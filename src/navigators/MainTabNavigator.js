@@ -10,16 +10,18 @@ import SearchStack from "../navigators/SearchStack";
 import TagTabNavigator from "../navigators/TagTabNavigator";
 import TagScreen from "../screens/TagScreen";
 import TagStack from "../navigators/TagStack";
-import ViewMovieStack from "../navigators/ViewMovieStack";
+import MainMovieStack from "../navigators/MainMovieStack";
+import ViewMovieDrawer from "../navigators/ViewMovieDrawer";
 
 const MainTabNavigator = createBottomTabNavigator({
   ViewMovies: {
-    screen: ViewMovieStack,
+    screen: MainMovieStack, //ViewMovieDrawer
     navigationOptions: ({ navigation }) => {
       // console.log(
       //   "home tab nav",
       //   navigation.state.routes[navigation.state.index]
       // );
+
       return {
         tabBarLabel: "View Movies",
         tabBarIcon: ({ tintColor }) => (

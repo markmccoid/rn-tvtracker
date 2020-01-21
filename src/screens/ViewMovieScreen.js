@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, FlatList, Image, StyleSheet, Button } from "react-native";
+import { View, Text, FlatList, List, StyleSheet, Button } from "react-native";
 // import { Button } from "react-native-elements";
 // import { useMovieStore } from "../store/createMovieStore";
 // import { useMovieState } from "../context/MovieDataContext";
@@ -15,23 +15,25 @@ const ViewMovieScreen = ({ navigation }) => {
   const scrollToTop = () => {
     flatListRef.current.scrollToOffset({ animated: true, offest: 0 });
   };
-
+  React.useEffect(() => {
+    // navigation.state.params = {
+    //   isFiltered: state.oSaved.filterData.tags.length > 0
+    // };
+    navigation.setParams({
+      isFiltered: state.oSaved.filterData.tags.length > 0,
+      numFilters: state.oSaved.filterData.tags.length
+    });
+  }, [state.oSaved.filterData.tags.length]);
   return (
-    <View style={{ flex: 1 }}>
-      <View style={styles.resultList}>
-        <FlatList
-          data={state.oSaved.savedMovies}
-          keyExtractor={(movie, idx) => movie.id.toString() + idx}
-          renderItem={({ item }) => {
-            return <ViewMovieItem movie={item} />;
-          }}
-          numColumns={2}
-        />
-        <Text>View Movie Screen</Text>
-      </View>
-      <Button
-        onPress={() => navigation.navigate("MovieDetail")}
-        title="Movie Detail"
+    <View style={styles.resultList}>
+      <FlatList
+        data={state.oSaved.getFilteredMovies}
+        keyExtractor={(movie, idx) => movie.id.toString() + idx}
+        columnWrapperStyle={{ justifyContent: "space-around" }}
+        renderItem={({ item }) => {
+          return <ViewMovieItem movie={item} />;
+        }}
+        numColumns={2}
       />
     </View>
   );
@@ -39,8 +41,7 @@ const ViewMovieScreen = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   resultList: {
-    flexDirection: "column",
-    alignItems: "center"
+    flex: 1
   }
 });
 export default ViewMovieScreen;

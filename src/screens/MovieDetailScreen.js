@@ -1,5 +1,6 @@
 import React from "react";
-import { View, Text, Image, StyleSheet } from "react-native";
+import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
+import { Feather } from "@expo/vector-icons";
 import { useNavigationParam } from "react-navigation-hooks";
 
 const MovieDetailScreen = ({ navigation }) => {
@@ -15,8 +16,19 @@ const MovieDetailScreen = ({ navigation }) => {
   );
 };
 
-MovieDetailScreen.navigationOptions = {
-  title: "Movie Details"
+MovieDetailScreen.navigationOptions = ({ navigation }) => {
+  let movie = navigation.getParam("movie");
+
+  return {
+    title: movie.title,
+    headerRight: (
+      <TouchableOpacity
+        onPress={() => navigation.navigate("MovieDetailTagEdit", { movie })}
+      >
+        <Feather name="tag" size={30} style={{ marginRight: 10 }} />
+      </TouchableOpacity>
+    )
+  };
 };
 
 const styles = StyleSheet.create({

@@ -2,7 +2,8 @@
 // phones local storage.
 export const onInitialize = async ({ state, effects }) => {
   let initData = await effects.oSaved.initializeStore();
-  console.log(initData);
+  //console.log(initData);
   state.oSaved.savedMovies = initData.savedMovies;
   state.oSaved.tagData = initData.savedTags;
+  state.oSaved.userData = initData.savedUserData;
 };

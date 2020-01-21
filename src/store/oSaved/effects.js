@@ -2,14 +2,16 @@ import {
   loadSavedMovies,
   saveMoviesToStorage,
   saveTagsToStorage,
-  loadSavedTags
+  saveUserDataToStorage,
+  loadSavedTags,
+  loadSavedUserData
 } from "../../storage";
 
 export const initializeStore = async () => {
   let savedMovies = await loadSavedMovies();
   let savedTags = await loadSavedTags();
-  console.log("INIT", savedMovies);
-  return { savedMovies, savedTags };
+  let savedUserData = await loadSavedUserData();
+  return { savedMovies, savedTags, savedUserData };
 };
 
 export const saveMovies = async movies => {
@@ -18,4 +20,8 @@ export const saveMovies = async movies => {
 
 export const saveTags = async tags => {
   await saveTagsToStorage(tags);
+};
+
+export const saveUserData = async userData => {
+  await saveUserDataToStorage(userData);
 };

@@ -10,7 +10,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { Image } from "react-native-elements";
 import { useOvermind } from "../store/overmind";
 
-const MovieResultItem = ({ movie, saveMovie }) => {
+const SearchResultItem = ({ movie, saveMovie }) => {
   return (
     <View
       style={[styles.container, movie.existsInSaved && styles.existsInSaved]}
@@ -61,4 +61,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default React.memo(MovieResultItem);
+export default React.memo(SearchResultItem);

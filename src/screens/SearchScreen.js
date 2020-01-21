@@ -12,7 +12,7 @@ import { Button } from "react-native-elements";
 // import { useMovieActions } from "../context/MovieDataContext";
 import { useOvermind } from "../store/overmind";
 import SearchForMovie from "../components/SearchForMovie";
-import MovieResultItem from "../components/MovieResultItem";
+import SearchResultItem from "../components/SearchResultItem";
 
 const SearchScreen = ({ navigation }) => {
   let [searchString, setSearchString] = React.useState("");
@@ -61,7 +61,7 @@ const SearchScreen = ({ navigation }) => {
         data={state.oSearch.resultData}
         keyExtractor={movie => movie.id.toString()}
         renderItem={({ item }) => {
-          return <MovieResultItem movie={item} saveMovie={saveMovie} />;
+          return <SearchResultItem movie={item} saveMovie={saveMovie} />;
         }}
         onEndReached={fetchMoreData}
         keyboardDismissMode="on-drag"

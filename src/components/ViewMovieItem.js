@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   StyleSheet
 } from "react-native";
+import { EvilIcons } from "@expo/vector-icons";
 import { useNavigation } from "react-navigation-hooks";
 import { useOvermind } from "../store/overmind";
 
@@ -17,7 +18,10 @@ const ViewMovieItem = ({ movie }) => {
   return (
     <TouchableOpacity onPress={() => navigate("MovieDetail", { movie })}>
       <View style={styles.container}>
-        <Image source={{ url: movie.posterURL }} style={styles.image} />
+        <View style={{ flexDirection: "row" }}>
+          {/* <EvilIcons name="heart" size={20} /> */}
+          <Image source={{ url: movie.posterURL }} style={styles.image} />
+        </View>
         <View style={styles.movieInfo}>
           <Text numberOfLines={1} style={styles.title}>
             {movie.title}
@@ -33,17 +37,23 @@ const ViewMovieItem = ({ movie }) => {
 
 const styles = StyleSheet.create({
   container: {
-    width: 190,
+    //width: 190,
     flexDirection: "column",
-    alignItems: "center",
-    margin: 5
+    elevation: 1,
+    borderRadius: 5,
+    backgroundColor: "#eae7ea",
+    paddingTop: 10,
+    paddingBottom: 10,
+    paddingHorizontal: 10,
+    //paddingRight: 10,
+    marginTop: 10,
+    marginBottom: 6,
+    borderColor: "#555",
+    borderWidth: 1
   },
   movieInfo: {
-    width: 149,
     padding: 4,
-    alignItems: "center",
-    borderColor: "gray",
-    borderWidth: 1
+    alignItems: "center"
   },
   title: {
     flex: 1,

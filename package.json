@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.7.7",
+    "@react-native-community/blur": "^3.4.1",
+    "@react-native-community/datetimepicker": "^2.1.0",
     "expo": "~36.0.0",
     "overmind": "^21.0.0",
     "overmind-devtools": "^22.0.0",
@@ -26,6 +28,7 @@
     "react-navigation-hooks": "^1.1.0",
     "react-navigation-stack": "^1.10.3",
     "react-navigation-tabs": "^2.6.2",
+    "styled-components": "^5.0.0",
     "zustand": "^2.2.1"
   },
   "devDependencies": {

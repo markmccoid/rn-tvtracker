@@ -3,12 +3,12 @@ import { Text, View, StyleSheet, TouchableOpacity, Button } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { createStackNavigator } from "react-navigation-stack";
 import { createDrawerNavigator } from "react-navigation-drawer";
-import ViewMovieStack from "./ViewMovieStack";
+import MainMovieStack from "./MainMovieStack";
 
 // Drawer Navigator
 const ViewMovieDrawerNavigator = createDrawerNavigator({
   ALL: {
-    screen: ViewMovieStack,
+    screen: MainMovieStack,
     navigationOptions: {
       drawerIcon: ({ tintColor }) => (
         <Ionicons name="md-home" style={{ color: tintColor }} />
@@ -17,8 +17,7 @@ const ViewMovieDrawerNavigator = createDrawerNavigator({
     }
   },
   Favorites: {
-    screen: ViewMovieStack,
-    params: { folder: "favs" },
+    screen: MainMovieStack,
     navigationOptions: ({ navigation }) => {
       return {
         params: { folder: "favs" },

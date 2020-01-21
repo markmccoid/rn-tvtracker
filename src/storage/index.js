@@ -4,7 +4,7 @@ import { AsyncStorage } from "react-native";
 const loadFromAsyncStorage = async key => {
   try {
     const data = await AsyncStorage.getItem(key);
-    console.log("LFAS data", data, key);
+    //console.log("LFAS data", data, key);
     if (data) {
       return JSON.parse(data);
     } else {
@@ -47,6 +47,22 @@ export const loadSavedTags = async () => {
     return [];
   }
 };
+//-- Load userData
+export const loadSavedUserData = async () => {
+  try {
+    const userData = await loadFromAsyncStorage("userdata");
+    if (userData) {
+      //console.log("USERDATa", userData);
+      return userData;
+    } else {
+      // If localstorage is empty return empty array
+      return {};
+    }
+  } catch (error) {
+    console.log("ERROR loading userdata", error);
+    return {};
+  }
+};
 
 // SAVE movie to local storage --//
 export const saveMoviesToStorage = async movies => {
@@ -62,5 +78,13 @@ export const saveTagsToStorage = async tags => {
     await AsyncStorage.setItem("tags", JSON.stringify(tags));
   } catch (error) {
     console.log("ERROR Saving Tags", error);
+  }
+};
+// SAVE userData to local storage --//
+export const saveUserDataToStorage = async userData => {
+  try {
+    await AsyncStorage.setItem("userdata", JSON.stringify(userData));
+  } catch (error) {
+    console.log("ERROR Saving userdata", error);
   }
 };

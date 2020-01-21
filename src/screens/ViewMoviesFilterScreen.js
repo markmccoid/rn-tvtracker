@@ -1,0 +1,75 @@
+import React from "react";
+import { View, Text, StyleSheet } from "react-native";
+import { Button } from "react-native-elements";
+import Icon from "react-native-vector-icons/Ionicons";
+import { useOvermind } from "../store/overmind";
+import styled from "styled-components/native";
+import TagCloud, { TagItem } from "../components/TagCloud/TagCloud";
+import _ from "lodash";
+
+const ViewMoviesFilterScreen = ({ navigation }) => {
+  const { state, actions } = useOvermind();
+  const { getAllFilterTags } = state.oSaved;
+  const {
+    addTagToFilter,
+    removeTagFromFilter,
+    clearFilterTags
+  } = actions.oSaved;
+  //---TESTING  Probably should be a getter in the store.+
+
+  return (
+    <View style={styles.container}>
+      <View>
+        <Text style={styles.title}>Filter by Tags</Text>
+        <TagCloud>
+          {getAllFilterTags.map(tagObj => {
+            return (
+              <TagItem
+                key={tagObj.tagId}
+                tagId={tagObj.tagId}
+                tagName={tagObj.tagName}
+                isSelected={tagObj.isSelected}
+                onSelectTag={() => addTagToFilter(tagObj.tagId)}
+                onDeSelectTag={() => removeTagFromFilter(tagObj.tagId)}
+              />
+            );
+          })}
+        </TagCloud>
+      </View>
+      <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+        <Button
+          style={styles.buttonStyle}
+          title="Clear Filters"
+          type="outline"
+          onPress={() => clearFilterTags()}
+        />
+        <Button
+          style={styles.buttonStyle}
+          title="Done"
+          onPress={() => navigation.goBack()}
+        />
+      </View>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    flexDirection: "column",
+    justifyContent: "space-between",
+    margin: 5,
+    borderColor: "black",
+    borderWidth: 1,
+    padding: 5
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold"
+  },
+  buttonStyle: {
+    width: 150
+  }
+});
+
+export default ViewMoviesFilterScreen;
