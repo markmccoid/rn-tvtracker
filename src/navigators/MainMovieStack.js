@@ -38,9 +38,7 @@ const ViewMovieDetailStack = createStackNavigator(
   {
     MovieDetailScreen: {
       screen: MovieDetailScreen,
-      navigationOptions: ({ navigation }) => {
-        console.log("MOVIE STACK PARAMS", navigation.state.params);
-      }
+      navigationOptions: ({ navigation }) => {}
     },
     MovieDetailTagEdit: {
       screen: MovieDetailTagEditScreen
@@ -62,11 +60,11 @@ const MainMovieStack = createStackNavigator(
         //console.log("PARAMS", params);
         let isFiltered = params ? params.isFiltered : false;
         let numFilters = params ? params.numFilters : undefined;
-        console.log(
-          "MOVIE TAB NAV",
-          navigation.state.routes,
-          navigation.state.index
-        );
+        // console.log(
+        //   "MOVIE TAB NAV",
+        //   navigation.state.routes,
+        //   navigation.state.index
+        // );
         // console.log(
         //   "MOVIE TAB PARAMS",
         //   navigation.state.routes[navigation.state.index].params
@@ -124,6 +122,7 @@ const MainMovieStack = createStackNavigator(
 
         return {
           title: movie.title,
+          headerTitleStyle: { fontSize: 22 },
           headerRight: () => {
             let routeName =
               navigation.state.routes[navigation.state.index].routeName;

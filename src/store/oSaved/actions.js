@@ -2,8 +2,24 @@ import _ from "lodash";
 import uuidv4 from "uuid/v4";
 
 //================================================================
+// - INITIALIZE (Hydrate Store)
+//================================================================
+export const hyrdateStore = async ({ state, effects }, uid) => {
+  let userDocData = await effects.oSaved.initializeStore(uid);
+  state.oSaved.savedMovies = userDocData.savedMovies;
+  state.oSaved.tagData = userDocData.tagData;
+  state.oSaved.userData = userDocData.userData;
+};
+
+//================================================================
 // - MOVIE (savedMovies) Actions
 //================================================================
+/**
+ * saveMovie - save the passed movie object to state and firestore
+ *
+ * @param {*} context
+ * @param {Object} movieObj
+ */
 export const saveMovie = async ({ state, effects, actions }, movieObj) => {
   const { tagResults } = actions.oSearch.internal;
   const searchData = state.oSearch.resultData;
@@ -20,6 +36,12 @@ export const saveMovie = async ({ state, effects, actions }, movieObj) => {
   await effects.oSaved.saveMovies(state.oSaved.savedMovies);
 };
 
+/**
+ * deleteMovie - delete the passed movieId and save to state and firestore
+ *
+ * @param {*} context
+ * @param {string} movieId
+ */
 export const deleteMovie = async ({ state, effects }, movieId) => {
   // find and remove movie
   state.oSaved.savedMovies = state.oSaved.savedMovies.filter(
@@ -29,6 +51,23 @@ export const deleteMovie = async ({ state, effects }, movieId) => {
   await effects.oSaved.saveMovies(state.oSaved.savedMovies);
 };
 
+/**
+ * updateMovieBackdropImage - update the passed movieIds backdrop image and save to state and firestore
+ *
+ * @param {*} context
+ * @param {Object} payload { movieId, backdropUrl}
+ */
+export const updateMovieBackdropImage = async ({ state, effects }, payload) => {
+  const { movieId, backdropURL } = payload;
+  //update the passed movieId's backdropURL
+  state.oSaved.savedMovies.forEach(movie => {
+    if (movie.id === movieId) {
+      return (movie.backdropURL = backdropURL);
+    }
+  });
+  //Save to firestore
+  await effects.oSaved.saveMovies(state.oSaved.savedMovies);
+};
 //================================================================
 // - TAG (tagData) Actions
 //================================================================
@@ -45,8 +84,7 @@ export const addNewTag = async ({ state, effects }, tagName) => {
   let tagId = uuidv4();
   let newTag = {
     tagId,
-    tagName,
-    members: []
+    tagName
   };
 
   state.oSaved.tagData.push(newTag);
@@ -88,10 +126,15 @@ export const addTagToMovie = async ({ state, effects }, payload) => {
   if (!userData.tags) {
     userData.tags = {};
   }
+  if (!userData.tags.hasOwnProperty(movieId)) {
+    userData.tags[movieId] = [tagId];
+  } else {
+    userData.tags[movieId] = [...userData.tags[movieId], tagId];
+  }
   // Add tag to movieId property on object
-  userData.tags[movieId] = userData.tags[movieId]
-    ? [...userData.tags[movieId], tagId]
-    : [tagId];
+  // userData.tags[movieId] = userData.tags[movieId]
+  //   ? [...userData.tags[movieId], tagId]
+  //   : [tagId];
   // Save userData to local storage
   await effects.oSaved.saveUserData(userData);
 };

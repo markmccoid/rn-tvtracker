@@ -44,7 +44,6 @@ let TagTabNavigator = createBottomTabNavigator(
     TagView: {
       screen: TagScreen,
       navigationOptions: () => {
-        console.log("in TagView Tag Screen");
       }
     },
     TagEdit: {
@@ -53,7 +52,6 @@ let TagTabNavigator = createBottomTabNavigator(
   },
   {
     navigationOptions: () => {
-      console.log("in MAINTagView Tag Screen");
     }
   }
 );

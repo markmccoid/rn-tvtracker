@@ -31,7 +31,6 @@ export const buildTagObjFromIds = (state, tagIdArray, isSelected) => {
 
 export const filterMovies = (savedMovies, userData, filterTags) => {
   let movieTags = userData.tags;
-  console.log(movieTags);
   // If we have no tags stored for movies in userData.tags
   // then return empty array as no movies will match since no movies have been tagged.
   // Remember userData.tag is an object with movieIds as the key/property
