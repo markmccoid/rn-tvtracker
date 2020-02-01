@@ -15,10 +15,12 @@ import ImageSwiper from "../ImageSwiper";
 const BackdropImageContainer = ({ movie }) => {
   const [inImageSelect, setInImageSelect] = React.useState(false);
   const [bdImages, setbdImages] = React.useState([]);
-  const { height, width } = Dimensions.get("window");
-  const navigation = useNavigation();
+  const { width } = Dimensions.get("window");
   const { actions } = useOvermind();
   const { updateMovieBackdropImage } = actions.oSaved;
+
+  // callback for when image isSelected
+  // saves to store the sets state so gallery not shown anymore
   const handleImageSelect = backdropURL => {
     updateMovieBackdropImage({
       movieId: movie.id,
@@ -26,11 +28,14 @@ const BackdropImageContainer = ({ movie }) => {
     });
     setInImageSelect(false);
   };
-
+  // Get backdrop images for passed movieId
+  // only get images if bdImages state is true
   React.useEffect(() => {
     const getImages = async () => {
       let imageArray = await movieGetImages(movie.id, "backdrops");
-      setbdImages(imageArray.data);
+      // push the current backdrop to the front of the array
+      imageArray = [movie.backdropURL, ...imageArray.data];
+      setbdImages(imageArray);
     };
     if (!inImageSelect) {
       setbdImages([]);
@@ -38,6 +43,7 @@ const BackdropImageContainer = ({ movie }) => {
       getImages();
     }
   }, [inImageSelect]);
+
   return (
     <View style={styles.imageContainer}>
       {!inImageSelect ? (
@@ -45,7 +51,12 @@ const BackdropImageContainer = ({ movie }) => {
           <Image source={{ url: movie.backdropURL }} style={styles.image} />
         </TouchableOpacity>
       ) : (
-        <ImageSwiper images={bdImages} onImageSelect={handleImageSelect} />
+        <ImageSwiper
+          images={bdImages}
+          onImageSelect={handleImageSelect}
+          width={width}
+          height={width * 0.53}
+        />
       )}
     </View>
   );

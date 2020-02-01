@@ -68,6 +68,23 @@ export const updateMovieBackdropImage = async ({ state, effects }, payload) => {
   //Save to firestore
   await effects.oSaved.saveMovies(state.oSaved.savedMovies);
 };
+/**
+ * updateMoviePosterImage - update the passed movieIds poster image and save to state and firestore
+ *
+ * @param {*} context
+ * @param {Object} payload { movieId, posterUrl}
+ */
+export const updateMoviePosterImage = async ({ state, effects }, payload) => {
+  const { movieId, posterURL } = payload;
+  //update the passed movieId's posterURL
+  state.oSaved.savedMovies.forEach(movie => {
+    if (movie.id === movieId) {
+      return (movie.posterURL = posterURL);
+    }
+  });
+  //Save to firestore
+  await effects.oSaved.saveMovies(state.oSaved.savedMovies);
+};
 //================================================================
 // - TAG (tagData) Actions
 //================================================================

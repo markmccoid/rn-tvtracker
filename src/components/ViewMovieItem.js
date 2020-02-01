@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -11,17 +11,60 @@ import {
 import { EvilIcons } from "@expo/vector-icons";
 import { useNavigation } from "react-navigation-hooks";
 import { useOvermind } from "../store/overmind";
+import { movieGetImages } from "tmdb_api";
+import ImageSwiper from "../components/ImageSwiper";
 
-const ViewMovieItem = ({ movie }) => {
+const ViewMovieItem = ({ movie, inImageSelect, setInImageSelect }) => {
+  const [posterImages, setPosterImages] = useState([]);
   const { navigate } = useNavigation();
   const { actions } = useOvermind();
   const { deleteMovie } = actions.oSaved;
+
+  useEffect(() => {
+    const getImages = async () => {
+      let imageArray = await movieGetImages(movie.id, "posters");
+      // push the current backdrop to the front of the array
+      imageArray = [movie.posterURL, ...imageArray.data];
+      setPosterImages(imageArray);
+    };
+    if (!inImageSelect) {
+      setPosterImages([]);
+    } else {
+      getImages();
+    }
+  }, [inImageSelect]);
+
+  // callback for when image isSelected
+  // saves to store the sets state so gallery not shown anymore
+  const handleImageSelect = posterURL => {
+    actions.oSaved.updateMoviePosterImage({
+      movieId: movie.id,
+      posterURL
+    });
+    setInImageSelect(false);
+  };
+
   return (
-    <TouchableOpacity onPress={() => navigate("MovieDetail", { movie })}>
+    <TouchableOpacity
+      onPress={() => {
+        setInImageSelect(false);
+        navigate("MovieDetail", { movie });
+      }}
+      onLongPress={() => setInImageSelect(true)}
+    >
       <View style={styles.container}>
         <View style={{ flexDirection: "row", justifyContent: "center" }}>
           {/* <EvilIcons name="heart" size={20} /> */}
-          <Image source={{ url: movie.posterURL }} style={styles.image} />
+          {!inImageSelect ? (
+            <Image source={{ url: movie.posterURL }} style={styles.image} />
+          ) : (
+            <ImageSwiper
+              images={posterImages}
+              onImageSelect={handleImageSelect}
+              width={150}
+              height={225}
+            />
+          )}
         </View>
         <View style={styles.movieInfo}>
           <Text numberOfLines={1} style={styles.title}>

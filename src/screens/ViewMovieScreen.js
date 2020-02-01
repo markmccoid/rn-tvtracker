@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, FlatList, List, StyleSheet, Button } from "react-native";
 // import { Button } from "react-native-elements";
 // import { useMovieStore } from "../store/createMovieStore";
@@ -11,11 +11,19 @@ const ViewMovieScreen = ({ navigation }) => {
   // const { savedMovies } = useMovieState();
   const flatListRef = React.useRef();
   const { state } = useOvermind();
-
+  const [inImageSelect, setInImageSelect] = useState([]);
   const scrollToTop = () => {
     flatListRef.current.scrollToOffset({ animated: true, offest: 0 });
   };
-  React.useEffect(() => {
+  // Initialize the inImageSelect flag to all false
+  useEffect(() => {
+    if (state.oSaved.getFilteredMovies.length > 0) {
+      setInImageSelect(
+        state.oSaved.getFilteredMovies.map((movie, idx) => false)
+      );
+    }
+  }, [state.oSaved.getFilteredMovies]);
+  useEffect(() => {
     // navigation.state.params = {
     //   isFiltered: state.oSaved.filterData.tags.length > 0
     // };
@@ -24,14 +32,30 @@ const ViewMovieScreen = ({ navigation }) => {
       numFilters: state.oSaved.filterData.tags.length
     });
   }, [state.oSaved.filterData.tags.length]);
+
   return (
     <View style={styles.resultList}>
       <FlatList
         data={state.oSaved.getFilteredMovies}
         keyExtractor={(movie, idx) => movie.id.toString() + idx}
         columnWrapperStyle={{ justifyContent: "space-around" }}
-        renderItem={({ item }) => {
-          return <ViewMovieItem movie={item} />;
+        renderItem={({ item, index }) => {
+          return (
+            <ViewMovieItem
+              movie={item}
+              inImageSelect={inImageSelect[index]}
+              setInImageSelect={value =>
+                setInImageSelect(prevArray => {
+                  // If setting any index to true, all others must be false.
+                  // If setting any index to false, all others still false
+                  let newArray = prevArray.map((item, idx) =>
+                    idx === index ? value : false
+                  );
+                  return newArray;
+                })
+              }
+            />
+          );
         }}
         numColumns={2}
       />

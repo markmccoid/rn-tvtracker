@@ -8,12 +8,10 @@ import {
 } from "react-native";
 import Carousel from "react-native-snap-carousel";
 
-const ImageSwiper = ({ images, onImageSelect }) => {
-  let width = Dimensions.get("window").width; //300
-  let height = Dimensions.get("window").width * 0.53; //169
-
+const ImageSwiper = ({ images, onImageSelect, width, height }) => {
+  // ref for Carousel
   let CRef = React.useRef();
-  let [currItem, setCurrItem] = React.useState(0);
+
   const _renderItem = ({ item, index }) => {
     return (
       <View
@@ -22,17 +20,16 @@ const ImageSwiper = ({ images, onImageSelect }) => {
           borderWidth: 1,
           backgroundColor: "white",
           width: width - 18,
-          height: (width - 18) * 0.53
+          height: height
         }}
       >
         <TouchableHighlight
           onPress={() => {
-            console.log("image pressed", CRef.current.currentIndex);
             onImageSelect(images[CRef.current.currentIndex]);
           }}
         >
           <Image
-            style={{ width: width - 20, height: (width - 20) * 0.53 }}
+            style={{ width: width, height: height }}
             source={{ uri: item }}
           />
         </TouchableHighlight>
@@ -46,7 +43,6 @@ const ImageSwiper = ({ images, onImageSelect }) => {
         ref={CRef}
         layout="stack"
         layoutCardOffset={14}
-        onSnapToItem={slideIndex => setCurrItem(slideIndex)}
         data={images}
         renderItem={_renderItem}
         sliderWidth={width}
