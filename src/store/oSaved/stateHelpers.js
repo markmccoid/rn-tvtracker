@@ -29,18 +29,31 @@ export const buildTagObjFromIds = (state, tagIdArray, isSelected) => {
   return _.sortBy(tagsObj, ["tagName"]);
 };
 
-export const filterMovies = (savedMovies, userData, filterTags) => {
+export const filterMovies = (savedMovies, userData, filterData) => {
   let movieTags = userData.tags;
+  let { tags: filterTags, tagOperator } = filterData;
+
   // If we have no tags stored for movies in userData.tags
   // then return empty array as no movies will match since no movies have been tagged.
   // Remember userData.tag is an object with movieIds as the key/property
   if (!movieTags) {
     return [];
   }
-  return savedMovies.filter(movie => {
-    if (movieTags[movie.id]) {
-      return movieTags[movie.id].some(tagId => filterTags.includes(tagId));
-    }
-    return false;
-  });
+  if (tagOperator === "AND") {
+    // AND filter for passed tags
+    return savedMovies.filter(movie => {
+      if (movieTags[movie.id]) {
+        return filterTags.every(tag => movieTags[movie.id].includes(tag));
+      }
+      return false;
+    });
+  } else {
+    // OR filter for passed tags
+    return savedMovies.filter(movie => {
+      if (movieTags[movie.id]) {
+        return movieTags[movie.id].some(tagId => filterTags.includes(tagId));
+      }
+      return false;
+    });
+  }
 };

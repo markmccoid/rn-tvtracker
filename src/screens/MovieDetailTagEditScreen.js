@@ -10,6 +10,7 @@ const MovieDetailTagEditScreen = ({ navigation }) => {
   const { state, actions } = useOvermind();
   const { getAllMovieTags } = state.oSaved;
   const { addTagToMovie, removeTagFromMovie } = actions.oSaved;
+  const numberOfTags = state.oSaved.getMovieTags(movie.id).length;
   // console.log("TAGNAMES", getMovieTags(movie.id));
   // console.log("UNUSED TAGNAMES", getUnusedMovieTags(movie.id));
   // let movieTags = getMovieTags(movie.id);
@@ -43,7 +44,15 @@ const MovieDetailTagEditScreen = ({ navigation }) => {
         </TagCloud>
       </View>
 
-      <Button title="Done" onPress={() => navigation.goBack()} />
+      <Button
+        title="Done"
+        onPress={() => {
+          // navigation.setParams({ numberOfTags });
+          navigation.goBack();
+          // console.log("IN NAV", numberOfTags);
+          // navigation.navigate("ViewMovieDetailStack", { movie, numberOfTags });
+        }}
+      />
     </View>
   );
 };

@@ -4,7 +4,8 @@ import {
   Text,
   TextInput,
   StyleSheet,
-  View
+  View,
+  ActivityIndicator
 } from "react-native";
 
 import {
@@ -20,21 +21,46 @@ const SignInScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const navigateToApp = () => {
+    const promise = new Promise(resolve => {
+      const subscription = navigation.addListener("didFocus", () => {
+        subscription.remove();
+        resolve();
+      });
+    });
+    navigation.navigate("App");
+    return promise;
+  };
+
   const handleSignIn = () => {
     if (!password || !email) {
       setError("Must enter email and password");
       return;
     }
+    setIsLoading(true);
     Firebase.auth()
       .signInWithEmailAndPassword(email, password)
-      .then(() => navigation.navigate("App"))
-      .catch(error => console.log(error));
+      .then(() => {
+        navigation.navigate("App");
+        setIsLoading(false);
+        // navigateToApp.then(() => {
+        //   setIsLoading(false);
+        // });
+      })
+      .catch(error => {
+        setError(error.message);
+        setPassword("");
+        setIsLoading(false);
+      });
   };
   return (
     <View style={styles.container}>
       <View style={styles.container}>
         <Header>Sign In</Header>
       </View>
+      {isLoading && <ActivityIndicator size="large" />}
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.inputBox}
@@ -54,17 +80,19 @@ const SignInScreen = ({ navigation }) => {
           secureTextEntry={true}
         />
         {error && <Text>{error}</Text>}
-        <Button onPress={handleSignIn}>
+        <Button disabled={isLoading} onPress={handleSignIn}>
           <ButtonText>Sign In</ButtonText>
         </Button>
         <View style={{ flexDirection: "row" }}>
           <TouchableOpacity
+            disabled={isLoading}
             style={styles.signUpButton}
             onPress={() => navigation.navigate("ForgotPassword")}
           >
             <ClickText>Forgot Password?</ClickText>
           </TouchableOpacity>
           <TouchableOpacity
+            disabled={isLoading}
             style={styles.signUpButton}
             onPress={() => navigation.navigate("SignUp")}
           >

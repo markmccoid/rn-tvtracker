@@ -180,3 +180,7 @@ export const removeTagFromFilter = ({ state }, tagId) => {
 export const clearFilterTags = ({ state }) => {
   state.oSaved.filterData.tags = [];
 };
+
+export const setTagOperator = ({ state }, tagOperator) => {
+  state.oSaved.filterData.tagOperator = tagOperator;
+};

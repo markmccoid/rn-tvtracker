@@ -15,27 +15,21 @@ export const config = {
     },
     // Object containing any filter data
     filterData: {
-      tags: []
+      tags: [],
+      tagOperator: "OR"
     },
     getFilteredMovies: state => {
       if (state.filterData.tags.length > 0) {
         return helpers.filterMovies(
           state.savedMovies,
           state.userData,
-          state.filterData.tags
+          state.filterData
         );
       }
       return state.savedMovies;
     },
     // Return tag object with all tags { tagId, tagName }
     getTags: state => state.tagData,
-    // state.tagData.reduce((tagNames, tagObj) => {
-    //   return [...tagNames, tagObj];
-    // }, []),
-    getAllTags: state => {
-      let allTagIds = state.tagData.map(tagObj => tagObj.tagId);
-      return helpers.buildTagObjFromIds(state, allTagIds, false);
-    },
     getMovieTags: state => movieId => {
       let movieTags = helpers.retrieveMovieTagIds(state, movieId);
       // Since we are only storing the tagId, we need to

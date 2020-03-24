@@ -18,7 +18,7 @@ YellowBox.ignoreWarnings(["Require cycle:"]);
 export default () => {
   //Initialize tmdb library
   initTMDB("0e4935aa81b04539beb687d04ff414e3");
-  const overmind = createOvermind(config, { devtools: "192.168.1.19:3031" });
+  const overmind = createOvermind(config, { devtools: "192.168.1.12:3031" });
 
   return (
     <Provider value={overmind}>

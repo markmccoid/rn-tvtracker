@@ -7,6 +7,7 @@ import ViewMovieScreen from "../screens/ViewMovieScreen";
 import ViewMoviesFilterScreen from "../screens/ViewMoviesFilterScreen";
 import MovieDetailScreen from "../screens/MovieDetailScreen";
 import MovieDetailTagEditScreen from "../screens/MovieDetailTagEditScreen";
+import { MovieDetailHeaderRight } from "./NavHelpers";
 
 const ViewMovieStack = createStackNavigator(
   {
@@ -57,7 +58,7 @@ const MainMovieStack = createStackNavigator(
         let params = navigation.state.routes[navigation.state.index].params;
         let routeName =
           navigation.state.routes[navigation.state.index].routeName;
-        //console.log("PARAMS", params);
+        // console.log("PARAMS", params);
         let isFiltered = params ? params.isFiltered : false;
         let numFilters = params ? params.numFilters : undefined;
         // console.log(
@@ -119,7 +120,9 @@ const MainMovieStack = createStackNavigator(
       screen: ViewMovieDetailStack,
       navigationOptions: ({ navigation }) => {
         let movie = navigation.getParam("movie");
+        // Get number of tags for movieId
 
+        // console.log("DETAIL PARAMS", numberOfTags);
         return {
           title: movie.title,
           headerTitleStyle: { fontSize: 22 },
@@ -140,13 +143,10 @@ const MainMovieStack = createStackNavigator(
               );
             } else {
               return (
-                <TouchableOpacity
-                  onPress={() =>
-                    navigation.navigate("MovieDetailTagEdit", { movie })
-                  }
-                >
-                  <Feather name="tag" size={30} style={{ marginRight: 10 }} />
-                </TouchableOpacity>
+                <MovieDetailHeaderRight
+                  navigate={navigation.navigate}
+                  movie={movie}
+                />
               );
             }
           }

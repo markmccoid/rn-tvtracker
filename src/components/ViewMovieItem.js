@@ -3,23 +3,64 @@ import {
   View,
   Text,
   Image,
-  Button,
   TouchableOpacity,
   StyleSheet,
   Dimensions
 } from "react-native";
-import { EvilIcons } from "@expo/vector-icons";
+import { Button } from "react-native-elements";
+import Icon from "react-native-vector-icons/FontAwesome";
+import { Overlay } from "react-native-elements";
 import { useNavigation } from "react-navigation-hooks";
 import { useOvermind } from "../store/overmind";
 import { movieGetImages } from "tmdb_api";
 import ImageSwiper from "../components/ImageSwiper";
 
+const ConfirmDelete = ({
+  showConfirmDelete,
+  setShowConfirmDelete,
+  onDeleteMovie
+}) => {
+  return (
+    <Overlay
+      isVisible={showConfirmDelete}
+      width={Dimensions.get("window").width * 0.75}
+      height={Dimensions.get("window").height * 0.2}
+      overlayStyle={{ borderColor: "black", borderWidth: 1, borderRadius: 5 }}
+    >
+      <View
+        style={{
+          flex: 1,
+          flexDirection: "column",
+          justifyContent: "space-between"
+        }}
+      >
+        <Text style={{ fontSize: 24, textAlign: "center", marginTop: 25 }}>
+          Really Delete Movie?
+        </Text>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            margin: 25
+          }}
+        >
+          <Button title="Cancel" onPress={() => setShowConfirmDelete(false)} />
+          <Button title="Delete" onPress={onDeleteMovie} />
+        </View>
+      </View>
+    </Overlay>
+  );
+};
+
 const ViewMovieItem = ({ movie, inImageSelect, setInImageSelect }) => {
   const [posterImages, setPosterImages] = useState([]);
+  const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const { navigate } = useNavigation();
-  const { actions } = useOvermind();
+  const { state, actions } = useOvermind();
   const { deleteMovie } = actions.oSaved;
+  const numberOfTags = state.oSaved.getMovieTags(movie.id).length;
 
+  // Called when getting image gallery
   useEffect(() => {
     const getImages = async () => {
       let imageArray = await movieGetImages(movie.id, "posters");
@@ -44,38 +85,59 @@ const ViewMovieItem = ({ movie, inImageSelect, setInImageSelect }) => {
     setInImageSelect(false);
   };
 
+  const handleDeleteMovie = () => {
+    setShowConfirmDelete(true);
+    //deleteMovie(movie.id);
+  };
   return (
-    <TouchableOpacity
-      onPress={() => {
-        setInImageSelect(false);
-        navigate("MovieDetail", { movie });
-      }}
-      onLongPress={() => setInImageSelect(true)}
-    >
+    <View>
       <View style={styles.container}>
-        <View style={{ flexDirection: "row", justifyContent: "center" }}>
-          {/* <EvilIcons name="heart" size={20} /> */}
-          {!inImageSelect ? (
-            <Image source={{ url: movie.posterURL }} style={styles.image} />
-          ) : (
-            <ImageSwiper
-              images={posterImages}
-              onImageSelect={handleImageSelect}
-              width={150}
-              height={225}
-            />
-          )}
-        </View>
-        <View style={styles.movieInfo}>
-          <Text numberOfLines={1} style={styles.title}>
-            {movie.title}
-          </Text>
-        </View>
-        <View>
-          <Button onPress={() => deleteMovie(movie.id)} title="Delete" />
+        <TouchableOpacity
+          onPress={() => {
+            setInImageSelect(false);
+            navigate("MovieDetail", { movie, numberOfTags });
+          }}
+          onLongPress={() => setInImageSelect(true)}
+        >
+          <View style={{ flexDirection: "row", justifyContent: "center" }}>
+            {/* <EvilIcons name="heart" size={20} /> */}
+            {!inImageSelect ? (
+              <Image source={{ url: movie.posterURL }} style={styles.image} />
+            ) : (
+              <ImageSwiper
+                images={posterImages}
+                onImageSelect={handleImageSelect}
+                width={150}
+                height={225}
+              />
+            )}
+          </View>
+          <View style={styles.movieInfo}>
+            <Text numberOfLines={1} style={styles.title}>
+              {movie.title}
+            </Text>
+          </View>
+        </TouchableOpacity>
+        <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
+          <Button
+            onPress={handleDeleteMovie}
+            containerStyle={{
+              width: 50,
+              justifyContent: "center",
+              borderColor: "black",
+              borderWidth: 1
+            }}
+            buttonStyle={{ backgroundColor: "#cc0000" }}
+            icon={<Icon name="trash" size={25} />}
+          />
         </View>
       </View>
-    </TouchableOpacity>
+      <ConfirmDelete
+        showConfirmDelete={showConfirmDelete}
+        setShowConfirmDelete={setShowConfirmDelete}
+        onDeleteMovie={() => deleteMovie(movie.id)}
+      />
+    </View>
   );
 };
 

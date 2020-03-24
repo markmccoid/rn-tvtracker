@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import { Button } from "react-native-elements";
+import { Button, ButtonGroup } from "react-native-elements";
 import Icon from "react-native-vector-icons/Ionicons";
 import { useOvermind } from "../store/overmind";
 import styled from "styled-components/native";
@@ -10,17 +10,25 @@ import _ from "lodash";
 const ViewMoviesFilterScreen = ({ navigation }) => {
   const { state, actions } = useOvermind();
   const { getAllFilterTags } = state.oSaved;
+  const { tagOperator } = state.oSaved.filterData;
   const {
     addTagToFilter,
     removeTagFromFilter,
-    clearFilterTags
+    clearFilterTags,
+    setTagOperator
   } = actions.oSaved;
   //---TESTING  Probably should be a getter in the store.+
-
+  const tagOperators = ["AND", "OR"];
+  console.log("TAGOP", tagOperator, tagOperators.indexOf(tagOperator));
   return (
     <View style={styles.container}>
       <View>
         <Text style={styles.title}>Filter by Tags</Text>
+        <ButtonGroup
+          onPress={index => setTagOperator(tagOperators[index])}
+          buttons={tagOperators}
+          selectedIndex={tagOperators.indexOf(tagOperator)}
+        />
         <TagCloud>
           {getAllFilterTags.map(tagObj => {
             return (
