@@ -4,7 +4,7 @@ import {
   Text,
   Button,
   StyleSheet,
-  ActivityIndicator
+  ActivityIndicator,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Image } from "react-native-elements";
@@ -38,27 +38,27 @@ const styles = StyleSheet.create({
     margin: 5,
     borderColor: "black",
     borderWidth: 1,
-    padding: 5
+    padding: 5,
   },
   movieInfo: {
     flex: 1,
-    justifyContent: "space-between"
+    justifyContent: "space-between",
   },
   title: {
     fontSize: 24,
-    fontWeight: "bold"
+    fontWeight: "bold",
   },
   image: {
     width: 150,
     height: 225,
     borderColor: "black",
-    borderWidth: 1
+    borderWidth: 1,
   },
   existsInSaved: {
     borderColor: "green",
     backgroundColor: "lightgreen",
-    borderWidth: 2
-  }
+    borderWidth: 2,
+  },
 });
 
 export default React.memo(SearchResultItem);

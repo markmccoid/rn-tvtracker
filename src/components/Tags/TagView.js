@@ -37,7 +37,7 @@ const TagView = () => {
       <SwipeListView
         useFlatList
         data={tagData}
-        keyExtractor={item => item.tagId}
+        keyExtractor={(item) => item.tagId}
         renderItem={(rowData, rowMap) => {
           return (
             <View style={styles.mainSwipe}>
@@ -73,7 +73,7 @@ const TagView = () => {
           );
         }}
         leftOpenValue={75}
-        rightOpenValue={-75}
+        rightOpenValue={-55}
         onRowOpen={(rowKey, rowMap) => {
           setTimeout(() => {
             if (rowMap[rowKey]) {
@@ -91,20 +91,20 @@ let styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "flex-start",
     marginBottom: 10,
-    marginRight: 10
+    marginRight: 10,
   },
   tag: {
-    flex: 4
+    flex: 4,
   },
   tagButton: {
-    flex: 1
+    flex: 1,
   },
   mainSwipe: {
     backgroundColor: "#ccc",
     borderColor: "black",
     borderWidth: 0.5,
     height: 40,
-    justifyContent: "center"
+    justifyContent: "center",
   },
   backRightBtn: {
     alignItems: "center",
@@ -115,17 +115,17 @@ let styles = StyleSheet.create({
     width: 75,
     height: 40,
     borderColor: "black",
-    borderBottomWidth: 1
+    borderBottomWidth: 1,
   },
   backRightBtnLeft: {
     backgroundColor: "lightblue",
     left: 0,
-    borderRightWidth: 1
+    borderRightWidth: 1,
   },
   deleteRightBtn: {
     backgroundColor: "#d11a2a",
-    right: 0
-  }
+    right: 0,
+  },
 });
 
 export default TagView;
