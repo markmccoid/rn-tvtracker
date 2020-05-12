@@ -1,32 +1,24 @@
 import React from "react";
-import { createAppContainer } from "react-navigation";
-import { YellowBox } from "react-native";
-import { initTMDB } from "tmdb_api";
-import { config } from "./src/store/overmind";
+import { NavigationContainer } from "@react-navigation/native";
 import { Provider } from "overmind-react";
 import { createOvermind } from "overmind";
-import NavigationService from "./src/navigators/NavigationService";
+import { config } from "./src/store/overmind";
+import { initTMDB } from "@markmccoid/tmdb_api";
 
-// import MainTabNavigator from "./src/navigators/MainTabNavigator";
-import AppSwitchNavigator from "./src/navigators/AppSwitchNavigator";
+import RootNav from "./src/navigation/RootNav";
 
-//import "./src/storage/firebase";
+export const AuthContext = React.createContext();
 
-const App = createAppContainer(AppSwitchNavigator);
-// suppress require cycle warning coming from tmdb_api package
-YellowBox.ignoreWarnings(["Require cycle:"]);
-export default () => {
-  //Initialize tmdb library
+const App = () => {
   initTMDB("0e4935aa81b04539beb687d04ff414e3");
-  const overmind = createOvermind(config, { devtools: "192.168.1.12:3031" });
-
+  const overmind = createOvermind(config, { devtools: "192.168.1.26:3031" });
   return (
     <Provider value={overmind}>
-      <App
-        ref={navigatorRef => {
-          NavigationService.setTopLevelNavigator(navigatorRef);
-        }}
-      />
+      <NavigationContainer>
+        <RootNav />
+      </NavigationContainer>
     </Provider>
   );
 };
+
+export default App;

@@ -1,15 +1,27 @@
 import React, { useState } from "react";
-import { View, TouchableOpacity, FlatList, StyleSheet } from "react-native";
-import { Text, TextInput, Button, ListItem } from "react-native-elements";
+import {
+  View,
+  TextInput,
+  Text,
+  TouchableOpacity,
+  FlatList,
+  StyleSheet,
+  Dimensions,
+} from "react-native";
 import { SwipeListView } from "react-native-swipe-list-view";
+import { Button } from "../common/Buttons";
 import { Feather } from "@expo/vector-icons";
+import { useDimensions } from "@react-native-community/hooks";
 import { useOvermind } from "../../store/overmind";
+
+import TagRowEdit from "./TagRowEdit";
 
 const TagView = () => {
   const { state, actions } = useOvermind();
   const { tagData } = state.oSaved;
   const { deleteTag } = actions.oSaved;
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(undefined);
+  let { width, height } = useDimensions().window;
   // const renderTag = ({ item }) => {
   //   return (
   //     <View style={styles.tagWrapper}>
@@ -27,7 +39,14 @@ const TagView = () => {
   //   );
   // };
   return (
-    <View>
+    <View
+      style={{
+        width: Dimensions.get("window").width - 20,
+        borderColor: "black",
+        marginLeft: 10,
+        borderWidth: 1,
+      }}
+    >
       {/* <FlatList
         keyExtractor={item => item.tagId}
         data={tagData}
@@ -40,11 +59,21 @@ const TagView = () => {
         keyExtractor={(item) => item.tagId}
         renderItem={(rowData, rowMap) => {
           return (
-            <View style={styles.mainSwipe}>
-              <Text style={{ fontSize: 18, marginLeft: 20 }}>
-                {rowData.item.tagName}
-              </Text>
-            </View>
+            <>
+              <View style={styles.mainSwipe}>
+                {isEditing === rowData.item.tagId ? (
+                  <TagRowEdit
+                    currTagValue={rowData.item.tagName}
+                    tagId={rowData.item.tagId}
+                    setIsEditing={setIsEditing}
+                  />
+                ) : (
+                  <Text style={{ fontSize: 18, paddingLeft: 20 }}>
+                    {rowData.item.tagName}
+                  </Text>
+                )}
+              </View>
+            </>
           );
         }}
         renderHiddenItem={(rowData, rowMap) => {
@@ -53,7 +82,7 @@ const TagView = () => {
               <View style={[styles.backRightBtn, styles.backRightBtnLeft]}>
                 <TouchableOpacity
                   onPress={() => {
-                    setIsEditing(true);
+                    setIsEditing(rowData.item.tagId);
                     rowMap[rowData.item.tagId].closeRow();
                   }}
                 >
@@ -73,13 +102,13 @@ const TagView = () => {
           );
         }}
         leftOpenValue={75}
-        rightOpenValue={-55}
+        rightOpenValue={-75}
         onRowOpen={(rowKey, rowMap) => {
           setTimeout(() => {
             if (rowMap[rowKey]) {
               rowMap[rowKey].closeRow();
             }
-          }, 2000);
+          }, 3000);
         }}
       />
     </View>
@@ -91,7 +120,6 @@ let styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "flex-start",
     marginBottom: 10,
-    marginRight: 10,
   },
   tag: {
     flex: 4,
@@ -105,6 +133,7 @@ let styles = StyleSheet.create({
     borderWidth: 0.5,
     height: 40,
     justifyContent: "center",
+    position: "relative",
   },
   backRightBtn: {
     alignItems: "center",
@@ -116,6 +145,7 @@ let styles = StyleSheet.create({
     height: 40,
     borderColor: "black",
     borderBottomWidth: 1,
+    borderTopWidth: 1,
   },
   backRightBtnLeft: {
     backgroundColor: "lightblue",
@@ -125,6 +155,8 @@ let styles = StyleSheet.create({
   deleteRightBtn: {
     backgroundColor: "#d11a2a",
     right: 0,
+    borderLeftWidth: 1,
+    borderRightWidth: 1,
   },
 });
 

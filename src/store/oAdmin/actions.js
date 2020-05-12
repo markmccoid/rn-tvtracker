@@ -9,3 +9,7 @@ export const logUserOut = ({ state }) => {
   state.oAdmin.email = "";
   state.oAdmin.uid = "";
 };
+
+export const setMovieEditingId = ({ state }, movieId = undefined) => {
+  state.oAdmin.appState.movieEditingId = movieId;
+};

@@ -5,7 +5,10 @@ export const config = {
     username: "",
     email: "",
     uid: undefined,
-    isLoggedIn: false
+    isLoggedIn: false,
+    appState: {
+      movieEditingId: undefined,
+    },
   },
-  actions
+  actions,
 };

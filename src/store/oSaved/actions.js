@@ -24,7 +24,7 @@ export const saveMovie = async ({ state, effects, actions }, movieObj) => {
   const { tagResults } = actions.oSearch.internal;
   const searchData = state.oSearch.resultData;
   // check to see if movie exists
-  if (state.oSaved.savedMovies.some(movie => movie.id === movieObj.id)) {
+  if (state.oSaved.savedMovies.some((movie) => movie.id === movieObj.id)) {
     return;
   }
   state.oSaved.savedMovies = [movieObj, ...state.oSaved.savedMovies];
@@ -45,8 +45,11 @@ export const saveMovie = async ({ state, effects, actions }, movieObj) => {
 export const deleteMovie = async ({ state, effects }, movieId) => {
   // find and remove movie
   state.oSaved.savedMovies = state.oSaved.savedMovies.filter(
-    movie => movie.id !== movieId
+    (movie) => movie.id !== movieId
   );
+
+  // Remove Tag information from oSaved.userData.tags
+  delete state.oSaved.userData.tags[movieId];
 
   await effects.oSaved.saveMovies(state.oSaved.savedMovies);
 };
@@ -60,7 +63,7 @@ export const deleteMovie = async ({ state, effects }, movieId) => {
 export const updateMovieBackdropImage = async ({ state, effects }, payload) => {
   const { movieId, backdropURL } = payload;
   //update the passed movieId's backdropURL
-  state.oSaved.savedMovies.forEach(movie => {
+  state.oSaved.savedMovies.forEach((movie) => {
     if (movie.id === movieId) {
       return (movie.backdropURL = backdropURL);
     }
@@ -77,7 +80,7 @@ export const updateMovieBackdropImage = async ({ state, effects }, payload) => {
 export const updateMoviePosterImage = async ({ state, effects }, payload) => {
   const { movieId, posterURL } = payload;
   //update the passed movieId's posterURL
-  state.oSaved.savedMovies.forEach(movie => {
+  state.oSaved.savedMovies.forEach((movie) => {
     if (movie.id === movieId) {
       return (movie.posterURL = posterURL);
     }
@@ -93,7 +96,7 @@ export const addNewTag = async ({ state, effects }, tagName) => {
   // Check to see if tag with same name exists (disregard case)
   if (
     existingTags.some(
-      tag => tag.tagName.toLowerCase() === tagName.toLowerCase()
+      (tag) => tag.tagName.toLowerCase() === tagName.toLowerCase()
     )
   ) {
     return;
@@ -101,7 +104,7 @@ export const addNewTag = async ({ state, effects }, tagName) => {
   let tagId = uuidv4();
   let newTag = {
     tagId,
-    tagName
+    tagName,
   };
 
   state.oSaved.tagData.push(newTag);
@@ -119,16 +122,34 @@ export const deleteTag = async ({ state, effects }, tagId) => {
   let existingTags = state.oSaved.tagData;
   let { userData } = state.oSaved;
   //Remove from tagData and save to Storage
-  state.oSaved.tagData = existingTags.filter(tag => tag.tagId !== tagId);
+  state.oSaved.tagData = existingTags.filter((tag) => tag.tagId !== tagId);
   await effects.oSaved.saveTags(state.oSaved.tagData);
 
   //Remove from userData.tags and save to storage
-  Object.keys(userData.tags).forEach(movieKey => {
+  Object.keys(userData.tags).forEach((movieKey) => {
     userData.tags[movieKey] = userData.tags[movieKey].filter(
-      id => id !== tagId
+      (id) => id !== tagId
     );
   });
   await effects.oSaved.saveUserData(userData);
+};
+/**
+ * Handles deleting tag from oSaved.tagData
+ * AND removing any instances of tagId from oSaved.userData.tags array of movies
+ * @param {state, effects, actions} overmind params
+ * @param {*} tagId
+ */
+export const editTag = async ({ state, effects }, payload) => {
+  let { tagId, updatedTag } = payload;
+  let existingTags = state.oSaved.tagData;
+  //Remove from tagData and save to Storage
+  state.oSaved.tagData = existingTags.map((tag) => {
+    if (tag.tagId === tagId) {
+      return { ...tag, tagName: updatedTag };
+    }
+    return tag;
+  });
+  await effects.oSaved.saveTags(state.oSaved.tagData);
 };
 
 //================================================================
@@ -159,7 +180,9 @@ export const addTagToMovie = async ({ state, effects }, payload) => {
 export const removeTagFromMovie = async ({ state, effects }, payload) => {
   let userData = state.oSaved.userData || {};
   const { movieId, tagId } = payload;
-  userData.tags[movieId] = userData.tags[movieId].filter(tag => tag !== tagId);
+  userData.tags[movieId] = userData.tags[movieId].filter(
+    (tag) => tag !== tagId
+  );
   // Save userData to local storage
   await effects.oSaved.saveUserData(userData);
 };
@@ -174,7 +197,7 @@ export const addTagToFilter = ({ state }, tagId) => {
 
 export const removeTagFromFilter = ({ state }, tagId) => {
   let filterData = state.oSaved.filterData;
-  filterData.tags = filterData.tags.filter(item => item !== tagId);
+  filterData.tags = filterData.tags.filter((item) => item !== tagId);
 };
 
 export const clearFilterTags = ({ state }) => {

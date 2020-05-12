@@ -1,4 +1,4 @@
-import { movieSearchByTitle } from "tmdb_api";
+import { movieSearchByTitle } from "@markmccoid/tmdb_api";
 
 export const searchMovieByTitle = async (title, page = 1) => {
   let results = await movieSearchByTitle(title, page);

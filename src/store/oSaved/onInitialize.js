@@ -1,4 +1,3 @@
-import NavigationService from "../../navigators/NavigationService";
 import Firebase from "../../storage/firebase";
 
 // initialize currently only loads data that was stored in
@@ -9,13 +8,11 @@ export const onInitialize = async ({ state, effects, actions }) => {
     if (user) {
       actions.oAdmin.logUserIn(user);
       actions.oSaved.hyrdateStore(user.uid);
-      NavigationService.navigate("App");
     } else {
       actions.oAdmin.logUserOut();
-      NavigationService.navigate("SignIn");
     }
   });
-  state.oAdmin.unsubscribe = unsubscribe;
+  //state.oAdmin.unsubscribe = unsubscribe;
   // let initData = await effects.oSaved.initializeStore();
   // //console.log(initData);
   // state.oSaved.savedMovies = initData.savedMovies;
