@@ -24,7 +24,7 @@ const TagInput = () => {
       <View style={styles.tagButton}>
         <Button
           title="Add"
-          small
+          medium
           width="80%"
           onPress={() => {
             addNewTag(tagValue);
@@ -56,6 +56,7 @@ let styles = StyleSheet.create({
   },
   tagButton: {
     flex: 1,
+    marginLeft: 10,
   },
 });
 export default TagInput;

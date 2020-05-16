@@ -6,13 +6,13 @@ export const PasswordInput = styled.TextInput`
   margin: 10px;
   padding: 15px;
   font-size: 16px;
-  border-color: ${props => (props.error ? "red" : "#d3d3d3")};
+  border-color: ${(props) => (props.error ? "red" : "#d3d3d3")};
   border-bottom-width: 1px;
   text-align: center;
 `;
 export const Header = styled.Text`
   font-size: 40px;
-  margin-bottom: 20px;
+  margin-bottom: 60px;
 `;
 export const IntroText = styled.Text`
   font-size: 18px;

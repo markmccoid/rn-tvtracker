@@ -2,7 +2,7 @@ import React from "react";
 import { Button, TouchableOpacity, ActivityIndicator } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 
-import { FilterIcon, CloseIcon } from "../../components/common/Icons";
+import { FilterIcon, CloseIcon, MenuIcon } from "../../components/common/Icons";
 import { Badge } from "react-native-elements";
 
 import ViewMoviesScreen from "./ViewMovies/ViewMoviesScreen";
@@ -45,6 +45,13 @@ const ViewStackScreen = () => {
 
           return {
             title: "Movies",
+            headerLeft: () => {
+              return (
+                <TouchableOpacity onPress={() => navigation.openDrawer()}>
+                  <MenuIcon size={30} style={{ marginLeft: 10 }} />
+                </TouchableOpacity>
+              );
+            },
             headerRight: () => {
               if (currentScreenName === "Movies") {
                 return (
@@ -92,7 +99,7 @@ const ViewStackScreen = () => {
         name="Details"
         component={ViewDetails}
         options={({ navigation, route }) => {
-          console.log("DET ROUTE", route);
+          console.log("DETAIL ROUTE", route);
           console.log("Params", route?.params);
           // Using optional chaining because initial route object is for stack
           let currentScreenName =
@@ -100,6 +107,13 @@ const ViewStackScreen = () => {
           return {
             headerRight: () => {
               return null;
+            },
+            headerLeft: () => {
+              return (
+                <TouchableOpacity onPress={() => navigation.openDrawer()}>
+                  <MenuIcon size={30} style={{ marginLeft: 10 }} />
+                </TouchableOpacity>
+              );
             },
           };
         }}

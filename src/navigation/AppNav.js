@@ -2,6 +2,7 @@ import React from "react";
 import { Button, ActivityIndicator } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createDrawerNavigator } from "@react-navigation/drawer";
+import { useFocusEffect } from "@react-navigation/native";
 
 import Firebase from "../storage/firebase";
 import ViewStack from "../screens/view/ViewStack";
@@ -55,6 +56,17 @@ const SignOut = ({ navigation }) => {
   return <ActivityIndicator />;
 };
 
+//-- Redirect to View Movies screen --
+const RedirectToMain = ({ navigation }) => {
+  // Using the useFocusEffect, the navigation is run
+  // whenever this component gets focus.
+  // Currently this is from the Drawer link "Home"
+  useFocusEffect(() => {
+    navigation.navigate("ViewMoviesTab", { screen: "ViewMovies" });
+  });
+
+  return null;
+};
 //-- Main application Bottom Tabs ----------
 const AppTabs = createBottomTabNavigator();
 const AppTabsScreen = () => {
@@ -79,6 +91,7 @@ const AppNav = () => {
     //-- Define the Drawer screens.  HomeStack is part of bottom tabs, but settings is not.
     <Drawer.Navigator>
       <Drawer.Screen name="<" component={AppTabsScreen} />
+      <Drawer.Screen name="Home" component={RedirectToMain} />
       <Drawer.Screen name="Settings" component={Settings} />
       <Drawer.Screen name="Sign Out" component={SignOut} />
     </Drawer.Navigator>

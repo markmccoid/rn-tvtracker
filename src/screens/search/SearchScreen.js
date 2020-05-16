@@ -11,16 +11,22 @@ import { Button } from "../../components/common/Buttons";
 import { useOvermind } from "../../store/overmind";
 import SearchForMovie from "../../components/search/SearchForMovie";
 import SearchResultItem from "../../components/search/SearchResultItem";
+import { useFocusEffect, useIsFocused } from "@react-navigation/native";
 
 const SearchScreen = ({ navigation }) => {
   let [searchString, setSearchString] = React.useState("");
   const flatListRef = React.useRef();
   const { state, actions } = useOvermind();
   const { saveMovie } = actions.oSaved;
-  const { searchByTitle, setIsNewQuery } = actions.oSearch;
+  const {
+    searchByTitle,
+    setIsNewQuery,
+    clearSearchStringAndData,
+  } = actions.oSearch;
   const currentPage = state.oSearch.resultCurrentPage;
   const { isMoreData, isLoading } = state.oSearch;
 
+  const isFocused = useIsFocused();
   const scrollToTop = () => {
     flatListRef.current.scrollToOffset({ animated: true, offest: 0 });
   };
@@ -33,18 +39,30 @@ const SearchScreen = ({ navigation }) => {
     }
   }, [state.oSearch.resultData, state.oSearch.isNewQuery]);
 
-  // const fetchMoreMovies = async () => {
-  //   // Check to see if currentPage < totalPages
-  //   // if so, then fetch data for currentPage + 1
-  //   if (state.searchResults.currentPage < state.searchResults.totalPages) {
-  //     console.log("Getting More DATA");
-  //     await actions.searchByTitle({
-  //       title: searchString,
-  //       page: state.searchResults.currentPage + 1
-  //     });
+  React.useEffect(() => {
+    if (!isFocused) {
+      clearSearchStringAndData();
+    }
+  }, [isFocused]);
+  // Write this up ----------------------------------------------------------------
+  // Had to use the useFocusEffect in conjunction with useIsFocued hook to
+  // know when to clear data NOPE -- Just use useEffect and trigger when isfocused changes
+  // If you do it other way, then clear happens when you jump back to screen
+  // if you use the useEffect /[isFocused] way, it clears when screen loses focus
+  // useFocusEffect(() => {
+  //   console.log("FOCUSED");
+  //   if (!isFocused) {
+  //     console.log("CLEARING SEARCH STRING");
+  //     // clearSearchStringAndData();
   //   }
-  //   return null;
-  // };
+  //   return () => {
+  //     if (!isFocused) {
+  //       console.log("Clean up");
+  //       //   clearSearchStringAndData();
+  //     }
+  //   };
+  // }, []);
+
   const fetchMoreData = async () => {
     if (isMoreData) {
       setIsNewQuery(false);

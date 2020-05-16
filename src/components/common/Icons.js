@@ -4,6 +4,7 @@ import {
   Feather,
   FontAwesome,
   MaterialIcons,
+  Ionicons,
 } from "@expo/vector-icons";
 
 export const ViewMovieIcon = ({ size, color, style = {} }) => {
@@ -36,4 +37,8 @@ export const CheckIcon = ({ size, color, style }) => {
   return (
     <AntDesign name="checkcircleo" size={size} color={color} style={style} />
   );
+};
+
+export const MenuIcon = ({ size, color, style }) => {
+  return <Ionicons name="ios-menu" size={size} color={color} style={style} />;
 };

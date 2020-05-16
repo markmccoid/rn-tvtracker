@@ -4,7 +4,8 @@ import Firebase from "../../storage/firebase";
 // phones local storage.
 export const onInitialize = async ({ state, effects, actions }) => {
   // Sets up Listener for Auth state.  If logged
-  let unsubscribe = Firebase.auth().onAuthStateChanged(user => {
+  let unsubscribe = Firebase.auth().onAuthStateChanged((user) => {
+    console.log("USER", user);
     if (user) {
       actions.oAdmin.logUserIn(user);
       actions.oSaved.hyrdateStore(user.uid);

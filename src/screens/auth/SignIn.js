@@ -20,37 +20,28 @@ import { Header, ButtonText } from "./authStyles";
 const SignIn = ({ navigation, route }) => {
   let { state, actions } = useOvermind();
   const [isLoading, setIsLoading] = React.useState(false);
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    reset,
-    errors,
-    setError,
-  } = useForm();
-  //} = useForm({ email: "", password: "", confirmPassword: "" });
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [confirmPassword, setConfirmPassword] = React.useState("");
+  const [error, setError] = React.useState("");
+
   // create refs for use is changing input focus
   const passwordRef = React.useRef();
   const confirmPasswordRef = React.useRef();
 
-  React.useEffect(() => {
-    register({ name: "email" }, { required: true, pattern: /^\S+@\S+$/i });
-    register({ name: "password" }, { required: true, maxLength: 30 });
-    register({ name: "confirmPassword" }, { required: true, maxLength: 30 });
-  }, [register]);
   //--Are we signing In or Creating User?
   const isSignIn = route.params?.screenFunction !== "create" ? true : false;
-  console.log(isSignIn);
+
   //---------------------------------
   // Submit is logging into Firebase
-  const onSubmit = (data, isSignInFlag) => {
-    let { email, password } = data;
-    console.log("OnSubmit", isSignInFlag, email, password);
+
+  const onSubmit = () => {
+    console.log("OnSubmit", email, password);
     if (!email || !password) {
       Alert.alert("Must enter an email and password");
       return;
     }
-    if (!isSignIn && password !== data.confirmPassword) {
+    if (!isSignIn && password !== confirmPassword) {
       Alert.alert("Passwords do not match");
       return;
     }
@@ -79,7 +70,7 @@ const SignIn = ({ navigation, route }) => {
         .catch((error) => {
           setIsLoading(false);
           reset();
-          setError("login", error.code, error.message);
+          setError(error.message);
         });
     }
   };
@@ -93,7 +84,7 @@ const SignIn = ({ navigation, route }) => {
         placeholder="Confirm Password"
         secureTextEntry={true}
         ref={confirmPasswordRef}
-        onChangeText={(text) => setValue("confirmPassword", text, true)}
+        onChangeText={setConfirmPassword}
       />
       {errors.confirmPassword && <Text style={{ color: "red" }}>Required</Text>}
     </>
@@ -109,13 +100,13 @@ const SignIn = ({ navigation, route }) => {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={styles.wrapper}>
-        <Header>MovieTracker</Header>
+      <KeyboardAvoidingView behavior="padding" style={styles.wrapper}>
+        <View style={styles.signInWrapper}>
+          <Header>MovieTracker</Header>
 
-        <KeyboardAvoidingView behavior="height" style={styles.signInWrapper}>
-          {errors.login && (
+          {/* {errors.login && (
             <Text style={styles.errorText}>{errors.login.message}</Text>
-          )}
+          )} */}
           <TextInput
             style={styles.inputBox}
             autoCapitalize="none"
@@ -124,24 +115,22 @@ const SignIn = ({ navigation, route }) => {
             placeholder="Email"
             keyboardType="email-address"
             returnKeyType="next"
-            onChangeText={(text) => setValue("email", text, true)}
+            onChangeText={setEmail}
             onSubmitEditing={() => passwordRef.current.focus()}
           />
-          {errors.email && <Text style={{ color: "red" }}>Email Required</Text>}
+
           <TextInput
             style={styles.inputBox}
             placeholder="Password"
             ref={passwordRef}
             secureTextEntry={true}
             returnKeyType={isSignIn ? "go" : "next"}
-            onChangeText={(text) => setValue("password", text, true)}
+            onChangeText={setPassword}
             onSubmitEditing={
-              isSignIn
-                ? handleSubmit((data) => onSubmit(data, isSignIn))
-                : () => confirmPasswordRef.current.focus()
+              isSignIn ? onSubmit : () => confirmPasswordRef.current.focus()
             }
           />
-          {errors.password && <Text style={{ color: "red" }}>Required</Text>}
+
           {!isSignIn ? (
             ConfirmPassword
           ) : (
@@ -160,7 +149,7 @@ const SignIn = ({ navigation, route }) => {
               marginVertical: 40,
               borderRadius: 5,
             }}
-            onPress={handleSubmit((data) => onSubmit(data, isSignIn))}
+            onPress={onSubmit}
           >
             <ButtonText>{isSignIn ? "Sign In" : "Sign Up"}</ButtonText>
           </TouchableOpacity>
@@ -182,8 +171,8 @@ const SignIn = ({ navigation, route }) => {
               </TouchableOpacity>
             </View>
           )}
-        </KeyboardAvoidingView>
-      </View>
+        </View>
+      </KeyboardAvoidingView>
     </TouchableWithoutFeedback>
   );
 };
@@ -193,12 +182,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#f8faf9",
     alignItems: "center",
-    justifyContent: "flex-start",
+    justifyContent: "center",
     width: "100%",
   },
   signInWrapper: {
     width: "100%",
-    marginTop: "45%",
     alignItems: "center",
   },
   errorText: {
