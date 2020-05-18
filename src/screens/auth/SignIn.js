@@ -11,14 +11,15 @@ import {
   Alert,
   ActivityIndicator,
 } from "react-native";
-import { useForm } from "react-hook-form";
 import { useOvermind } from "../../store/overmind";
-import Firebase from "../../storage/firebase";
+import Firebase, { firestore } from "../../storage/firebase";
 
 import { Header, ButtonText } from "./authStyles";
 
 const SignIn = ({ navigation, route }) => {
   let { state, actions } = useOvermind();
+  const { initialDataCreation } = actions.oSaved;
+
   const [isLoading, setIsLoading] = React.useState(false);
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
@@ -49,32 +50,35 @@ const SignIn = ({ navigation, route }) => {
     if (isSignIn) {
       Firebase.auth()
         .signInWithEmailAndPassword(email, password)
-        .then(() => {
+        .then((resp) => {
           setIsLoading(false);
         })
         .catch((error) => {
-          //console.log("error", error.message, error.code);
-          setError("login", error.code, error.message);
-          // setPassword("");
+          setError(error.message);
           setIsLoading(false);
+          Alert.alert(error.message);
         });
     } else {
       Firebase.auth()
         .createUserWithEmailAndPassword(email, password)
         .then((resp) => {
-          return firestore.collection("users").doc(resp.user.uid).set({
-            email,
-          });
+          return firestore
+            .collection("users")
+            .doc(resp.user.uid)
+            .set({
+              email,
+            })
+            .then((resp) => {
+              initialDataCreation();
+            });
         })
-        .then(() => setIsLoading(false))
         .catch((error) => {
           setIsLoading(false);
-          reset();
           setError(error.message);
+          Alert.alert(error.message);
         });
     }
   };
-  // console.log("ErrorObj", errors);
 
   //--- Setup second password for Create User screen
   let ConfirmPassword = !isSignIn && (
@@ -84,9 +88,10 @@ const SignIn = ({ navigation, route }) => {
         placeholder="Confirm Password"
         secureTextEntry={true}
         ref={confirmPasswordRef}
+        returnKeyType="go"
         onChangeText={setConfirmPassword}
+        onSubmitEditing={onSubmit}
       />
-      {errors.confirmPassword && <Text style={{ color: "red" }}>Required</Text>}
     </>
   );
 

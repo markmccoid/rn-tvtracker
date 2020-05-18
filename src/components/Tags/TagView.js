@@ -86,7 +86,7 @@ const TagView = () => {
                     rowMap[rowData.item.tagId].closeRow();
                   }}
                 >
-                  <Text>Edit</Text>
+                  <Feather name="edit" size={30} />
                 </TouchableOpacity>
               </View>
               <View style={[styles.backRightBtn, styles.deleteRightBtn]}>

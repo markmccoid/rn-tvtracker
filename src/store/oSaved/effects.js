@@ -4,20 +4,21 @@ import {
   saveTagsToStorage,
   saveUserDataToStorage,
   loadSavedTags,
-  loadSavedUserData
+  loadSavedUserData,
 } from "../../storage";
 import {
   loadUserDocument,
   storeSavedMovies,
   storeTagData,
-  storeUserData
+  storeUserData,
 } from "../../storage/firestore";
 
-export const initializeStore = async uid => {
+export const initializeStore = async (uid) => {
+  console.log("UID", uid);
   let userDocument = await loadUserDocument(uid);
-  let savedMovies = userDocument.savedMovies || [];
-  let tagData = userDocument.tagData || [];
-  let userData = userDocument.userData || {};
+  let savedMovies = userDocument?.savedMovies || [];
+  let tagData = userDocument?.tagData || [];
+  let userData = userDocument?.userData || {};
   return { savedMovies, tagData, userData };
   // From async Storage
   // let savedMovies = await loadSavedMovies();
@@ -26,14 +27,14 @@ export const initializeStore = async uid => {
   // return { savedMovies, savedTags, savedUserData };
 };
 
-export const saveMovies = async movies => {
+export const saveMovies = async (movies) => {
   await storeSavedMovies(movies);
 };
 
-export const saveTags = async tags => {
+export const saveTags = async (tags) => {
   await storeTagData(tags);
 };
 
-export const saveUserData = async userData => {
+export const saveUserData = async (userData) => {
   await storeUserData(userData);
 };

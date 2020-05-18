@@ -91,6 +91,18 @@ export const updateMoviePosterImage = async ({ state, effects }, payload) => {
 //================================================================
 // - TAG (tagData) Actions
 //================================================================
+//-This function is only run when a person first signs up.
+//-It just sets up any default information in the overmind store
+//-and firestore.
+export const initialDataCreation = async ({ state, effects }) => {
+  let tagArray = [
+    { tagId: uuidv4(), tagName: "Favorites" },
+    { tagId: uuidv4(), tagName: "Watched" },
+    { tagId: uuidv4(), tagName: "Next Up" },
+  ];
+  state.oSaved.tagData = tagArray;
+  effects.oSaved.saveTags(state.oSaved.tagData);
+};
 export const addNewTag = async ({ state, effects }, tagName) => {
   let existingTags = state.oSaved.tagData;
   // Check to see if tag with same name exists (disregard case)

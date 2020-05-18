@@ -42,3 +42,7 @@ export const CheckIcon = ({ size, color, style }) => {
 export const MenuIcon = ({ size, color, style }) => {
   return <Ionicons name="ios-menu" size={size} color={color} style={style} />;
 };
+
+export const EditIcon = ({ size, color, style }) => {
+  return <Feather name="edit" size={size} color={color} style={style} />;
+};
