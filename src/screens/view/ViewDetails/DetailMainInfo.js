@@ -7,7 +7,6 @@ import {
   SafeAreaView,
   StyleSheet,
 } from "react-native";
-import CachedImage from "react-native-expo-cached-image";
 import { Button, CircleButton } from "../../../components/common/Buttons";
 import { useOvermind } from "../../../store/overmind";
 import { useDimensions } from "@react-native-community/hooks";

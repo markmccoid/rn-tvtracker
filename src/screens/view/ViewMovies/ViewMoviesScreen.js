@@ -10,16 +10,8 @@ const ViewMoviesScreen = ({ navigation, route }) => {
   const { setMovieEditingId } = actions.oAdmin;
   const { movieEditingId } = state.oAdmin.appState;
 
-  // Set the Params for the Movies Route to use in setting the Badge on the Filter Icon
-  useEffect(() => {
-    navigation.setParams({
-      isFiltered: state.oSaved.filterData.tags.length > 0,
-      numFilters: state.oSaved.filterData.tags.length,
-    });
-  }, [state.oSaved.filterData.tags.length]);
-
   //Trying to use this to clear editingId when returning from filter screen.
-  //Have to assing the "returning" param on both the DONE button in the filter screen component
+  //Have to set the "returning" param on both the DONE button in the filter screen component
   //and the header "X"(Close).
   //Not sure if setting the param that we are checking in dependancies is good or bad.
   useEffect(() => {

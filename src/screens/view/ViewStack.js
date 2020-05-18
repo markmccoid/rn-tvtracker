@@ -2,6 +2,8 @@ import React from "react";
 import { Button, TouchableOpacity, ActivityIndicator } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 
+import { useOvermind } from "../../store/overmind";
+
 import { FilterIcon, CloseIcon, MenuIcon } from "../../components/common/Icons";
 import { Badge } from "react-native-elements";
 
@@ -29,6 +31,10 @@ const ViewMoviesStack = () => {
   );
 };
 const ViewStackScreen = () => {
+  const { state, actions } = useOvermind();
+  let numFilters = state.oSaved.filterData.tags.length;
+  let isFiltered = numFilters > 0;
+
   return (
     <ViewStack.Navigator>
       <ViewStack.Screen
@@ -39,9 +45,6 @@ const ViewStackScreen = () => {
           let currentScreenName =
             route?.state?.routeNames[route.state.index] || "Movies";
           let params = route?.state?.routes[route.state.index].params;
-
-          let isFiltered = params?.isFiltered;
-          let numFilters = params?.numFilters;
 
           return {
             title: "Movies",
