@@ -1,11 +1,11 @@
-import React from "react";
-import { View, Text, Image, StyleSheet } from "react-native";
-import { TouchableOpacity } from "react-native-gesture-handler";
-import { useDimensions } from "@react-native-community/hooks";
+import React from 'react';
+import { View, Text, Image, StyleSheet, LayoutAnimation } from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import { useDimensions } from '@react-native-community/hooks';
 
-import { useOvermind } from "../../store/overmind.js";
-import { DeleteIcon, CheckIcon } from "../common/Icons";
-import TagCloud, { TagItem } from "../TagCloud/TagCloud";
+import { useOvermind } from '../../store/overmind.js';
+import { DeleteIcon, CheckIcon } from '../common/Icons';
+import TagCloud, { TagItem } from '../TagCloud/TagCloud';
 
 const MovieColumnLayout = ({
   movie,
@@ -18,21 +18,21 @@ const MovieColumnLayout = ({
   const { state, actions } = useOvermind();
   const { deleteMovie, addTagToMovie, removeTagFromMovie } = actions.oSaved;
   const { getAllMovieTags } = state.oSaved;
-  const movieReleaseDate = movie.releaseDate?.formatted || " - ";
+  const movieReleaseDate = movie.releaseDate?.formatted || ' - ';
 
   //Image Dimensions
   const imageWidth = width - 20;
   const imageHeight = height / 7;
-
+  LayoutAnimation.spring();
   return (
     <View>
       <View
         style={{
-          position: "absolute",
+          position: 'absolute',
           marginTop: 20,
           marginLeft: 10,
           zIndex: 10,
-          display: inEditState ? "" : "none",
+          display: inEditState ? '' : 'none',
         }}
       >
         <TouchableOpacity
@@ -41,10 +41,10 @@ const MovieColumnLayout = ({
             height: 35,
             paddingLeft: 2,
             paddingTop: 2,
-            backgroundColor: "#ff453a",
-            justifyContent: "center",
-            alignItems: "center",
-            borderColor: "black",
+            backgroundColor: '#ff453a',
+            justifyContent: 'center',
+            alignItems: 'center',
+            borderColor: 'black',
             borderWidth: 1,
             borderRadius: 35 / 2,
           }}
@@ -59,12 +59,12 @@ const MovieColumnLayout = ({
 
       <View
         style={{
-          position: "absolute",
+          position: 'absolute',
           right: 0,
           marginTop: 20,
           marginRight: 10,
           zIndex: 10,
-          display: inEditState ? "" : "none",
+          display: inEditState ? '' : 'none',
         }}
       >
         <TouchableOpacity
@@ -73,10 +73,10 @@ const MovieColumnLayout = ({
             height: 35,
             paddingLeft: 2,
             paddingTop: 2,
-            backgroundColor: "#34C759",
-            justifyContent: "center",
-            alignItems: "center",
-            borderColor: "black",
+            backgroundColor: '#34C759',
+            justifyContent: 'center',
+            alignItems: 'center',
+            borderColor: 'black',
             borderWidth: 1,
             borderRadius: 35 / 2,
           }}
@@ -95,9 +95,9 @@ const MovieColumnLayout = ({
           style={{
             margin: 10,
             marginTop: inEditState ? 30 : 10,
-            borderColor: "darkgray",
+            borderColor: 'darkgray',
             borderWidth: 1,
-            shadowColor: "#000",
+            shadowColor: '#000',
             shadowOffset: {
               width: 0,
               height: 5,
@@ -112,7 +112,7 @@ const MovieColumnLayout = ({
             style={{
               width: imageWidth,
               height: imageHeight,
-              resizeMode: "cover",
+              resizeMode: 'cover',
             }}
             source={{
               uri: movie.backdropURL,
@@ -121,11 +121,11 @@ const MovieColumnLayout = ({
 
           <View
             style={{
-              position: "absolute",
+              position: 'absolute',
               bottom: -15,
-              backgroundColor: "rgba(50,50,0,0.5)",
+              backgroundColor: 'rgba(50,50,0,0.5)',
               borderWidth: 1,
-              borderColor: "white",
+              borderColor: 'white',
               borderRadius: 5,
               paddingHorizontal: 4,
               paddingVertical: 2,
@@ -134,8 +134,8 @@ const MovieColumnLayout = ({
             <Text
               style={{
                 fontSize: 20,
-                color: "white",
-                textAlign: "center",
+                color: 'white',
+                textAlign: 'center',
               }}
             >
               {movie.title}
@@ -144,18 +144,18 @@ const MovieColumnLayout = ({
 
           <View
             style={{
-              flexDirection: "row",
-              justifyContent: "flex-end",
+              flexDirection: 'row',
+              justifyContent: 'flex-end',
               width: imageWidth,
             }}
           >
             <View
               style={{
-                position: "absolute",
+                position: 'absolute',
                 top: -imageHeight,
-                backgroundColor: "rgba(50,50,0,0.5)",
+                backgroundColor: 'rgba(50,50,0,0.5)',
                 borderWidth: 1,
-                borderColor: "white",
+                borderColor: 'white',
                 borderRadius: 5,
                 paddingHorizontal: 4,
                 paddingVertical: 2,
@@ -164,8 +164,8 @@ const MovieColumnLayout = ({
               <Text
                 style={{
                   fontSize: 15,
-                  color: "white",
-                  textAlign: "center",
+                  color: 'white',
+                  textAlign: 'center',
                 }}
               >
                 {movieReleaseDate}
@@ -179,7 +179,7 @@ const MovieColumnLayout = ({
           marginBottom: 20,
           marginLeft: 10,
           zIndex: 10,
-          display: inEditState ? "" : "none",
+          display: inEditState ? '' : 'none',
         }}
       >
         <TagCloud>

@@ -1,13 +1,13 @@
-import React from "react";
-import { View, Text, Image, StyleSheet } from "react-native";
-import { TouchableOpacity } from "react-native-gesture-handler";
-import { useDimensions } from "@react-native-community/hooks";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import React from 'react';
+import { View, Text, Image, StyleSheet } from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import { useDimensions } from '@react-native-community/hooks';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
-import { useOvermind } from "../../store/overmind.js";
-import TagCloud, { TagItem } from "../TagCloud/TagCloud";
+import { useOvermind } from '../../store/overmind.js';
+import TagCloud, { TagItem } from '../TagCloud/TagCloud';
 
-import MovieColumnLayout from "./MovieColumnLayout";
+import MovieColumnLayout from './MovieColumnLayout';
 
 const ViewMoviesListItem = ({ movie, setMovieEditingId, movieEditingId }) => {
   //Bool letting us know if we are in edit mode for this movieId
@@ -17,7 +17,7 @@ const ViewMoviesListItem = ({ movie, setMovieEditingId, movieEditingId }) => {
 
   const navigateToDetails = () => {
     setMovieEditingId(); // clear editing Id
-    navigate("Details", { movieId: movie.id });
+    navigate('Details', { movieId: movie.id });
   };
 
   return (
