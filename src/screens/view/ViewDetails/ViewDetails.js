@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   View,
   Text,
@@ -6,12 +6,12 @@ import {
   ScrollView,
   SafeAreaView,
   StyleSheet,
-} from "react-native";
-import { Button, CircleButton } from "../../../components/common/Buttons";
-import { useOvermind } from "../../../store/overmind";
-import { useDimensions } from "@react-native-community/hooks";
+} from 'react-native';
+import { Button, CircleButton } from '../../../components/common/Buttons';
+import { useOvermind } from '../../../store/overmind';
+import { useDimensions } from '@react-native-community/hooks';
 
-import DetailMainInfo from "./DetailMainInfo";
+import DetailMainInfo from './DetailMainInfo';
 
 const ViewDetails = ({ navigation, route }) => {
   let movieId = route.params?.movieId;
@@ -19,7 +19,9 @@ const ViewDetails = ({ navigation, route }) => {
   let movie = state.oSaved.getMovieDetails(movieId);
   const { width, height } = useDimensions().window;
   const dims = useDimensions();
-  console.log("DIMS", dims);
+
+  // Get the Movie details
+  // const { posterURL}
   // Set the title to the current movie title
   navigation.setOptions({ title: movie.title });
 
@@ -27,10 +29,10 @@ const ViewDetails = ({ navigation, route }) => {
     <View style={{ flex: 1 }}>
       <Image
         style={{
-          position: "absolute",
+          position: 'absolute',
           width,
           height,
-          resizeMode: "cover",
+          resizeMode: 'cover',
           opacity: 0.3,
         }}
         source={{
