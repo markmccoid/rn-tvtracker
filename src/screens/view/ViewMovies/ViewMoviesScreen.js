@@ -1,15 +1,28 @@
-import React, { useEffect } from "react";
-import { View, Text, FlatList, StyleSheet } from "react-native";
-import * as Styled from "./styles";
-import { useOvermind } from "../../../store/overmind";
+import React, { useEffect } from 'react';
+import { View, TextInput, FlatList, StyleSheet } from 'react-native';
+import { SearchBar } from 'react-native-elements';
+import * as Styled from './styles';
+import { useOvermind } from '../../../store/overmind';
+import ListSearchBar from './ListSearchBar';
 
-import ViewMoviesListItem from "../../../components/ViewMovies/ViewMoviesListItem";
+import ViewMoviesListItem from '../../../components/ViewMovies/ViewMoviesListItem';
 
 const ViewMoviesScreen = ({ navigation, route }) => {
+  const [showSearch, setShowSearch] = React.useState(false);
+  const flatListRef = React.useRef();
   const { state, actions } = useOvermind();
   const { setMovieEditingId } = actions.oAdmin;
   const { movieEditingId } = state.oAdmin.appState;
-
+  const { searchFilter } = state.oSaved;
+  const { setSearchFilter } = actions.oSaved;
+  const getItemLayout = (data, index) => {
+    let height = index === 1 ? 70 : 150;
+    return {
+      length: height,
+      offset: height * index - 70,
+      index,
+    };
+  };
   //Trying to use this to clear editingId when returning from filter screen.
   //Have to set the "returning" param on both the DONE button in the filter screen component
   //and the header "X"(Close).
@@ -19,11 +32,36 @@ const ViewMoviesScreen = ({ navigation, route }) => {
       setMovieEditingId();
       navigation.setParams({ returning: false });
     }
-  }, [route.params?.returning]);
+    // if the showSearch param is true, then set the internal state to show the search input
+    // Have to set the param "showSearch" back to false otherwise this param would never change
+    // unless we chose to change it in the ListSearchBar component.
+    // Seems convoluted and there must be a better way, but no time to figure it out.
+    if (route.params?.showSearch) {
+      setShowSearch(true);
+      navigation.setParams({ showSearch: false });
+    }
+  }, [route.params?.returning, route.params?.showSearch]);
+
+  useEffect(() => {
+    if (showSearch) {
+      flatListRef.current.scrollToIndex({ animated: true, index: 0 });
+    }
+  }, [showSearch]);
   return (
-    <View style={{ flex: 1 }}>
+    <View
+      style={{ flex: 1 }}
+      // onLayout={() => {
+      //   flatListRef.current.scrollToIndex({ animated: true, index: 1 });
+      // }}
+    >
+      {showSearch ? (
+        <ListSearchBar show={showSearch} setShowSearch={setShowSearch} />
+      ) : null}
       <FlatList
         data={state.oSaved.getFilteredMovies}
+        ref={flatListRef}
+        // getItemLayout={getItemLayout}
+        keyboardDismissMode
         keyExtractor={(movie, idx) => movie.id.toString() + idx}
         // columnWrapperStyle={{ justifyContent: "space-around" }}
         // numColumns={2}

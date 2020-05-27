@@ -1,8 +1,8 @@
-import _ from "lodash";
-import * as actions from "./actions";
-import * as effects from "./effects";
-import { onInitialize } from "./onInitialize";
-import * as helpers from "./stateHelpers";
+import _ from 'lodash';
+import * as actions from './actions';
+import * as effects from './effects';
+import { onInitialize } from './onInitialize';
+import * as helpers from './stateHelpers';
 
 export const config = {
   onInitialize,
@@ -16,10 +16,11 @@ export const config = {
     // Object containing any filter data
     filterData: {
       tags: [],
-      tagOperator: "OR",
+      tagOperator: 'OR',
+      searchFilter: undefined,
     },
     getFilteredMovies: (state) => {
-      if (state.filterData.tags.length > 0) {
+      if (state.filterData.tags.length > 0 || state.filterData.searchFilter) {
         return helpers.filterMovies(
           state.savedMovies,
           state.userData,
@@ -33,7 +34,7 @@ export const config = {
       if (!movieId) {
         return null;
       }
-      let moviesObj = _.keyBy(state.savedMovies, "id");
+      let moviesObj = _.keyBy(state.savedMovies, 'id');
       return moviesObj[movieId];
     },
     // Return tag object with all tags { tagId, tagName }
@@ -55,7 +56,7 @@ export const config = {
     getAllMovieTags: (state) => (movieId) => {
       return _.sortBy(
         [...state.getUnusedMovieTags(movieId), ...state.getMovieTags(movieId)],
-        ["tagName"]
+        ['tagName']
       );
     },
     getFilterTags: (state) => {
@@ -73,7 +74,7 @@ export const config = {
     getAllFilterTags: (state) => {
       return _.sortBy(
         [...state.getUnusedFilterTags, ...state.getFilterTags],
-        ["tagName"]
+        ['tagName']
       );
     },
   },

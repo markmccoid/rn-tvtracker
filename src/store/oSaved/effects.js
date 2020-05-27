@@ -5,16 +5,17 @@ import {
   saveUserDataToStorage,
   loadSavedTags,
   loadSavedUserData,
-} from "../../storage";
+} from '../../storage';
 import {
   loadUserDocument,
   storeSavedMovies,
   storeTagData,
   storeUserData,
-} from "../../storage/firestore";
+} from '../../storage/firestore';
+import { movieGetDetails } from '@markmccoid/tmdb_api';
 
 export const initializeStore = async (uid) => {
-  console.log("UID", uid);
+  console.log('UID', uid);
   let userDocument = await loadUserDocument(uid);
   let savedMovies = userDocument?.savedMovies || [];
   let tagData = userDocument?.tagData || [];
@@ -37,4 +38,11 @@ export const saveTags = async (tags) => {
 
 export const saveUserData = async (userData) => {
   await storeUserData(userData);
+};
+
+export const getMovieDetails = async (movieId) => {
+  let results = await movieGetDetails(movieId);
+  return {
+    data: { ...results.data },
+  };
 };

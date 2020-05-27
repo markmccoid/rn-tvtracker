@@ -1,11 +1,11 @@
-import React from "react";
+import React from 'react';
 import {
   AntDesign,
   Feather,
   FontAwesome,
   MaterialIcons,
   Ionicons,
-} from "@expo/vector-icons";
+} from '@expo/vector-icons';
 
 export const ViewMovieIcon = ({ size, color, style = {} }) => {
   return <MaterialIcons name="movie" size={size} color={color} style={style} />;
@@ -45,4 +45,8 @@ export const MenuIcon = ({ size, color, style }) => {
 
 export const EditIcon = ({ size, color, style }) => {
   return <Feather name="edit" size={size} color={color} style={style} />;
+};
+
+export const SearchIcon2 = ({ size, color, style }) => {
+  return <Ionicons name="ios-search" size={size} color={color} style={style} />;
 };

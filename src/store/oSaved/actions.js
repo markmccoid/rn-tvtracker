@@ -1,5 +1,6 @@
-import _ from "lodash";
-import uuidv4 from "uuid/v4";
+import _ from 'lodash';
+import uuidv4 from 'uuid/v4';
+import { pipe, debounce, mutate, filter } from 'overmind';
 
 //================================================================
 // - INITIALIZE (Hydrate Store)
@@ -20,6 +21,7 @@ export const hyrdateStore = async ({ state, effects }, uid) => {
  * @param {*} context
  * @param {Object} movieObj
  */
+//*TODO have save movie use movieGetDetails(movieId) to get full details and save to firebase
 export const saveMovie = async ({ state, effects, actions }, movieObj) => {
   const { tagResults } = actions.oSearch.internal;
   const searchData = state.oSearch.resultData;
@@ -27,7 +29,10 @@ export const saveMovie = async ({ state, effects, actions }, movieObj) => {
   if (state.oSaved.savedMovies.some((movie) => movie.id === movieObj.id)) {
     return;
   }
-  state.oSaved.savedMovies = [movieObj, ...state.oSaved.savedMovies];
+  // get more movie details from tmdbapi
+  const movieDetails = await effects.oSaved.getMovieDetails(movieObj.id);
+  console.log('MOVIE DETAILS', movieDetails.data);
+  state.oSaved.savedMovies = [movieDetails.data, ...state.oSaved.savedMovies];
   // When saving movie user is left on search screen, this will update
   // the screen to show that the selected movie has been saved
   state.oSearch.isNewQuery = false;
@@ -96,9 +101,9 @@ export const updateMoviePosterImage = async ({ state, effects }, payload) => {
 //-and firestore.
 export const initialDataCreation = async ({ state, effects }) => {
   let tagArray = [
-    { tagId: uuidv4(), tagName: "Favorites" },
-    { tagId: uuidv4(), tagName: "Watched" },
-    { tagId: uuidv4(), tagName: "Next Up" },
+    { tagId: uuidv4(), tagName: 'Favorites' },
+    { tagId: uuidv4(), tagName: 'Watched' },
+    { tagId: uuidv4(), tagName: 'Next Up' },
   ];
   state.oSaved.tagData = tagArray;
   effects.oSaved.saveTags(state.oSaved.tagData);
@@ -219,3 +224,14 @@ export const clearFilterTags = ({ state }) => {
 export const setTagOperator = ({ state }, tagOperator) => {
   state.oSaved.filterData.tagOperator = tagOperator;
 };
+// Used to search through saved movie list
+// export const setSearchFilter = ({ state }, search) => {
+//   state.oSaved.filterData.searchFilter = search;
+// };
+
+export const setSearchFilter = pipe(
+  debounce(300),
+  mutate(({ state }, search) => {
+    state.oSaved.filterData.searchFilter = search.toLowerCase();
+  })
+);

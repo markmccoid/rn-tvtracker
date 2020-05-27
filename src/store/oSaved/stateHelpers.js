@@ -1,8 +1,8 @@
-import _ from "lodash";
+import _ from 'lodash';
 // These functions are used by the getters in the state
 // They help abstract common functionality used by multiple getters
-export const retrieveTagIds = tagObjArray => {
-  return tagObjArray.map(tagObj => tagObj.tagId);
+export const retrieveTagIds = (tagObjArray) => {
+  return tagObjArray.map((tagObj) => tagObj.tagId);
 };
 
 export const retrieveMovieTagIds = (state, movieId) => {
@@ -18,42 +18,50 @@ export const buildTagObjFromIds = (state, tagIdArray, isSelected) => {
   // loop through all tags and when find a match in passed tagIdArray
   // return an object { tagId, tagName, isSelected }
   let tagsObj = state.getTags.reduce((final, tagObj) => {
-    if (tagIdArray.find(tagId => tagId === tagObj.tagId)) {
+    if (tagIdArray.find((tagId) => tagId === tagObj.tagId)) {
       final = [
         ...final,
-        { tagId: tagObj.tagId, tagName: tagObj.tagName, isSelected }
+        { tagId: tagObj.tagId, tagName: tagObj.tagName, isSelected },
       ];
     }
     return final;
   }, []);
-  return _.sortBy(tagsObj, ["tagName"]);
+  return _.sortBy(tagsObj, ['tagName']);
 };
 
-export const filterMovies = (savedMovies, userData, filterData) => {
+export const filterMovies = (savedMoviesIn, userData, filterData) => {
   let movieTags = userData.tags;
-  let { tags: filterTags, tagOperator } = filterData;
-
+  let { tags: filterTags, tagOperator, searchFilter } = filterData;
+  let savedMovies = [...savedMoviesIn];
   // If we have no tags stored for movies in userData.tags
   // then return empty array as no movies will match since no movies have been tagged.
   // Remember userData.tag is an object with movieIds as the key/property
-  if (!movieTags) {
+  console.log('filterMovies', searchFilter);
+  if (!movieTags && !searchFilter) {
     return [];
   }
-  if (tagOperator === "AND") {
+  if (searchFilter) {
+    console.log('InFilter', searchFilter, filterTags);
+    savedMovies = savedMovies.filter((item) =>
+      item.title.toLowerCase().includes(searchFilter)
+    );
+  }
+  if (tagOperator === 'AND' && filterTags?.length > 0) {
     // AND filter for passed tags
-    return savedMovies.filter(movie => {
+    savedMovies = savedMovies.filter((movie) => {
       if (movieTags[movie.id]) {
-        return filterTags.every(tag => movieTags[movie.id].includes(tag));
+        return filterTags.every((tag) => movieTags[movie.id].includes(tag));
       }
       return false;
     });
-  } else {
+  } else if (tagOperator === 'OR' && filterTags?.length > 0) {
     // OR filter for passed tags
-    return savedMovies.filter(movie => {
+    saveMovies = savedMovies.filter((movie) => {
       if (movieTags[movie.id]) {
-        return movieTags[movie.id].some(tagId => filterTags.includes(tagId));
+        return movieTags[movie.id].some((tagId) => filterTags.includes(tagId));
       }
       return false;
     });
   }
+  return savedMovies;
 };
