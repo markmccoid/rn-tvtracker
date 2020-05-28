@@ -8,6 +8,7 @@ import { useOvermind } from '../../store/overmind.js';
 import TagCloud, { TagItem } from '../TagCloud/TagCloud';
 
 import MovieColumnLayout from './MovieColumnLayout';
+import MoviePortraitLayout from './MoviePortraitLayout';
 
 const ViewMoviesListItem = ({ movie, setMovieEditingId, movieEditingId }) => {
   //Bool letting us know if we are in edit mode for this movieId
@@ -21,7 +22,7 @@ const ViewMoviesListItem = ({ movie, setMovieEditingId, movieEditingId }) => {
   };
 
   return (
-    <MovieColumnLayout
+    <MoviePortraitLayout
       movie={movie}
       setMovieEditingId={setMovieEditingId}
       navigateToDetails={navigateToDetails}
@@ -31,3 +32,10 @@ const ViewMoviesListItem = ({ movie, setMovieEditingId, movieEditingId }) => {
 };
 
 export default ViewMoviesListItem;
+
+/* <MovieColumnLayout
+      movie={movie}
+      setMovieEditingId={setMovieEditingId}
+      navigateToDetails={navigateToDetails}
+      inEditState={inEditState}
+    /> */

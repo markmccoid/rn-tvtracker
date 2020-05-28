@@ -43,7 +43,7 @@ const ViewMoviesScreen = ({ navigation, route }) => {
   }, [showSearch]);
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={styles.containerForPortrait}>
       {showSearch ? <ListSearchBar /> : null}
       <FlatList
         data={state.oSaved.getFilteredMovies}
@@ -52,7 +52,7 @@ const ViewMoviesScreen = ({ navigation, route }) => {
         keyboardDismissMode
         keyExtractor={(movie, idx) => movie.id.toString() + idx}
         // columnWrapperStyle={{ justifyContent: "space-around" }}
-        // numColumns={2}
+        numColumns={2}
         renderItem={({ item, index }) => {
           return (
             <ViewMoviesListItem
@@ -67,6 +67,15 @@ const ViewMoviesScreen = ({ navigation, route }) => {
   );
 };
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  containerForColumn: {
+    flex: 1,
+  },
+  containerForPortrait: {
+    flex: 1,
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+});
 
 export default ViewMoviesScreen;
