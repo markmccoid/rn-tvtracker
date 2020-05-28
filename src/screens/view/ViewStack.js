@@ -50,8 +50,7 @@ const ViewStackScreen = () => {
           let currentScreenName =
             route?.state?.routeNames[route.state.index] || 'Movies';
           let params = route?.state?.routes[route.state.index].params;
-          //TODO - params.showSearch for Movies screen can't be used here to see
-          //TODO - if search is show since we flip it off in ViewMovieScreen.js -- find a better way to do this
+          let paramShowSearch = params?.showSearch;
 
           return {
             title: 'Movies',
@@ -72,7 +71,7 @@ const ViewStackScreen = () => {
                       }
                     >
                       <SearchIcon
-                        color="black"
+                        color={paramShowSearch ? 'green' : 'black'}
                         size={30}
                         style={{ marginRight: 15 }}
                       />
@@ -81,7 +80,7 @@ const ViewStackScreen = () => {
                       onPress={() => navigation.navigate('Filter')}
                     >
                       <FilterIcon
-                        color={params.showSearch ? 'green' : 'black'}
+                        color="black"
                         size={30}
                         style={{ marginRight: 15 }}
                       />

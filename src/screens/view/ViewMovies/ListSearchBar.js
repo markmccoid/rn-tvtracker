@@ -9,25 +9,16 @@ import {
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { useOvermind } from '../../../store/overmind';
 
-const ListSearchBar = ({ show, setShowSearch }) => {
+const ListSearchBar = () => {
   const { state, actions } = useOvermind();
   const { searchFilter } = state.oSaved;
   const { setSearchFilter } = actions.oSaved;
-  React.useEffect(() => {
-    console.log('rendering LSB', searchFilter);
-  });
+  const navigation = useNavigation();
+
   return (
     <View style={styles.container}>
       <TextInput
-        style={{
-          margin: 10,
-          padding: 10,
-          borderColor: 'darkgray',
-          borderRadius: 5,
-          borderWidth: 1,
-          width: '80%',
-          backgroundColor: '#ddd',
-        }}
+        style={styles.searchInput}
         placeholder="Search Movie Title"
         onChangeText={(e) => setSearchFilter(e)}
         value={searchFilter}
@@ -37,7 +28,8 @@ const ListSearchBar = ({ show, setShowSearch }) => {
       <TouchableOpacity
         onPress={() => {
           setSearchFilter('');
-          setShowSearch(false);
+          //setShowSearch(false);
+          navigation.setParams({ showSearch: false });
         }}
       >
         <Text>Cancel</Text>
@@ -50,6 +42,15 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  searchInput: {
+    margin: 10,
+    padding: 10,
+    borderColor: 'darkgray',
+    borderRadius: 5,
+    borderWidth: 1,
+    width: '80%',
+    backgroundColor: '#ddd',
   },
   cancelButton: {},
 });

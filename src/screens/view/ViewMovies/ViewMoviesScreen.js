@@ -8,7 +8,7 @@ import ListSearchBar from './ListSearchBar';
 import ViewMoviesListItem from '../../../components/ViewMovies/ViewMoviesListItem';
 
 const ViewMoviesScreen = ({ navigation, route }) => {
-  const [showSearch, setShowSearch] = React.useState(false);
+  //const [showSearch, setShowSearch] = React.useState(false);
   const flatListRef = React.useRef();
   const { state, actions } = useOvermind();
   const { setMovieEditingId } = actions.oAdmin;
@@ -23,6 +23,7 @@ const ViewMoviesScreen = ({ navigation, route }) => {
       index,
     };
   };
+  let showSearch = route.params?.showSearch;
   //Trying to use this to clear editingId when returning from filter screen.
   //Have to set the "returning" param on both the DONE button in the filter screen component
   //and the header "X"(Close).
@@ -32,31 +33,18 @@ const ViewMoviesScreen = ({ navigation, route }) => {
       setMovieEditingId();
       navigation.setParams({ returning: false });
     }
-    // if the showSearch param is true, then set the internal state to show the search input
-    // Have to set the param "showSearch" back to false otherwise this param would never change
-    // unless we chose to change it in the ListSearchBar component.
-    // Seems convoluted and there must be a better way, but no time to figure it out.
-    if (route.params?.showSearch) {
-      setShowSearch(true);
-      navigation.setParams({ showSearch: false });
-    }
-  }, [route.params?.returning, route.params?.showSearch]);
+  }, [route.params?.returning]);
 
+  // When we show the search bar scroll to the top of the flatlist
   useEffect(() => {
     if (showSearch) {
       flatListRef.current.scrollToIndex({ animated: true, index: 0 });
     }
   }, [showSearch]);
+
   return (
-    <View
-      style={{ flex: 1 }}
-      // onLayout={() => {
-      //   flatListRef.current.scrollToIndex({ animated: true, index: 1 });
-      // }}
-    >
-      {showSearch ? (
-        <ListSearchBar show={showSearch} setShowSearch={setShowSearch} />
-      ) : null}
+    <View style={{ flex: 1 }}>
+      {showSearch ? <ListSearchBar /> : null}
       <FlatList
         data={state.oSaved.getFilteredMovies}
         ref={flatListRef}
