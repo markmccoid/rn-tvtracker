@@ -36,12 +36,10 @@ export const filterMovies = (savedMoviesIn, userData, filterData) => {
   // If we have no tags stored for movies in userData.tags
   // then return empty array as no movies will match since no movies have been tagged.
   // Remember userData.tag is an object with movieIds as the key/property
-  console.log('filterMovies', searchFilter);
   if (!movieTags && !searchFilter) {
     return [];
   }
   if (searchFilter) {
-    console.log('InFilter', searchFilter, filterTags);
     savedMovies = savedMovies.filter((item) =>
       item.title.toLowerCase().includes(searchFilter)
     );
@@ -56,7 +54,7 @@ export const filterMovies = (savedMoviesIn, userData, filterData) => {
     });
   } else if (tagOperator === 'OR' && filterTags?.length > 0) {
     // OR filter for passed tags
-    saveMovies = savedMovies.filter((movie) => {
+    savedMovies = savedMovies.filter((movie) => {
       if (movieTags[movie.id]) {
         return movieTags[movie.id].some((tagId) => filterTags.includes(tagId));
       }

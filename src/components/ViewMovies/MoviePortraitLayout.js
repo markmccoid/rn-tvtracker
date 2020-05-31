@@ -4,8 +4,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { useDimensions } from '@react-native-community/hooks';
 
 import { useOvermind } from '../../store/overmind.js';
-import { DeleteIcon, CheckIcon } from '../common/Icons';
-import TagCloud, { TagItem } from '../TagCloud/TagCloud';
+import { DeleteIcon, CheckIcon, HeartIcon } from '../common/Icons';
 
 const MoviePortraitLayout = ({
   movie,
@@ -19,7 +18,7 @@ const MoviePortraitLayout = ({
   const { deleteMovie, addTagToMovie, removeTagFromMovie } = actions.oSaved;
   const { getAllMovieTags } = state.oSaved;
   const movieReleaseDate = movie.releaseDate?.formatted || ' - ';
-  console.log('IMAGE', movie.posterURL);
+
   //NOTE-- posterURL images are 300 x 450
   // Height is 1.5 times the width
   let posterWidth = width / 2.2;
@@ -31,12 +30,21 @@ const MoviePortraitLayout = ({
       height: posterHeight,
     },
     movieCard: {
+      width: '100%',
       marginVertical: 5,
       margin: 5,
       width: posterWidth,
+      borderWidth: 1,
+      borderRadius: 2,
+      borderColor: '#ddd',
+      borderBottomWidth: 0,
+      shadowColor: '#000',
+      shadowOffset: { width: 1, height: 2 },
+      shadowOpacity: 0.5,
+      shadowRadius: 3,
+      elevation: 1,
     },
   });
-  LayoutAnimation.spring();
   return (
     <View style={styles.movieCard}>
       <TouchableOpacity
@@ -49,36 +57,7 @@ const MoviePortraitLayout = ({
           <Image style={styles.posterImage} source={{ uri: movie.posterURL }} />
         </View>
       </TouchableOpacity>
-      <View
-        style={{
-          marginBottom: 20,
-          marginLeft: 10,
-          zIndex: 10,
-          display: inEditState ? '' : 'none',
-        }}
-      >
-        <TagCloud>
-          {getAllMovieTags(movie.id).map((tagObj) => {
-            return (
-              <TagItem
-                key={tagObj.tagId}
-                tagId={tagObj.tagId}
-                tagName={tagObj.tagName}
-                isSelected={tagObj.isSelected}
-                onSelectTag={() =>
-                  addTagToMovie({ movieId: movie.id, tagId: tagObj.tagId })
-                }
-                onDeSelectTag={() =>
-                  removeTagFromMovie({
-                    movieId: movie.id,
-                    tagId: tagObj.tagId,
-                  })
-                }
-              />
-            );
-          })}
-        </TagCloud>
-      </View>
+      {/* Icon row */}
     </View>
   );
 };

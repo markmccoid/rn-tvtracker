@@ -29,7 +29,7 @@ export const CloseIcon = ({ size, color, style }) => {
   return <AntDesign name="close" size={size} color={color} style={style} />;
 };
 
-export const DeleteIcon = ({ size, color, style }) => {
+export const DeleteIcon = ({ size = 25, color = '#b20a2c', style }) => {
   return <AntDesign name="delete" size={size} color={color} style={style} />;
 };
 
@@ -47,6 +47,6 @@ export const EditIcon = ({ size, color, style }) => {
   return <Feather name="edit" size={size} color={color} style={style} />;
 };
 
-export const SearchIcon2 = ({ size, color, style }) => {
-  return <Ionicons name="ios-search" size={size} color={color} style={style} />;
+export const HeartIcon = ({ size, color, style }) => {
+  return <AntDesign name="hearto" size={size} color={color} style={style} />;
 };

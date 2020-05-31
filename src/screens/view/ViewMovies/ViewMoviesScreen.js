@@ -1,20 +1,20 @@
 import React, { useEffect } from 'react';
-import { View, TextInput, FlatList, StyleSheet } from 'react-native';
-import { SearchBar } from 'react-native-elements';
-import * as Styled from './styles';
+import { View, Text, FlatList, Image, StyleSheet } from 'react-native';
 import { useOvermind } from '../../../store/overmind';
+import { useDimensions } from '@react-native-community/hooks';
 import ListSearchBar from './ListSearchBar';
 
 import ViewMoviesListItem from '../../../components/ViewMovies/ViewMoviesListItem';
+import ViewMovieOverlay from './ViewMovieOverlay';
 
 const ViewMoviesScreen = ({ navigation, route }) => {
-  //const [showSearch, setShowSearch] = React.useState(false);
+  const { width, height } = useDimensions().window;
+  const [movieDetails, setMovieDetails] = React.useState(undefined);
   const flatListRef = React.useRef();
   const { state, actions } = useOvermind();
   const { setMovieEditingId } = actions.oAdmin;
   const { movieEditingId } = state.oAdmin.appState;
-  const { searchFilter } = state.oSaved;
-  const { setSearchFilter } = actions.oSaved;
+  const { getFilteredMovies, getAllMovieTags, getMovieDetails } = state.oSaved;
   const getItemLayout = (data, index) => {
     let height = index === 1 ? 70 : 150;
     return {
@@ -23,6 +23,12 @@ const ViewMoviesScreen = ({ navigation, route }) => {
       index,
     };
   };
+
+  //NOTE-- posterURL images are 300 x 450
+  // Height is 1.5 times the width
+  let posterWidth = width / 2;
+  let posterHeight = posterWidth * 1.5;
+
   let showSearch = route.params?.showSearch;
   //Trying to use this to clear editingId when returning from filter screen.
   //Have to set the "returning" param on both the DONE button in the filter screen component
@@ -42,11 +48,17 @@ const ViewMoviesScreen = ({ navigation, route }) => {
     }
   }, [showSearch]);
 
+  // Get movie details when movie is selected/edit mode
+  // probably should move whole overlay section to a separate file
+  useEffect(() => {
+    setMovieDetails(getMovieDetails(movieEditingId));
+  }, [movieEditingId]);
+
   return (
     <View style={styles.containerForPortrait}>
       {showSearch ? <ListSearchBar /> : null}
       <FlatList
-        data={state.oSaved.getFilteredMovies}
+        data={getFilteredMovies}
         ref={flatListRef}
         // getItemLayout={getItemLayout}
         keyboardDismissMode
@@ -62,6 +74,13 @@ const ViewMoviesScreen = ({ navigation, route }) => {
             />
           );
         }}
+      />
+      {/* Only show when editing a movie - this happens on a long press on movie */}
+      <ViewMovieOverlay
+        movieId={movieEditingId}
+        setMovieEditingId={setMovieEditingId}
+        isVisible={!!movieEditingId}
+        movieDetails={movieDetails}
       />
     </View>
   );
