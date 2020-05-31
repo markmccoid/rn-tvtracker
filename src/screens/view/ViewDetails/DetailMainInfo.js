@@ -21,17 +21,6 @@ const DetailMainInfo = ({ movie }) => {
   const { overview = '', releaseDate = '', imdbURL = '', runtime = '' } = movie;
   return (
     <View>
-      {/* <Image
-        style={{
-          width,
-          height: 200,
-        }}
-        resizeMode="cover"
-        source={{
-          uri: movie.backdropURL,
-        }}
-      /> */}
-
       <View
         style={{
           flexDirection: 'row',
@@ -40,26 +29,49 @@ const DetailMainInfo = ({ movie }) => {
           //backgroundColor: "#3b544199",
         }}
       >
-        <Image
-          style={{ width: 130, height: 200, marginRight: 10 }}
-          source={movieURL}
-          resizeMode="contain"
-        />
-        <Text style={{ fontSize: 16, width: width - 145, paddingTop: 10 }}>
-          {overview}
-        </Text>
+        <View style={styles.posterWrapper}>
+          <Image
+            style={styles.posterImage}
+            source={movieURL}
+            resizeMode="contain"
+          />
+        </View>
+        <View style={{ width: width - 145, paddingTop: 10, paddingLeft: 5 }}>
+          <Text style={{ fontSize: 16 }}>{overview}</Text>
+          <Text style={{ fontSize: 18 }}>
+            Released on {releaseDate.formatted}
+          </Text>
+          <Text style={{ fontSize: 18 }}>Length: {runtime} minutes</Text>
+        </View>
       </View>
       <View
         style={{
           margin: 5,
           padding: 10,
         }}
-      >
-        <Text style={{ fontSize: 18 }}>{releaseDate.formatted}</Text>
-        <Text style={{ fontSize: 18 }}>{runtime}</Text>
-      </View>
+      ></View>
     </View>
   );
 };
 
+const styles = StyleSheet.create({
+  posterWrapper: {
+    borderWidth: 1,
+    borderRadius: 2,
+    borderColor: '#ddd',
+    borderBottomWidth: 0,
+    shadowColor: '#000',
+    shadowOffset: { width: 2.5, height: 3 },
+    shadowOpacity: 0.6,
+    shadowRadius: 2,
+    elevation: 1,
+    marginLeft: 5,
+    marginRight: 5,
+    marginTop: 10,
+  },
+  posterImage: {
+    width: 130,
+    height: 200,
+  },
+});
 export default DetailMainInfo;
