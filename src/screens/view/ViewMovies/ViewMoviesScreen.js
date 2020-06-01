@@ -58,7 +58,7 @@ const ViewMoviesScreen = ({ navigation, route }) => {
     <View style={styles.containerForPortrait}>
       {showSearch ? <ListSearchBar /> : null}
       <FlatList
-        data={getFilteredMovies}
+        data={getFilteredMovies('date', 'asc')}
         ref={flatListRef}
         // getItemLayout={getItemLayout}
         keyboardDismissMode

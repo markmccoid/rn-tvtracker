@@ -19,15 +19,23 @@ export const config = {
       tagOperator: 'OR',
       searchFilter: undefined,
     },
-    getFilteredMovies: (state) => {
+    // sort = ['title', 'date']
+    getFilteredMovies: (state) => (sort = 'title', direction = 'asc') => {
+      let movieList = state.savedMovies;
+      // set lodash sort iteratees (either title or a function for date)
+      if (sort === 'date') {
+        sort = (el) => el.releaseDate.date;
+      }
+      //Determine if we are filtering via Tags or with a typed in Search
       if (state.filterData.tags.length > 0 || state.filterData.searchFilter) {
-        return helpers.filterMovies(
+        movieList = helpers.filterMovies(
           state.savedMovies,
           state.userData,
           state.filterData
         );
       }
-      return state.savedMovies;
+      movieList = _.sortBy(movieList, [sort]);
+      return direction === 'asc' ? movieList : movieList.reverse();
     },
     // Get the movie details object for the passed movie ID
     getMovieDetails: (state) => (movieId) => {
