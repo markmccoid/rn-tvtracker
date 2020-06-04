@@ -1,4 +1,4 @@
-import Firebase, { firestore } from "../../storage/firebase";
+import Firebase, { firestore } from '../../storage/firebase';
 
 // initialize currently only loads data that was stored in
 // phones local storage.
@@ -6,9 +6,9 @@ let unsubscribe = () => {};
 let undo = () => {};
 export const onInitialize = async ({ state, effects, actions }) => {
   // Sets up Listener for Auth state.  If logged
-  console.log("seetting up listener");
+  console.log('setting up listener');
   unsubscribe = Firebase.auth().onAuthStateChanged((user) => {
-    console.log("USER", user);
+    console.log('In firebase auth listener 2');
     if (user) {
       actions.oAdmin.logUserIn(user);
       actions.oSaved.hyrdateStore(user.uid);

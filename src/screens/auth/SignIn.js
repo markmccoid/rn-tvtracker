@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   View,
   Text,
@@ -10,40 +10,41 @@ import {
   KeyboardAvoidingView,
   Alert,
   ActivityIndicator,
-} from "react-native";
-import { useOvermind } from "../../store/overmind";
-import Firebase, { firestore } from "../../storage/firebase";
+} from 'react-native';
+import { useOvermind } from '../../store/overmind';
+import Firebase, { firestore } from '../../storage/firebase';
 
-import { Header, ButtonText } from "./authStyles";
+import { Header, ButtonText } from './authStyles';
 
 const SignIn = ({ navigation, route }) => {
   let { state, actions } = useOvermind();
+  let { isLoggedIn } = state.oAdmin;
   const { initialDataCreation } = actions.oSaved;
 
+  // const [isLoading, setIsLoading] = React.useState(
+  //   route.params?.authStatus === 'loading' ? true : false
+  // );
   const [isLoading, setIsLoading] = React.useState(false);
-  const [email, setEmail] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [confirmPassword, setConfirmPassword] = React.useState("");
-  const [error, setError] = React.useState("");
+  const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
+  const [confirmPassword, setConfirmPassword] = React.useState('');
+  const [error, setError] = React.useState('');
 
   // create refs for use is changing input focus
   const passwordRef = React.useRef();
   const confirmPasswordRef = React.useRef();
-
   //--Are we signing In or Creating User?
-  const isSignIn = route.params?.screenFunction !== "create" ? true : false;
+  const isSignIn = route.params?.screenFunction !== 'create' ? true : false;
 
   //---------------------------------
   // Submit is logging into Firebase
-
   const onSubmit = () => {
-    console.log("OnSubmit", email, password);
     if (!email || !password) {
-      Alert.alert("Must enter an email and password");
+      Alert.alert('Must enter an email and password');
       return;
     }
     if (!isSignIn && password !== confirmPassword) {
-      Alert.alert("Passwords do not match");
+      Alert.alert('Passwords do not match');
       return;
     }
     setIsLoading(true);
@@ -63,7 +64,7 @@ const SignIn = ({ navigation, route }) => {
         .createUserWithEmailAndPassword(email, password)
         .then((resp) => {
           return firestore
-            .collection("users")
+            .collection('users')
             .doc(resp.user.uid)
             .set({
               email,
@@ -94,10 +95,9 @@ const SignIn = ({ navigation, route }) => {
       />
     </>
   );
-
-  if (isLoading) {
+  if (isLoading || isLoggedIn === undefined) {
     return (
-      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         <ActivityIndicator size="large" />
       </View>
     );
@@ -129,7 +129,7 @@ const SignIn = ({ navigation, route }) => {
             placeholder="Password"
             ref={passwordRef}
             secureTextEntry={true}
-            returnKeyType={isSignIn ? "go" : "next"}
+            returnKeyType={isSignIn ? 'go' : 'next'}
             onChangeText={setPassword}
             onSubmitEditing={
               isSignIn ? onSubmit : () => confirmPasswordRef.current.focus()
@@ -139,8 +139,8 @@ const SignIn = ({ navigation, route }) => {
           {!isSignIn ? (
             ConfirmPassword
           ) : (
-            <TouchableOpacity onPress={() => navigation.push("ForgotPassword")}>
-              <Text style={{ marginTop: 10, fontSize: 16, color: "#888" }}>
+            <TouchableOpacity onPress={() => navigation.push('ForgotPassword')}>
+              <Text style={{ marginTop: 10, fontSize: 16, color: '#888' }}>
                 Forgot Password?
               </Text>
             </TouchableOpacity>
@@ -148,28 +148,28 @@ const SignIn = ({ navigation, route }) => {
 
           <TouchableOpacity
             style={{
-              width: "85%",
-              backgroundColor: "#52aac9",
+              width: '85%',
+              backgroundColor: '#52aac9',
               padding: 15,
               marginVertical: 40,
               borderRadius: 5,
             }}
             onPress={onSubmit}
           >
-            <ButtonText>{isSignIn ? "Sign In" : "Sign Up"}</ButtonText>
+            <ButtonText>{isSignIn ? 'Sign In' : 'Sign Up'}</ButtonText>
           </TouchableOpacity>
           {isSignIn && (
-            <View style={{ flexDirection: "row", marginTop: 50 }}>
-              <Text style={{ marginRight: 5, fontSize: 16, color: "#888" }}>
+            <View style={{ flexDirection: 'row', marginTop: 50 }}>
+              <Text style={{ marginRight: 5, fontSize: 16, color: '#888' }}>
                 Haven't signed up yet?
               </Text>
               <TouchableOpacity
                 onPress={() =>
-                  navigation.push("CreateAccount", { screenFunction: "create" })
+                  navigation.push('CreateAccount', { screenFunction: 'create' })
                 }
               >
                 <Text
-                  style={{ fontSize: 16, color: "#333", fontWeight: "bold" }}
+                  style={{ fontSize: 16, color: '#333', fontWeight: 'bold' }}
                 >
                   Sign Up
                 </Text>
@@ -185,36 +185,36 @@ const SignIn = ({ navigation, route }) => {
 const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
-    backgroundColor: "#f8faf9",
-    alignItems: "center",
-    justifyContent: "center",
-    width: "100%",
+    backgroundColor: '#f8faf9',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
   },
   signInWrapper: {
-    width: "100%",
-    alignItems: "center",
+    width: '100%',
+    alignItems: 'center',
   },
   errorText: {
     fontSize: 18,
-    fontWeight: "bold",
-    color: "red",
+    fontWeight: 'bold',
+    color: 'red',
   },
   inputBox: {
-    width: "85%",
+    width: '85%',
     borderRadius: 5,
-    backgroundColor: "#fff",
+    backgroundColor: '#fff',
     margin: 10,
     padding: 15,
     fontSize: 18,
-    borderColor: "#e5e5e5",
+    borderColor: '#e5e5e5',
     borderWidth: 1,
-    textAlign: "center",
+    textAlign: 'center',
   },
   bottomButtons: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "flex-end",
-    backgroundColor: "red",
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'flex-end',
+    backgroundColor: 'red',
   },
 });
 

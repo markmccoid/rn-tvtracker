@@ -121,8 +121,6 @@ const ViewStackScreen = () => {
         name="Details"
         component={ViewDetails}
         options={({ navigation, route }) => {
-          console.log('DETAIL ROUTE', route);
-          console.log('Params', route?.params);
           // Using optional chaining because initial route object is for stack
           let currentScreenName =
             route?.state?.routeNames[route.state.index] || 'Details';

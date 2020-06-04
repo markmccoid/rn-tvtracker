@@ -1,9 +1,9 @@
-import React from "react";
-import { Button, TouchableOpacity } from "react-native";
-import { createStackNavigator } from "@react-navigation/stack";
-import { MenuIcon } from "../../components/common/Icons";
+import React from 'react';
+import { Button, TouchableOpacity } from 'react-native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { MenuIcon } from '../../components/common/Icons';
 
-import SearchScreen from "./SearchScreen";
+import SearchScreen from './SearchScreen';
 
 const SearchStack = createStackNavigator();
 
@@ -14,7 +14,6 @@ const SearchStackScreen = () => {
         name="Search"
         component={SearchScreen}
         options={({ navigation, route }) => {
-          console.log("SEARcH ROUTE", route);
           return {
             headerLeft: () => {
               return (

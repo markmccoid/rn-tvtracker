@@ -1,11 +1,11 @@
-import * as actions from "./actions";
+import * as actions from './actions';
 
 export const config = {
   state: {
-    username: "",
-    email: "",
+    username: '',
+    email: '',
     uid: undefined,
-    isLoggedIn: false,
+    isLoggedIn: undefined,
     appState: {
       movieEditingId: undefined,
     },

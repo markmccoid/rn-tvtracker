@@ -1,17 +1,17 @@
-import React from "react";
-import { Button, ActivityIndicator } from "react-native";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { createDrawerNavigator } from "@react-navigation/drawer";
-import { useFocusEffect } from "@react-navigation/native";
+import React from 'react';
+import { Button, ActivityIndicator } from 'react-native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createDrawerNavigator } from '@react-navigation/drawer';
+import { useFocusEffect } from '@react-navigation/native';
 
-import Firebase from "../storage/firebase";
-import ViewStack from "../screens/view/ViewStack";
-import SearchStack from "../screens/search/SearchStack";
-import TagStack from "../screens/tags/TagStack";
+import Firebase from '../storage/firebase';
+import ViewStack from '../screens/view/ViewStack';
+import SearchStack from '../screens/search/SearchStack';
+import TagStack from '../screens/tags/TagStack';
 
-import { ViewMovieIcon, SearchIcon, TagIcon } from "../components/common/Icons";
+import { ViewMovieIcon, SearchIcon, TagIcon } from '../components/common/Icons';
 
-import { Settings } from "../screens/settings/SettingsScreen";
+import { Settings } from '../screens/settings/SettingsScreen';
 
 //----------------------------------------------------------------
 // Create screenoptions function for TabsNavigator
@@ -21,17 +21,17 @@ const tabsScreenOptions = ({ route }) => ({
     let iconComponent;
     let tagStyle = { marginTop: 5 };
     switch (route.name) {
-      case "ViewMoviesTab":
+      case 'ViewMoviesTab':
         iconComponent = (
           <ViewMovieIcon size={size} color={color} style={tagStyle} />
         );
         break;
-      case "Search":
+      case 'Search':
         iconComponent = (
           <SearchIcon size={size} color={color} style={tagStyle} />
         );
         break;
-      case "Tags":
+      case 'Tags':
         iconComponent = <TagIcon size={size} color={color} style={tagStyle} />;
         break;
       default:
@@ -62,7 +62,10 @@ const RedirectToMain = ({ navigation }) => {
   // whenever this component gets focus.
   // Currently this is from the Drawer link "Home"
   useFocusEffect(() => {
-    navigation.navigate("ViewMoviesTab", { screen: "ViewMovies" });
+    navigation.navigate('ViewMoviesTab', {
+      screen: 'ViewMovies',
+      params: { screen: 'Filter', forgotParam: 'shit' },
+    });
   });
 
   return null;
@@ -78,7 +81,7 @@ const AppTabsScreen = () => {
       <AppTabs.Screen
         name="ViewMoviesTab"
         component={ViewStack}
-        options={{ title: "View Movies" }}
+        options={{ title: 'View Movies' }}
       />
       <AppTabs.Screen name="Search" component={SearchStack} />
       <AppTabs.Screen name="Tags" component={TagStack} />

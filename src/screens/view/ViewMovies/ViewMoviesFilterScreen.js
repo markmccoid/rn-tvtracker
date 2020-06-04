@@ -1,11 +1,11 @@
-import React from "react";
-import { View, Text, StyleSheet } from "react-native";
-import { Button, ButtonGroup } from "react-native-elements";
-import { useOvermind } from "../../../store/overmind";
-import TagCloud, { TagItem } from "../../../components/TagCloud/TagCloud";
-import _ from "lodash";
+import React from 'react';
+import { View, Text, StyleSheet } from 'react-native';
+import { Button, ButtonGroup } from 'react-native-elements';
+import { useOvermind } from '../../../store/overmind';
+import TagCloud, { TagItem } from '../../../components/TagCloud/TagCloud';
+import _ from 'lodash';
 
-const ViewMoviesFilterScreen = ({ navigation }) => {
+const ViewMoviesFilterScreen = ({ route, navigation }) => {
   const { state, actions } = useOvermind();
   const { getAllFilterTags } = state.oSaved;
   const { tagOperator } = state.oSaved.filterData;
@@ -16,7 +16,7 @@ const ViewMoviesFilterScreen = ({ navigation }) => {
     setTagOperator,
   } = actions.oSaved;
   //---TESTING  Probably should be a getter in the store.+
-  const tagOperators = ["AND", "OR"];
+  const tagOperators = ['AND', 'OR'];
   return (
     <View style={styles.container}>
       <View>
@@ -41,7 +41,7 @@ const ViewMoviesFilterScreen = ({ navigation }) => {
           })}
         </TagCloud>
       </View>
-      <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
         <Button
           style={styles.buttonStyle}
           title="Clear Filters"
@@ -52,7 +52,7 @@ const ViewMoviesFilterScreen = ({ navigation }) => {
           style={styles.buttonStyle}
           title="Done"
           onPress={() => {
-            navigation.navigate("Movies", { returning: true });
+            navigation.navigate('Movies', { returning: true });
           }}
         />
       </View>
@@ -63,16 +63,16 @@ const ViewMoviesFilterScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection: "column",
-    justifyContent: "space-between",
+    flexDirection: 'column',
+    justifyContent: 'space-between',
     margin: 5,
-    borderColor: "black",
+    borderColor: 'black',
     borderWidth: 1,
     padding: 5,
   },
   title: {
     fontSize: 24,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   buttonStyle: {
     width: 150,
