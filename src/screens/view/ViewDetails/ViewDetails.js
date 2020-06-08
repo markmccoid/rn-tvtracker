@@ -1,34 +1,48 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   View,
   Text,
   Image,
   ScrollView,
+  Linking,
   SafeAreaView,
   StyleSheet,
 } from 'react-native';
 import { Button, CircleButton } from '../../../components/common/Buttons';
 import { useOvermind } from '../../../store/overmind';
 import { useDimensions } from '@react-native-community/hooks';
+import { movieGetCredits } from '@markmccoid/tmdb_api';
+import { useCastData } from '../../../hooks/useCastData';
 import TagCloud, { TagItem } from '../../../components/TagCloud/TagCloud';
 
 import DetailMainInfo from './DetailMainInfo';
+import DetailCastInfo from './DetailCastInfo';
 
 const ViewDetails = ({ navigation, route }) => {
   const [viewTags, setViewTags] = React.useState(false);
+  // const [cast, setCast] = React.useState([]);
+
   let movieId = route.params?.movieId;
+  const castData = useCastData(movieId);
   let { state, actions } = useOvermind();
   let movie = state.oSaved.getMovieDetails(movieId);
   let tags = state.oSaved.getAllMovieTags(movieId);
   let { removeTagFromMovie, addTagToMovie } = actions.oSaved;
   const { width, height } = useDimensions().window;
   const dims = useDimensions();
-
   // Get the Movie details
   // const { posterURL}
   // Set the title to the current movie title
   navigation.setOptions({ title: movie.title });
 
+  // useEffect(() => {
+  //   console.log('in useeffect DETAIL');
+  //   const getCredits = async () => {
+  //     movieGetCredits(movie.id).then((resp) => setCast(resp.data.cast));
+  //   };
+  //   getCredits();
+  // }, []);
+  // console.log('CREDITS', cast);
   return (
     <View style={{ flex: 1 }}>
       <Image
@@ -46,7 +60,7 @@ const ViewDetails = ({ navigation, route }) => {
       <ScrollView style={{ flex: 1 }}>
         <DetailMainInfo movie={movie} />
 
-        <View style={{ alignItems: 'center' }}>
+        <View style={styles.buttonBar}>
           <Button
             onPress={() => setViewTags((prev) => !prev)}
             title={viewTags ? 'Hide Tags' : 'Show Tags'}
@@ -54,7 +68,24 @@ const ViewDetails = ({ navigation, route }) => {
             bgColor="#52aac9"
             small
             width={100}
-            wrapperStyle={{}}
+            wrapperStyle={{ borderRadius: 0 }}
+            color="#fff"
+            noBorder
+          />
+          <Button
+            onPress={() =>
+              Linking.openURL(`imdb:///title/${movie.imdbId}`).catch((err) => {
+                Linking.openURL(
+                  'https://apps.apple.com/us/app/imdb-movies-tv-shows/id342792525'
+                );
+              })
+            }
+            title="Open in IMDB"
+            bgOpacity="ff"
+            bgColor="#52aac9"
+            small
+            width={150}
+            wrapperStyle={{ borderRadius: 0 }}
             color="#fff"
             noBorder
           />
@@ -83,6 +114,16 @@ const ViewDetails = ({ navigation, route }) => {
             })}
           </TagCloud>
         </View>
+        <View style={styles.castInfo}>
+          {castData.map((person) => (
+            <DetailCastInfo
+              person={person}
+              screenWidth={width}
+              key={person.personId}
+            />
+          ))}
+        </View>
+
         <Button
           onPress={() => navigation.goBack()}
           title="Back"
@@ -99,4 +140,24 @@ const ViewDetails = ({ navigation, route }) => {
   );
 };
 
+const styles = StyleSheet.create({
+  castInfo: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    width: 414,
+  },
+  buttonBar: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 15,
+    paddingVertical: 10,
+    marginHorizontal: 5,
+    marginBottom: 5,
+    backgroundColor: '#ffffff85',
+  },
+});
+//`imdb:///find?q=${movie.title}`
 export default ViewDetails;
