@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   View,
   Text,
@@ -6,8 +6,8 @@ import {
   StyleSheet,
   Image,
   ActivityIndicator,
-} from "react-native";
-import { MaterialIcons } from "@expo/vector-icons";
+} from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
 
 const SearchResultItem = ({ movie, saveMovie }) => {
   return (
@@ -33,29 +33,29 @@ const SearchResultItem = ({ movie, saveMovie }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 2,
-    flexDirection: "row",
+    flexDirection: 'row',
     margin: 5,
-    borderColor: "black",
+    borderColor: 'black',
     borderWidth: 1,
     padding: 5,
   },
   movieInfo: {
     flex: 1,
-    justifyContent: "space-between",
+    justifyContent: 'space-between',
   },
   title: {
     fontSize: 24,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   image: {
     width: 150,
     height: 225,
-    borderColor: "black",
+    borderColor: 'black',
     borderWidth: 1,
   },
   existsInSaved: {
-    borderColor: "green",
-    backgroundColor: "lightgreen",
+    borderColor: 'green',
+    backgroundColor: 'lightgreen',
     borderWidth: 2,
   },
 });
