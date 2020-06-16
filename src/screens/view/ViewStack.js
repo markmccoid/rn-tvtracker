@@ -39,7 +39,7 @@ const ViewStackScreen = () => {
   const { state, actions } = useOvermind();
   let numFilters = state.oSaved.filterData.tags.length;
   let isFiltered = numFilters > 0;
-
+  const { clearFilterTags } = actions.oSaved;
   return (
     <ViewStack.Navigator>
       <ViewStack.Screen
@@ -78,6 +78,7 @@ const ViewStackScreen = () => {
                     </TouchableOpacity>
                     <TouchableOpacity
                       onPress={() => navigation.navigate('Filter')}
+                      onLongPress={() => clearFilterTags()}
                     >
                       <FilterIcon
                         color="black"

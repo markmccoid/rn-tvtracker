@@ -40,10 +40,12 @@ const SignIn = ({ navigation, route }) => {
   // Submit is logging into Firebase
   const onSubmit = () => {
     if (!email || !password) {
+      Keyboard.dismiss();
       Alert.alert('Must enter an email and password');
       return;
     }
     if (!isSignIn && password !== confirmPassword) {
+      Keyboard.dismiss();
       Alert.alert('Passwords do not match');
       return;
     }
@@ -57,6 +59,7 @@ const SignIn = ({ navigation, route }) => {
         .catch((error) => {
           setError(error.message);
           setIsLoading(false);
+          Keyboard.dismiss();
           Alert.alert(error.message);
         });
     } else {
@@ -76,6 +79,7 @@ const SignIn = ({ navigation, route }) => {
         .catch((error) => {
           setIsLoading(false);
           setError(error.message);
+          Keyboard.dismiss();
           Alert.alert(error.message);
         });
     }

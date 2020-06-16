@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   View,
   Text,
@@ -6,15 +6,15 @@ import {
   Image,
   StyleSheet,
   ActivityIndicator,
-} from "react-native";
-import { Button } from "../../components/common/Buttons";
-import { useOvermind } from "../../store/overmind";
-import SearchForMovie from "../../components/search/SearchForMovie";
-import SearchResultItem from "../../components/search/SearchResultItem";
-import { useFocusEffect, useIsFocused } from "@react-navigation/native";
+} from 'react-native';
+import { Button } from '../../components/common/Buttons';
+import { useOvermind } from '../../store/overmind';
+import SearchForMovie from '../../components/search/SearchForMovie';
+import SearchResultItem from '../../components/search/SearchResultItem';
+import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 
 const SearchScreen = ({ navigation }) => {
-  let [searchString, setSearchString] = React.useState("");
+  let [searchString, setSearchString] = React.useState('');
   const flatListRef = React.useRef();
   const { state, actions } = useOvermind();
   const { saveMovie } = actions.oSaved;
@@ -77,7 +77,13 @@ const SearchScreen = ({ navigation }) => {
         data={state.oSearch.resultData}
         keyExtractor={(movie) => movie.id.toString()}
         renderItem={({ item }) => {
-          return <SearchResultItem movie={item} saveMovie={saveMovie} />;
+          return (
+            <SearchResultItem
+              key={item.id}
+              movie={item}
+              saveMovie={saveMovie}
+            />
+          );
         }}
         onEndReached={fetchMoreData}
         keyboardDismissMode="on-drag"
@@ -90,6 +96,7 @@ const SearchScreen = ({ navigation }) => {
         searchString={searchString}
         setSearchString={setSearchString}
       />
+
       {isLoading && !isMoreData ? (
         <ActivityIndicator size="large" style={{ flex: 1 }} />
       ) : null}

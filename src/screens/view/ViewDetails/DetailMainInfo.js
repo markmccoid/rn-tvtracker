@@ -44,12 +44,6 @@ const DetailMainInfo = ({ movie }) => {
           <Text style={{ fontSize: 18 }}>Length: {runtime} minutes</Text>
         </View>
       </View>
-      <View
-        style={{
-          margin: 5,
-          padding: 10,
-        }}
-      ></View>
     </View>
   );
 };

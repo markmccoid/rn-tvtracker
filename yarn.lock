@@ -5189,6 +5189,11 @@ react-native-elements@^2.0.0:
     react-native-ratings "^6.5.0"
     react-native-status-bar-height "^2.2.0"
 
+react-native-error-boundary@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/react-native-error-boundary/-/react-native-error-boundary-1.1.0.tgz#a674c5b7fdde51957e8b28fee23cbd001d4ee50e"
+  integrity sha512-iuGaxgU7SUAJ/X1J0mp3bQMksOPMHzyU8dHI1NS+WPs0J6kxv7PFJsfnUdfyd71wJ8YpUOaQLWtF+hbQ8AZ7hw==
+
 react-native-gesture-handler@~1.5.0:
   version "1.5.6"
   resolved "https://registry.yarnpkg.com/react-native-gesture-handler/-/react-native-gesture-handler-1.5.6.tgz#5d90145f624e3707db2930f43ab41579683e2375"

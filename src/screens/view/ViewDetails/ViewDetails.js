@@ -11,15 +11,16 @@ import {
 import { Button, CircleButton } from '../../../components/common/Buttons';
 import { useOvermind } from '../../../store/overmind';
 import { useDimensions } from '@react-native-community/hooks';
-import { movieGetCredits } from '@markmccoid/tmdb_api';
 import { useCastData } from '../../../hooks/useCastData';
 import TagCloud, { TagItem } from '../../../components/TagCloud/TagCloud';
 
 import DetailMainInfo from './DetailMainInfo';
 import DetailCastInfo from './DetailCastInfo';
+import PickImage from './PickImage';
 
 const ViewDetails = ({ navigation, route }) => {
   const [viewTags, setViewTags] = React.useState(false);
+  const [viewPickImage, setPickImage] = React.useState(false);
   // const [cast, setCast] = React.useState([]);
 
   let movieId = route.params?.movieId;
@@ -27,6 +28,7 @@ const ViewDetails = ({ navigation, route }) => {
   let { state, actions } = useOvermind();
   let movie = state.oSaved.getMovieDetails(movieId);
   let tags = state.oSaved.getAllMovieTags(movieId);
+  let assignedTags = state.oSaved.getMovieTags(movieId);
   let { removeTagFromMovie, addTagToMovie } = actions.oSaved;
   const { width, height } = useDimensions().window;
   const dims = useDimensions();
@@ -59,7 +61,27 @@ const ViewDetails = ({ navigation, route }) => {
       />
       <ScrollView style={{ flex: 1 }}>
         <DetailMainInfo movie={movie} />
-
+        <View>
+          <TagCloud>
+            {assignedTags.map((tagObj) => {
+              return (
+                <TagItem
+                  key={tagObj.tagId}
+                  tagId={tagObj.tagId}
+                  tagName={tagObj.tagName}
+                  isSelected={tagObj.isSelected}
+                  size="s"
+                  onDeSelectTag={() =>
+                    removeTagFromMovie({
+                      movieId: movie.id,
+                      tagId: tagObj.tagId,
+                    })
+                  }
+                />
+              );
+            })}
+          </TagCloud>
+        </View>
         <View style={styles.buttonBar}>
           <Button
             onPress={() => setViewTags((prev) => !prev)}
@@ -89,6 +111,17 @@ const ViewDetails = ({ navigation, route }) => {
             color="#fff"
             noBorder
           />
+          <Button
+            onPress={() => setPickImage(!viewPickImage)}
+            title="Pick Image"
+            bgOpacity="ff"
+            bgColor="#52aac9"
+            small
+            width={100}
+            wrapperStyle={{ borderRadius: 0 }}
+            color="#fff"
+            noBorder
+          />
         </View>
 
         <View style={{ display: viewTags ? '' : 'none' }}>
@@ -114,6 +147,9 @@ const ViewDetails = ({ navigation, route }) => {
             })}
           </TagCloud>
         </View>
+
+        {viewPickImage && <PickImage movieId={movie.id} />}
+
         <View style={styles.castInfo}>
           {castData.map((person) => (
             <DetailCastInfo
@@ -149,7 +185,7 @@ const styles = StyleSheet.create({
   },
   buttonBar: {
     flexDirection: 'row',
-    justifyContent: 'space-evenly',
+    justifyContent: 'space-around',
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 15,

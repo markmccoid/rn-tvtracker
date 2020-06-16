@@ -19,6 +19,7 @@ export const config = {
       tagOperator: 'OR',
       searchFilter: undefined,
     },
+    //------- Getters -----------//
     // sort = ['title', 'date']
     getFilteredMovies: (state) => (sort = 'title', direction = 'asc') => {
       let movieList = state.savedMovies;
@@ -37,6 +38,7 @@ export const config = {
       movieList = _.sortBy(movieList, [sort]);
       return direction === 'asc' ? movieList : movieList.reverse();
     },
+    //--------------
     // Get the movie details object for the passed movie ID
     getMovieDetails: (state) => (movieId) => {
       if (!movieId) {
@@ -45,8 +47,26 @@ export const config = {
       let moviesObj = _.keyBy(state.savedMovies, 'id');
       return moviesObj[movieId];
     },
+    //--------------
+    // Get the current posterURL and backgroundURL for the passed movieId
+    getCurrentImageUrls: (state) => (movieId) => {
+      let movies = state.savedMovies;
+
+      for (let i = 0; i <= movies.length; i++) {
+        if (movieId === movies[i].id) {
+          // return the current image urls for this movies[i]
+          return {
+            currentPosterURL: movies[i].posterURL,
+            currentBackdropURL: movies[i].backdropURL,
+          };
+        }
+      }
+      return {};
+    },
+    //--------------
     // Return tag object with all tags { tagId, tagName }
     getTags: (state) => state.tagData,
+    //--------------
     getMovieTags: (state) => (movieId) => {
       let movieTags = helpers.retrieveMovieTagIds(state, movieId);
       // Since we are only storing the tagId, we need to
@@ -54,6 +74,7 @@ export const config = {
       // This helper function will do that
       return helpers.buildTagObjFromIds(state, movieTags, true);
     },
+    //--------------
     getUnusedMovieTags: (state) => (movieId) => {
       let movieTagIds = helpers.retrieveMovieTagIds(state, movieId);
       let allTagIds = helpers.retrieveTagIds(state.getTags);
@@ -61,16 +82,19 @@ export const config = {
       let unusedTagIds = _.difference(allTagIds, movieTagIds);
       return helpers.buildTagObjFromIds(state, unusedTagIds, false);
     },
+    //--------------
     getAllMovieTags: (state) => (movieId) => {
       return _.sortBy(
         [...state.getUnusedMovieTags(movieId), ...state.getMovieTags(movieId)],
         ['tagName']
       );
     },
+    //--------------
     getFilterTags: (state) => {
       let filterTagIds = state.filterData.tags;
       return helpers.buildTagObjFromIds(state, filterTagIds, true);
     },
+    //--------------
     getUnusedFilterTags: (state) => {
       let filterTagIds = state.filterData.tags;
       let allTagIds = helpers.retrieveTagIds(state.getTags);
@@ -79,6 +103,7 @@ export const config = {
       );
       return helpers.buildTagObjFromIds(state, unusedFilterTagIds, false);
     },
+    //--------------
     getAllFilterTags: (state) => {
       return _.sortBy(
         [...state.getUnusedFilterTags, ...state.getFilterTags],

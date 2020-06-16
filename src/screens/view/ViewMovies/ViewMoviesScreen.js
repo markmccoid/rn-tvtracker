@@ -24,7 +24,7 @@ const ViewMoviesScreen = ({ navigation, route }) => {
     };
   };
 
-  console.log('VIEW MOVIE PARAMS', route);
+  // console.log('VIEW MOVIE PARAMS', route);
 
   //NOTE-- posterURL images are 300 x 450
   // Height is 1.5 times the width
