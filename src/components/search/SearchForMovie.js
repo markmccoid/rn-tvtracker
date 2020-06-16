@@ -1,8 +1,8 @@
-import React from "react";
-import { View, Text, TextInput, StyleSheet, Keyboard } from "react-native";
+import React from 'react';
+import { View, Text, TextInput, StyleSheet, Keyboard } from 'react-native';
 // import { SearchBar, Button } from "react-native-elements";
-import { useOvermind } from "../../store/overmind";
-import { useNavigation } from "@react-navigation/native";
+import { useOvermind } from '../../store/overmind';
+import { useNavigation } from '@react-navigation/native';
 
 const SearchForMovie = ({ setSearchString }) => {
   let inputRef = React.useRef(); // Not using right now
@@ -29,7 +29,7 @@ const SearchForMovie = ({ setSearchString }) => {
     //If this function implemented, then we need an
     // action to clear the searchResults object in overmind
     Keyboard.dismiss();
-    setSearchString("");
+    setSearchString('');
   };
 
   return (
@@ -39,6 +39,8 @@ const SearchForMovie = ({ setSearchString }) => {
         onChangeText={(e) => searchPassingTitle(e)}
         value={searchString}
         autoFocus
+        autoCorrect={false}
+        autoCapitalize="none"
         clearButtonMode="while-editing"
         style={styles.searchBar}
       />
@@ -48,7 +50,7 @@ const SearchForMovie = ({ setSearchString }) => {
 
 const styles = StyleSheet.create({
   input: {
-    borderColor: "black",
+    borderColor: 'black',
     borderWidth: 1,
     padding: 5,
     fontSize: 18,
@@ -60,8 +62,8 @@ const styles = StyleSheet.create({
     margin: 10,
     borderRadius: 5,
     borderWidth: 1,
-    borderColor: "black",
-    backgroundColor: "white",
+    borderColor: 'black',
+    backgroundColor: 'white',
   },
 });
 

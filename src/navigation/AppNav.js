@@ -1,8 +1,16 @@
 import React from 'react';
-import { Button, ActivityIndicator } from 'react-native';
+import { View, Text, ActivityIndicator, ImageBackground } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createDrawerNavigator } from '@react-navigation/drawer';
+import {
+  createDrawerNavigator,
+  DrawerContentScrollView,
+  DrawerItemList,
+  DrawerItem,
+} from '@react-navigation/drawer';
 import { useFocusEffect } from '@react-navigation/native';
+
+//Remove if moving tag building elsewhere (should be action to pull stored this just for testing)
+import { useOvermind } from '../store/overmind';
 
 import Firebase from '../storage/firebase';
 import ViewStack from '../screens/view/ViewStack';
@@ -89,10 +97,71 @@ const AppTabsScreen = () => {
   );
 };
 
+// The DrawerContentScrollView takes care of housekeeping for scroll view (notches, etc)
+// The DrawerItemList displays the screens that you pass as children to your drawer
+// The DrawerItem components are your custom components
+// props sent to custom drawer include navigation
+
+function CustomDrawerContent(props) {
+  const { actions } = useOvermind();
+  const { addTagToFilter, clearFilterTags } = actions.oSaved;
+
+  return (
+    <DrawerContentScrollView {...props}>
+      <DrawerItemList {...props} />
+      <DrawerItem
+        label="Settings"
+        onPress={() => props.navigation.navigate('Settings')}
+        style={{
+          borderBottomColor: 'black',
+          borderBottomWidth: 1,
+          width: '100%',
+          padding: 0,
+        }}
+      />
+      <DrawerItem
+        label="Custom filter"
+        onPress={() => {
+          addTagToFilter('f3cea5d6-ccaf-4d46-864c-e6e6d36c7486');
+          props.navigation.closeDrawer();
+        }}
+        style={{
+          borderBottomColor: 'black',
+          borderBottomWidth: 1,
+          width: '100%',
+          padding: 0,
+        }}
+      />
+      <DrawerItem
+        label="Redirect Home"
+        onPress={() => {
+          setTimeout(
+            () =>
+              props.navigation.navigate('ViewMoviesTab', {
+                screen: 'Details',
+                params: { movieId: 520663 },
+              }),
+            500
+          );
+          props.navigation.toggleDrawer();
+        }}
+      />
+      <DrawerItem
+        label="Close"
+        onPress={() => props.navigation.toggleDrawer()}
+      />
+    </DrawerContentScrollView>
+  );
+}
+
 const AppNav = () => {
   return (
     //-- Define the Drawer screens.  HomeStack is part of bottom tabs, but settings is not.
-    <Drawer.Navigator>
+    <Drawer.Navigator
+      drawerType="front"
+      drawerStyle={{}}
+      drawerContent={(props) => <CustomDrawerContent {...props} />}
+    >
       <Drawer.Screen name="<" component={AppTabsScreen} />
       <Drawer.Screen name="Home" component={RedirectToMain} />
       <Drawer.Screen name="Settings" component={Settings} />

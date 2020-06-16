@@ -10,7 +10,6 @@ import {
 import { MaterialIcons } from '@expo/vector-icons';
 
 const SearchResultItem = ({ movie, saveMovie }) => {
-  console.log('search result Item', movie.releaseDate);
   return (
     <View
       style={[styles.container, movie.existsInSaved && styles.existsInSaved]}
@@ -19,11 +18,13 @@ const SearchResultItem = ({ movie, saveMovie }) => {
         <Text style={styles.title}>{movie.title}</Text>
         <View style={styles.genreContainer}>
           {movie.genres.map((genre) => (
-            <Text style={styles.genre}>{genre}</Text>
+            <Text key={genre} style={styles.genre}>
+              {genre}
+            </Text>
           ))}
         </View>
         <View style={styles.dateContainer}>
-          <Text style={styles.dateText}> {movie.releaseDate.formatted}</Text>
+          <Text style={styles.dateText}> {movie.releaseDate?.formatted}</Text>
         </View>
         <Text>{movie.overview}</Text>
         {!movie.existsInSaved && (
