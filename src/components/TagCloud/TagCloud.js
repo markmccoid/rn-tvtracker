@@ -1,7 +1,7 @@
-import React from "react";
-import { View, Text, LayoutAnimation } from "react-native";
-import { AntDesign } from "@expo/vector-icons";
-import { TagContainer, Tag, TagIcon } from "./TagCloudStyles";
+import React from 'react';
+import { View, Text, LayoutAnimation } from 'react-native';
+import { AntDesign } from '@expo/vector-icons';
+import { TagContainer, Tag, TagIcon, TagText } from './TagCloudStyles';
 
 export const TagItem = ({
   tagId,
@@ -9,20 +9,22 @@ export const TagItem = ({
   onSelectTag,
   onDeSelectTag,
   tagName,
+  size = 'm',
 }) => {
   return (
     <Tag
       key={tagId}
+      size={size}
       onPress={() => (isSelected ? onDeSelectTag() : onSelectTag())}
       isSelected={isSelected} //used in styled components
     >
       <TagIcon>
         <AntDesign
           style={{ paddingRight: 5 }}
-          name={isSelected ? "tag" : "tago"}
-          size={20}
+          name={isSelected ? 'tag' : 'tago'}
+          size={size === 's' ? 15 : 20}
         />
-        <Text>{tagName}</Text>
+        <TagText size={size}>{tagName}</TagText>
       </TagIcon>
     </Tag>
   );
