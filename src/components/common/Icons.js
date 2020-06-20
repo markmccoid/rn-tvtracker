@@ -3,6 +3,7 @@ import {
   AntDesign,
   Feather,
   FontAwesome,
+  FontAwesome5,
   MaterialIcons,
   Ionicons,
 } from '@expo/vector-icons';
@@ -49,4 +50,19 @@ export const EditIcon = ({ size, color, style }) => {
 
 export const HeartIcon = ({ size, color, style }) => {
   return <AntDesign name="hearto" size={size} color={color} style={style} />;
+};
+
+export const ImagesIcon = ({ size, color, style }) => {
+  return <FontAwesome5 name="images" size={size} color={color} style={style} />;
+};
+
+export const CaretRightIcon = ({ size, color, style }) => {
+  return (
+    <FontAwesome name="caret-right" size={size} color={color} style={style} />
+  );
+};
+export const CaretDownIcon = ({ size, color, style }) => {
+  return (
+    <FontAwesome name="caret-down" size={size} color={color} style={style} />
+  );
 };

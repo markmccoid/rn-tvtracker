@@ -31,7 +31,6 @@ export const saveMovie = async ({ state, effects, actions }, movieObj) => {
   }
   // get more movie details from tmdbapi
   const movieDetails = await effects.oSaved.getMovieDetails(movieObj.id);
-  console.log('MOVIE DETAILS', movieDetails.data);
   state.oSaved.savedMovies = [movieDetails.data, ...state.oSaved.savedMovies];
   // When saving movie user is left on search screen, this will update
   // the screen to show that the selected movie has been saved

@@ -48,11 +48,9 @@ const ForgotPasswordScreen = ({ navigation, route }) => {
       });
   };
   React.useEffect(() => {
-    console.log('setting focus', emailInputRef.current.focus);
     emailInputRef.current.focus();
   });
   //--- Setup second password for Create User screen
-  console.log('ERRORs', error);
 
   if (isLoading) {
     return (

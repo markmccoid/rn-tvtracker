@@ -15,7 +15,6 @@ import {
 import { movieGetDetails } from '@markmccoid/tmdb_api';
 
 export const initializeStore = async (uid) => {
-  console.log('UID', uid);
   let userDocument = await loadUserDocument(uid);
   let savedMovies = userDocument?.savedMovies || [];
   let tagData = userDocument?.tagData || [];

@@ -6,9 +6,7 @@ let unsubscribe = () => {};
 let undo = () => {};
 export const onInitialize = async ({ state, effects, actions }) => {
   // Sets up Listener for Auth state.  If logged
-  console.log('setting up listener');
   unsubscribe = Firebase.auth().onAuthStateChanged((user) => {
-    console.log('In firebase auth listener 2');
     if (user) {
       actions.oAdmin.logUserIn(user);
       actions.oSaved.hyrdateStore(user.uid);

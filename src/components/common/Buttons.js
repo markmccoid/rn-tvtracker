@@ -1,8 +1,8 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { TouchableOpacity, Text, StyleSheet } from "react-native";
-import styled from "styled-components";
-import tinycolor from "tinycolor2";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { TouchableOpacity, Text, StyleSheet } from 'react-native';
+import styled from 'styled-components';
+import tinycolor from 'tinycolor2';
 
 //============================
 //- Standard Button Start
@@ -11,7 +11,7 @@ const ButtonWrapper = styled.TouchableOpacity`
   width: ${(props) => (isNaN(props.width) ? props.width : `${props.width}px`)};
   background-color: ${(props) => `${props.backgroundColor}${props.bgOpacity}`};
   border: ${(props) => `1px solid ${props.borderColor}`};
-  padding: ${(props) => props.size + "px"};
+  padding: ${(props) => props.size + 'px'};
   margin: ${(props) => props.margin};
   border-radius: 8px;
 `;
@@ -25,10 +25,10 @@ const ButtonText = styled.Text`
 export const Button = ({
   onPress,
   title,
-  bgOpacity = "ff",
-  bgColor = "white",
-  color = "black",
-  width = "auto",
+  bgOpacity = 'ff',
+  bgColor = 'white',
+  color = 'black',
+  width = 'auto',
   small = false,
   medium = false,
   large = false,
@@ -37,10 +37,12 @@ export const Button = ({
   textStyle = {},
   disabled = false,
   noBorder = false,
+  before = null, // Components to show before title
+  after = null, // Components to show after title
 }) => {
   // take small/medium/large prop and translate to a size to pass to styled component
-  let size = (small && "5") || (medium && "10") || (large && "15") || 10; //10 becomes the default
-  let textSize = (small && "14") || (medium && "18") || (large && "21") || 18; //18 becomes the default
+  let size = (small && '5') || (medium && '10') || (large && '15') || 10; //10 becomes the default
+  let textSize = (small && '14') || (medium && '18') || (large && '21') || 18; //18 becomes the default
   // if color passed convert to tinycolor object
   let bgTinyColor = tinycolor(bgColor);
   // Make sure a hex string so we can apply the alpha value
@@ -64,12 +66,16 @@ export const Button = ({
       size={size}
       margin={margin}
       backgroundColor={backgroundColor}
-      borderColor={borderColor + ((noBorder && "00") || "")} // tack on alpha channel of transparent if noBorder true, else tack on nothing
+      borderColor={borderColor + ((noBorder && '00') || '')} // tack on alpha channel of transparent if noBorder true, else tack on nothing
       style={{ ...wrapperStyle }}
     >
-      <ButtonText textSize={textSize} style={{ ...textStyle }}>
-        {title}
-      </ButtonText>
+      {before}
+      {title && (
+        <ButtonText textSize={textSize} style={{ ...textStyle }}>
+          {title}
+        </ButtonText>
+      )}
+      {after}
     </ButtonWrapper>
   );
 };
@@ -118,7 +124,7 @@ export const CircleButton = ({
   onPress,
   title,
   width = 50,
-  bgOpacity = "ff",
+  bgOpacity = 'ff',
 }) => {
   return (
     <CircleButtonWrapper onPress={onPress} bgOpacity={bgOpacity} width={width}>

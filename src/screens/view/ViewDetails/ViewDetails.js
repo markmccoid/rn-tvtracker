@@ -1,18 +1,25 @@
 import React, { useEffect } from 'react';
 import {
   View,
+  Animated,
   Text,
   Image,
   ScrollView,
   Linking,
   SafeAreaView,
   StyleSheet,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import { Button, CircleButton } from '../../../components/common/Buttons';
 import { useOvermind } from '../../../store/overmind';
 import { useDimensions } from '@react-native-community/hooks';
 import { useCastData } from '../../../hooks/useCastData';
 import TagCloud, { TagItem } from '../../../components/TagCloud/TagCloud';
+import {
+  CaretDownIcon,
+  CaretRightIcon,
+  ImagesIcon,
+} from '../../../components/common/Icons';
 
 import DetailMainInfo from './DetailMainInfo';
 import DetailCastInfo from './DetailCastInfo';
@@ -21,7 +28,11 @@ import PickImage from './PickImage';
 const ViewDetails = ({ navigation, route }) => {
   const [viewTags, setViewTags] = React.useState(false);
   const [viewPickImage, setPickImage] = React.useState(false);
-  // const [cast, setCast] = React.useState([]);
+  // using to control when the animation is done in PickImage
+  // vpiAnimation = 'closing' means the button is closing the pick image component
+  const [vpiAnimation, setvpiAnimation] = React.useState(undefined);
+  // Animated Icons
+  const iconAnim = React.useRef(new Animated.Value(0)).current;
 
   let movieId = route.params?.movieId;
   const castData = useCastData(movieId);
@@ -32,8 +43,20 @@ const ViewDetails = ({ navigation, route }) => {
   let { removeTagFromMovie, addTagToMovie } = actions.oSaved;
   const { width, height } = useDimensions().window;
   const dims = useDimensions();
-  // Get the Movie details
-  // const { posterURL}
+
+  const RotateDown = () => {
+    Animated.timing(iconAnim, {
+      toValue: 90,
+      duration: 500,
+    }).start();
+  };
+  const RotateUp = () => {
+    Animated.timing(iconAnim, {
+      toValue: 0,
+      duration: 500,
+    }).start();
+  };
+
   // Set the title to the current movie title
   navigation.setOptions({ title: movie.title });
 
@@ -111,17 +134,86 @@ const ViewDetails = ({ navigation, route }) => {
             color="#fff"
             noBorder
           />
-          <Button
-            onPress={() => setPickImage(!viewPickImage)}
-            title="Pick Image"
+          {/* <Button
+            onPress={() => {
+              if (viewPickImage) {
+                RotateUp(); //start icon animation
+              } else {
+                RotateDown();
+              }
+              setPickImage(!viewPickImage);
+            }}
             bgOpacity="ff"
             bgColor="#52aac9"
             small
             width={100}
-            wrapperStyle={{ borderRadius: 0 }}
+            wrapperStyle={{ borderRadius: 0, flexDirection: 'row', padding: 5 }}
             color="#fff"
             noBorder
-          />
+            before={
+              <Animated.View
+                style={{
+                  marginLeft: 5,
+                  transform: [
+                    {
+                      rotate: iconAnim.interpolate({
+                        inputRange: [0, 90],
+                        outputRange: ['0deg', '90deg'],
+                      }),
+                    },
+                  ],
+                }}
+              >
+                <CaretRightIcon size={20} color="white" />
+              </Animated.View>
+            }
+            after={
+              <ImagesIcon size={20} color="white" style={{ marginLeft: 20 }} />
+            }
+          /> */}
+          <TouchableWithoutFeedback
+            onPress={() => {
+              if (viewPickImage) {
+                RotateUp(); //start icon animation
+              } else {
+                RotateDown();
+              }
+              if (!vpiAnimation || vpiAnimation === 'closing') {
+                setPickImage(true);
+                setvpiAnimation('opening');
+              } else if (vpiAnimation === 'opening') {
+                setvpiAnimation('closing');
+              }
+            }}
+          >
+            <View
+              style={{
+                borderRadius: 0,
+                flexDirection: 'row',
+                padding: 5,
+                backgroundColor: '#52aac9',
+                width: 100,
+                justifyContent: 'center',
+              }}
+            >
+              <Animated.View
+                style={{
+                  marginLeft: 5,
+                  transform: [
+                    {
+                      rotate: iconAnim.interpolate({
+                        inputRange: [0, 90],
+                        outputRange: ['0deg', '90deg'],
+                      }),
+                    },
+                  ],
+                }}
+              >
+                <CaretRightIcon size={20} color="white" />
+              </Animated.View>
+              <ImagesIcon size={20} color="white" style={{ marginLeft: 20 }} />
+            </View>
+          </TouchableWithoutFeedback>
         </View>
 
         <View style={{ display: viewTags ? '' : 'none' }}>
@@ -148,7 +240,13 @@ const ViewDetails = ({ navigation, route }) => {
           </TagCloud>
         </View>
 
-        {viewPickImage && <PickImage movieId={movie.id} />}
+        {viewPickImage && (
+          <PickImage
+            movieId={movie.id}
+            setViewPickImage={setPickImage}
+            vpiAnimation={vpiAnimation}
+          />
+        )}
 
         <View style={styles.castInfo}>
           {castData.map((person) => (

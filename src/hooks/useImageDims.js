@@ -10,11 +10,10 @@ export const useImageDims = (size = 'm') => {
   // Height is 1.5 times the width
   if (size === 'm') {
     posterWidth = width / 2.2;
-    posterHeight = posterWidth * 1.5;
+  } else if (size === 'l') {
+    posterWidth = width / 1.1;
   }
 
-  return {
-    posterWidth,
-    posterHeight,
-  };
+  posterHeight = posterWidth * 1.5;
+  return [posterWidth, posterHeight];
 };
