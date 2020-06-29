@@ -19,6 +19,9 @@ export const config = {
       tagOperator: 'OR',
       searchFilter: undefined,
     },
+    // saved filters that can be applied
+    // will be an array of object {id, name, description, tagOperator, tags: []}
+    savedFilters: [],
     //------- Getters -----------//
     // sort = ['title', 'date']
     getFilteredMovies: (state) => (sort = 'title', direction = 'asc') => {

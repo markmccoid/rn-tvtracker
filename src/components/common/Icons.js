@@ -66,3 +66,20 @@ export const CaretDownIcon = ({ size, color, style }) => {
     <FontAwesome name="caret-down" size={size} color={color} style={style} />
   );
 };
+
+//----------------
+//- Drawer Icons
+//----------------
+export const SignOutIcon = ({ size, color, style }) => {
+  return (
+    <FontAwesome name="sign-out" color={color} size={size} style={style} />
+  );
+};
+export const HomeIcon = ({ size, color, style }) => {
+  return <FontAwesome name="home" color={color} size={size} style={style} />;
+};
+export const SettingsIcon = ({ size, color, style }) => {
+  return (
+    <Ionicons name="ios-settings" color={color} size={size} style={style} />
+  );
+};

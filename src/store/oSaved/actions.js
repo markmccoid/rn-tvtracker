@@ -2,6 +2,8 @@ import _ from 'lodash';
 import uuidv4 from 'uuid/v4';
 import { pipe, debounce, mutate, filter } from 'overmind';
 
+// export actions for saved filters.
+export * from './actionsSavedFilters';
 //================================================================
 // - INITIALIZE (Hydrate Store)
 //================================================================
@@ -10,6 +12,7 @@ export const hyrdateStore = async ({ state, effects }, uid) => {
   state.oSaved.savedMovies = userDocData.savedMovies;
   state.oSaved.tagData = userDocData.tagData;
   state.oSaved.userData = userDocData.userData;
+  state.oSaved.savedFilters = userDocData.savedFilters;
 };
 
 //================================================================
@@ -180,15 +183,13 @@ export const addTagToMovie = async ({ state, effects }, payload) => {
   if (!userData.tags) {
     userData.tags = {};
   }
+  // if the movieId property doesn't exist then not tags have been added, so add as a new array
   if (!userData.tags.hasOwnProperty(movieId)) {
     userData.tags[movieId] = [tagId];
   } else {
     userData.tags[movieId] = [...userData.tags[movieId], tagId];
   }
-  // Add tag to movieId property on object
-  // userData.tags[movieId] = userData.tags[movieId]
-  //   ? [...userData.tags[movieId], tagId]
-  //   : [tagId];
+
   // Save userData to local storage
   await effects.oSaved.saveUserData(userData);
 };

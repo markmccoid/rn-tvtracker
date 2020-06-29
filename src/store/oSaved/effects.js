@@ -11,6 +11,7 @@ import {
   storeSavedMovies,
   storeTagData,
   storeUserData,
+  storeSavedFilters,
 } from '../../storage/firestore';
 import { movieGetDetails } from '@markmccoid/tmdb_api';
 
@@ -19,7 +20,8 @@ export const initializeStore = async (uid) => {
   let savedMovies = userDocument?.savedMovies || [];
   let tagData = userDocument?.tagData || [];
   let userData = userDocument?.userData || {};
-  return { savedMovies, tagData, userData };
+  let savedFilters = userDocument?.savedFilters || [];
+  return { savedMovies, tagData, userData, savedFilters };
   // From async Storage
   // let savedMovies = await loadSavedMovies();
   // let savedTags = await loadSavedTags();
@@ -37,6 +39,10 @@ export const saveTags = async (tags) => {
 
 export const saveUserData = async (userData) => {
   await storeUserData(userData);
+};
+
+export const saveSavedFilters = async (savedFiltersData) => {
+  await storeSavedFilters(savedFiltersData);
 };
 
 export const getMovieDetails = async (movieId) => {
