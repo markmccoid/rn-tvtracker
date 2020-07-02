@@ -10,10 +10,12 @@ import {
   HomeIcon,
   SettingsIcon,
   SignOutIcon,
+  FilterIcon,
 } from '../components/common/Icons';
 import { useOvermind } from '../store/overmind';
 
 import Firebase from '../storage/firebase';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 // The DrawerContentScrollView takes care of housekeeping for scroll view (notches, etc)
 // The DrawerItemList displays the screens that you pass as children to your drawer
 // The DrawerItem components are your custom components
@@ -21,7 +23,9 @@ import Firebase from '../storage/firebase';
 
 function AppNavDrawerContent(props) {
   const { state, actions } = useOvermind();
-  const { addSavedFilter, addTagToFilter, clearFilterTags } = actions.oSaved;
+  const { addSavedFilter, applySavedFilter, clearFilterTags } = actions.oSaved;
+  const { getDrawerSavedFilters } = state.oSaved;
+  const savedFilters = getDrawerSavedFilters;
   return (
     <View style={{ flex: 1 }}>
       <View
@@ -49,30 +53,31 @@ function AppNavDrawerContent(props) {
           />
         </View>
 
-        <View style={styles.customFiltersWrapper}>
-          <Text style={styles.sectionTitle}>Custom Filters</Text>
-          <DrawerItem
-            label="Custom filter"
-            onPress={() => {
-              addSavedFilter({
-                tagOperator: 'AND',
-                tags: [
-                  'f3cea5d6-ccaf-4d46-864c-e6e6d36c7486',
-                  'b98b7d14-ac7c-414c-b084-4d585de74665',
-                ],
-                name: 'Mark-Lori Next',
-                description: 'The next movies for mark and lori',
-              });
-              props.navigation.closeDrawer();
-            }}
-            style={{
-              borderBottomColor: 'black',
-              borderBottomWidth: 1,
-              width: '100%',
-              padding: 0,
-            }}
-          />
+        <View style={styles.savedFiltersSectionWrapper}>
+          <View style={{ marginLeft: 17, flexDirection: 'row' }}>
+            <FilterIcon size={20} style={{ marginRight: 10 }} />
+            <Text style={[styles.sectionTitle, styles.savedFilterTitle]}>
+              Saved Filters
+            </Text>
+          </View>
+
+          <View style={styles.savedFiltersWrapper}>
+            {savedFilters.map((filterObj) => (
+              <TouchableOpacity
+                key={filterObj.id}
+                onPress={() => {
+                  clearFilterTags();
+                  applySavedFilter(filterObj.id);
+                  props.navigation.closeDrawer();
+                }}
+                style={styles.savedFilterItem}
+              >
+                <Text style={styles.savedFilterLabel}>{filterObj.name}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
         </View>
+
         <DrawerItem
           label="Redirect Home"
           onPress={() => {
@@ -113,11 +118,32 @@ const styles = StyleSheet.create({
     borderBottomColor: 'black',
     borderBottomWidth: 1,
   },
-  customFiltersWrapper: {
-    margin: 15,
+  savedFiltersSectionWrapper: {
+    marginTop: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: 'black',
   },
   sectionTitle: {
     fontSize: 16,
+  },
+  savedFiltersWrapper: {
+    marginLeft: 25,
+  },
+  savedFilterTitle: {
+    marginBottom: 10,
+  },
+  savedFilterLabel: {
+    color: 'black',
+    fontSize: 14,
+  },
+  savedFilterItem: {
+    padding: 10,
+    marginVertical: 4,
+    marginHorizontal: 10,
+    borderRadius: 8,
+    backgroundColor: '#ccc',
+    borderColor: '#555',
+    borderWidth: 1,
   },
 });
 

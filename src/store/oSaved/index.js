@@ -108,10 +108,19 @@ export const config = {
     },
     //--------------
     getAllFilterTags: (state) => {
+      /*
+      Returns an array of all tags with the isSelected property set to either true or false 
+      depending on if the tag is in state.filterData.tags array.
+      */
       return _.sortBy(
         [...state.getUnusedFilterTags, ...state.getFilterTags],
         ['tagName']
       );
+    },
+    //------------------
+    getDrawerSavedFilters: (state) => {
+      // Return only savedFilters that should be shown in the drawer menu
+      return _.filter(state.savedFilters, { showInDrawer: true });
     },
   },
   actions,

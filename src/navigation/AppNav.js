@@ -101,6 +101,7 @@ const AppNav = () => {
       drawerContent={(props) => <AppNavDrawerContent {...props} />}
     >
       <Drawer.Screen name="<" component={AppTabsScreen} />
+      <Drawer.Screen name="Settings" component={SettingsStackScreen} />
       {/* <Drawer.Screen name="Home" component={RedirectToMain} />
       <Drawer.Screen name="Settings" component={SettingsStackScreen} /> */}
     </Drawer.Navigator>
