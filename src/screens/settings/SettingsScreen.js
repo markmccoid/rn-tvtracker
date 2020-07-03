@@ -1,6 +1,14 @@
 import React from 'react';
-import { SafeAreaView, Text, Button, StyleSheet } from 'react-native';
+import {
+  SafeAreaView,
+  View,
+  Text,
+  Button,
+  ScrollView,
+  StyleSheet,
+} from 'react-native';
 import { useOvermind } from '../../store/overmind';
+import SavedFiltersView from '../../components/settings/SavedFiltersView';
 
 const Settings = ({ navigation }) => {
   const { state, actions } = useOvermind();
@@ -8,19 +16,19 @@ const Settings = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.settingsText}>Saved Filters</Text>
-      {savedFilters.map((savedFilter) => {
-        return (
-          <Text key={savedFilter.id} style={styles.settingsText}>
-            {savedFilter.name}
+      <ScrollView>
+        <View style={styles.settingsContainer}>
+          <Text style={styles.settingsText}>Saved Filters</Text>
+          <SavedFiltersView />
+        </View>
+        <View style={styles.settingsContainer}>
+          <Text style={styles.settingsText}>Set Default Filter</Text>
+          <Text>
+            This will be a dropdown box with all the filters. User can choose
+            one which will be applied everytime the application is started
           </Text>
-        );
-      })}
-      <Button title="Home" onPress={() => navigation.goBack()} />
-      <Button
-        title="Create"
-        onPress={() => navigation.navigate('Create Saved Filter')}
-      />
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -31,8 +39,12 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginHorizontal: 10,
   },
+  settingsContainer: {
+    margin: 5,
+  },
   settingsText: {
-    fontSize: 16,
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });
 

@@ -1,7 +1,6 @@
 import uuidv4 from 'uuid/v4';
 
 export const addSavedFilter = ({ state, actions, effects }, savedFilterObj) => {
-  console.log('IN addsavedFilter');
   // Add id using uuid
   savedFilterObj = { id: uuidv4(), ...savedFilterObj };
   // push onto current saved filters
@@ -11,13 +10,35 @@ export const addSavedFilter = ({ state, actions, effects }, savedFilterObj) => {
   effects.oSaved.saveSavedFilters(state.oSaved.savedFilters);
 };
 
+export const updateSavedFilter = (
+  { state, actions, effects },
+  savedFilterObj
+) => {
+  // create a new array of filters with the passed object's filter updated
+  const newFilters = state.oSaved.savedFilters.map((filterObj) => {
+    if (filterObj.id === savedFilterObj.id) {
+      return savedFilterObj;
+    }
+    return filterObj;
+  });
+  //Store back into Overmind
+  state.oSaved.savedFilters = newFilters;
+  // Save to Firebase
+  effects.oSaved.saveSavedFilters(newFilters);
+};
+
 export const deleteSavedFilter = (
   { state, actions, effects },
-  savedFilterId
+  filterIdToDelete
 ) => {
   // TODO Make sure this filter is not used in the side bar or as the default
   // TODO Delete Filter from Store
-  // TODO Store new set of saved filters to Firebase
+  const savedFilters = state.oSaved.savedFilters;
+  state.oSaved.savedFilters = savedFilters.filter(
+    (filter) => filter.id !== filterIdToDelete
+  );
+  // Save to Firebase
+  effects.oSaved.saveSavedFilters(state.oSaved.savedFilters);
 };
 
 //================================================================

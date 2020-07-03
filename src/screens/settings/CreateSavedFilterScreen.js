@@ -8,6 +8,7 @@ import {
   ScrollView,
   StyleSheet,
 } from 'react-native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import TagCloud, { TagItem } from '../../components/TagCloud/TagCloud';
 import { Button } from '../../components/common/Buttons';
 import { ButtonGroup } from 'react-native-elements';
@@ -19,11 +20,16 @@ const CreateSavedFilterScreen = ({ navigation }) => {
   const [tagOperator, setTagOperator] = React.useState('AND');
   const [showInDrawer, setShowInDrawer] = React.useState(false);
 
+  const route = useRoute();
+  const filterId = route?.params?.filterId;
+
+  console.log('ROUTE PARAMS', filterId);
+
   const tagOperators = ['AND', 'OR'];
 
   const { state, actions } = useOvermind();
   const { getTags } = state.oSaved;
-  const { addSavedFilter } = actions.oSaved;
+  const { addSavedFilter, updateSavedFilter } = actions.oSaved;
 
   const onSaveFilter = () => {
     //Make sure Filter name is filled in
@@ -36,7 +42,10 @@ const CreateSavedFilterScreen = ({ navigation }) => {
      * showInDrawer
      */
     if (!filterName && !selectedTags.length) {
-      Alert.alert('Fix', 'Must have a filter name at least one tag selected');
+      Alert.alert(
+        'Problem Saving',
+        'Must have a filter name at least one tag selected'
+      );
       return;
     }
     const filterObj = {

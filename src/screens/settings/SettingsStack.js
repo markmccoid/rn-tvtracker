@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, TouchableOpacity, Settings } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { MenuIcon } from '../../components/common/Icons';
+import { MenuIcon, HomeIcon } from '../../components/common/Icons';
 
 import SettingsScreen from './SettingsScreen';
 import CreateSavedFilterScreen from './CreateSavedFilterScreen';
@@ -9,8 +9,14 @@ import CreateSavedFilterScreen from './CreateSavedFilterScreen';
 const SettingsStack = createStackNavigator();
 
 const SettingsStackScreen = () => {
+  //NOTE: - I have set this as model so that other screens (currently just "Create Saved Filter") open up as model
+  // -- if you have some screens you don't want to be model then you will need to embed another Stack within
+  // -- i.e. the main "Settings" screen will be a stack.
   return (
-    <SettingsStack.Navigator>
+    <SettingsStack.Navigator
+      screenOptions={{ animationEnabled: false }}
+      mode="modal"
+    >
       <SettingsStack.Screen
         name="Settings"
         component={SettingsScreen}
@@ -23,12 +29,22 @@ const SettingsStackScreen = () => {
                 </TouchableOpacity>
               );
             },
+            headerRight: () => {
+              return (
+                <TouchableOpacity
+                  onPress={() => navigation.navigate('ViewMovies')}
+                >
+                  <HomeIcon size={30} style={{ marginRight: 10 }} />
+                </TouchableOpacity>
+              );
+            },
           };
         }}
       />
       <SettingsStack.Screen
-        name="Create Saved Filter"
+        name="CreateSavedFilter"
         component={CreateSavedFilterScreen}
+        options={{ animationEnabled: true, title: 'Create Saved Filter' }}
       />
     </SettingsStack.Navigator>
   );
