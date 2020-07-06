@@ -51,15 +51,17 @@ const ViewStackScreen = () => {
             route?.state?.routeNames[route.state.index] || 'Movies';
           let params = route?.state?.routes[route.state.index].params;
           let paramShowSearch = params?.showSearch;
-
+          let title = currentScreenName === 'Movies' ? 'Movies' : 'Set Filter';
           return {
-            title: 'Movies',
+            title: title,
             headerLeft: () => {
-              return (
-                <TouchableOpacity onPress={() => navigation.openDrawer()}>
-                  <MenuIcon size={30} style={{ marginLeft: 10 }} />
-                </TouchableOpacity>
-              );
+              if (currentScreenName === 'Movies') {
+                return (
+                  <TouchableOpacity onPress={() => navigation.openDrawer()}>
+                    <MenuIcon size={30} style={{ marginLeft: 10 }} />
+                  </TouchableOpacity>
+                );
+              }
             },
             headerRight: () => {
               if (currentScreenName === 'Movies') {

@@ -24,7 +24,17 @@ export const storeTagData = async (tags) => {
 export const storeUserData = async (userData) => {
   let uid = Firebase.auth().currentUser.uid;
   let userDocRef = await firestore.collection('users').doc(uid);
-  return userDocRef.update({ userData: userData });
+  return userDocRef.update({ userData });
+};
+
+export const storeUserDataSettings = async (userDataSettings) => {
+  let uid = Firebase.auth().currentUser.uid;
+  let userDocRef = await firestore.collection('users').doc(uid);
+  return userDocRef.update({
+    userData: {
+      setting: userDataSettings,
+    },
+  });
 };
 
 export const storeSavedFilters = async (savedFiltersData) => {

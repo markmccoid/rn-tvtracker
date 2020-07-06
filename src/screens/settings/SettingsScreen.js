@@ -10,6 +10,8 @@ import {
 import { useOvermind } from '../../store/overmind';
 import SavedFiltersView from '../../components/settings/SavedFiltersView';
 
+import DefaultFilter from './DefaultFilter';
+
 const Settings = ({ navigation }) => {
   const { state, actions } = useOvermind();
   const { savedFilters } = state.oSaved;
@@ -27,6 +29,7 @@ const Settings = ({ navigation }) => {
             This will be a dropdown box with all the filters. User can choose
             one which will be applied everytime the application is started
           </Text>
+          <DefaultFilter />
         </View>
       </ScrollView>
     </SafeAreaView>

@@ -11,8 +11,10 @@ import {
   storeSavedMovies,
   storeTagData,
   storeUserData,
+  storeUserDataSettings,
   storeSavedFilters,
 } from '../../storage/firestore';
+import _ from 'lodash';
 import { movieGetDetails } from '@markmccoid/tmdb_api';
 
 export const initializeStore = async (uid) => {
@@ -37,9 +39,12 @@ export const saveTags = async (tags) => {
   await storeTagData(tags);
 };
 
-export const saveUserData = async (userData) => {
+// Debounce saving user data.  This is so that if the user makes multiple changes
+// We wait until they are done and then write the change to firebase.
+//NOTE: This change is made immediately to the Overmind store (done in Actions)
+export const saveUserData = _.debounce(async (userData) => {
   await storeUserData(userData);
-};
+}, 10000);
 
 export const saveSavedFilters = async (savedFiltersData) => {
   await storeSavedFilters(savedFiltersData);

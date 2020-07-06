@@ -40,6 +40,9 @@ function AppNavDrawerContent(props) {
             onPress={() =>
               props.navigation.navigate('ViewMoviesTab', {
                 screen: 'ViewMovies',
+                params: {
+                  screen: 'Movies',
+                },
               })
             }
           />

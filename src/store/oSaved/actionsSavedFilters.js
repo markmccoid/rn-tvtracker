@@ -1,5 +1,9 @@
 import uuidv4 from 'uuid/v4';
-
+/**
+ * addSavedFilter - Adds a new saved filter to the store and then stores it in Firebase.
+ * @param {*} param0
+ * @param {object} savedFilterObj
+ */
 export const addSavedFilter = ({ state, actions, effects }, savedFilterObj) => {
   // Add id using uuid
   savedFilterObj = { id: uuidv4(), ...savedFilterObj };
@@ -10,6 +14,12 @@ export const addSavedFilter = ({ state, actions, effects }, savedFilterObj) => {
   effects.oSaved.saveSavedFilters(state.oSaved.savedFilters);
 };
 
+/**
+ * updateSavedFilter - Updates an existing saved filter with the passed properties.
+ * and then saves to Firebase
+ * @param {*} param0
+ * @param {ojbect} savedFilterObj
+ */
 export const updateSavedFilter = (
   { state, actions, effects },
   savedFilterObj
@@ -27,6 +37,11 @@ export const updateSavedFilter = (
   effects.oSaved.saveSavedFilters(newFilters);
 };
 
+/**
+ * deleteSavedFilter - deletes the filter associated with the passed ID and then udpates Firebase
+ * @param {*} param0
+ * @param {string} filterIdToDelete
+ */
 export const deleteSavedFilter = (
   { state, actions, effects },
   filterIdToDelete
@@ -54,4 +69,16 @@ export const applySavedFilter = ({ state, actions }, savedFilterId) => {
   filterToApply.tags.forEach((tagId) => addTagToFilter(tagId));
   // Add the tagOperator to the filter.
   setTagOperator(filterToApply.tagOperator);
+};
+
+//--------------------------------------------
+//- Set Default Filter -- oSaved.userData.settings.defaultFilter
+export const setDefaultFilter = (
+  { state, actions, effects },
+  defaultFilter
+) => {
+  const userSettings = state.oSaved.userData.settings;
+  state.oSaved.userData.settings = { ...userSettings, defaultFilter };
+  //TODO create firebase function and store to firebase.
+  effects.oSaved.saveUserData(state.oSaved.userData);
 };

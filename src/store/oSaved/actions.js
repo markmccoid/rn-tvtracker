@@ -7,12 +7,19 @@ export * from './actionsSavedFilters';
 //================================================================
 // - INITIALIZE (Hydrate Store)
 //================================================================
-export const hyrdateStore = async ({ state, effects }, uid) => {
+export const hyrdateStore = async ({ state, actions, effects }, uid) => {
   let userDocData = await effects.oSaved.initializeStore(uid);
   state.oSaved.savedMovies = userDocData.savedMovies;
   state.oSaved.tagData = userDocData.tagData;
   state.oSaved.userData = userDocData.userData;
   state.oSaved.savedFilters = userDocData.savedFilters;
+  // Apply a default filter, if one has been selected in settings
+  const defaultFilterId = state.oSaved.userData.settings.defaultFilter;
+  if (defaultFilterId) {
+    //Apply default Filter
+    console.log(defaultFilterId);
+    actions.oSaved.applySavedFilter(defaultFilterId);
+  }
 };
 
 //================================================================
@@ -190,7 +197,7 @@ export const addTagToMovie = async ({ state, effects }, payload) => {
     userData.tags[movieId] = [...userData.tags[movieId], tagId];
   }
 
-  // Save userData to local storage
+  // Save userData to firestore
   await effects.oSaved.saveUserData(userData);
 };
 
@@ -200,7 +207,7 @@ export const removeTagFromMovie = async ({ state, effects }, payload) => {
   userData.tags[movieId] = userData.tags[movieId].filter(
     (tag) => tag !== tagId
   );
-  // Save userData to local storage
+  // Save userData to firestore
   await effects.oSaved.saveUserData(userData);
 };
 

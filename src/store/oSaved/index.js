@@ -12,6 +12,9 @@ export const config = {
     // Object containing movieIds and related user data like tags
     userData: {
       tags: {},
+      settings: {
+        defaultFilter: undefined,
+      },
     },
     // Object containing any filter data
     filterData: {
