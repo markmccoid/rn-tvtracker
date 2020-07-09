@@ -82,3 +82,7 @@ export const setDefaultFilter = (
   //TODO create firebase function and store to firebase.
   effects.oSaved.saveUserData(state.oSaved.userData);
 };
+
+export const testSettingsUpdate = ({ state, actions, effects }) => {
+  effects.oSaved.saveUserDataSettings('Are Tags Still');
+};

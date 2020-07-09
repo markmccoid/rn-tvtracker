@@ -29,12 +29,13 @@ export const storeUserData = async (userData) => {
 
 export const storeUserDataSettings = async (userDataSettings) => {
   let uid = Firebase.auth().currentUser.uid;
-  let userDocRef = await firestore.collection('users').doc(uid);
-  return userDocRef.update({
-    userData: {
-      setting: userDataSettings,
-    },
-  });
+  console.log('IN FB', uid);
+  let movieSnapshot = await firestore
+    .collection('users')
+    .doc(uid)
+    .collection('savedMovies')
+    .get();
+  movieSnapshot.docs.map((doc) => console.log('DOC', doc.id, doc.data()));
 };
 
 export const storeSavedFilters = async (savedFiltersData) => {

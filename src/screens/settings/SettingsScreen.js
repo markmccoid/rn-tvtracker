@@ -30,6 +30,10 @@ const Settings = ({ navigation }) => {
             one which will be applied everytime the application is started
           </Text>
           <DefaultFilter />
+          <Button
+            onPress={actions.oSaved.testSettingsUpdate}
+            title="Test Firestore"
+          />
         </View>
       </ScrollView>
     </SafeAreaView>

@@ -46,6 +46,9 @@ export const saveUserData = _.debounce(async (userData) => {
   await storeUserData(userData);
 }, 10000);
 
+export const saveUserDataSettings = (userDataSettings) => {
+  storeUserDataSettings(userDataSettings);
+};
 export const saveSavedFilters = async (savedFiltersData) => {
   await storeSavedFilters(savedFiltersData);
 };
