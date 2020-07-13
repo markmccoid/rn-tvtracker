@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import _ from "lodash";
 // These functions are used by the getters in the state
 // They help abstract common functionality used by multiple getters
 export const retrieveTagIds = (tagObjArray) => {
@@ -8,10 +8,10 @@ export const retrieveTagIds = (tagObjArray) => {
 export const retrieveMovieTagIds = (state, movieId) => {
   // Check to make sure we have tags for passed movieId
 
-  if (!state.userData.tags || !state.userData.tags[movieId]) {
+  if (!state.taggedMovies || !state.taggedMovies[movieId]) {
     return [];
   }
-  return state.userData.tags[movieId];
+  return state.taggedMovies[movieId];
 };
 
 export const buildTagObjFromIds = (state, tagIdArray, isSelected) => {
@@ -26,14 +26,14 @@ export const buildTagObjFromIds = (state, tagIdArray, isSelected) => {
     }
     return final;
   }, []);
-  return _.sortBy(tagsObj, ['tagName']);
+  return _.sortBy(tagsObj, ["tagName"]);
 };
 
-export const filterMovies = (savedMoviesIn, userData, filterData) => {
-  let movieTags = userData.tags;
+export const filterMovies = (savedMoviesIn, taggedMovies, filterData) => {
+  let movieTags = taggedMovies;
   let { tags: filterTags, tagOperator, searchFilter } = filterData;
   let savedMovies = [...savedMoviesIn];
-  // If we have no tags stored for movies in userData.tags
+  // If we have no tags stored for movies in taggedMovies
   // then return empty array as no movies will match since no movies have been tagged.
   // Remember userData.tag is an object with movieIds as the key/property
   if (!movieTags && !searchFilter) {
@@ -44,7 +44,7 @@ export const filterMovies = (savedMoviesIn, userData, filterData) => {
       item.title.toLowerCase().includes(searchFilter)
     );
   }
-  if (tagOperator === 'AND' && filterTags?.length > 0) {
+  if (tagOperator === "AND" && filterTags?.length > 0) {
     // AND filter for passed tags
     savedMovies = savedMovies.filter((movie) => {
       if (movieTags[movie.id]) {
@@ -52,7 +52,7 @@ export const filterMovies = (savedMoviesIn, userData, filterData) => {
       }
       return false;
     });
-  } else if (tagOperator === 'OR' && filterTags?.length > 0) {
+  } else if (tagOperator === "OR" && filterTags?.length > 0) {
     // OR filter for passed tags
     savedMovies = savedMovies.filter((movie) => {
       if (movieTags[movie.id]) {

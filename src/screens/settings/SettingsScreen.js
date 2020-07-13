@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   SafeAreaView,
   View,
@@ -6,11 +6,11 @@ import {
   Button,
   ScrollView,
   StyleSheet,
-} from 'react-native';
-import { useOvermind } from '../../store/overmind';
-import SavedFiltersView from '../../components/settings/SavedFiltersView';
+} from "react-native";
+import { useOvermind } from "../../store/overmind";
+import SavedFiltersView from "../../components/settings/SavedFiltersView";
 
-import DefaultFilter from './DefaultFilter';
+import DefaultFilter from "./DefaultFilter";
 
 const Settings = ({ navigation }) => {
   const { state, actions } = useOvermind();
@@ -25,15 +25,8 @@ const Settings = ({ navigation }) => {
         </View>
         <View style={styles.settingsContainer}>
           <Text style={styles.settingsText}>Set Default Filter</Text>
-          <Text>
-            This will be a dropdown box with all the filters. User can choose
-            one which will be applied everytime the application is started
-          </Text>
+          <Text>Choose a saved filter to be run when app starts.</Text>
           <DefaultFilter />
-          <Button
-            onPress={actions.oSaved.testSettingsUpdate}
-            title="Test Firestore"
-          />
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -51,7 +44,7 @@ const styles = StyleSheet.create({
   },
   settingsText: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 });
 

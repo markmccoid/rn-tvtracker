@@ -1,9 +1,8 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { Button } from '../common/Buttons';
-import { EditIcon, DeleteIcon } from '../common/Icons';
-import { useOvermind } from '../../store/overmind';
+import React from "react";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { EditIcon, DeleteIcon } from "../common/Icons";
+import { useOvermind } from "../../store/overmind";
 
 const SavedFiltersItem = ({ savedFilter }) => {
   const navigation = useNavigation();
@@ -13,7 +12,7 @@ const SavedFiltersItem = ({ savedFilter }) => {
     <View style={styles.container}>
       <TouchableOpacity
         style={styles.nameContainer}
-        onPress={() => console.log('filter id', savedFilter.id)}
+        onPress={() => console.log("filter id", savedFilter.id)}
       >
         <Text key={savedFilter.id} style={styles.filterTitle}>
           {savedFilter.name}
@@ -21,16 +20,16 @@ const SavedFiltersItem = ({ savedFilter }) => {
       </TouchableOpacity>
       <View
         style={{
-          flexDirection: 'row',
-          alignItems: 'center',
+          flexDirection: "row",
+          alignItems: "center",
           width: 50,
-          justifyContent: 'space-between',
+          justifyContent: "space-between",
         }}
       >
         <TouchableOpacity
           onPress={() =>
-            navigation.navigate('CreateSavedFilter', {
-              params: { filterId: savedFilter.id },
+            navigation.navigate("CreateSavedFilter", {
+              filterId: savedFilter.id,
             })
           }
         >
@@ -50,9 +49,9 @@ const SavedFiltersItem = ({ savedFilter }) => {
 const styles = StyleSheet.create({
   container: {
     padding: 5,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   nameContainer: {
     padding: 5,

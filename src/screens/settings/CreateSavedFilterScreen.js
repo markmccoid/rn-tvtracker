@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   Alert,
   View,
@@ -7,29 +7,38 @@ import {
   Switch,
   ScrollView,
   StyleSheet,
-} from 'react-native';
-import { useNavigation, useRoute } from '@react-navigation/native';
-import TagCloud, { TagItem } from '../../components/TagCloud/TagCloud';
-import { Button } from '../../components/common/Buttons';
-import { ButtonGroup } from 'react-native-elements';
-import { useOvermind } from '../../store/overmind';
+} from "react-native";
+import TagCloud, { TagItem } from "../../components/TagCloud/TagCloud";
+import { Button } from "../../components/common/Buttons";
+import { ButtonGroup } from "react-native-elements";
+import { useOvermind } from "../../store/overmind";
+import { setMovieEditingId } from "../../store/oAdmin/actions";
 
-const CreateSavedFilterScreen = ({ navigation }) => {
+const CreateSavedFilterScreen = ({ navigation, route }) => {
   const [selectedTags, setSelectedTags] = React.useState([]);
   const [filterName, setFilterName] = React.useState(undefined);
-  const [tagOperator, setTagOperator] = React.useState('AND');
+  const [tagOperator, setTagOperator] = React.useState("AND");
   const [showInDrawer, setShowInDrawer] = React.useState(false);
+  const [inEditFilter, setInEditFilter] = React.useState(false);
 
-  const route = useRoute();
-  const filterId = route?.params?.filterId;
-
-  console.log('ROUTE PARAMS', filterId);
-
-  const tagOperators = ['AND', 'OR'];
+  const tagOperators = ["AND", "OR"];
 
   const { state, actions } = useOvermind();
   const { getTags } = state.oSaved;
   const { addSavedFilter, updateSavedFilter } = actions.oSaved;
+
+  const filterId = route?.params?.filterId;
+  React.useEffect(() => {
+    // Get the filterId of the filter being edited
+    if (filterId) {
+      const filterObj = state.oSaved.getSavedFilter(filterId);
+      setFilterName(filterObj.name);
+      setTagOperator(filterObj.tagOperator);
+      setShowInDrawer(filterObj.showInDrawer);
+      setSelectedTags(filterObj.tags);
+      setInEditFilter(true);
+    }
+  }, []);
 
   const onSaveFilter = () => {
     //Make sure Filter name is filled in
@@ -43,12 +52,13 @@ const CreateSavedFilterScreen = ({ navigation }) => {
      */
     if (!filterName && !selectedTags.length) {
       Alert.alert(
-        'Problem Saving',
-        'Must have a filter name at least one tag selected'
+        "Problem Saving",
+        "Must have a filter name at least one tag selected"
       );
       return;
     }
     const filterObj = {
+      id: filterId,
       name: filterName,
       tags: selectedTags,
       tagOperator,
@@ -113,7 +123,7 @@ const CreateSavedFilterScreen = ({ navigation }) => {
         </View>
         <View>
           <Button
-            title="Save Filter"
+            title={inEditFilter ? "Update Filter" : "Save Filter"}
             onPress={() => onSaveFilter()}
             bgColor="#aeaeae"
             bgOpacity="aa"
@@ -132,14 +142,14 @@ const styles = StyleSheet.create({
   title: {
     marginVertical: 10,
     fontSize: 15,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   filterName: {
     padding: 10,
     borderRadius: 5,
     borderWidth: 1,
-    borderColor: 'black',
-    backgroundColor: 'white',
+    borderColor: "black",
+    backgroundColor: "white",
   },
   tagContainer: {
     marginVertical: 10,
