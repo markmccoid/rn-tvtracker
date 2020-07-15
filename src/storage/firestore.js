@@ -11,7 +11,7 @@ export const loadUserDocument = async (uid) => {
   // return the full user document's data
   const userDocSnapshot = await firestore.collection("users").doc(uid).get();
   const userDoc = userDocSnapshot.data();
-
+  console.log("--------Loading User Doc----------------");
   return { savedMovies, ...userDoc };
 };
 
@@ -65,16 +65,25 @@ export const addMovieToFirestore = async (movieObj) => {
 };
 
 // Update the movie document in firestore.
-// expecting full object, not using the { merge: true } flag
-export const updateMovieInFirestore = (movieObj) => {
+// expecting full object, not using the { merge: true } flag although, that may only work with set
+// export const updateMovieInFirestore = (movieObj) => {
+//   let uid = Firebase.auth().currentUser.uid;
+//   let movieId = movieObj.id;
+//   let movieDocRef = firestore
+//     .collection("users")
+//     .doc(uid)
+//     .collection("savedMovies")
+//     .doc(movieId.toString());
+//   return movieDocRef.update({ ...movieObj });
+//};
+export const updateMovieInFirestore = (movieId, updateStmt) => {
   let uid = Firebase.auth().currentUser.uid;
-  let movieId = movieObj.id;
   let movieDocRef = firestore
     .collection("users")
     .doc(uid)
     .collection("savedMovies")
     .doc(movieId.toString());
-  return movieDocRef.update({ ...movieObj });
+  return movieDocRef.update(updateStmt);
 };
 
 // Delete a single savedMovie document from firestore

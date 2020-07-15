@@ -41,8 +41,16 @@ export const addMovie = async (movieObj) => {
   await addMovieToFirestore(movieObj);
 };
 
-export const updateMovie = async (movieObj) => {
-  await updateMovieInFirestore(movieObj);
+/**
+ *
+ * @param {number} movieId
+ * @param {object} updateStmt - firestore formatted update
+ * { taggedWith: [...]}
+ * { posterURL: 'url to poster'}
+ * etc...
+ */
+export const updateMovie = async (movieId, updateStmt) => {
+  await updateMovieInFirestore(movieId, updateStmt);
 };
 
 export const deleteMovie = async (movieId) => {
