@@ -19,7 +19,7 @@
     "expo": "~36.0.0",
     "expo-blur": "~8.0.0",
     "firebase": "7.9.0",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "overmind": "^23.0.1",
     "overmind-react": "^24.0.1",
     "prop-types": "^15.7.2",
