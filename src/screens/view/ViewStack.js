@@ -54,7 +54,7 @@ const ViewStackScreen = () => {
           let paramShowSearch = params?.showSearch;
           let title =
             currentScreenName === "Movies"
-              ? `Movies-${numMovies}`
+              ? `${numMovies} Movies`
               : "Set Filter";
           return {
             title: title,
