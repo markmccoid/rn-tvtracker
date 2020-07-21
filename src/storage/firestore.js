@@ -11,7 +11,6 @@ export const loadUserDocument = async (uid) => {
   // return the full user document's data
   const userDocSnapshot = await firestore.collection("users").doc(uid).get();
   const userDoc = userDocSnapshot.data();
-  console.log("--------Loading User Doc----------------");
   return { savedMovies, ...userDoc };
 };
 
@@ -36,7 +35,6 @@ export const storeUserData = async (userData) => {
 
 export const storeUserDataSettings = async (userDataSettings) => {
   let uid = Firebase.auth().currentUser.uid;
-  console.log("IN FB", uid);
   let movieSnapshot = await firestore
     .collection("users")
     .doc(uid)

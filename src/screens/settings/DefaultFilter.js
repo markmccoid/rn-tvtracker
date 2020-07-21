@@ -7,7 +7,6 @@ const DefaultFilter = () => {
   const { state, actions } = useOvermind();
   const { savedFilters, settings } = state.oSaved;
   const defaultFilter = settings?.defaultFilter;
-  console.log(defaultFilter);
 
   const { setDefaultFilter } = actions.oSaved;
   const filterItems = savedFilters.map((filter) => ({
