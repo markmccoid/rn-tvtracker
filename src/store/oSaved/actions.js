@@ -17,6 +17,8 @@ export const hyrdateStore = async ({ state, actions, effects }, uid) => {
   state.oSaved.taggedMovies = internalActions.createTaggedMoviesObj(
     userDocData.savedMovies
   ); //userDocData.taggedMovies;
+
+  console.log(state.oSaved.savedMovies.map((movie) => movie.title));
   // Apply a default filter, if one has been selected in settings
   const defaultFilterId = state.oSaved.settings.defaultFilter;
   if (defaultFilterId) {
@@ -36,7 +38,7 @@ export const hyrdateStore = async ({ state, actions, effects }, uid) => {
  */
 //*TODO have save movie use movieGetDetails(movieId) to get full details and save to firebase
 export const saveMovie = async ({ state, effects, actions }, movieObj) => {
-  //! We are tagging the result set so that the search screen will now that the movie
+  //! We are tagging the result set so that the search screen will know that the movie
   //! is part of our saved movies.
   //! BUT we do NOT need to save this field in firebase.  We can add it during hydration.
 
@@ -83,6 +85,7 @@ export const deleteMovie = async ({ state, effects }, movieId) => {
 };
 
 /**
+ * * updated for New Data Model
  * updateMovieBackdropImage - update the passed movieIds backdrop image and save to state and firestore
  *
  * @param {*} context
@@ -97,7 +100,9 @@ export const updateMovieBackdropImage = async ({ state, effects }, payload) => {
     }
   });
   //Save to firestore
-  await effects.oSaved.saveMovies(state.oSaved.savedMovies);
+  const updateStmt = { backdropURL: backdropURL };
+  //Save to firestore
+  await effects.oSaved.updateMovie(movieId, updateStmt);
 };
 /**
  * * updated for New Data Model

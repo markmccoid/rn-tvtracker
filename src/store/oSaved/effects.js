@@ -45,6 +45,9 @@ export const addMovie = async (movieObj) => {
  *
  * @param {number} movieId
  * @param {object} updateStmt - firestore formatted update
+ * the update statement is just an object telling what portion of the movie to update.
+ * to update the posterimage you send { posterImage: posterImage }
+ * NOTE: Can't use the shortcut in JS where if key and data variable are named same, you just pass one.
  * { taggedWith: [...]}
  * { posterURL: 'url to poster'}
  * etc...

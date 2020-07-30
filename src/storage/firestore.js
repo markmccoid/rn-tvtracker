@@ -8,10 +8,13 @@ export const loadUserDocument = async (uid) => {
     .collection("savedMovies")
     .get();
   const savedMovies = movieSnapshot.docs.map((doc) => doc.data());
+  console.log(savedMovies.map((movie) => movie.title));
   // return the full user document's data
   const userDocSnapshot = await firestore.collection("users").doc(uid).get();
   const userDoc = userDocSnapshot.data();
-  return { savedMovies, ...userDoc };
+  // Sending destructured object first.  Had issue where savedMovie object was in user collection
+  // and it was overwriting the savedMovies collection.  Shouldn't happen, but this will keep error from happening if it does.
+  return { ...userDoc, savedMovies };
 };
 
 //! OLD DATA MODEL FUNCTION
@@ -51,6 +54,7 @@ export const storeSavedFilters = async (savedFiltersData) => {
 
 //* ------------------------------------------------
 //* NEW DATA MODEL.  Add new document to savedMovies Collection
+// document id will be movieId converted to string
 export const addMovieToFirestore = async (movieObj) => {
   let uid = Firebase.auth().currentUser.uid;
   let movieId = movieObj.id;
