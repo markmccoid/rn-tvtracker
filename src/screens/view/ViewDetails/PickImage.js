@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   View,
   Animated,
@@ -7,21 +7,22 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-} from 'react-native';
-import { useOvermind } from '../../../store/overmind';
-import { useImageDims } from '../../../hooks/useImageDims';
-import { movieGetImages } from '@markmccoid/tmdb_api';
+} from "react-native";
+
+import { useOvermind } from "../../../store/overmind";
+import { useImageDims } from "../../../hooks/useImageDims";
+import { movieGetImages } from "@markmccoid/tmdb_api";
 
 const getImages = async (movieId) => {
-  const posterImages = await movieGetImages(movieId, 'posters');
+  const posterImages = await movieGetImages(movieId, "posters");
   return posterImages.data;
 };
 
 const PickImage = ({ movieId, vpiAnimation, setViewPickImage }) => {
   const [posterData, setPosterData] = React.useState([]);
   const [largeImage, setLargeImage] = React.useState(undefined);
-  const [posterWidth, posterHeight] = useImageDims('m');
-  const [posterWidthLarge, posterHeightLarge] = useImageDims('l');
+  const [posterWidth, posterHeight] = useImageDims("m");
+  const [posterWidthLarge, posterHeightLarge] = useImageDims("l");
   // Get the opacity animation value
   const fadeAnim = React.useRef(new Animated.Value(0)).current;
   // Get Overmind store data
@@ -43,7 +44,7 @@ const PickImage = ({ movieId, vpiAnimation, setViewPickImage }) => {
     Animated.timing(fadeAnim, {
       toValue: 0,
       duration: 800,
-    }).start(() => setViewPickImage(false));
+    }).start(() => setViewPickImage(1));
   };
   // Called once on mount with array of posterURLs and when new poster is selected
   // They are annotated with isCurrentImage
@@ -75,7 +76,7 @@ const PickImage = ({ movieId, vpiAnimation, setViewPickImage }) => {
   }, []);
 
   React.useEffect(() => {
-    if (vpiAnimation === 'closing') {
+    if (vpiAnimation === "closing") {
       fadeOut();
     }
   }, [vpiAnimation]);
@@ -124,7 +125,7 @@ const PickImage = ({ movieId, vpiAnimation, setViewPickImage }) => {
                         width: posterWidth,
                         height: posterHeight,
                         borderWidth: isCurrentImage ? 2 : 0,
-                        borderColor: 'red',
+                        borderColor: "red",
                       },
                       styles.image,
                     ]}
@@ -143,18 +144,18 @@ const PickImage = ({ movieId, vpiAnimation, setViewPickImage }) => {
 const styles = StyleSheet.create({
   container: {
     margin: 10,
-    backgroundColor: 'white',
-    borderColor: 'black',
+    backgroundColor: "white",
+    borderColor: "black",
     borderWidth: 1,
   },
   scroll: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-around',
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-around",
     paddingTop: 7,
   },
   imageShadow: {
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 2.5, height: 3 },
     shadowOpacity: 0.6,
     shadowRadius: 2,
@@ -164,18 +165,18 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   headerContainer: {
-    backgroundColor: '#ccc',
-    borderBottomColor: 'black',
+    backgroundColor: "#ccc",
+    borderBottomColor: "black",
     borderBottomWidth: 1,
   },
   header: {
     fontSize: 15,
-    fontWeight: 'bold',
-    textAlign: 'center',
+    fontWeight: "bold",
+    textAlign: "center",
     padding: 10,
   },
   largeImageContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     marginVertical: 10,
   },
   largeImage: {

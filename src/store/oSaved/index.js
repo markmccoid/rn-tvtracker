@@ -1,25 +1,29 @@
-import _ from 'lodash';
-import * as actions from './actions';
-import * as effects from './effects';
-import { onInitialize } from './onInitialize';
-import * as helpers from './stateHelpers';
+import _ from "lodash";
+import * as actions from "./actions";
+import * as effects from "./effects";
+import { onInitialize } from "./onInitialize";
+import * as helpers from "./stateHelpers";
 
 export const config = {
   onInitialize,
   state: {
     savedMovies: [], // Movie data pulled from @markmccoid/tmdb_api
     tagData: [], // Array of Objects containing tag info { tagId, tagName, members[]??}
-    // Object containing movieIds and related user data like tags
+    //! obsolete, delete after finishing with data structure change
     userData: {
       tags: {},
-      settings: {
-        defaultFilter: undefined,
-      },
+    },
+    // This will hold an object (with key of MovieId) for each movie that has
+    // been "tagged".
+    taggedMovies: {},
+    //Settings object
+    settings: {
+      defaultFilter: undefined,
     },
     // Object containing any filter data
     filterData: {
       tags: [],
-      tagOperator: 'OR',
+      tagOperator: "OR",
       searchFilter: undefined,
     },
     // saved filters that can be applied
@@ -27,22 +31,22 @@ export const config = {
     savedFilters: [],
     //------- Getters -----------//
     // sort = ['title', 'date']
-    getFilteredMovies: (state) => (sort = 'title', direction = 'asc') => {
+    getFilteredMovies: (state) => (sort = "title", direction = "asc") => {
       let movieList = state.savedMovies;
       // set lodash sort iteratees (either title or a function for date)
-      if (sort === 'date') {
+      if (sort === "date") {
         sort = (el) => el.releaseDate.date;
       }
       //Determine if we are filtering via Tags or with a typed in Search
       if (state.filterData.tags.length > 0 || state.filterData.searchFilter) {
         movieList = helpers.filterMovies(
           state.savedMovies,
-          state.userData,
+          state.taggedMovies,
           state.filterData
         );
       }
       movieList = _.sortBy(movieList, [sort]);
-      return direction === 'asc' ? movieList : movieList.reverse();
+      return direction === "asc" ? movieList : movieList.reverse();
     },
     //--------------
     // Get the movie details object for the passed movie ID
@@ -50,7 +54,7 @@ export const config = {
       if (!movieId) {
         return null;
       }
-      let moviesObj = _.keyBy(state.savedMovies, 'id');
+      let moviesObj = _.keyBy(state.savedMovies, "id");
       return moviesObj[movieId];
     },
     //--------------
@@ -92,7 +96,7 @@ export const config = {
     getAllMovieTags: (state) => (movieId) => {
       return _.sortBy(
         [...state.getUnusedMovieTags(movieId), ...state.getMovieTags(movieId)],
-        ['tagName']
+        ["tagName"]
       );
     },
     //--------------
@@ -117,13 +121,19 @@ export const config = {
       */
       return _.sortBy(
         [...state.getUnusedFilterTags, ...state.getFilterTags],
-        ['tagName']
+        ["tagName"]
       );
     },
-    //------------------
+    //------------------------
+    //- SAVED FILTERS Getters
+    //------------------------
     getDrawerSavedFilters: (state) => {
       // Return only savedFilters that should be shown in the drawer menu
       return _.filter(state.savedFilters, { showInDrawer: true });
+    },
+    // Returns the savedFilter Object associated with passed filterId
+    getSavedFilter: (state) => (filterId) => {
+      return state.savedFilters.filter((item) => item.id === filterId)[0];
     },
   },
   actions,

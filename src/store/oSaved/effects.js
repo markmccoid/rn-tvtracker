@@ -5,7 +5,7 @@ import {
   saveUserDataToStorage,
   loadSavedTags,
   loadSavedUserData,
-} from '../../storage';
+} from "../../storage";
 import {
   loadUserDocument,
   storeSavedMovies,
@@ -13,46 +13,78 @@ import {
   storeUserData,
   storeUserDataSettings,
   storeSavedFilters,
-} from '../../storage/firestore';
-import _ from 'lodash';
-import { movieGetDetails } from '@markmccoid/tmdb_api';
+} from "../../storage/firestore";
+//* NEW DATA MODEL Funcs
+import {
+  addMovieToFirestore,
+  deleteMovieFromFirestore,
+  storeSettings,
+  storeTaggedMovies,
+  updateMovieInFirestore,
+} from "../../storage/firestore";
+
+import _ from "lodash";
+import { movieGetDetails } from "@markmccoid/tmdb_api";
 
 export const initializeStore = async (uid) => {
   let userDocument = await loadUserDocument(uid);
   let savedMovies = userDocument?.savedMovies || [];
   let tagData = userDocument?.tagData || [];
-  let userData = userDocument?.userData || {};
+  let settings = userDocument?.settings || {};
   let savedFilters = userDocument?.savedFilters || [];
-  return { savedMovies, tagData, userData, savedFilters };
-  // From async Storage
-  // let savedMovies = await loadSavedMovies();
-  // let savedTags = await loadSavedTags();
-  // let savedUserData = await loadSavedUserData();
-  // return { savedMovies, savedTags, savedUserData };
+  let taggedMovies = userDocument?.taggedMovies || {};
+  return { savedMovies, tagData, settings, savedFilters, taggedMovies };
 };
 
-export const saveMovies = async (movies) => {
-  await storeSavedMovies(movies);
+//* Movie Document DB operations
+export const addMovie = async (movieObj) => {
+  await addMovieToFirestore(movieObj);
 };
 
+/**
+ *
+ * @param {number} movieId
+ * @param {object} updateStmt - firestore formatted update
+ * the update statement is just an object telling what portion of the movie to update.
+ * to update the posterimage you send { posterImage: posterImage }
+ * NOTE: Can't use the shortcut in JS where if key and data variable are named same, you just pass one.
+ * { taggedWith: [...]}
+ * { posterURL: 'url to poster'}
+ * etc...
+ */
+export const updateMovie = async (movieId, updateStmt) => {
+  await updateMovieInFirestore(movieId, updateStmt);
+};
+
+export const deleteMovie = async (movieId) => {
+  await deleteMovieFromFirestore(movieId);
+};
+
+//* Settings Object DB Operations -- only save since each time
+//* we overwrite ALL the setting with new settings
+export const saveSettings = async (settings) => {
+  await storeSettings(settings);
+};
+
+// Debounce saving tagged movie data.  This is so that if the user makes multiple changes
+// we wait until they are done and then write the change to firebase.
+//NOTE: This change is made immediately to the Overmind store (done in Actions)
+// we are just trying to minimize writes to the DB.
+export const saveTaggedMovies = _.debounce(async (taggedMovies) => {
+  await storeTaggedMovies(taggedMovies);
+}, 8000);
+
+//* Save the user defined Tag List to the DB
 export const saveTags = async (tags) => {
   await storeTagData(tags);
 };
 
-// Debounce saving user data.  This is so that if the user makes multiple changes
-// We wait until they are done and then write the change to firebase.
-//NOTE: This change is made immediately to the Overmind store (done in Actions)
-export const saveUserData = _.debounce(async (userData) => {
-  await storeUserData(userData);
-}, 10000);
-
-export const saveUserDataSettings = (userDataSettings) => {
-  storeUserDataSettings(userDataSettings);
-};
+//* Save the user created filters (savedFilters) to the DB
 export const saveSavedFilters = async (savedFiltersData) => {
   await storeSavedFilters(savedFiltersData);
 };
 
+//* Get more movie details
 export const getMovieDetails = async (movieId) => {
   let results = await movieGetDetails(movieId);
   return {

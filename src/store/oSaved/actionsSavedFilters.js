@@ -1,14 +1,25 @@
-import uuidv4 from 'uuid/v4';
+import uuidv4 from "uuid/v4";
 /**
  * addSavedFilter - Adds a new saved filter to the store and then stores it in Firebase.
  * @param {*} param0
  * @param {object} savedFilterObj
  */
 export const addSavedFilter = ({ state, actions, effects }, savedFilterObj) => {
-  // Add id using uuid
-  savedFilterObj = { id: uuidv4(), ...savedFilterObj };
-  // push onto current saved filters
-  state.oSaved.savedFilters.push(savedFilterObj);
+  // If id is undefined, then add id using uuid
+  // If id is NOT undefined, the assume updating existing filter.
+  if (!savedFilterObj.id) {
+    savedFilterObj = { ...savedFilterObj, id: uuidv4() };
+    // push onto current saved filters
+    state.oSaved.savedFilters.push(savedFilterObj);
+  } else {
+    // This is an update.  Find the filter to update and update it.
+    state.oSaved.savedFilters = state.oSaved.savedFilters.map((filter) => {
+      if (filter.id === savedFilterObj.id) {
+        return savedFilterObj;
+      }
+      return filter;
+    });
+  }
 
   // Save to Firebase
   effects.oSaved.saveSavedFilters(state.oSaved.savedFilters);
@@ -77,12 +88,8 @@ export const setDefaultFilter = (
   { state, actions, effects },
   defaultFilter
 ) => {
-  const userSettings = state.oSaved.userData.settings;
-  state.oSaved.userData.settings = { ...userSettings, defaultFilter };
+  const userSettings = state.oSaved.settings;
+  state.oSaved.settings = { ...userSettings, defaultFilter };
   //TODO create firebase function and store to firebase.
-  effects.oSaved.saveUserData(state.oSaved.userData);
-};
-
-export const testSettingsUpdate = ({ state, actions, effects }) => {
-  effects.oSaved.saveUserDataSettings('Are Tags Still');
+  effects.oSaved.saveSettings(state.oSaved.settings);
 };

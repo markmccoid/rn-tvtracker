@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   AntDesign,
   Feather,
@@ -6,7 +6,7 @@ import {
   FontAwesome5,
   MaterialIcons,
   Ionicons,
-} from '@expo/vector-icons';
+} from "@expo/vector-icons";
 
 export const ViewMovieIcon = ({ size, color, style = {} }) => {
   return <MaterialIcons name="movie" size={size} color={color} style={style} />;
@@ -30,7 +30,7 @@ export const CloseIcon = ({ size, color, style }) => {
   return <AntDesign name="close" size={size} color={color} style={style} />;
 };
 
-export const DeleteIcon = ({ size = 25, color = '#b20a2c', style }) => {
+export const DeleteIcon = ({ size = 25, color = "#b20a2c", style }) => {
   return <AntDesign name="delete" size={size} color={color} style={style} />;
 };
 
@@ -82,4 +82,7 @@ export const SettingsIcon = ({ size, color, style }) => {
   return (
     <Ionicons name="ios-settings" color={color} size={size} style={style} />
   );
+};
+export const UserIcon = ({ size, color, style }) => {
+  return <FontAwesome name="user" color={color} size={size} style={style} />;
 };
