@@ -38,7 +38,7 @@ export const hyrdateStore = async ({ state, actions, effects }, uid) => {
  */
 //*TODO have save movie use movieGetDetails(movieId) to get full details and save to firebase
 export const saveMovie = async ({ state, effects, actions }, movieObj) => {
-  //! We are tagging the result set so that the search screen will know that the movie
+  //! We are tagging the result set so that the search screen will know that the moviegit pu
   //! is part of our saved movies.
   //! BUT we do NOT need to save this field in firebase.  We can add it during hydration.
 
