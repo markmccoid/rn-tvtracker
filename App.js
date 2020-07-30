@@ -12,7 +12,7 @@ export const AuthContext = React.createContext();
 
 const App = () => {
   initTMDB("0e4935aa81b04539beb687d04ff414e3");
-  const overmind = createOvermind(config, { devtools: "192.168.1.5:3031" });
+  const overmind = createOvermind(config, { devtools: "192.168.1.4:3031" });
   return (
     <Provider value={overmind}>
       <NavigationContainer>
