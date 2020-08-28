@@ -7,7 +7,6 @@ export const retrieveTagIds = (tagObjArray) => {
 
 export const retrieveMovieTagIds = (state, movieId) => {
   // Check to make sure we have tags for passed movieId
-
   if (!state.taggedMovies || !state.taggedMovies[movieId]) {
     return [];
   }
@@ -26,7 +25,8 @@ export const buildTagObjFromIds = (state, tagIdArray, isSelected) => {
     }
     return final;
   }, []);
-  return _.sortBy(tagsObj, ["tagName"]);
+  // return _.sortBy(tagsObj, ["tagName"]);
+  return tagsObj;
 };
 
 export const filterMovies = (savedMoviesIn, taggedMovies, filterData) => {

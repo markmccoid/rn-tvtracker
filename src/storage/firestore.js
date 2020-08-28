@@ -8,7 +8,6 @@ export const loadUserDocument = async (uid) => {
     .collection("savedMovies")
     .get();
   const savedMovies = movieSnapshot.docs.map((doc) => doc.data());
-  console.log(savedMovies.map((movie) => movie.title));
   // return the full user document's data
   const userDocSnapshot = await firestore.collection("users").doc(uid).get();
   const userDoc = userDocSnapshot.data();
@@ -43,7 +42,7 @@ export const storeUserDataSettings = async (userDataSettings) => {
     .doc(uid)
     .collection("savedMovies")
     .get();
-  movieSnapshot.docs.map((doc) => console.log("DOC", doc.id, doc.data()));
+  //movieSnapshot.docs.map((doc) => console.log("DOC", doc.id, doc.data()));
 };
 
 export const storeSavedFilters = async (savedFiltersData) => {

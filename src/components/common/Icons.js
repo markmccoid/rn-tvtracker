@@ -18,6 +18,12 @@ export const SearchIcon = ({ size, color, style }) => {
   );
 };
 
+export const DragHandleIcon = ({ size, color, style }) => {
+  return (
+    <MaterialIcons name="drag-handle" size={size} color={color} style={style} />
+  );
+};
+
 export const TagIcon = ({ size, color, style }) => {
   return <FontAwesome name="tags" color={color} size={size} style={style} />;
 };

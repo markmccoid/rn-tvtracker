@@ -18,7 +18,7 @@ export const hyrdateStore = async ({ state, actions, effects }, uid) => {
     userDocData.savedMovies
   ); //userDocData.taggedMovies;
 
-  console.log(state.oSaved.savedMovies.map((movie) => movie.title));
+  // console.log(state.oSaved.savedMovies.map((movie) => movie.title));
   // Apply a default filter, if one has been selected in settings
   const defaultFilterId = state.oSaved.settings.defaultFilter;
   if (defaultFilterId) {
@@ -155,7 +155,7 @@ export const addNewTag = async ({ state, effects }, tagName) => {
   };
 
   state.oSaved.tagData.push(newTag);
-  // Maybe will want to sort tags in some way??
+
   effects.oSaved.saveTags(state.oSaved.tagData);
 };
 
@@ -205,6 +205,16 @@ export const editTag = async ({ state, effects }, payload) => {
   await effects.oSaved.saveTags(state.oSaved.tagData);
 };
 
+/**
+ * Handles updating the whole array of oSaved.tagData
+ * Need to debounce data save effect so only updates once every 15 seconds.
+ * @param {state, effects, actions} overmind params
+ * @param {*} tagId
+ */
+export const updateTags = async ({ state, effects }, payload) => {
+  state.oSaved.tagData = payload;
+  await effects.oSaved.saveTags(state.oSaved.tagData);
+};
 //================================================================
 // - TAGGED MOVIES  Actions
 //================================================================

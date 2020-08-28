@@ -94,10 +94,23 @@ export const config = {
     },
     //--------------
     getAllMovieTags: (state) => (movieId) => {
-      return _.sortBy(
+      // Take the array of movie tag objects (that have the isSelected property set)
+      // and convert to an object with the tagId as the key.
+      // This makes it easy to pull the isSelected flag belo
+      const unsortedTags = _.keyBy(
         [...state.getUnusedMovieTags(movieId), ...state.getMovieTags(movieId)],
-        ["tagName"]
+        "tagId"
       );
+
+      // We want to return the tags sorted as they are in the original array
+      // Pull all the tags and return the array sorted tag with the isSelected
+      // property pulled from unsorted tags
+      sortedTags = state.getTags;
+      return sortedTags.map((tagObj) => ({
+        tagId: tagObj.tagId,
+        tagName: tagObj.tagName,
+        isSelected: unsortedTags[tagObj.tagId].isSelected,
+      }));
     },
     //--------------
     getFilterTags: (state) => {
