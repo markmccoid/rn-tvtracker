@@ -96,7 +96,7 @@ export const config = {
     getAllMovieTags: (state) => (movieId) => {
       // Take the array of movie tag objects (that have the isSelected property set)
       // and convert to an object with the tagId as the key.
-      // This makes it easy to pull the isSelected flag belo
+      // This makes it easy to pull the isSelected flag below
       const unsortedTags = _.keyBy(
         [...state.getUnusedMovieTags(movieId), ...state.getMovieTags(movieId)],
         "tagId"
@@ -105,12 +105,10 @@ export const config = {
       // We want to return the tags sorted as they are in the original array
       // Pull all the tags and return the array sorted tag with the isSelected
       // property pulled from unsorted tags
-      sortedTags = state.getTags;
-      return sortedTags.map((tagObj) => ({
-        tagId: tagObj.tagId,
-        tagName: tagObj.tagName,
-        isSelected: unsortedTags[tagObj.tagId].isSelected,
-      }));
+      return helpers.tagSorter(unsortedTags, {
+        sortType: "fromarray",
+        sortedTagArray: state.getTags,
+      });
     },
     //--------------
     getFilterTags: (state) => {
@@ -128,14 +126,21 @@ export const config = {
     },
     //--------------
     getAllFilterTags: (state) => {
-      /*
-      Returns an array of all tags with the isSelected property set to either true or false 
-      depending on if the tag is in state.filterData.tags array.
-      */
-      return _.sortBy(
+      // Take the array of filter tag objects (that have the isSelected property set and not yet set.)
+      // and convert to an object with the tagId as the key.
+      // This makes it easy to pull the isSelected flag below
+      const unsortedTags = _.keyBy(
         [...state.getUnusedFilterTags, ...state.getFilterTags],
-        ["tagName"]
+        "tagId"
       );
+
+      // We want to return the tags sorted as they are in the original array
+      // Pull all the tags and return the array sorted tag with the isSelected
+      // property pulled from unsorted tags
+      return helpers.tagSorter(unsortedTags, {
+        sortType: "fromarray",
+        sortedTagArray: state.getTags,
+      });
     },
     //------------------------
     //- SAVED FILTERS Getters

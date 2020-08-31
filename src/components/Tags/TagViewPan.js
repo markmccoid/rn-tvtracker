@@ -51,10 +51,11 @@ const TagViewPan = () => {
   const scrollOffset = React.useRef(0);
   const rowHeight = React.useRef(0);
   const currentIdx = React.useRef(-1);
+  const startingIdx = React.useRef(-1);
   const active = React.useRef(false);
   const flatListHeight = React.useRef(0);
   let flatListRef = React.useRef();
-  let listViewRef = React.useRef();
+  let viewListRef = React.useRef();
   const { width, height } = useDimensions().window;
   //Get tag data from Overmind
   const { state, actions } = useOvermind();
@@ -63,7 +64,8 @@ const TagViewPan = () => {
   const { tagData } = state.oSaved;
   const { updateTags, deleteTag } = actions.oSaved;
 
-  // const [data, setData] = React.useState(tagData);
+  // Sets our local data array whenever Overmind's data changes length
+  // We only need to update the local array if an tag is ADDED or REMOVED
   React.useEffect(() => {
     setData([...tagData]);
   }, [tagData.length]);
@@ -84,6 +86,7 @@ const TagViewPan = () => {
       // currentIdx.current = yToIndex(evt.nativeEvent.locationY);
       currentY.current = gestureState.y0;
       currentIdx.current = yToIndex(gestureState.y0);
+      startingIdx.current = currentIdx.current;
       active.current = true;
 
       pointY.setValue(
@@ -117,7 +120,9 @@ const TagViewPan = () => {
       // The user has released all touches while this view is the
       // responder. This typically means a gesture has succeeded
       reset();
-      updateTags(data);
+      if (currentIdx.current !== startingIdx.current) {
+        updateTags(data);
+      }
     },
     onPanResponderTerminate: (evt, gestureState) => {
       // Another component has become the responder, so this gesture
@@ -148,7 +153,7 @@ const TagViewPan = () => {
         currentY.current + 60 >
         flatListTopOffset.current + flatListHeight.current
       ) {
-        listViewRef.current.scrollToOffset({
+        flatListRef.current.scrollToOffset({
           offset: scrollOffset.current + 10,
           animated: false,
         });
@@ -157,7 +162,7 @@ const TagViewPan = () => {
         scrollOffset.current > 0 &&
         currentY.current - 60 <= flatListTopOffset.current
       ) {
-        listViewRef.current.scrollToOffset({
+        flatListRef.current.scrollToOffset({
           offset: scrollOffset.current - 10,
           animated: false,
         });
@@ -213,25 +218,32 @@ const TagViewPan = () => {
                 (rowHeight.current = e.nativeEvent.layout.height)
               }
               style={{
-                padding: 7,
-                backgroundColor: "#ccc",
+                backgroundColor: "#e5e5e5",
                 flexDirection: "row",
+                alignItems: "center",
                 opacity: draggingIdx === index ? 0 : 1,
               }}
             >
-              <View {...(usePanResponder ? _panResponder.panHandlers : {})}>
-                <DragHandleIcon color="black" size={22} />
-              </View>
               <Text
                 style={{
                   fontSize: 18,
                   color: "black",
-                  marginLeft: 25,
+                  marginLeft: 15,
+                  padding: 10,
                   flex: 1,
                 }}
               >
                 {item.tagName}
               </Text>
+              <View
+                style={{
+                  padding: 10,
+                  margin: 0,
+                }}
+                {...(usePanResponder ? _panResponder.panHandlers : {})}
+              >
+                <DragHandleIcon color="black" size={30} />
+              </View>
             </View>
           )}
         </View>
@@ -293,9 +305,10 @@ const TagViewPan = () => {
       /> */}
       <SwipeListView
         listViewRef={(ref) => {
-          listViewRef.current = ref;
+          flatListRef.current = ref;
         }}
         useFlatList
+        style={{ backgroundColor: "#ccc" }}
         data={data}
         scrollEnabled={!dragging}
         onScroll={(e) => (scrollOffset.current = e.nativeEvent.contentOffset.y)}
@@ -305,7 +318,7 @@ const TagViewPan = () => {
         }}
         scrollEventThrottle={16}
         keyExtractor={(item) => item.tagId}
-        renderItem={renderRow}
+        renderItem={(props) => renderRow(props, true)}
         renderHiddenItem={(rowData, rowMap) => {
           return (
             <>
@@ -350,24 +363,28 @@ export default TagViewPan;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginVertical: 10,
+    marginTop: 10,
     width: Dimensions.get("window").width,
     borderTopColor: "black",
-    borderTopWidth: 1,
+    borderTopWidth: 0.5,
+    borderBottomColor: "black",
+    borderBottomWidth: 0.5,
   },
   mainSwipe: {
     backgroundColor: "white",
     borderColor: "black",
     borderWidth: 0.5,
     // height: 40,
-    justifyContent: "center",
-    position: "relative",
+    // justifyContent: "center",
+    // alignItems: "center",
+    // position: "relative",
   },
   backRightBtn: {
     position: "absolute",
     bottom: 0,
     justifyContent: "center",
     top: 0,
+    // paddingVertical: 10,
     width: Dimensions.get("window").width / 3,
     // height: 40,
     // borderColor: "black",

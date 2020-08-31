@@ -12,7 +12,12 @@ export const retrieveMovieTagIds = (state, movieId) => {
   }
   return state.taggedMovies[movieId];
 };
-
+/**
+ *
+ * @param {*} state
+ * @param {*} tagIdArray
+ * @param {*} isSelected
+ */
 export const buildTagObjFromIds = (state, tagIdArray, isSelected) => {
   // loop through all tags and when find a match in passed tagIdArray
   // return an object { tagId, tagName, isSelected }
@@ -25,10 +30,16 @@ export const buildTagObjFromIds = (state, tagIdArray, isSelected) => {
     }
     return final;
   }, []);
-  // return _.sortBy(tagsObj, ["tagName"]);
   return tagsObj;
 };
 
+/**
+ * Filter movies based on the passed in filterData
+ *
+ * @param {array} savedMoviesIn - array of all movies saved
+ * @param {object} taggedMovies - object of all movies that are tagged and their tags
+ * @param {*} filterData - data fo filter on
+ */
 export const filterMovies = (savedMoviesIn, taggedMovies, filterData) => {
   let movieTags = taggedMovies;
   let { tags: filterTags, tagOperator, searchFilter } = filterData;
@@ -62,4 +73,24 @@ export const filterMovies = (savedMoviesIn, taggedMovies, filterData) => {
     });
   }
   return savedMovies;
+};
+
+/**
+ *
+ * @param {array} tagsToSort - Array of tag objects
+ * @param {object} config - sortType and helpers
+ */
+export const tagSorter = (unsortedTags, config) => {
+  const { sortType } = config;
+  // We want to return the tags sorted as they are in the original array
+  // Pull all the tags and return the array sorted tag with the isSelected
+  // property pulled from unsorted tags
+  if (sortType === "fromarray") {
+    const sortedTags = config.sortedTagArray;
+    return sortedTags.map((tagObj) => ({
+      tagId: tagObj.tagId,
+      tagName: tagObj.tagName,
+      isSelected: unsortedTags[tagObj.tagId].isSelected,
+    }));
+  }
 };

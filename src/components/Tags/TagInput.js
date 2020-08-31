@@ -25,7 +25,7 @@ const TagInput = () => {
         <Button
           title="Add"
           medium
-          width="80%"
+          width="100%"
           onPress={() => {
             addNewTag(tagValue);
             setTagValue("");
