@@ -65,6 +65,14 @@ function AppNavDrawerContent(props) {
           />
         </View>
 
+        <View style={styles.menuItemStyle}>
+          <DrawerItem
+            label="Carousel View"
+            icon={({ focused, color, size }) => <SettingsIcon size={size} />}
+            onPress={() => props.navigation.navigate("Carousel View")}
+          />
+        </View>
+
         <View style={styles.savedFiltersSectionWrapper}>
           <View style={{ marginLeft: 17, flexDirection: "row" }}>
             <FilterIcon size={20} style={{ marginRight: 10 }} />

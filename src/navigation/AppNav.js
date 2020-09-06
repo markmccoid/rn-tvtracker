@@ -1,21 +1,22 @@
-import React from 'react';
-import { View, Text, ActivityIndicator, ImageBackground } from 'react-native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createDrawerNavigator } from '@react-navigation/drawer';
-import { useFocusEffect } from '@react-navigation/native';
+import React from "react";
+import { View, Text, ActivityIndicator, ImageBackground } from "react-native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createDrawerNavigator } from "@react-navigation/drawer";
+import { useFocusEffect } from "@react-navigation/native";
 
 //Remove if moving tag building elsewhere (should be action to pull stored this just for testing)
-import { useOvermind } from '../store/overmind';
+import { useOvermind } from "../store/overmind";
 
-import Firebase from '../storage/firebase';
-import ViewStack from '../screens/view/ViewStack';
-import SearchStack from '../screens/search/SearchStack';
-import TagStack from '../screens/tags/TagStack';
+import Firebase from "../storage/firebase";
+import ViewStack from "../screens/view/ViewStack";
+import SearchStack from "../screens/search/SearchStack";
+import TagStack from "../screens/tags/TagStack";
 
-import { ViewMovieIcon, SearchIcon, TagIcon } from '../components/common/Icons';
+import { ViewMovieIcon, SearchIcon, TagIcon } from "../components/common/Icons";
 
-import SettingsStackScreen from '../screens/settings/SettingsStack';
-import AppNavDrawerContent from './AppNavDrawerContent';
+import SettingsStackScreen from "../screens/settings/SettingsStack";
+import TestCarouselAnim from "../screens/view/ViewMovies/TestCarouselAnim";
+import AppNavDrawerContent from "./AppNavDrawerContent";
 //----------------------------------------------------------------
 // Create screenoptions function for TabsNavigator
 //----------------------------------------------------------------
@@ -24,17 +25,17 @@ const tabsScreenOptions = ({ route }) => ({
     let iconComponent;
     let tagStyle = { marginTop: 5 };
     switch (route.name) {
-      case 'ViewMoviesTab':
+      case "ViewMoviesTab":
         iconComponent = (
           <ViewMovieIcon size={size} color={color} style={tagStyle} />
         );
         break;
-      case 'Search':
+      case "Search":
         iconComponent = (
           <SearchIcon size={size} color={color} style={tagStyle} />
         );
         break;
-      case 'Tags':
+      case "Tags":
         iconComponent = <TagIcon size={size} color={color} style={tagStyle} />;
         break;
       default:
@@ -65,9 +66,9 @@ const RedirectToMain = ({ navigation }) => {
   // whenever this component gets focus.
   // Currently this is from the Drawer link "Home"
   useFocusEffect(() => {
-    navigation.navigate('ViewMoviesTab', {
-      screen: 'ViewMovies',
-      params: { screen: 'Filter', forgotParam: 'shit' },
+    navigation.navigate("ViewMoviesTab", {
+      screen: "ViewMovies",
+      params: { screen: "Filter", forgotParam: "shit" },
     });
   });
 
@@ -84,7 +85,7 @@ const AppTabsScreen = () => {
       <AppTabs.Screen
         name="ViewMoviesTab"
         component={ViewStack}
-        options={{ title: 'View Movies' }}
+        options={{ title: "View Movies" }}
       />
       <AppTabs.Screen name="Search" component={SearchStack} />
       <AppTabs.Screen name="Tags" component={TagStack} />
@@ -102,6 +103,7 @@ const AppNav = () => {
     >
       <Drawer.Screen name="<" component={AppTabsScreen} />
       <Drawer.Screen name="Settings" component={SettingsStackScreen} />
+      <Drawer.Screen name="Carousel View" component={TestCarouselAnim} />
       {/* <Drawer.Screen name="Home" component={RedirectToMain} />
       <Drawer.Screen name="Settings" component={SettingsStackScreen} /> */}
     </Drawer.Navigator>
