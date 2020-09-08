@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   View,
   Text,
@@ -6,18 +6,18 @@ import {
   Image,
   StyleSheet,
   ActivityIndicator,
-} from 'react-native';
-import { Button } from '../../components/common/Buttons';
-import { useOvermind } from '../../store/overmind';
-import SearchForMovie from '../../components/search/SearchForMovie';
-import SearchResultItem from '../../components/search/SearchResultItem';
-import { useFocusEffect, useIsFocused } from '@react-navigation/native';
+} from "react-native";
+import { Button } from "../../components/common/Buttons";
+import { useOvermind } from "../../store/overmind";
+import SearchForMovie from "../../components/search/SearchForMovie";
+import SearchResultItem from "../../components/search/SearchResultItem2";
+import { useFocusEffect, useIsFocused } from "@react-navigation/native";
 
 const SearchScreen = ({ navigation }) => {
-  let [searchString, setSearchString] = React.useState('');
+  let [searchString, setSearchString] = React.useState("");
   const flatListRef = React.useRef();
   const { state, actions } = useOvermind();
-  const { saveMovie } = actions.oSaved;
+  const { saveMovie, deleteMovie } = actions.oSaved;
   const {
     searchByTitle,
     setIsNewQuery,
@@ -76,12 +76,14 @@ const SearchScreen = ({ navigation }) => {
         ref={flatListRef}
         data={state.oSearch.resultData}
         keyExtractor={(movie) => movie.id.toString()}
+        numColumns={3}
         renderItem={({ item }) => {
           return (
             <SearchResultItem
               key={item.id}
               movie={item}
               saveMovie={saveMovie}
+              deleteMovie={deleteMovie}
             />
           );
         }}
@@ -100,7 +102,7 @@ const SearchScreen = ({ navigation }) => {
       {isLoading && !isMoreData ? (
         <ActivityIndicator size="large" style={{ flex: 1 }} />
       ) : null}
-      {movieJSX}
+      <View style={{ alignItems: "center" }}>{movieJSX}</View>
     </View>
   );
 };

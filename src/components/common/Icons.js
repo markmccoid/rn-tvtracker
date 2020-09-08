@@ -40,9 +40,16 @@ export const DeleteIcon = ({ size = 25, color = "#b20a2c", style }) => {
   return <AntDesign name="delete" size={size} color={color} style={style} />;
 };
 
+//OLD Check icon has circle around it
+// export const CheckIcon = ({ size, color, style }) => {
+//   return (
+//     <AntDesign name="checkcircleo" size={size} color={color} style={style} />
+//   );
+// };
+// New Check icon has no circle around it
 export const CheckIcon = ({ size, color, style }) => {
   return (
-    <AntDesign name="checkcircleo" size={size} color={color} style={style} />
+    <Ionicons name="ios-checkmark" color={color} size={size} style={style} />
   );
 };
 
@@ -91,4 +98,8 @@ export const SettingsIcon = ({ size, color, style }) => {
 };
 export const UserIcon = ({ size, color, style }) => {
   return <FontAwesome name="user" color={color} size={size} style={style} />;
+};
+//Plus sign icon
+export const AddIcon = ({ size, color, style }) => {
+  return <Ionicons name="ios-add" color={color} size={size} style={style} />;
 };
