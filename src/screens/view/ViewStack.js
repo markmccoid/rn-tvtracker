@@ -35,12 +35,16 @@ const ViewMoviesStack = () => {
     </ViewMoviesStackNav.Navigator>
   );
 };
+
 const ViewStackScreen = () => {
   const { state, actions } = useOvermind();
   let numFilters = state.oSaved.filterData.tags.length;
+  let numGenreFilters = state.oSaved.filterData.genres.length;
   let numMovies = state.oSaved.getFilteredMovies().length;
   let isFiltered = numFilters > 0;
-  const { clearFilterTags } = actions.oSaved;
+  const isGenreFiltered = numGenreFilters > 0;
+
+  const { clearFilterScreen } = actions.oSaved;
   return (
     <ViewStack.Navigator>
       <ViewStack.Screen
@@ -84,7 +88,7 @@ const ViewStackScreen = () => {
                     </TouchableOpacity>
                     <TouchableOpacity
                       onPress={() => navigation.navigate("Filter")}
-                      onLongPress={() => clearFilterTags()}
+                      onLongPress={() => clearFilterScreen()}
                     >
                       <FilterIcon
                         color="black"
@@ -99,6 +103,17 @@ const ViewStackScreen = () => {
                             position: "absolute",
                             top: -5,
                             right: 10,
+                          }}
+                        />
+                      )}
+                      {isGenreFiltered && (
+                        <Badge
+                          status="primary"
+                          value={numGenreFilters}
+                          containerStyle={{
+                            position: "absolute",
+                            top: -5,
+                            left: -5,
                           }}
                         />
                       )}

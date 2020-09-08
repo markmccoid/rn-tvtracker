@@ -33,6 +33,12 @@ export const buildTagObjFromIds = (state, tagIdArray, isSelected) => {
   return tagsObj;
 };
 
+//
+export const buildGenreObjFromArray = (filterGenres, isSelected = true) => {
+  // console.log(filterGenres);
+  // console.log(filterGenres.map((genre) => ({ genre, isSelected })));
+  // return filterGenres.map((genre) => ({ genre, isSelected }));
+};
 /**
  * Filter movies based on the passed in filterData
  *
@@ -42,19 +48,27 @@ export const buildTagObjFromIds = (state, tagIdArray, isSelected) => {
  */
 export const filterMovies = (savedMoviesIn, taggedMovies, filterData) => {
   let movieTags = taggedMovies;
-  let { tags: filterTags, tagOperator, searchFilter } = filterData;
+  let {
+    tags: filterTags,
+    tagOperator,
+    genres: filterGenres,
+    genreOperator,
+    searchFilter,
+  } = filterData;
   let savedMovies = [...savedMoviesIn];
   // If we have no tags stored for movies in taggedMovies
   // then return empty array as no movies will match since no movies have been tagged.
-  // Remember userData.tag is an object with movieIds as the key/property
   if (!movieTags && !searchFilter) {
     return [];
   }
+  // Filter movies based on text typed in search box
   if (searchFilter) {
     savedMovies = savedMovies.filter((item) =>
       item.title.toLowerCase().includes(searchFilter)
     );
   }
+  //-------------------------
+  // Filter based on Tags
   if (tagOperator === "AND" && filterTags?.length > 0) {
     // AND filter for passed tags
     savedMovies = savedMovies.filter((movie) => {
@@ -72,6 +86,20 @@ export const filterMovies = (savedMoviesIn, taggedMovies, filterData) => {
       return false;
     });
   }
+  //-------------------------
+  // Filter based on Genres
+  if (filterGenres?.length > 0) {
+    if (genreOperator === "AND") {
+      savedMovies = savedMovies.filter((movie) => {
+        return filterGenres.every((genre) => movie.genres.includes(genre));
+      });
+    } else if (genreOperator === "OR") {
+      savedMovies = savedMovies.filter((movie) => {
+        return filterGenres.some((genre) => movie.genres.includes(genre));
+      });
+    }
+  }
+
   return savedMovies;
 };
 

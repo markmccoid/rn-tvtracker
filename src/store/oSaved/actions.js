@@ -25,8 +25,22 @@ export const hyrdateStore = async ({ state, actions, effects }, uid) => {
     //Apply default Filter
     actions.oSaved.applySavedFilter(defaultFilterId);
   }
+  // Get movie genres from savedMovies objects
+  state.oSaved.generated.genres = getGenresFromMovies(state.oSaved.savedMovies);
 };
 
+/**
+ * Takes in an array of Movie objects and extracts the
+ * Genres from each returning a unique list of genres
+ * @param {array of Objects} movies
+ */
+const getGenresFromMovies = (movies) => {
+  let genresSet = new Set();
+  movies.forEach((movie) => {
+    movie.genres.forEach((genre) => genresSet.add(genre));
+  });
+  return [...genresSet].sort();
+};
 //================================================================
 // - MOVIE (savedMovies) Actions
 //================================================================
@@ -54,7 +68,7 @@ export const saveMovie = async ({ state, effects, actions }, movieObj) => {
   const movieDetails = await effects.oSaved.getMovieDetails(movieObj.id);
   state.oSaved.savedMovies = [movieDetails.data, ...state.oSaved.savedMovies];
   // When saving movie user is left on search screen, this will update
-  // the screen to show that the selected movie has been saved
+  // the screen to show that the selected movige has been saved
   state.oSearch.isNewQuery = false;
   state.oSearch.resultData = tagResults(searchData);
   //----------------------------
@@ -69,7 +83,7 @@ export const saveMovie = async ({ state, effects, actions }, movieObj) => {
  * @param {*} context
  * @param {string} movieId
  */
-export const deleteMovie = async ({ state, effects }, movieId) => {
+export const deleteMovie = async ({ state, effects, actions }, movieId) => {
   // find and remove movie
   state.oSaved.savedMovies = state.oSaved.savedMovies.filter(
     (movie) => movie.id !== movieId
@@ -78,6 +92,14 @@ export const deleteMovie = async ({ state, effects }, movieId) => {
   //* Don't need to worry about deleting taggedWith in firestore since they are stored in movie document
   //* However we need to update the local store
   delete state.oSaved.taggedMovies[movieId];
+
+  // When saving movie user is left on search screen, this will update
+  // the screen to show that the selected movie has been saved
+  const { tagResults } = actions.oSearch.internal;
+  const searchData = state.oSearch.resultData;
+  state.oSearch.isNewQuery = false;
+  state.oSearch.resultData = tagResults(searchData);
+  //----------------------------
 
   // await effects.oSaved.saveMovies(state.oSaved.savedMovies);
   //* Modified for new Data Model
@@ -264,10 +286,34 @@ export const removeTagFromFilter = ({ state }, tagId) => {
 export const clearFilterTags = ({ state }) => {
   state.oSaved.filterData.tags = [];
 };
+export const clearFilterScreen = ({ state }) => {
+  state.oSaved.filterData.tags = [];
+  state.oSaved.filterData.genres = [];
+};
 
 export const setTagOperator = ({ state }, tagOperator) => {
   state.oSaved.filterData.tagOperator = tagOperator;
 };
+//-----------------------
+// GENRE Actions
+export const addGenreToFilter = ({ state }, genre) => {
+  let filterData = state.oSaved.filterData;
+  filterData.genres.push(genre);
+};
+
+export const removeGenreFromFilter = ({ state }, genre) => {
+  let filterData = state.oSaved.filterData;
+  filterData.genres = filterData.genres.filter((item) => item !== genre);
+};
+
+export const clearFilterGenres = ({ state }) => {
+  state.oSaved.filterData.genres = [];
+};
+
+export const setGenreOperator = ({ state }, genreOperator) => {
+  state.oSaved.filterData.genreOperator = genreOperator;
+};
+
 // Used to search through saved movie list
 // debounce
 export const setSearchFilter = pipe(

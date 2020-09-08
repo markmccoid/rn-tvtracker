@@ -9,10 +9,6 @@ export const config = {
   state: {
     savedMovies: [], // Movie data pulled from @markmccoid/tmdb_api
     tagData: [], // Array of Objects containing tag info { tagId, tagName, members[]??}
-    //! obsolete, delete after finishing with data structure change
-    userData: {
-      tags: {},
-    },
     // This will hold an object (with key of MovieId) for each movie that has
     // been "tagged".
     taggedMovies: {},
@@ -22,23 +18,35 @@ export const config = {
     },
     // Object containing any filter data
     filterData: {
-      tags: [],
       tagOperator: "OR",
+      tags: [],
+      genreOperator: "OR",
+      genres: [],
       searchFilter: undefined,
     },
     // saved filters that can be applied
     // will be an array of object {id, name, description, tagOperator, tags: []}
     savedFilters: [],
+    // all stuff under generated is not saved to firestore
+    generated: {
+      genres: [],
+    },
     //------- Getters -----------//
     // sort = ['title', 'date']
     getFilteredMovies: (state) => (sort = "title", direction = "asc") => {
       let movieList = state.savedMovies;
+
       // set lodash sort iteratees (either title or a function for date)
       if (sort === "date") {
+        // This sort functino will be passed to lodash _.sortBy
         sort = (el) => el.releaseDate.date;
       }
-      //Determine if we are filtering via Tags or with a typed in Search
-      if (state.filterData.tags.length > 0 || state.filterData.searchFilter) {
+      //Determine if any filter criteria is set
+      if (
+        state.filterData.tags.length > 0 ||
+        state.filterData.genres.length > 0 ||
+        state.filterData.searchFilter
+      ) {
         movieList = helpers.filterMovies(
           state.savedMovies,
           state.taggedMovies,
@@ -111,13 +119,21 @@ export const config = {
       });
     },
     //--------------
+    // Returns on the tags that are currently
+    // being used to filter data
+    // NOTE: filter tags only store the tag id, which is why we need to
+    //       call the buildTagObjFromIds and pass whether the tag isSelected or not
+    // tag object returned { tagId, tagName, isSelected }
     getFilterTags: (state) => {
       let filterTagIds = state.filterData.tags;
       return helpers.buildTagObjFromIds(state, filterTagIds, true);
     },
     //--------------
+    // Returns only the tags that are NOT being used to filter data currently
     getUnusedFilterTags: (state) => {
+      // Tags being used to filter currently
       let filterTagIds = state.filterData.tags;
+      // All tags defined in the system
       let allTagIds = helpers.retrieveTagIds(state.getTags);
       let unusedFilterTagIds = allTagIds.filter(
         (tagId) => !filterTagIds.find((tag) => tag === tagId)
@@ -128,12 +144,11 @@ export const config = {
     getAllFilterTags: (state) => {
       // Take the array of filter tag objects (that have the isSelected property set and not yet set.)
       // and convert to an object with the tagId as the key.
-      // This makes it easy to pull the isSelected flag below
+      // This makes it easy to pull the isSelected flag when running the tagSorter function (which returns an array)
       const unsortedTags = _.keyBy(
         [...state.getUnusedFilterTags, ...state.getFilterTags],
         "tagId"
       );
-
       // We want to return the tags sorted as they are in the original array
       // Pull all the tags and return the array sorted tag with the isSelected
       // property pulled from unsorted tags
@@ -141,6 +156,26 @@ export const config = {
         sortType: "fromarray",
         sortedTagArray: state.getTags,
       });
+    },
+
+    //GENRE
+    getFilterGenres: (state) => {
+      let filterGenres = state.filterData.genres;
+      if (filterGenres.length > 0) {
+        return filterGenres.map((genre) => ({ genre, isSelected: true }));
+      }
+      return [];
+    },
+    getUnusedFilterGenres: (state) => {
+      let filterGenres = state.filterData.genres;
+      let allGenres = state.generated.genres;
+      let unusedFilterGenres = allGenres.filter(
+        (genre) => !filterGenres.find((g) => g === genre)
+      );
+      return unusedFilterGenres.map((genre) => ({ genre, isSelected: false }));
+    },
+    getAllFilterGenres: (state) => {
+      return [...state.getFilterGenres, ...state.getUnusedFilterGenres];
     },
     //------------------------
     //- SAVED FILTERS Getters

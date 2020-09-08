@@ -1,15 +1,15 @@
-import React, { useEffect } from 'react';
+import React, { useEffect } from "react";
 import {
   View,
   TextInput,
   TouchableOpacity,
   Text,
   StyleSheet,
-} from 'react-native';
-import { useNavigation, useRoute } from '@react-navigation/native';
-import { useOvermind } from '../../../store/overmind';
+} from "react-native";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { useOvermind } from "../../../store/overmind";
 
-const ListSearchBar = () => {
+const ListSearchBar = ({ onCancel = () => null }) => {
   const { state, actions } = useOvermind();
   const { searchFilter } = state.oSaved;
   const { setSearchFilter } = actions.oSaved;
@@ -27,8 +27,9 @@ const ListSearchBar = () => {
       />
       <TouchableOpacity
         onPress={() => {
-          setSearchFilter('');
+          setSearchFilter("");
           //setShowSearch(false);
+          onCancel();
           navigation.setParams({ showSearch: false });
         }}
       >
@@ -40,17 +41,17 @@ const ListSearchBar = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   searchInput: {
     margin: 10,
     padding: 10,
-    borderColor: 'darkgray',
+    borderColor: "darkgray",
     borderRadius: 5,
     borderWidth: 1,
-    width: '80%',
-    backgroundColor: '#ddd',
+    width: "80%",
+    backgroundColor: "#ddd",
   },
   cancelButton: {},
 });

@@ -1,11 +1,18 @@
-import React, { useEffect } from 'react';
-import { View, Text, FlatList, Image, StyleSheet } from 'react-native';
-import { useOvermind } from '../../../store/overmind';
-import { useDimensions } from '@react-native-community/hooks';
-import ListSearchBar from './ListSearchBar';
+import React, { useEffect } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  FlatList,
+  StyleSheet,
+  Animated,
+} from "react-native";
+import { useOvermind } from "../../../store/overmind";
+import { useDimensions } from "@react-native-community/hooks";
+import ListSearchBar from "./ListSearchBar";
 
-import ViewMoviesListItem from '../../../components/ViewMovies/ViewMoviesListItem';
-import ViewMovieOverlay from './ViewMovieOverlay';
+import ViewMoviesListItem from "../../../components/ViewMovies/ViewMoviesListItem";
+import ViewMovieOverlay from "./ViewMovieOverlay";
 
 const ViewMoviesScreen = ({ navigation, route }) => {
   const { width, height } = useDimensions().window;
@@ -15,6 +22,9 @@ const ViewMoviesScreen = ({ navigation, route }) => {
   const { setMovieEditingId } = actions.oAdmin;
   const { movieEditingId } = state.oAdmin.appState;
   const { getFilteredMovies, getAllMovieTags, getMovieDetails } = state.oSaved;
+  // For use in showing the search input component
+  const offsetY = React.useRef(new Animated.Value(0)).current;
+
   const getItemLayout = (data, index) => {
     let height = index === 1 ? 70 : 150;
     return {
@@ -58,10 +68,21 @@ const ViewMoviesScreen = ({ navigation, route }) => {
 
   return (
     <View style={styles.containerForPortrait}>
-      {showSearch ? <ListSearchBar /> : null}
+      {showSearch ? (
+        <ListSearchBar onCancel={() => setShowSearchInput(false)} />
+      ) : null}
       <FlatList
-        data={getFilteredMovies('date', 'asc')}
+        data={getFilteredMovies("date", "asc")}
         ref={flatListRef}
+        onScroll={(e) => {
+          //   offsetY.setValue(e.nativeEvent.contentOffset.y);
+          //   // console.log("Y", e.nativeEvent.contentOffset.y);
+          //   if (e.nativeEvent.contentOffset.y < -10) {
+          //     // setY(e.nativeEvent.contentOffset.y);
+          //     setShowSearchInput(true);
+          //   }
+        }}
+        scrollEventThrottle={16}
         // getItemLayout={getItemLayout}
         keyboardDismissMode
         keyExtractor={(movie, idx) => movie.id.toString() + idx}
@@ -94,8 +115,8 @@ const styles = StyleSheet.create({
   },
   containerForPortrait: {
     flex: 1,
-    flexDirection: 'column',
-    alignItems: 'center',
+    flexDirection: "column",
+    alignItems: "center",
   },
 });
 
