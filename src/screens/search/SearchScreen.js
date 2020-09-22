@@ -10,11 +10,15 @@ import {
 import { Button } from "../../components/common/Buttons";
 import { useOvermind } from "../../store/overmind";
 import SearchForMovie from "../../components/search/SearchForMovie";
-import SearchResultItem from "../../components/search/SearchResultItem2";
+import SearchResultItem from "../../components/search/SearchResultItem";
 import { useFocusEffect, useIsFocused } from "@react-navigation/native";
 
 const SearchScreen = ({ navigation }) => {
   let [searchString, setSearchString] = React.useState("");
+  //Lets us know if we are returning from details page
+  //if so, don't clear old search results
+  const [onDetailsPage, setOnDetailsPage] = React.useState(false);
+
   const flatListRef = React.useRef();
   const { state, actions } = useOvermind();
   const { saveMovie, deleteMovie } = actions.oSaved;
@@ -39,9 +43,18 @@ const SearchScreen = ({ navigation }) => {
     }
   }, [state.oSearch.resultData, state.oSearch.isNewQuery]);
 
+  //Only clear data when we lose focus and did NOT go to the details page.
   React.useEffect(() => {
-    if (!isFocused) {
+    if (!isFocused && !onDetailsPage) {
       clearSearchStringAndData();
+    }
+  }, [isFocused, onDetailsPage]);
+
+  // React Navigation hook that runs when this screen gets focus
+  // Use this to reset the onDetailsPage flag
+  useFocusEffect(() => {
+    if (isFocused) {
+      setOnDetailsPage(false);
     }
   }, [isFocused]);
   // Write this up ----------------------------------------------------------------
@@ -84,6 +97,7 @@ const SearchScreen = ({ navigation }) => {
               movie={item}
               saveMovie={saveMovie}
               deleteMovie={deleteMovie}
+              setOnDetailsPage={setOnDetailsPage}
             />
           );
         }}

@@ -1,10 +1,10 @@
-import React from 'react';
-import { Button, TouchableOpacity } from 'react-native';
-import { createStackNavigator } from '@react-navigation/stack';
-import { MenuIcon } from '../../components/common/Icons';
+import React from "react";
+import { Button, TouchableOpacity } from "react-native";
+import { createStackNavigator } from "@react-navigation/stack";
+import { MenuIcon } from "../../components/common/Icons";
 
-import SearchScreen from './SearchScreen';
-
+import SearchScreen from "./SearchScreen";
+import Details from "../view/ViewDetails/ViewDetails";
 const SearchStack = createStackNavigator();
 
 const SearchStackScreen = () => {
@@ -25,6 +25,7 @@ const SearchStackScreen = () => {
           };
         }}
       />
+      <SearchStack.Screen name="DetailsFromSearch" component={Details} />
     </SearchStack.Navigator>
   );
 };
