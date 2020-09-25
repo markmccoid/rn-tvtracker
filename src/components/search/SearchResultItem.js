@@ -16,6 +16,7 @@ const { width, height } = Dimensions.get("window");
 const imageWidth = width / 3 - 20;
 const imageHeight = (width / 3 - 20) / 0.67;
 
+// Individual movie "boxes" shown on search result screen
 const SearchResultItem = ({
   movie,
   saveMovie,
@@ -23,6 +24,10 @@ const SearchResultItem = ({
   setOnDetailsPage,
 }) => {
   const { navigate } = useNavigation();
+  // If movie exists in library, then we display it in details page differently
+  // The DetailsFromSearch screen is in the SearchStack.js file, but points to
+  // the same component as the the details screen from the ViewStack.js screen.
+  // Both point to ViewDetails.js
   const navigateToDetails = () => {
     setOnDetailsPage(true);
     if (movie.existsInSaved) {

@@ -27,15 +27,17 @@ const SearchScreen = ({ navigation }) => {
     setIsNewQuery,
     clearSearchStringAndData,
   } = actions.oSearch;
+
+  const { isLoading } = state.oSearch;
   const currentPage = state.oSearch.resultCurrentPage;
-  const { isMoreData, isLoading } = state.oSearch;
+  const isMoreData = state.oSearch.resultTotalPages - currentPage > 0;
 
   const isFocused = useIsFocused();
   const scrollToTop = () => {
     flatListRef.current.scrollToOffset({ animated: true, offest: 0 });
   };
 
-  //TODO: need to know that this is a new search otherwise
+  //need to know that this is a new search otherwise
   // it is just pagination
   React.useEffect(() => {
     if (flatListRef.current && state.oSearch.isNewQuery) {
@@ -76,12 +78,17 @@ const SearchScreen = ({ navigation }) => {
   //   };
   // }, []);
 
+  //NOTE: Each page contains 10 items, but with screen redesign 12 movies
+  // fit on the first screen, this means that two api calls will happen
+  // when searching.  Meaning the currentPage state variable will always be 2
+  // after the "first" loading of the flatlist
   const fetchMoreData = async () => {
     if (isMoreData) {
       setIsNewQuery(false);
       await searchByTitle(currentPage + 1);
     }
   };
+
   let movieJSX = null;
   if (state.oSearch.resultData) {
     movieJSX = (

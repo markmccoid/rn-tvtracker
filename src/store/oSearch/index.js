@@ -9,17 +9,7 @@ export const config = {
     resultCurrentPage: undefined,
     resultTotalPages: undefined,
     resultIsLoading: false,
-    get isMoreData() {
-      if (!this.resultCurrentPage || !this.resultTotalPages) {
-        return false;
-      }
-      if (this.resultTotalPages - this.resultCurrentPage > 0) {
-        return true;
-      } else {
-        return false;
-      }
-    }
   },
   actions,
-  effects
+  effects,
 };

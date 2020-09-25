@@ -4,7 +4,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { MenuIcon } from "../../components/common/Icons";
 
 import SearchScreen from "./SearchScreen";
-import Details from "../view/ViewDetails/ViewDetails";
+import ViewDetails from "../view/ViewDetails/ViewDetails";
 const SearchStack = createStackNavigator();
 
 const SearchStackScreen = () => {
@@ -25,7 +25,7 @@ const SearchStackScreen = () => {
           };
         }}
       />
-      <SearchStack.Screen name="DetailsFromSearch" component={Details} />
+      <SearchStack.Screen name="DetailsFromSearch" component={ViewDetails} />
     </SearchStack.Navigator>
   );
 };

@@ -6,9 +6,9 @@ import {
   Image,
   ScrollView,
   Linking,
-  SafeAreaView,
   StyleSheet,
   TouchableWithoutFeedback,
+  Dimensions,
 } from "react-native";
 import { Button, CircleButton } from "../../../components/common/Buttons";
 import { useOvermind } from "../../../store/overmind";
@@ -251,7 +251,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "center",
-    width: 414,
+    width: Dimensions.get("window").width,
   },
   buttonBar: {
     flexDirection: "row",

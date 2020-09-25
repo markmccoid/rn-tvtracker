@@ -56,7 +56,7 @@ const DetailMainInfo = ({ movie }) => {
         <View style={[styles.textRow, { flexWrap: "wrap" }]}>
           <Text style={styles.textRowLabel}>Genre(s): </Text>
           {movie.genres.map((genre, idx) => (
-            <Text style={{ fontSize: 18 }}>{`${
+            <Text key={genre} style={{ fontSize: 18 }}>{`${
               idx === 0 ? "" : ", "
             }${genre}`}</Text>
           ))}

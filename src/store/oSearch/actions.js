@@ -45,7 +45,7 @@ export const searchPassingTitle = pipe(
 export const clearSearchStringAndData = ({ state }) => {
   state.oSearch.searchString = "";
   state.oSearch.resultData = [];
-  state.oSearch.isMoreData = false;
+  // state.oSearch.isMoreData = false;
   state.oSearch.isNewQuery = true;
 };
 /**

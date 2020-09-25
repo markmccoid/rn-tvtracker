@@ -11,14 +11,6 @@ const SearchForMovie = ({ setSearchString }) => {
   let { searchString, isLoading } = state.oSearch;
   let navigation = useNavigation();
 
-  // const searchCancelled = () => {
-  //   // setMovies([]);
-  //   //If this function implemented, then we need an
-  //   // action to clear the searchResults object in overmind
-  //   Keyboard.dismiss();
-  //   setSearchString("");
-  // };
-
   return (
     <View>
       <TextInput
