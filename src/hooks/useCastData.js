@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
-import { movieGetCredits } from '@markmccoid/tmdb_api';
+import { useEffect, useState } from "react";
+import { movieGetCredits } from "@markmccoid/tmdb_api";
 import {
   loadLocalCastData,
   saveCastDataToLocal,
-} from '../storage/localStorage';
+} from "../storage/localStorage";
 
 export function useCastData(movieId) {
   let [castData, setCastData] = useState([]);
