@@ -5,6 +5,8 @@ import {
   FlatList,
   Image,
   StyleSheet,
+  Keyboard,
+  TouchableWithoutFeedback,
   ActivityIndicator,
 } from "react-native";
 import { Button } from "../../components/common/Buttons";
@@ -114,17 +116,19 @@ const SearchScreen = ({ navigation }) => {
     );
   }
   return (
-    <View style={{ flex: 1 }}>
-      <SearchForMovie
-        searchString={searchString}
-        setSearchString={setSearchString}
-      />
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={{ flex: 1 }}>
+        <SearchForMovie
+          searchString={searchString}
+          setSearchString={setSearchString}
+        />
 
-      {isLoading && !isMoreData ? (
-        <ActivityIndicator size="large" style={{ flex: 1 }} />
-      ) : null}
-      <View style={{ alignItems: "center" }}>{movieJSX}</View>
-    </View>
+        {isLoading && !isMoreData ? (
+          <ActivityIndicator size="large" style={{ flex: 1 }} />
+        ) : null}
+        <View style={{ alignItems: "center" }}>{movieJSX}</View>
+      </View>
+    </TouchableWithoutFeedback>
   );
 };
 

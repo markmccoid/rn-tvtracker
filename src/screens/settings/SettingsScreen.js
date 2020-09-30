@@ -15,7 +15,10 @@ import DefaultFilter from "./DefaultFilter";
 const Settings = ({ navigation }) => {
   const { state, actions } = useOvermind();
   const { savedFilters } = state.oSaved;
-
+  React.useEffect(() => {
+    console.log("Mounting setting");
+    return () => console.log("UNMounting settings");
+  });
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>

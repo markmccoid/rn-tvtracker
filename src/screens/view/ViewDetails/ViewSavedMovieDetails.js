@@ -74,6 +74,7 @@ const ViewSavedMovieDetails = ({ movieId }) => {
     Animated.timing(iconAnim, {
       toValue,
       duration: 500,
+      useNativeDriver: true,
     }).start();
   };
 

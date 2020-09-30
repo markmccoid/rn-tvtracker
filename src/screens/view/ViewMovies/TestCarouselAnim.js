@@ -29,6 +29,8 @@ const Backdrop = ({ movies, scrollX }) => {
     <View style={{ position: "absolute", width, height: BACKDROP_HEIGHT }}>
       <FlatList
         data={movies}
+        horizontal
+        initialNumToRender={movies.length}
         keyExtractor={(movie, idx) => movie.id.toString() + idx}
         renderItem={({ item, index }) => {
           const inputRange = [(index - 1) * ITEM_SIZE, index * ITEM_SIZE];
@@ -70,9 +72,6 @@ const TestCarouselAnim = ({ navigation }) => {
   const { getFilteredMovies } = state.oSaved;
   const flatListRef = React.useRef();
   const scrollX = React.useRef(new Animated.Value(0)).current;
-  // const x = getFilteredMovies("date", "asc");
-  // console.log("GET", x);
-
   return (
     <View style={styles.container}>
       {/* <StatusBar hidden /> */}

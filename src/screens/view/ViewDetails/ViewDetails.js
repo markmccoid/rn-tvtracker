@@ -6,6 +6,7 @@ import {
   ScrollView,
   Linking,
   StyleSheet,
+  Dimensions,
 } from "react-native";
 import { Button } from "../../../components/common/Buttons";
 import { AddIcon, DeleteIcon } from "../../../components/common/Icons";
@@ -43,7 +44,7 @@ const ViewDetails = ({ navigation, route }) => {
   movie =
     route.params?.movie === undefined && movieId
       ? state.oSaved.getMovieDetails(movieId)
-      : route.params.movie || undefined;
+      : route.params.movie;
 
   // Set the title to the current movie title
   // Also add a + icon for movies that are have not yet been added to list.
@@ -150,6 +151,13 @@ const ViewDetails = ({ navigation, route }) => {
   }
 };
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  castInfo: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    width: Dimensions.get("window").width,
+  },
+});
 //`imdb:///find?q=${movie.title}`
 export default ViewDetails;

@@ -76,7 +76,6 @@ const CreateSavedFilterScreen = ({ navigation, route }) => {
             placeholder="Enter Filter Name"
             onChangeText={(e) => setFilterName(e)}
             value={filterName}
-            autoFocus
             autoCorrect={true}
             autoCapitalize="sentences"
             clearButtonMode="while-editing"

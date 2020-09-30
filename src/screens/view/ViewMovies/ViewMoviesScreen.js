@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -17,6 +17,7 @@ import ViewMovieOverlay from "./ViewMovieOverlay";
 const ViewMoviesScreen = ({ navigation, route }) => {
   const { width, height } = useDimensions().window;
   const [movieDetails, setMovieDetails] = React.useState(undefined);
+  const [showSearch, setShowSearch] = useState(false);
   const flatListRef = React.useRef();
   const { state, actions } = useOvermind();
   const { setMovieEditingId } = actions.oAdmin;
@@ -41,7 +42,10 @@ const ViewMoviesScreen = ({ navigation, route }) => {
   let posterWidth = width / 2;
   let posterHeight = posterWidth * 1.5;
 
-  let showSearch = route.params?.showSearch;
+  // Determines whether or not to show the search input box
+  useEffect(() => {
+    setShowSearch(route.params?.showSearch);
+  }, [route.params?.showSearch]);
   //Trying to use this to clear editingId when returning from filter screen.
   //Have to set the "returning" param on both the DONE button in the filter screen component
   //and the header "X"(Close).
@@ -69,7 +73,7 @@ const ViewMoviesScreen = ({ navigation, route }) => {
   return (
     <View style={styles.containerForPortrait}>
       {showSearch ? (
-        <ListSearchBar onCancel={() => setShowSearchInput(false)} />
+        <ListSearchBar onCancel={() => setShowSearch(false)} />
       ) : null}
       <FlatList
         data={getFilteredMovies("date", "asc")}

@@ -101,9 +101,13 @@ const AppNav = () => {
       drawerStyle={{}}
       drawerContent={(props) => <AppNavDrawerContent {...props} />}
     >
-      <Drawer.Screen name="<" component={AppTabsScreen} />
+      <Drawer.Screen name="h" component={AppTabsScreen} />
       <Drawer.Screen name="Settings" component={SettingsStackScreen} />
-      <Drawer.Screen name="Carousel View" component={TestCarouselAnim} />
+      <Drawer.Screen
+        options={{ unmountOnBlur: true }}
+        name="Carousel View"
+        component={TestCarouselAnim}
+      />
       {/* <Drawer.Screen name="Home" component={RedirectToMain} />
       <Drawer.Screen name="Settings" component={SettingsStackScreen} /> */}
     </Drawer.Navigator>

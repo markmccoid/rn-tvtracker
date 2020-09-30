@@ -55,7 +55,7 @@ const ViewStackScreen = () => {
           let currentScreenName =
             route?.state?.routeNames[route.state.index] || "Movies";
           let params = route?.state?.routes[route.state.index].params;
-          let paramShowSearch = params?.showSearch;
+          let paramShowSearch = params?.showSearch || false;
           let title =
             currentScreenName === "Movies"
               ? `${numMovies} Movies`
@@ -77,7 +77,9 @@ const ViewStackScreen = () => {
                   <View style={{ flexDirection: "row" }}>
                     <TouchableOpacity
                       onPress={() =>
-                        navigation.navigate("Movies", { showSearch: true })
+                        navigation.navigate("Movies", {
+                          showSearch: !paramShowSearch,
+                        })
                       }
                     >
                       <SearchIcon

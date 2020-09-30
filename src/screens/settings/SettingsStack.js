@@ -1,10 +1,10 @@
-import React from 'react';
-import { Button, TouchableOpacity, Settings } from 'react-native';
-import { createStackNavigator } from '@react-navigation/stack';
-import { MenuIcon, HomeIcon } from '../../components/common/Icons';
+import React from "react";
+import { Button, TouchableOpacity, Settings } from "react-native";
+import { createStackNavigator } from "@react-navigation/stack";
+import { MenuIcon, HomeIcon, CloseIcon } from "../../components/common/Icons";
 
-import SettingsScreen from './SettingsScreen';
-import CreateSavedFilterScreen from './CreateSavedFilterScreen';
+import SettingsScreen from "./SettingsScreen";
+import CreateSavedFilterScreen from "./CreateSavedFilterScreen";
 
 const SettingsStack = createStackNavigator();
 
@@ -32,7 +32,7 @@ const SettingsStackScreen = () => {
             headerRight: () => {
               return (
                 <TouchableOpacity
-                  onPress={() => navigation.navigate('ViewMovies')}
+                  onPress={() => navigation.navigate("ViewMovies")}
                 >
                   <HomeIcon size={30} style={{ marginRight: 10 }} />
                 </TouchableOpacity>
@@ -44,7 +44,31 @@ const SettingsStackScreen = () => {
       <SettingsStack.Screen
         name="CreateSavedFilter"
         component={CreateSavedFilterScreen}
-        options={{ animationEnabled: true, title: 'Create Saved Filter' }}
+        options={({ navigation, route }) => {
+          // Using optional chaining because initial route object is for stack
+          let currentScreenName =
+            route?.state?.routeNames[route.state.index] || "Movies";
+          return {
+            animationEnabled: true,
+            title: "Create Saved Filter",
+            headerLeft: () => {
+              return null;
+            },
+            headerRight: () => {
+              return (
+                <TouchableOpacity
+                  onPress={() => navigation.navigate("Settings")}
+                >
+                  <CloseIcon
+                    color="black"
+                    size={30}
+                    style={{ marginRight: 15 }}
+                  />
+                </TouchableOpacity>
+              );
+            },
+          };
+        }}
       />
     </SettingsStack.Navigator>
   );

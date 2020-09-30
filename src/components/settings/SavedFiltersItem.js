@@ -10,14 +10,11 @@ const SavedFiltersItem = ({ savedFilter }) => {
   const { deleteSavedFilter } = actions.oSaved;
   return (
     <View style={styles.container}>
-      <TouchableOpacity
-        style={styles.nameContainer}
-        onPress={() => console.log("filter id", savedFilter.id)}
-      >
+      <View style={styles.nameContainer}>
         <Text key={savedFilter.id} style={styles.filterTitle}>
           {savedFilter.name}
         </Text>
-      </TouchableOpacity>
+      </View>
       <View
         style={{
           flexDirection: "row",

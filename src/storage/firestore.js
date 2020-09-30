@@ -42,7 +42,6 @@ export const storeUserDataSettings = async (userDataSettings) => {
     .doc(uid)
     .collection("savedMovies")
     .get();
-  //movieSnapshot.docs.map((doc) => console.log("DOC", doc.id, doc.data()));
 };
 
 export const storeSavedFilters = async (savedFiltersData) => {

@@ -36,6 +36,7 @@ const PickImage = ({ movieId, vpiAnimation, setViewPickImage }) => {
     Animated.timing(fadeAnim, {
       toValue: 1,
       duration: 1000,
+      useNativeDriver: false,
     }).start();
   };
   const fadeOut = () => {
@@ -44,6 +45,7 @@ const PickImage = ({ movieId, vpiAnimation, setViewPickImage }) => {
     Animated.timing(fadeAnim, {
       toValue: 0,
       duration: 800,
+      useNativeDriver: false,
     }).start(() => setViewPickImage(1));
   };
   // Called once on mount with array of posterURLs and when new poster is selected
