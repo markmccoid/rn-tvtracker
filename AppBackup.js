@@ -15,17 +15,17 @@ const HomeStack = createStackNavigator(
       screen: HomeScreen,
       navigationOptions: ({ navigation }) => {
         return {
-          title: "View Movies"
+          title: "View Movies",
         };
-      }
+      },
     },
     Detail: {
-      screen: DetailScreen
-    }
+      screen: DetailScreen,
+    },
   },
   {
     initialRouteName: "Home",
-    defaultNavigationOptions: { title: "Movies" }
+    defaultNavigationOptions: { title: "Movies" },
   }
 );
 
@@ -33,9 +33,9 @@ const SearchStack = createStackNavigator({
   Search: {
     screen: SearchScreen,
     navigationOptions: {
-      title: "Search For Movies"
-    }
-  }
+      title: "Search For Movies",
+    },
+  },
 });
 
 // Testing nesting a tab navigator in the TagStack
@@ -43,29 +43,27 @@ let TagTabNavigator = createBottomTabNavigator(
   {
     TagView: {
       screen: TagScreen,
-      navigationOptions: () => {
-      }
+      navigationOptions: () => {},
     },
     TagEdit: {
-      screen: TagEditScreen
-    }
+      screen: TagEditScreen,
+    },
   },
   {
-    navigationOptions: () => {
-    }
+    navigationOptions: () => {},
   }
 );
 
 const TagStack = createStackNavigator({
   TagTab: {
-    screen: TagTabNavigator
+    screen: TagTabNavigator,
   },
   Tag: {
     screen: TagScreen,
     navigationOptions: {
-      title: "Tags"
-    }
-  }
+      title: "Tags",
+    },
+  },
 });
 const TabNavigator = createBottomTabNavigator(
   {
@@ -85,9 +83,9 @@ const TabNavigator = createBottomTabNavigator(
               size={24}
               style={{ marginTop: 5 }}
             />
-          )
+          ),
         };
-      }
+      },
     },
     Search: {
       screen: SearchStack,
@@ -100,8 +98,8 @@ const TabNavigator = createBottomTabNavigator(
             size={24}
             style={{ marginTop: 5 }}
           />
-        )
-      }
+        ),
+      },
     },
     Tags: {
       screen: TagStack,
@@ -114,20 +112,18 @@ const TabNavigator = createBottomTabNavigator(
             size={24}
             style={{ marginTop: 5 }}
           />
-        )
-      }
-    }
+        ),
+      },
+    },
   },
   {
     navigationOptions: ({ navigation }) => {
-      console.log("in tab");
       const { routeName } = navigation.state.routes[navigation.state.index];
-      console.log("tab routename", routeName);
       return {
         headerTitle: routeName,
-        tabBarVisible: false
+        tabBarVisible: false,
       };
-    }
+    },
   }
 );
 //

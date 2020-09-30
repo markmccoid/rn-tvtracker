@@ -1,18 +1,16 @@
 {
   "expo": {
-    "name": "Blank Template",
-    "slug": "rnav5",
+    "name": "Movie Tracker",
+    "slug": "movie-tracker",
     "privacy": "public",
     "platforms": [
-      "ios",
-      "android",
-      "web"
+      "ios"
     ],
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/MovieTrackerIcon.png",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/MovieTrackerSplash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -23,7 +21,9 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": false,
+      "bundleIdentifier": "com.mccoidco.movietracker",
+      "buildNumber": "1.0.0"
     }
   }
 }
