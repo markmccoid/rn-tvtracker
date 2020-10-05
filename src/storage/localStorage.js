@@ -1,8 +1,8 @@
-import React from 'react';
-import { AsyncStorage } from 'react-native';
+import React from "react";
+import AsyncStorage from "@react-native-community/async-storage";
 
 // -- Load passed key from Local Storage -- //
-const loadFromAsyncStorage = async (key) => {
+export const loadFromAsyncStorage = async (key) => {
   try {
     const data = await AsyncStorage.getItem(key);
     //console.log("LFAS data", data, key);
@@ -13,36 +13,23 @@ const loadFromAsyncStorage = async (key) => {
       return undefined;
     }
   } catch (error) {
-    console.log('ERROR loading data', error);
+    console.log("ERROR loading data", error);
     return undefined;
   }
 };
 
-//-- Tries to load cast for passed movieId
-//-- If no cast data in local storage, then
-//-- move on to getting data from API
-export const loadLocalCastData = async (movieId) => {
+export const saveToAsyncStorage = async (key, data) => {
   try {
-    const castData = await loadFromAsyncStorage(`castdata-${movieId}`);
-    if (castData) {
-      return castData;
-    } else {
-      // If localstorage is empty return undefined
-      // This will indicate to calling function that it needs
-      // to go to API for data.
-      return undefined;
-    }
+    await AsyncStorage.setItem(key, JSON.stringify(data));
   } catch (error) {
-    console.log('ERROR loading cast data', error);
-    return [];
+    console.log("ERROR Saving Cast Data", error);
   }
 };
 
-//- castData will be an object custom created from API Calls
-export const saveCastDataToLocal = async (castData, movieId) => {
+export const removeFromAsyncStorage = async (key) => {
   try {
-    await AsyncStorage.setItem(`castdata-${movieId}`, JSON.stringify(castData));
+    await AsyncStorage.removeItem(key);
   } catch (error) {
-    console.log('ERROR Saving Cast Data', error);
+    console.log("ERROR Removing data", error);
   }
 };

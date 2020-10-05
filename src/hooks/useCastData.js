@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { movieGetCredits } from "@markmccoid/tmdb_api";
 import {
-  loadLocalCastData,
-  saveCastDataToLocal,
+  loadFromAsyncStorage,
+  saveToAsyncStorage,
 } from "../storage/localStorage";
 
 export function useCastData(movieId) {
@@ -12,13 +12,15 @@ export function useCastData(movieId) {
   // if not there, then reads from API and saves to local storage
   const loadCastData = async () => {
     let tempData;
-    // Try to get cast Data from local storage
-    tempData = await loadLocalCastData(movieId);
+    const castStorageKey = `castdata-${movieId}`;
+    // Try to get cast Data from Async storage
+    tempData = await loadFromAsyncStorage(castStorageKey);
     if (!tempData) {
       // No data in local storage, get from API
       tempData = await movieGetCredits(movieId);
       tempData = tempData.data.cast;
-      await saveCastDataToLocal(tempData, movieId);
+      // Save to Async Storage
+      await saveToAsyncStorage(castStorageKey, tempData);
     }
 
     setCastData(tempData);
