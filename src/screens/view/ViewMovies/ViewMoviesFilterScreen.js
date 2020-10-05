@@ -13,13 +13,13 @@ const ViewMoviesFilterScreen = ({ route, navigation }) => {
   const {
     addTagToFilter,
     removeTagFromFilter,
-    clearFilterTags,
     clearFilterScreen,
     setTagOperator,
     addGenreToFilter,
     removeGenreFromFilter,
-    clearFilterGenres,
     setGenreOperator,
+    clearFilterTags,
+    clearFilterGenres,
   } = actions.oSaved;
   //---TESTING  Probably should be a getter in the store.+
   const tagOperators = ["AND", "OR"];

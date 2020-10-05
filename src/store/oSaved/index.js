@@ -175,7 +175,12 @@ export const config = {
       return unusedFilterGenres.map((genre) => ({ genre, isSelected: false }));
     },
     getAllFilterGenres: (state) => {
-      return [...state.getFilterGenres, ...state.getUnusedFilterGenres];
+      const updatedGenreArray = [
+        ...state.getFilterGenres,
+        ...state.getUnusedFilterGenres,
+      ];
+      //Sort by genre name so they don't "move" when selected
+      return _.sortBy(updatedGenreArray, ["genre"]);
     },
     //------------------------
     //- SAVED FILTERS Getters

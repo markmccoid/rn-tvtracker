@@ -12,7 +12,7 @@
     "splash": {
       "image": "./assets/MovieTrackerSplash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#4285ec"
     },
     "updates": {
       "fallbackToCacheTimeout": 0

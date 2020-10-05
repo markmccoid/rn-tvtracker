@@ -27,6 +27,7 @@ import {
   ImagesIcon,
 } from "../../../components/common/Icons";
 
+import { colors } from "../../../globalStyles";
 import DetailMainInfo from "./DetailMainInfo";
 import DetailCastInfo from "./DetailCastInfo";
 import PickImage from "./PickImage";
@@ -125,7 +126,7 @@ const ViewSavedMovieDetails = ({ movieId }) => {
             }}
             title={viewTags ? "Hide Tags" : "Show Tags"}
             bgOpacity="ff"
-            bgColor="#52aac9"
+            bgColor={colors.primary}
             small
             width={100}
             wrapperStyle={{ borderRadius: 0 }}
@@ -142,7 +143,7 @@ const ViewSavedMovieDetails = ({ movieId }) => {
             }
             title="Open in IMDB"
             bgOpacity="ff"
-            bgColor="#52aac9"
+            bgColor={colors.primary}
             small
             width={150}
             wrapperStyle={{ borderRadius: 0 }}
@@ -167,7 +168,7 @@ const ViewSavedMovieDetails = ({ movieId }) => {
                 borderRadius: 0,
                 flexDirection: "row",
                 padding: 5,
-                backgroundColor: "#52aac9",
+                backgroundColor: colors.primary,
                 width: 100,
                 justifyContent: "center",
               }}

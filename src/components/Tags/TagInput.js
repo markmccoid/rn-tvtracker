@@ -4,6 +4,8 @@ import { View, TextInput, StyleSheet } from "react-native";
 import { Button } from "../common/Buttons";
 import { useOvermind } from "../../store/overmind";
 
+import { colors } from "../../globalStyles";
+
 const TagInput = () => {
   const [tagValue, setTagValue] = React.useState("");
   const { state, actions } = useOvermind();
@@ -24,6 +26,9 @@ const TagInput = () => {
       <View style={styles.tagButton}>
         <Button
           title="Add"
+          bgColor={colors.primary}
+          bgOpacity="ee"
+          color="white"
           medium
           width="100%"
           onPress={() => {

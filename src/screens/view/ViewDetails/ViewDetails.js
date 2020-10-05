@@ -12,14 +12,14 @@ import { Button } from "../../../components/common/Buttons";
 import { AddIcon, DeleteIcon } from "../../../components/common/Icons";
 import { useOvermind } from "../../../store/overmind";
 import { useDimensions } from "@react-native-community/hooks";
-import { useCastData } from "../../../hooks/useCastData";
-
-import DetailMainInfo from "./DetailMainInfo";
-import DetailCastInfo from "./DetailCastInfo";
 
 import ViewSavedMovieDetails from "./ViewSavedMovieDetails";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
+import { colors } from "../../../globalStyles";
+import { useCastData } from "../../../hooks/useCastData";
+import DetailMainInfo from "./DetailMainInfo";
+import DetailCastInfo from "./DetailCastInfo";
 /**
  * The ViewDetails screen can show the details for a movie in two states:
  * 1. The movie already exists in your saved movies
@@ -126,7 +126,7 @@ const ViewDetails = ({ navigation, route }) => {
               }
               title="Open in IMDB"
               bgOpacity="ff"
-              bgColor="#52aac9"
+              bgColor={colors.primary}
               small
               width={width / 2}
               wrapperStyle={{
