@@ -5,6 +5,7 @@ import {
   FontAwesome,
   FontAwesome5,
   MaterialIcons,
+  MaterialCommunityIcons,
   Ionicons,
 } from "@expo/vector-icons";
 
@@ -102,4 +103,34 @@ export const UserIcon = ({ size, color, style }) => {
 //Plus sign icon
 export const AddIcon = ({ size, color, style }) => {
   return <Ionicons name="ios-add" color={color} size={size} style={style} />;
+};
+
+// Other Icons
+
+export const ThumbsUpIcon = ({ size, color, style }) => {
+  return (
+    <Ionicons name="ios-thumbs-up" color={color} size={size} style={style} />
+  );
+};
+
+export const ExpandDownIcon = ({ size, color, style }) => {
+  return (
+    <MaterialCommunityIcons
+      name="arrow-expand-down"
+      color={color}
+      size={size}
+      style={style}
+    />
+  );
+};
+
+export const CollapseUpIcon = ({ size, color, style }) => {
+  return (
+    <MaterialCommunityIcons
+      name="arrow-collapse-up"
+      color={color}
+      size={size}
+      style={style}
+    />
+  );
 };

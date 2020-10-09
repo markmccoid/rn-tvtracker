@@ -1,7 +1,8 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
+  FlatList,
   Image,
   ScrollView,
   Linking,
@@ -12,14 +13,19 @@ import { Button } from "../../../components/common/Buttons";
 import { AddIcon, DeleteIcon } from "../../../components/common/Icons";
 import { useOvermind } from "../../../store/overmind";
 import { useDimensions } from "@react-native-community/hooks";
+import { useFocusEffect } from "@react-navigation/native";
 
 import ViewSavedMovieDetails from "./ViewSavedMovieDetails";
+import ViewSearchedMovieDetails from "./ViewSearchedMovieDetails";
+
 import { TouchableOpacity } from "react-native-gesture-handler";
 
 import { colors } from "../../../globalStyles";
 import { useCastData } from "../../../hooks/useCastData";
+import { useRecommendedData } from "../../../hooks/useRecommendedData";
 import DetailMainInfo from "./DetailMainInfo";
 import DetailCastInfo from "./DetailCastInfo";
+import SearchResultItem from "../../../components/search/SearchResultItem";
 /**
  * The ViewDetails screen can show the details for a movie in two states:
  * 1. The movie already exists in your saved movies
@@ -31,37 +37,72 @@ import DetailCastInfo from "./DetailCastInfo";
  * In Case #2, the params object will have a "movie" key with the movie details populated from
  * the search screen.  This will give you a yellowbox error in RNN v5 because it is a non serailzied object,
  * but it is ok to ignore.
+ * The other param passed with Case #2 is "notSaved" which when true indicates that this navigate has a movie that
+ * is NOT saved.  I used this negative way so that if we don't get this param passed we can safely assume that the
+ * navigation event is coming from a place where the movie is saved.
  *
  */
 const ViewDetails = ({ navigation, route }) => {
-  const { width, height } = useDimensions().window;
+  const [movieData, setMovieData] = useState(undefined);
+  const [isInSavedMovies, setIsInSavedMovies] = useState(
+    !route.params?.notSaved
+  );
+
   let { state, actions } = useOvermind();
+  const { saveMovie, deleteMovie } = actions.oSaved;
 
-  let movieId = route.params?.movieId;
+  useEffect(() => {
+    setIsInSavedMovies(!route.params?.notSaved); //if undefined or false, return true
+    let movieTemp = {};
+    if (route.params?.movieId) {
+      movieTemp = state.oSaved.getMovieDetails(route.params?.movieId);
+    }
+    if (route.params?.movie) {
+      movieTemp = route.params?.movie;
+    }
+    setMovieData(movieTemp);
+  }, [route.params?.movieId, route.params?.movie, route.params?.notSaved]);
 
-  //If no movie param, then assume coming from saved movie and get details
-  let movie = undefined;
-  movie =
-    route.params?.movie === undefined && movieId
-      ? state.oSaved.getMovieDetails(movieId)
-      : route.params.movie;
+  // let movieId = undefined;
+  // let movie = undefined;
+  // let movieTitle = "Movie";
+  // console.log("RERENDER", isInSavedMovies, Object.keys(route.params));
+  // if (isInSavedMovies) {
+  //   movieId = route.params?.movieId;
+  //   movie = state.oSaved.getMovieDetails(movieId);
+  //   // movieTitle = movie.title;
+  // } else {
+  //   movie = route.params?.movie;
+  //   movieId = route.params?.movie?.id;
+  //   // movieTitle = movie.title;
+  // }
+  // console.log("AFTER IF", Object.keys(movie));
 
-  // Set the title to the current movie title
-  // Also add a + icon for movies that are have not yet been added to list.
-  // If the movie is in the list, show a delete icon instead of the plus.
+  //---- Set navigation options for detail screen -----
+  // 1. Set the title to the current movie title
+  // 2. Add a + icon for movies that are have not yet been added to list.
+  // 3. If the movie is in the list, show a delete icon INSTEAD of the plus.
   //TODO (could be better looking delete icon)
   // only on mounting of the component
   React.useEffect(() => {
+    if (!movieData) {
+      return;
+    }
+
     navigation.setOptions({
-      title: movie.title,
+      title: movieData.title,
       headerRight: () => {
-        if (route.params?.movie) {
+        if (!isInSavedMovies) {
           return (
             <TouchableOpacity
               style={{ marginRight: 15 }}
               onPress={() => {
-                actions.oSaved.saveMovie(movie);
-                navigation.goBack();
+                saveMovie(movieData);
+                navigation.navigate(route.name, {
+                  movieId: movieData.id,
+                  notSaved: false,
+                });
+                // navigation.goBack();
               }}
             >
               <AddIcon size={35} />
@@ -72,8 +113,8 @@ const ViewDetails = ({ navigation, route }) => {
             <TouchableOpacity
               style={{ marginRight: 15 }}
               onPress={() => {
-                actions.oSaved.deleteMovie(movieId);
-                route.params.movieId = undefined;
+                //route.params.movieId = undefined;
+                deleteMovie(movieData.id);
                 navigation.goBack();
               }}
             >
@@ -83,81 +124,20 @@ const ViewDetails = ({ navigation, route }) => {
         }
       },
     });
-  }, []);
+  }, [movieData, isInSavedMovies]);
 
   // No movieId and no movie passed via params, then just return null
   //TODO: probably need a better "message", but we really should only hit this
   //TODO: when deleteing movie from the right header icon
-  if (!movieId && !route.params?.movie) {
+  if (!movieData) {
     return null;
   }
-
-  if (movieId) {
-    return <ViewSavedMovieDetails movieId={movieId} />;
-  }
-  if (movie) {
-    const castData = useCastData(movie.id);
-    return (
-      <View style={{ flex: 1 }}>
-        <Image
-          style={{
-            position: "absolute",
-            width,
-            height,
-            resizeMode: "cover",
-            opacity: 0.3,
-          }}
-          source={{
-            uri: movie.backdropURL,
-          }}
-        />
-        <ScrollView style={{ flex: 1 }}>
-          <DetailMainInfo movie={movie} />
-          <View style={{ flex: 1, alignItems: "center", marginBottom: 10 }}>
-            <Button
-              onPress={() =>
-                Linking.openURL(`imdb:///title/${movie.imdbId}`).catch(
-                  (err) => {
-                    Linking.openURL(
-                      "https://apps.apple.com/us/app/imdb-movies-tv-shows/id342792525"
-                    );
-                  }
-                )
-              }
-              title="Open in IMDB"
-              bgOpacity="ff"
-              bgColor={colors.primary}
-              small
-              width={width / 2}
-              wrapperStyle={{
-                borderRadius: 0,
-              }}
-              color="#fff"
-              noBorder
-            />
-          </View>
-          <View style={styles.castInfo}>
-            {castData.map((person) => (
-              <DetailCastInfo
-                person={person}
-                screenWidth={width}
-                key={person.personId}
-              />
-            ))}
-          </View>
-        </ScrollView>
-      </View>
-    );
+  if (isInSavedMovies) {
+    return <ViewSavedMovieDetails movieId={movieData.id} />;
+  } else {
+    return <ViewSearchedMovieDetails movie={movieData} />;
   }
 };
 
-const styles = StyleSheet.create({
-  castInfo: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "center",
-    width: Dimensions.get("window").width,
-  },
-});
 //`imdb:///find?q=${movie.title}`
 export default ViewDetails;

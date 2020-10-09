@@ -42,6 +42,9 @@ export const searchPassingTitle = pipe(
   })
 );
 
+export const tagOtherMovieResults = ({ actions }, movies) => {
+  return actions.oSearch.internal.tagResults(movies);
+};
 export const clearSearchStringAndData = ({ state }) => {
   state.oSearch.searchString = "";
   state.oSearch.resultData = [];

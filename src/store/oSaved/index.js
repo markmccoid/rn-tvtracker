@@ -187,7 +187,7 @@ export const config = {
     //------------------------
     getDrawerSavedFilters: (state) => {
       // Return only savedFilters that should be shown in the drawer menu
-      return _.filter(state.savedFilters, { showInDrawer: true });
+      return _.filter(state.savedFilters, { showInDrawer: true }) || [];
     },
     // Returns the savedFilter Object associated with passed filterId
     getSavedFilter: (state) => (filterId) => {

@@ -28,7 +28,7 @@ export function useCastData(movieId) {
 
   useEffect(() => {
     loadCastData();
-  }, []);
+  }, [movieId]);
 
   return castData;
 }

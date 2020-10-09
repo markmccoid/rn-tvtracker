@@ -2,6 +2,7 @@ import _ from "lodash";
 import uuidv4 from "uuid/v4";
 import { pipe, debounce, mutate, filter } from "overmind";
 import * as internalActions from "./internalActions";
+import { removeFromAsyncStorage } from "../../storage/localStorage";
 
 // export actions for saved filters.
 export * from "./actionsSavedFilters";
@@ -52,15 +53,14 @@ const getGenresFromMovies = (movies) => {
  */
 //*TODO have save movie use movieGetDetails(movieId) to get full details and save to firebase
 export const saveMovie = async ({ state, effects, actions }, movieObj) => {
-  //! We are tagging the result set so that the search screen will know that the moviegit pu
+  //! We are tagging the result set so that the search screen will know that the movie
   //! is part of our saved movies.
   //! BUT we do NOT need to save this field in firebase.  We can add it during hydration.
 
   const { tagResults } = actions.oSearch.internal;
   const searchData = state.oSearch.resultData;
-  // check to see if movie exists
-  //! Thinking we should never get here if movie exists since we shouldn't show the add button
-  //! on search results screen.  Probably still OK to check if it exists,
+
+  // check to see if movie exists as a safeguard against duplicates in database
   if (state.oSaved.savedMovies.some((movie) => movie.id === movieObj.id)) {
     return;
   }
@@ -100,6 +100,9 @@ export const deleteMovie = async ({ state, effects, actions }, movieId) => {
   state.oSearch.isNewQuery = false;
   state.oSearch.resultData = tagResults(searchData);
   //----------------------------
+
+  // Clear any items associated with movie that might be saved in Async storage
+  removeFromAsyncStorage(`castdata-${movieId}`);
 
   // await effects.oSaved.saveMovies(state.oSaved.savedMovies);
   //* Modified for new Data Model

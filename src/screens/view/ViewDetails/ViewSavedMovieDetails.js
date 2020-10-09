@@ -8,6 +8,7 @@ import {
   Linking,
   StyleSheet,
   TouchableWithoutFeedback,
+  TouchableOpacity,
   Dimensions,
 } from "react-native";
 import { Button, CircleButton } from "../../../components/common/Buttons";
@@ -25,11 +26,14 @@ import {
   CaretDownIcon,
   CaretRightIcon,
   ImagesIcon,
+  ExpandDownIcon,
+  CollapseUpIcon,
 } from "../../../components/common/Icons";
 
 import { colors } from "../../../globalStyles";
 import DetailMainInfo from "./DetailMainInfo";
 import DetailCastInfo from "./DetailCastInfo";
+import DetailRecommendations from "./DetailRecommendations";
 import PickImage from "./PickImage";
 
 // Need to figure out how to have multiple transition sets for a single transitioning view
@@ -63,6 +67,8 @@ const ViewSavedMovieDetails = ({ movieId }) => {
   // Animated Icons
   const iconAnim = React.useRef(new Animated.Value(0)).current;
 
+  const [viewRecommendations, setViewRecommendations] = React.useState(false);
+
   const castData = useCastData(movieId);
   let { state, actions } = useOvermind();
   let movie = state.oSaved.getMovieDetails(movieId);
@@ -79,6 +85,9 @@ const ViewSavedMovieDetails = ({ movieId }) => {
     }).start();
   };
 
+  if (!movie) {
+    return null;
+  }
   return (
     <View style={{ flex: 1 }}>
       <Image
@@ -232,7 +241,42 @@ const ViewSavedMovieDetails = ({ movieId }) => {
               vpiAnimation={vpiAnimation}
             />
           )}
-
+          <View
+            style={{
+              flex: 1,
+              flexDirection: "column",
+              alignItems: "center",
+              backgroundColor: "#ffffff85",
+              borderTopColor: "#aaa",
+              borderBottomColor: "#aaa",
+              borderBottomWidth: 2,
+              borderTopWidth: 2,
+              marginVertical: 10,
+              paddingVertical: 15,
+            }}
+          >
+            <TouchableOpacity
+              style={{ flexDirection: "row" }}
+              onPress={() => setViewRecommendations((prev) => !prev)}
+            >
+              <Text
+                style={{ fontSize: 20, fontWeight: "bold", marginRight: 15 }}
+              >
+                Recommendations
+              </Text>
+              {!viewRecommendations ? (
+                <ExpandDownIcon style={{ marginTop: 5 }} size={20} />
+              ) : (
+                <CollapseUpIcon style={{ marginTop: 5 }} size={20} />
+              )}
+            </TouchableOpacity>
+            {viewRecommendations && (
+              <View style={{ marginVertical: 5 }}>
+                <DetailRecommendations movieId={movie.id} />
+              </View>
+            )}
+          </View>
+          <Text>Cast Info</Text>
           <View style={styles.castInfo}>
             {castData.map((person) => (
               <DetailCastInfo

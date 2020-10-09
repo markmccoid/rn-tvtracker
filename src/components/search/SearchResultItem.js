@@ -22,18 +22,25 @@ const SearchResultItem = ({
   saveMovie,
   deleteMovie,
   setOnDetailsPage,
+  navigateToScreen,
 }) => {
   const { navigate } = useNavigation();
+
   // If movie exists in library, then we display it in details page differently
   // The DetailsFromSearch screen is in the SearchStack.js file, but points to
   // the same component as the the details screen from the ViewStack.js screen.
   // Both point to ViewDetails.js
   const navigateToDetails = () => {
     setOnDetailsPage(true);
+
     if (movie.existsInSaved) {
-      navigate("DetailsFromSearch", { movieId: movie.id });
+      navigate(navigateToScreen, {
+        movieId: movie.id,
+        movie: undefined,
+        notSaved: false,
+      });
     } else {
-      navigate("DetailsFromSearch", { movie });
+      navigate(navigateToScreen, { movie, movieId: undefined, notSaved: true });
     }
   };
 
