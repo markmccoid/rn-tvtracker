@@ -1468,10 +1468,10 @@
     "@types/yargs" "^15.0.0"
     chalk "^3.0.0"
 
-"@markmccoid/tmdb_api@^0.1.1":
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/@markmccoid/tmdb_api/-/tmdb_api-0.1.1.tgz#a981cb902da18080991be45d54f200c78d9f2656"
-  integrity sha512-isZ+KzQsvN6Ash+uZU4kvuZDrDDQDk9ZIMh/U3dC1ZpbY5C3KvDtnLGIdY1rDZ46rMfqhaH5wTgzXzeY+Ohrtg==
+"@markmccoid/tmdb_api@^0.1.2":
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/@markmccoid/tmdb_api/-/tmdb_api-0.1.2.tgz#71b51b8b0b11fe594288efacabe8e13e165005e1"
+  integrity sha512-/pmNYAaV/bbtqXF5F2NcKOYri5C/Ihx8mjpyzFgeWRW6e5Hmi3J0FPPS9Z9aKm9qraqAaqFFGlfApwRNEzpDeA==
   dependencies:
     "@babel/runtime" "^7.7.7"
     axios "^0.19.0"

@@ -113,6 +113,12 @@ export const ThumbsUpIcon = ({ size, color, style }) => {
   );
 };
 
+export const YouTubePlayIcon = ({ size, color, style }) => {
+  return (
+    <FontAwesome name="youtube-play" color={color} size={size} style={style} />
+  );
+};
+
 export const ExpandDownIcon = ({ size, color, style }) => {
   return (
     <MaterialCommunityIcons

@@ -1,31 +1,12 @@
 import React, { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  FlatList,
-  Image,
-  ScrollView,
-  Linking,
-  StyleSheet,
-  Dimensions,
-} from "react-native";
-import { Button } from "../../../components/common/Buttons";
+import { ActivityIndicator } from "react-native";
 import { AddIcon, DeleteIcon } from "../../../components/common/Icons";
 import { useOvermind } from "../../../store/overmind";
-import { useDimensions } from "@react-native-community/hooks";
-import { useFocusEffect } from "@react-navigation/native";
 
 import ViewSavedMovieDetails from "./ViewSavedMovieDetails";
-import ViewSearchedMovieDetails from "./ViewSearchedMovieDetails";
 
 import { TouchableOpacity } from "react-native-gesture-handler";
 
-import { colors } from "../../../globalStyles";
-import { useCastData } from "../../../hooks/useCastData";
-import { useRecommendedData } from "../../../hooks/useRecommendedData";
-import DetailMainInfo from "./DetailMainInfo";
-import DetailCastInfo from "./DetailCastInfo";
-import SearchResultItem from "../../../components/search/SearchResultItem";
 /**
  * The ViewDetails screen can show the details for a movie in two states:
  * 1. The movie already exists in your saved movies
@@ -83,7 +64,6 @@ const ViewDetails = ({ navigation, route }) => {
   // 2. Add a + icon for movies that are have not yet been added to list.
   // 3. If the movie is in the list, show a delete icon INSTEAD of the plus.
   //TODO (could be better looking delete icon)
-  // only on mounting of the component
   React.useEffect(() => {
     if (!movieData) {
       return;
@@ -130,13 +110,15 @@ const ViewDetails = ({ navigation, route }) => {
   //TODO: probably need a better "message", but we really should only hit this
   //TODO: when deleteing movie from the right header icon
   if (!movieData) {
-    return null;
+    return <ActivityIndicator size="large" />;
   }
-  if (isInSavedMovies) {
-    return <ViewSavedMovieDetails movieId={movieData.id} />;
-  } else {
-    return <ViewSearchedMovieDetails movie={movieData} />;
-  }
+
+  return (
+    <ViewSavedMovieDetails
+      movie={movieData}
+      isInSavedMovies={isInSavedMovies}
+    />
+  );
 };
 
 //`imdb:///find?q=${movie.title}`

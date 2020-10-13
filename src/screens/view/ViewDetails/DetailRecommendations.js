@@ -1,19 +1,9 @@
 import * as React from "react";
-import {
-  View,
-  Text,
-  FlatList,
-  ActivityIndicator,
-  Image,
-  ScrollView,
-  Linking,
-  StyleSheet,
-  Dimensions,
-} from "react-native";
+import { View, ActivityIndicator, Text, ScrollView } from "react-native";
 import SearchResultItem from "../../../components/search/SearchResultItem";
 import { useRecommendedData } from "../../../hooks/useRecommendedData";
 import { useOvermind } from "../../../store/overmind";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useRoute } from "@react-navigation/native";
 
 const DetailRecommendations = ({ movieId }) => {
   const flatRef = React.useRef();
@@ -56,18 +46,16 @@ const DetailRecommendations = ({ movieId }) => {
     );
   }
 
+  if (recommendations.length === 0 && !recommendIsLoading) {
+    return (
+      <View style={{ flexDirection: "row", justifyContent: "center" }}>
+        <Text style={{ fontWeight: "normal", fontSize: 20 }}>
+          No Videos Found
+        </Text>
+      </View>
+    );
+  }
   return (
-    // <View
-    //   style={{
-    //     backgroundColor: "#ffffff85",
-    //     borderTopColor: "#ccc",
-    //     borderBottomColor: "#ccc",
-    //     borderBottomWidth: 2,
-    //     borderTopWidth: 2,
-    //     marginVertical: 10,
-    //     paddingVertical: 15,
-    //   }}
-    // >
     <ScrollView
       ref={flatRef}
       horizontal
@@ -87,8 +75,6 @@ const DetailRecommendations = ({ movieId }) => {
         );
       })}
     </ScrollView>
-
-    // </View>
   );
 };
 

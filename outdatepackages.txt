@@ -29,3 +29,59 @@ react-native-web                      0.13.13 0.13.16 0.0.0-583e16fa8 dependenci
 styled-components                     5.0.1   5.2.0   5.2.0           dependencies    https://styled-components.com/                                             
 tinycolor2                            1.4.1   1.4.2   1.4.2           dependencies    https://github.com/bgrins/TinyColor#readme                                 
 Done in 0.93s.
+
+
+#yarn add overmind@^25.0.2 overmind-react@^26.0.2 react-hook-form@^6.9.2 react-native-gesture-handler@~1.8.0 react-native-swipe-list-view@^3.2.4 react-native-elements@^2.3.2 @react-navigation/drawer@^5.9.3 @react-navigation/bottom-tabs@^5.9.2 react-native-screens@~2.11.0 @react-navigation/stack@^5.9.3 styled-components@^5.2.0 @react-navigation/native@^5.7.6 firebase@7.22.1 @react-native-community/hooks@^2.6.0 @markmccoid/tmdb_api@^0.1.1 react@16.13.1 @react-native-community/masked-view@0.1.10 expo-blur@~8.2.0 prop-types@^15.7.2 react-dom@16.13.1 react-native-svg@12.1.0 react-native-web@~0.0.0-583e16fa8 react-navigation-hooks@^1.1.0 expo@^39.0.3
+
+react-native-dropdown-picker@^3.7.0
+
+{
+  "main": "node_modules/expo/AppEntry.js",
+  "scripts": {
+    "start": "expo start",
+    "firebaseversion": "firebase --version",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "eject": "expo eject"
+  },
+  "dependencies": {
+    "@markmccoid/tmdb_api": "^0.1.1",
+    "@react-native-community/async-storage": "~1.12.0",
+    "@react-native-community/hooks": "^2.4.8",
+    "@react-native-community/masked-view": "0.1.10",
+    "@react-navigation/bottom-tabs": "^5.2.4",
+    "@react-navigation/drawer": "^5.3.4",
+    "@react-navigation/native": "^5.2.1",
+    "@react-navigation/stack": "^5.2.8",
+    "expo": "^39.0.0",
+    "expo-blur": "~8.2.0",
+    "expo-linear-gradient": "~8.3.0",
+    "firebase": "7.9.0",
+    "lodash": "^4.17.19",
+    "overmind": "^25.0.2",
+    "overmind-react": "^26.0.2",
+    "prop-types": "^15.7.2",
+    "react": "16.13.1",
+    "react-dom": "16.13.1",
+    "react-hook-form": "^5.2.0",
+    "react-native": "https://github.com/expo/react-native/archive/sdk-39.0.0.tar.gz",
+    "react-native-dropdown-picker": "^3.0.5",
+    "react-native-elements": "^2.0.0",
+    "react-native-gesture-handler": "~1.7.0",
+    "react-native-reanimated": "~1.13.0",
+    "react-native-safe-area-context": "3.1.4",
+    "react-native-screens": "~2.10.1",
+    "react-native-svg": "12.1.0",
+    "react-native-swipe-list-view": "^3.0.1",
+    "react-native-web": "~0.13.7",
+    "react-navigation-hooks": "^1.1.0",
+    "styled-components": "^5.0.1",
+    "tinycolor2": "^1.4.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.0.0",
+    "babel-preset-expo": "^8.3.0"
+  },
+  "private": true
+}
