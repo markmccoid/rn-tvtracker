@@ -63,7 +63,6 @@ const ViewMoviesScreen = ({ navigation, route }) => {
       flatListRef.current.scrollToIndex({ animated: true, index: 0 });
     }
   }, [showSearch]);
-
   // Get movie details when movie is selected/edit mode
   // probably should move whole overlay section to a separate file
   useEffect(() => {

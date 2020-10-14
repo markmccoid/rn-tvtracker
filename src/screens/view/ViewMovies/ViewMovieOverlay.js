@@ -1,11 +1,11 @@
-import React from 'react';
-import { View, Text, StyleSheet, Image, Animated } from 'react-native';
-import { Overlay } from 'react-native-elements';
-import { useDimensions } from '@react-native-community/hooks';
-import { useOvermind } from '../../../store/overmind';
-import { Button } from '../../../components/common/Buttons';
+import React from "react";
+import { View, Text, StyleSheet, Image, Animated } from "react-native";
+import { Overlay } from "react-native-elements";
+import { useDimensions } from "@react-native-community/hooks";
+import { useOvermind } from "../../../store/overmind";
+import { Button } from "../../../components/common/Buttons";
 
-import TagCloud, { TagItem } from '../../../components/TagCloud/TagCloud';
+import TagCloud, { TagItem } from "../../../components/TagCloud/TagCloud";
 
 const ViewMovieOverlay = ({
   movieId,
@@ -26,9 +26,9 @@ const ViewMovieOverlay = ({
       isVisible={isVisible}
       onBackdropPress={() => setMovieEditingId(undefined)}
       overlayStyle={{
-        backgroundColor: '#e9e4f0',
+        backgroundColor: "#e9e4f0",
         margin: 10,
-        borderColor: 'black',
+        borderColor: "black",
         borderWidth: 1,
       }}
       animationType="fade"
@@ -98,25 +98,25 @@ const ViewMovieOverlay = ({
 
 const styles = StyleSheet.create({
   titleWrapper: {
-    borderBottomColor: 'black',
+    borderBottomColor: "black",
     borderBottomWidth: 2,
     marginHorizontal: -10,
     marginBottom: 10,
   },
   title: {
     fontSize: 20,
-    fontWeight: 'bold',
-    textAlign: 'center',
+    fontWeight: "bold",
+    textAlign: "center",
     marginBottom: 10,
   },
   imageAndButtons: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginBottom: 10,
   },
   buttonsWrapper: {
-    flexDirection: 'column',
-    justifyContent: 'flex-start',
+    flexDirection: "column",
+    justifyContent: "flex-start",
   },
   tagCloudWrapper: {
     marginBottom: 20,
