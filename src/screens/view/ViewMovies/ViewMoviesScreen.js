@@ -7,7 +7,7 @@ import {
   StyleSheet,
   Animated,
 } from "react-native";
-import { useOvermind } from "../../../store/overmind";
+import { useOState, useOActions } from "../../../store/overmind";
 import { useDimensions } from "@react-native-community/hooks";
 import ListSearchBar from "./ListSearchBar";
 
@@ -19,7 +19,8 @@ const ViewMoviesScreen = ({ navigation, route }) => {
   const [movieDetails, setMovieDetails] = React.useState(undefined);
   const [showSearch, setShowSearch] = useState(false);
   const flatListRef = React.useRef();
-  const { state, actions } = useOvermind();
+  const state = useOState();
+  const actions = useOActions();
   const { setMovieEditingId } = actions.oAdmin;
   const { movieEditingId } = state.oAdmin.appState;
   const { getFilteredMovies, getAllMovieTags, getMovieDetails } = state.oSaved;
@@ -75,7 +76,7 @@ const ViewMoviesScreen = ({ navigation, route }) => {
         <ListSearchBar onCancel={() => setShowSearch(false)} />
       ) : null}
       <FlatList
-        data={getFilteredMovies("date", "asc")}
+        data={getFilteredMovies("date", "dec")}
         ref={flatListRef}
         onScroll={(e) => {
           //   offsetY.setValue(e.nativeEvent.contentOffset.y);

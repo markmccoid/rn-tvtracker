@@ -1,3 +1,6 @@
+/**
+ * NOT USED - TagViewPan.js is used instead
+ */
 import React, { useState } from "react";
 import {
   View,
@@ -12,12 +15,13 @@ import { SwipeListView } from "react-native-swipe-list-view";
 import { Button } from "../common/Buttons";
 import { Feather } from "@expo/vector-icons";
 import { useDimensions } from "@react-native-community/hooks";
-import { useOvermind } from "../../store/overmind";
+import { useOState, useOActions } from "../../store/overmind";
 
 import TagRowEdit from "./TagRowEdit";
 
 const TagView = () => {
-  const { state, actions } = useOvermind();
+  const state = useOState();
+  const actions = useOActions();
   const { tagData } = state.oSaved;
   const { deleteTag } = actions.oSaved;
   const [isEditing, setIsEditing] = useState(undefined);

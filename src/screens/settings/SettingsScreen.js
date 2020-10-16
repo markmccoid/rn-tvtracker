@@ -1,19 +1,12 @@
 import React from "react";
-import {
-  SafeAreaView,
-  View,
-  Text,
-  Button,
-  ScrollView,
-  StyleSheet,
-} from "react-native";
-import { useOvermind } from "../../store/overmind";
+import { SafeAreaView, View, Text, ScrollView, StyleSheet } from "react-native";
+import { useOState } from "../../store/overmind";
 import SavedFiltersView from "../../components/settings/SavedFiltersView";
 
 import DefaultFilter from "./DefaultFilter";
 
 const Settings = ({ navigation }) => {
-  const { state, actions } = useOvermind();
+  const state = useOState();
   const { savedFilters } = state.oSaved;
   // React.useEffect(() => {
   //   console.log("Mounting setting");

@@ -9,7 +9,7 @@ import {
   Animated,
 } from "react-native";
 import { useDimensions } from "@react-native-community/hooks";
-import { useOvermind } from "../../store/overmind";
+import { useOState, useOActions } from "../../store/overmind";
 import { DragHandleIcon } from "../common/Icons";
 
 //TODO -- Overmind save bounce the save
@@ -52,7 +52,8 @@ const TagViewPan = () => {
   const flatListRef = React.useRef();
 
   //Get tag data from Overmind
-  const { state, actions } = useOvermind();
+  const state = useOState();
+  const actions = useOActions();
   // tagData = [ { tagId, tagName }, ...]
   const { tagData } = state.oSaved;
   const { updateTags } = actions.oSaved;

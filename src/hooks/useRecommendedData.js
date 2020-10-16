@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { movieGetRecommendations } from "@markmccoid/tmdb_api";
-import { useOvermind } from "../store/overmind";
+import { useOState, useOActions } from "../store/overmind";
 
 function getNextPage(page, totalPages) {
   let nextPage = page + 1;
@@ -13,7 +13,8 @@ function getNextPage(page, totalPages) {
 export const useRecommendedData = (movieId, page = 1) => {
   const [recommendedData, setRecommendedData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const { state, actions } = useOvermind();
+  const state = useOState();
+  const actions = useOActions();
 
   const getRecommendedData = async () => {
     setIsLoading(true);

@@ -1,12 +1,13 @@
 import React from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
 import { Button, ButtonGroup } from "react-native-elements";
-import { useOvermind } from "../../../store/overmind";
+import { useOState, useOActions } from "../../../store/overmind";
 import TagCloud, { TagItem } from "../../../components/TagCloud/TagCloud";
 import _ from "lodash";
 
 const ViewMoviesFilterScreen = ({ route, navigation }) => {
-  const { state, actions } = useOvermind();
+  const state = useOState();
+  const actions = useOActions();
   const { getAllFilterTags, getAllFilterGenres } = state.oSaved;
   // const { genres } = state.oSaved.generated;
   const { tagOperator, genreOperator } = state.oSaved.filterData;

@@ -11,8 +11,7 @@ import {
 import TagCloud, { TagItem } from "../../components/TagCloud/TagCloud";
 import { Button } from "../../components/common/Buttons";
 import { ButtonGroup } from "react-native-elements";
-import { useOvermind } from "../../store/overmind";
-import { setMovieEditingId } from "../../store/oAdmin/actions";
+import { useOState, useOActions } from "../../store/overmind";
 
 const CreateSavedFilterScreen = ({ navigation, route }) => {
   const [selectedTags, setSelectedTags] = React.useState([]);
@@ -23,7 +22,8 @@ const CreateSavedFilterScreen = ({ navigation, route }) => {
 
   const tagOperators = ["AND", "OR"];
 
-  const { state, actions } = useOvermind();
+  const state = useOState();
+  const actions = useOActions();
   const { getTags } = state.oSaved;
   const { addSavedFilter, updateSavedFilter } = actions.oSaved;
 

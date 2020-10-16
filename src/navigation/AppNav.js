@@ -4,9 +4,6 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { useFocusEffect } from "@react-navigation/native";
 
-//Remove if moving tag building elsewhere (should be action to pull stored this just for testing)
-import { useOvermind } from "../store/overmind";
-
 import Firebase from "../storage/firebase";
 import ViewStack from "../screens/view/ViewStack";
 import SearchStack from "../screens/search/SearchStack";

@@ -7,10 +7,11 @@ import {
   StyleSheet,
 } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { useOvermind } from "../../../store/overmind";
+import { useOActions, useOState } from "../../../store/overmind";
 
 const ListSearchBar = ({ onCancel = () => null }) => {
-  const { state, actions } = useOvermind();
+  const state = useOState();
+  const actions = useOActions();
   const { searchFilter } = state.oSaved;
   const { setSearchFilter } = actions.oSaved;
   const navigation = useNavigation();

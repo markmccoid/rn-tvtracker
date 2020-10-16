@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, StyleSheet, Image, Animated } from "react-native";
 import { Overlay } from "react-native-elements";
 import { useDimensions } from "@react-native-community/hooks";
-import { useOvermind } from "../../../store/overmind";
+import { useOState, useOActions } from "../../../store/overmind";
 import { Button } from "../../../components/common/Buttons";
 
 import TagCloud, { TagItem } from "../../../components/TagCloud/TagCloud";
@@ -14,7 +14,8 @@ const ViewMovieOverlay = ({
   setMovieEditingId,
 }) => {
   const { width, height } = useDimensions().window;
-  const { state, actions } = useOvermind();
+  const state = useOState();
+  const actions = useOActions();
   const { getAllMovieTags } = state.oSaved;
   const { deleteMovie, addTagToMovie, removeTagFromMovie } = actions.oSaved;
 

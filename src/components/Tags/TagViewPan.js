@@ -4,7 +4,6 @@ import {
   Text,
   View,
   TouchableOpacity,
-  FlatList,
   Dimensions,
   PanResponder,
   Animated,
@@ -12,9 +11,10 @@ import {
 import { SwipeListView } from "react-native-swipe-list-view";
 import { Feather } from "@expo/vector-icons";
 import { useDimensions } from "@react-native-community/hooks";
-import { useOvermind } from "../../store/overmind";
+import { useOState, useOActions } from "../../store/overmind";
 import { DragHandleIcon } from "../common/Icons";
 import TagRowEdit from "./TagRowEdit";
+
 //TODO -- Overmind save bounce the save
 //---------------------------------
 //-----------------------------------
@@ -58,7 +58,8 @@ const TagViewPan = () => {
   let viewListRef = React.useRef();
   const { width, height } = useDimensions().window;
   //Get tag data from Overmind
-  const { state, actions } = useOvermind();
+  const state = useOState();
+  const actions = useOActions();
   // tagData = [ { tagId, tagName }, ...]
   const [data, setData] = React.useState();
   const { tagData } = state.oSaved;
@@ -66,9 +67,12 @@ const TagViewPan = () => {
 
   // Sets our local data array whenever Overmind's data changes length
   // We only need to update the local array if an tag is ADDED or REMOVED
+  // OR EDITED
   React.useEffect(() => {
-    setData([...tagData]);
-  }, [tagData.length]);
+    if (!isEditing) {
+      setData([...tagData]);
+    }
+  }, [tagData.length, isEditing]);
 
   const _panResponder = PanResponder.create({
     // Ask to be the responder:

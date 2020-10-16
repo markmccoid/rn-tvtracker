@@ -1,10 +1,11 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import { useOvermind } from "../../store/overmind";
+import { useOState, useOActions } from "../../store/overmind";
 import DropDownPicker from "react-native-dropdown-picker";
 
 const DefaultFilter = () => {
-  const { state, actions } = useOvermind();
+  const state = useOState();
+  const actions = useOActions();
   const { savedFilters, settings } = state.oSaved;
   const defaultFilter = settings?.defaultFilter;
 
