@@ -13,7 +13,7 @@ import {
   FilterIcon,
   UserIcon,
 } from "../components/common/Icons";
-import { useOvermind } from "../store/overmind";
+import { useOState, useOActions } from "../store/overmind";
 
 import Firebase from "../storage/firebase";
 import { TouchableOpacity } from "react-native-gesture-handler";
@@ -23,10 +23,12 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 // props sent to custom drawer include navigation
 
 function AppNavDrawerContent(props) {
-  const { state, actions } = useOvermind();
-  const { addSavedFilter, applySavedFilter, clearFilterTags } = actions.oSaved;
-  const { getDrawerSavedFilters } = state.oSaved;
-  const savedFilters = getDrawerSavedFilters;
+  const state = useOState();
+  const actions = useOActions();
+  const { applySavedFilter, clearFilterTags } = actions.oSaved;
+  const savedFilters = state.oSaved.getDrawerSavedFilters;
+  const { email } = state.oAdmin;
+
   return (
     <View style={{ flex: 1 }}>
       <View
@@ -36,7 +38,7 @@ function AppNavDrawerContent(props) {
         {/* <DrawerItemList {...props} /> */}
         <View style={styles.userInfo}>
           <UserIcon size={20} style={{ marginLeft: 20, paddingRight: 20 }} />
-          <Text>{state.oAdmin.email}</Text>
+          <Text>{email}</Text>
           {/* <DrawerItem
             label={state.oAdmin.email}
             icon={({ focused, color, size }) => <UserIcon size={size} />}

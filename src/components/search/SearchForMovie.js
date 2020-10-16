@@ -1,14 +1,15 @@
 import React from "react";
 import { View, Text, TextInput, StyleSheet, Keyboard } from "react-native";
 // import { SearchBar, Button } from "react-native-elements";
-import { useOvermind } from "../../store/overmind";
+import { useOActions, useOState } from "../../store/overmind";
 import { useNavigation } from "@react-navigation/native";
 
 const SearchForMovie = ({ setSearchString }) => {
   let inputRef = React.useRef(); // Not using right now
-  let { state, actions } = useOvermind();
-  let { searchPassingTitle, searchByTitle } = actions.oSearch;
-  let { searchString, isLoading } = state.oSearch;
+  const state = useOState();
+  const actions = useOActions();
+  let { searchPassingTitle } = actions.oSearch;
+  let { searchString } = state.oSearch;
   let navigation = useNavigation();
 
   return (

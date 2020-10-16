@@ -12,7 +12,7 @@ import {
   Dimensions,
 } from "react-native";
 
-import { useOvermind } from "../../../store/overmind";
+import { useOState, useOActions } from "../../../store/overmind";
 import { useDimensions } from "@react-native-community/hooks";
 import { useCastData } from "../../../hooks/useCastData";
 import { Transitioning, Transition } from "react-native-reanimated";
@@ -63,7 +63,8 @@ const ViewSavedMovieDetails = ({ movie, isInSavedMovies }) => {
   const iconAnim = React.useRef(new Animated.Value(0)).current;
 
   const castData = useCastData(movieId);
-  let { state, actions } = useOvermind();
+  const state = useOState();
+  const actions = useOActions();
   // let movie = state.oSaved.getMovieDetails(movieId);
   let tags = state.oSaved.getAllMovieTags(movieId);
   let assignedTags = state.oSaved.getMovieTags(movieId);

@@ -1,16 +1,13 @@
 import React from "react";
 import {
   View,
-  Text,
   FlatList,
-  Image,
-  StyleSheet,
   Keyboard,
   TouchableWithoutFeedback,
   ActivityIndicator,
 } from "react-native";
 import { Button } from "../../components/common/Buttons";
-import { useOvermind } from "../../store/overmind";
+import { useOState, useOActions } from "../../store/overmind";
 import SearchForMovie from "../../components/search/SearchForMovie";
 import SearchResultItem from "../../components/search/SearchResultItem";
 import { useFocusEffect, useIsFocused } from "@react-navigation/native";
@@ -22,7 +19,8 @@ const SearchScreen = ({ navigation }) => {
   const [onDetailsPage, setOnDetailsPage] = React.useState(false);
 
   const flatListRef = React.useRef();
-  const { state, actions } = useOvermind();
+  const state = useOState();
+  const actions = useOActions();
   const { saveMovie, deleteMovie } = actions.oSaved;
   const {
     searchByTitle,

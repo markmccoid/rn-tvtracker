@@ -6,16 +6,13 @@ import {
   StyleSheet,
   Animated,
   Button,
-  SafeAreaView,
   Image,
   Dimensions,
-  StatusBar,
 } from "react-native";
-import MaskedView from "@react-native-community/masked-view";
-import Svg, { Rect } from "react-native-svg";
+
 import { LinearGradient } from "expo-linear-gradient";
 
-import { useOvermind } from "../../../store/overmind";
+import { useOState } from "../../../store/overmind";
 
 const { width, height } = Dimensions.get("window");
 
@@ -68,7 +65,7 @@ const Backdrop = ({ movies, scrollX }) => {
 };
 
 const TestCarouselAnim = ({ navigation }) => {
-  const { state, actions } = useOvermind();
+  const state = useOState();
   const { getFilteredMovies } = state.oSaved;
   const flatListRef = React.useRef();
   const scrollX = React.useRef(new Animated.Value(0)).current;

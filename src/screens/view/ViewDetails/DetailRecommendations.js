@@ -2,7 +2,7 @@ import * as React from "react";
 import { View, ActivityIndicator, Text, ScrollView } from "react-native";
 import SearchResultItem from "../../../components/search/SearchResultItem";
 import { useRecommendedData } from "../../../hooks/useRecommendedData";
-import { useOvermind } from "../../../store/overmind";
+import { useOActions } from "../../../store/overmind";
 import { useRoute } from "@react-navigation/native";
 
 const DetailRecommendations = ({ movieId }) => {
@@ -10,7 +10,7 @@ const DetailRecommendations = ({ movieId }) => {
   const [recommendations, recommendIsLoading] = useRecommendedData(movieId);
   const [scrollIndex, setScrollIndex] = React.useState(0);
   const route = useRoute();
-  let { actions } = useOvermind();
+  const actions = useOActions();
   const { saveMovie, deleteMovie } = actions.oSaved;
 
   // Everytime we load the recommendations,

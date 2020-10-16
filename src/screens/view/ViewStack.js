@@ -2,7 +2,7 @@ import React from "react";
 import { View, TouchableOpacity, ActivityIndicator } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 
-import { useOvermind } from "../../store/overmind";
+import { useOState, useOActions } from "../../store/overmind";
 
 import {
   FilterIcon,
@@ -37,7 +37,8 @@ const ViewMoviesStack = () => {
 };
 
 const ViewStackScreen = () => {
-  const { state, actions } = useOvermind();
+  const state = useOState();
+  const actions = useOActions();
   let numFilters = state.oSaved.filterData.tags.length;
   let numGenreFilters = state.oSaved.filterData.genres.length;
   let numMovies = state.oSaved.getFilteredMovies().length;

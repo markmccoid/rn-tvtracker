@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator } from "react-native";
 import { AddIcon, DeleteIcon } from "../../../components/common/Icons";
-import { useOvermind } from "../../../store/overmind";
+import { useOState, useOActions } from "../../../store/overmind";
 
 import ViewSavedMovieDetails from "./ViewSavedMovieDetails";
 
@@ -29,7 +29,8 @@ const ViewDetails = ({ navigation, route }) => {
     !route.params?.notSaved
   );
 
-  let { state, actions } = useOvermind();
+  const state = useOState();
+  const actions = useOActions();
   const { saveMovie, deleteMovie } = actions.oSaved;
 
   useEffect(() => {

@@ -2,11 +2,11 @@ import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { EditIcon, DeleteIcon } from "../common/Icons";
-import { useOvermind } from "../../store/overmind";
+import { useOActions } from "../../store/overmind";
 
 const SavedFiltersItem = ({ savedFilter }) => {
   const navigation = useNavigation();
-  const { actions } = useOvermind();
+  const actions = useOActions();
   const { deleteSavedFilter } = actions.oSaved;
   return (
     <View style={styles.container}>

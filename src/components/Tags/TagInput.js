@@ -2,15 +2,14 @@ import React from "react";
 import { View, TextInput, StyleSheet } from "react-native";
 // import { Input, Button, ListItem } from "react-native-elements";
 import { Button } from "../common/Buttons";
-import { useOvermind } from "../../store/overmind";
+import { useOActions } from "../../store/overmind";
 
 import { colors } from "../../globalStyles";
 
 const TagInput = () => {
   const [tagValue, setTagValue] = React.useState("");
-  const { state, actions } = useOvermind();
+  const actions = useOActions();
   const { addNewTag } = actions.oSaved;
-  const { tagData } = state.oSaved;
   return (
     <View style={styles.tagInputWrapper}>
       <View style={styles.inputFieldWrapper}>

@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 
-import { useOvermind } from "../../../store/overmind";
+import { useOState, useOActions } from "../../../store/overmind";
 import { useImageDims } from "../../../hooks/useImageDims";
 import { movieGetImages } from "@markmccoid/tmdb_api";
 
@@ -26,7 +26,8 @@ const PickImage = ({ movieId, vpiAnimation, setViewPickImage }) => {
   // Get the opacity animation value
   const fadeAnim = React.useRef(new Animated.Value(0)).current;
   // Get Overmind store data
-  const { state, actions } = useOvermind();
+  const state = useOState();
+  const actions = useOActions();
   const { getCurrentImageUrls } = state.oSaved;
   const { updateMoviePosterImage } = actions.oSaved;
 

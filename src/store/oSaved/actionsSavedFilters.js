@@ -26,29 +26,6 @@ export const addSavedFilter = ({ state, actions, effects }, savedFilterObj) => {
 };
 
 /**
- * updateSavedFilter - Updates an existing saved filter with the passed properties.
- * and then saves to Firebase
- * @param {*} param0
- * @param {ojbect} savedFilterObj
- */
-export const updateSavedFilter = (
-  { state, actions, effects },
-  savedFilterObj
-) => {
-  // create a new array of filters with the passed object's filter updated
-  const newFilters = state.oSaved.savedFilters.map((filterObj) => {
-    if (filterObj.id === savedFilterObj.id) {
-      return savedFilterObj;
-    }
-    return filterObj;
-  });
-  //Store back into Overmind
-  state.oSaved.savedFilters = newFilters;
-  // Save to Firebase
-  effects.oSaved.saveSavedFilters(newFilters);
-};
-
-/**
  * deleteSavedFilter - deletes the filter associated with the passed ID and then udpates Firebase
  * @param {*} param0
  * @param {string} filterIdToDelete

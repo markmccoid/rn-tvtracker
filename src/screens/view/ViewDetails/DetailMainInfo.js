@@ -1,14 +1,6 @@
 import React from "react";
-import {
-  View,
-  Text,
-  Image,
-  ScrollView,
-  SafeAreaView,
-  StyleSheet,
-} from "react-native";
-import { Button, CircleButton } from "../../../components/common/Buttons";
-import { useOvermind } from "../../../store/overmind";
+import { View, Text, Image, StyleSheet } from "react-native";
+
 import { useDimensions } from "@react-native-community/hooks";
 
 const DetailMainInfo = ({ movie }) => {

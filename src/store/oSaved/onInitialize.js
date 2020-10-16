@@ -1,4 +1,4 @@
-import Firebase, { firestore } from '../../storage/firebase';
+import Firebase, { firestore } from "../../storage/firebase";
 
 // initialize currently only loads data that was stored in
 // phones local storage.

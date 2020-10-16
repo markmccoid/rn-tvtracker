@@ -1,11 +1,11 @@
 import React from "react";
 import { View, TextInput, Text, TouchableOpacity } from "react-native";
 import { Button } from "../common/Buttons";
-import { useOvermind } from "../../store/overmind";
+import { useOState, useOActions } from "../../store/overmind";
 
 const TagRowEdit = ({ currTagValue, tagId, setIsEditing }) => {
   const [tagValue, setTagValue] = React.useState(currTagValue);
-  const { state, actions } = useOvermind();
+  const actions = useOActions();
   const { editTag } = actions.oSaved;
   return (
     <View style={{ flexDirection: "row", justifyContent: "space-between" }}>

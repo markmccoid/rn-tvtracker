@@ -5062,6 +5062,11 @@ node-stream-zip@^1.9.1:
   resolved "https://registry.yarnpkg.com/node-stream-zip/-/node-stream-zip-1.11.3.tgz#223892620b4889bce9782b256a76682631c507be"
   integrity sha512-GY+9LxkQuIT3O7K8BTdHVGKFcBYBy2vAVcTBtkKpu+OlBef/NSb6VuIWSyLiVDfmLMkggHeRJZN0F3W0GWU/uw==
 
+non-blocking-json@1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/non-blocking-json/-/non-blocking-json-1.1.1.tgz#2180c25ee0330475bdc5e14b27d0750d7c0d73a4"
+  integrity sha512-iweGQWA3+GZkjJEXhvtRh1fjo8DpnotpL8+13NSwaI28X6HaqlYTxAI/ZXawCmva2GS3NaOl5NdNudg3RyQreQ==
+
 noop-fn@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/noop-fn/-/noop-fn-1.0.0.tgz#5f33d47f13d2150df93e0cb036699e982f78ffbf"
@@ -5293,21 +5298,22 @@ osenv@^0.1.4:
     os-homedir "^1.0.0"
     os-tmpdir "^1.0.0"
 
-overmind-react@^24.0.1:
-  version "24.1.0"
-  resolved "https://registry.yarnpkg.com/overmind-react/-/overmind-react-24.1.0.tgz#3e25a08f6fb642ee41ecdf334f02a203d530c777"
-  integrity sha512-ySj752/CxdfB6j+VxXvy4Sq5zNY0UKsinSh84gs2I0onvDUKRNDa8n3gROeFZid+hWPXVNZvzx4JUSg7yLkKwA==
+overmind-react@^26.0.2:
+  version "26.0.2"
+  resolved "https://registry.yarnpkg.com/overmind-react/-/overmind-react-26.0.2.tgz#5bc648cd00148fbe004af55d3d2b12ac9e9dbed0"
+  integrity sha512-U0TI7ybdr0qZyKQgHFg9unDg16w9RmaF4TgHlJQTyl2ICZd2CePTAZQgfJKVG7Sy2MPTSq/pt7RjgiAy/xg8mw==
   dependencies:
-    overmind "23.1.0"
+    overmind "25.0.2"
 
-overmind@23.1.0, overmind@^23.0.1:
-  version "23.1.0"
-  resolved "https://registry.yarnpkg.com/overmind/-/overmind-23.1.0.tgz#112c0ec7c9f362bac1df8b48f3b62232cc48ce1a"
-  integrity sha512-N7GrZCuNgep+q27EgDBec3W2psFs2xyckxSlTyI5vfXrdajOcpTA6ERDWKbAcmkZVv+1PWZ96o4ozSiEk1Ea+Q==
+overmind@25.0.2, overmind@^25.0.2:
+  version "25.0.2"
+  resolved "https://registry.yarnpkg.com/overmind/-/overmind-25.0.2.tgz#a86ac3db212768a957d2cf8706e0001faa88cf4e"
+  integrity sha512-LUD6vXLoPSEQbL36MByDgmdJ8JsOSBcK/tJxYmsSMcbZw0b8KBia1uNHZGb2WFuLfMIS2abbg4stDEUPb7wr8Q==
   dependencies:
     betsy "1.0.2"
     is-plain-obj "^1.1.0"
-    proxy-state-tree "5.0.1"
+    non-blocking-json "1.1.1"
+    proxy-state-tree "6.0.2"
     tslib "^1.10.0"
 
 p-finally@^1.0.0:
@@ -5591,10 +5597,10 @@ protobufjs@^6.8.6:
     "@types/node" "^10.1.0"
     long "^4.0.0"
 
-proxy-state-tree@5.0.1:
-  version "5.0.1"
-  resolved "https://registry.yarnpkg.com/proxy-state-tree/-/proxy-state-tree-5.0.1.tgz#129e8c708796fec74c3c73d6b3fcfcffecab62fb"
-  integrity sha512-eEFNXXsCCHmtUkpueWrrQmBCDpzS4G7EJb7jUBSOE4KYofu0q2f61cX4NCZLBUQvxUhjXDXCARr2bDDQofIbQA==
+proxy-state-tree@6.0.2:
+  version "6.0.2"
+  resolved "https://registry.yarnpkg.com/proxy-state-tree/-/proxy-state-tree-6.0.2.tgz#8cfd51c1a2b84910e3e6cc1a91ecefacea88665d"
+  integrity sha512-FZh7PqvG7SDCOmnSFKmXoF9eWBXTiBkc/f1+1dSi+Wcnc7j7NPeP7HT2HgXUhLe1WL9GDYVe6W2L4VebonwK9w==
   dependencies:
     is-plain-obj "^1.1.0"
 
