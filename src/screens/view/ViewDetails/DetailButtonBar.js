@@ -38,7 +38,7 @@ const DetailButtonBar = ({
       <View style={{ flex: 1, alignItems: "center", marginBottom: 10 }}>
         <Button
           onPress={() =>
-            Linking.openURL(`imdb:///title/${movie.imdbId}`).catch((err) => {
+            Linking.openURL(`imdb:///title/${imdbId}`).catch((err) => {
               Linking.openURL(
                 "https://apps.apple.com/us/app/imdb-movies-tv-shows/id342792525"
               );

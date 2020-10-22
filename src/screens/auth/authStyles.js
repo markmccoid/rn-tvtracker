@@ -12,7 +12,7 @@ export const PasswordInput = styled.TextInput`
 `;
 export const Header = styled.Text`
   font-size: 40px;
-  margin-bottom: 60px;
+  margin-bottom: 30px;
 `;
 export const IntroText = styled.Text`
   font-size: 18px;

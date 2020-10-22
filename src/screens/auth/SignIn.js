@@ -145,26 +145,21 @@ const SignIn = ({ navigation, route }) => {
             ConfirmPassword
           ) : (
             <TouchableOpacity onPress={() => navigation.push("ForgotPassword")}>
-              <Text style={{ marginTop: 10, fontSize: 16, color: "#888" }}>
+              <Text
+                style={{
+                  marginTop: 10,
+                  fontSize: 16,
+                  color: "#888",
+                  fontWeight: "bold",
+                }}
+              >
                 Forgot Password?
               </Text>
             </TouchableOpacity>
           )}
 
-          <TouchableOpacity
-            style={{
-              width: "85%",
-              backgroundColor: "#52aac9",
-              padding: 15,
-              marginVertical: 40,
-              borderRadius: 5,
-            }}
-            onPress={onSubmit}
-          >
-            <ButtonText>{isSignIn ? "Sign In" : "Sign Up"}</ButtonText>
-          </TouchableOpacity>
           {isSignIn && (
-            <View style={{ flexDirection: "row", marginTop: 50 }}>
+            <View style={{ flexDirection: "row", marginTop: 10 }}>
               <Text style={{ marginRight: 5, fontSize: 16, color: "#888" }}>
                 Haven't signed up yet?
               </Text>
@@ -181,6 +176,19 @@ const SignIn = ({ navigation, route }) => {
               </TouchableOpacity>
             </View>
           )}
+
+          <TouchableOpacity
+            style={{
+              width: "85%",
+              backgroundColor: "#52aac9",
+              padding: 15,
+              marginVertical: 20,
+              borderRadius: 5,
+            }}
+            onPress={onSubmit}
+          >
+            <ButtonText>{isSignIn ? "Sign In" : "Sign Up"}</ButtonText>
+          </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
     </TouchableWithoutFeedback>

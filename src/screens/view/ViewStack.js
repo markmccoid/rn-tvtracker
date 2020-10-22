@@ -44,7 +44,6 @@ const ViewStackScreen = () => {
   let numMovies = state.oSaved.getFilteredMovies().length;
   let isFiltered = numFilters > 0;
   const isGenreFiltered = numGenreFilters > 0;
-
   const { clearFilterScreen } = actions.oSaved;
   return (
     <ViewStack.Navigator>
@@ -56,7 +55,6 @@ const ViewStackScreen = () => {
           let currentScreenName =
             route?.state?.routeNames[route.state.index] || "Movies";
           let params = route?.state?.routes[route.state.index].params;
-          let paramShowSearch = params?.showSearch || false;
           let title =
             currentScreenName === "Movies"
               ? `${numMovies} Movies`
@@ -76,7 +74,7 @@ const ViewStackScreen = () => {
               if (currentScreenName === "Movies") {
                 return (
                   <View style={{ flexDirection: "row" }}>
-                    <TouchableOpacity
+                    {/* <TouchableOpacity
                       onPress={() =>
                         navigation.navigate("Movies", {
                           showSearch: !paramShowSearch,
@@ -88,7 +86,7 @@ const ViewStackScreen = () => {
                         size={30}
                         style={{ marginRight: 15 }}
                       />
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                     <TouchableOpacity
                       onPress={() => navigation.navigate("Filter")}
                       onLongPress={() => clearFilterScreen()}

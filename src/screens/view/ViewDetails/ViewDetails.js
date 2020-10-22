@@ -3,7 +3,7 @@ import { ActivityIndicator } from "react-native";
 import { AddIcon, DeleteIcon } from "../../../components/common/Icons";
 import { useOState, useOActions } from "../../../store/overmind";
 
-import ViewSavedMovieDetails from "./ViewSavedMovieDetails";
+import ViewMovieDetails from "./ViewMovieDetails";
 
 import { TouchableOpacity } from "react-native-gesture-handler";
 
@@ -115,10 +115,7 @@ const ViewDetails = ({ navigation, route }) => {
   }
 
   return (
-    <ViewSavedMovieDetails
-      movie={movieData}
-      isInSavedMovies={isInSavedMovies}
-    />
+    <ViewMovieDetails movie={movieData} isInSavedMovies={isInSavedMovies} />
   );
 };
 

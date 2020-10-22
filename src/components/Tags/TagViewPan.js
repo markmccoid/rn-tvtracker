@@ -261,7 +261,7 @@ const TagViewPan = () => {
       onLayout={(e) => {
         viewRef.current.measure((x, y, width, height, pageX, pageY) => {
           flatListTopOffset.current = pageY;
-          console.log("VIEWRef", x, y, pageX, pageY, width, height);
+          // console.log("VIEWRef", x, y, pageX, pageY, width, height);
         });
       }}
     >

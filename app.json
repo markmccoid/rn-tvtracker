@@ -2,7 +2,7 @@
   "expo": {
     "name": "Movie Tracker",
     "slug": "movie-tracker",
-    "privacy": "public",
+    "privacy": "unlisted",
     "platforms": [
       "ios"
     ],

@@ -8,12 +8,19 @@ import Firebase from "../storage/firebase";
 import ViewStack from "../screens/view/ViewStack";
 import SearchStack from "../screens/search/SearchStack";
 import TagStack from "../screens/tags/TagStack";
+import { useOState } from "../store/overmind";
 
-import { ViewMovieIcon, SearchIcon, TagIcon } from "../components/common/Icons";
+import {
+  ViewMovieIcon,
+  SearchIcon,
+  TagIcon,
+  AddIcon,
+} from "../components/common/Icons";
 
 import SettingsStackScreen from "../screens/settings/SettingsStack";
 import TestCarouselAnim from "../screens/view/ViewMovies/TestCarouselAnim";
 import AppNavDrawerContent from "./AppNavDrawerContent";
+
 //----------------------------------------------------------------
 // Create screenoptions function for TabsNavigator
 //----------------------------------------------------------------
@@ -28,9 +35,7 @@ const tabsScreenOptions = ({ route }) => ({
         );
         break;
       case "Search":
-        iconComponent = (
-          <SearchIcon size={size} color={color} style={tagStyle} />
-        );
+        iconComponent = <AddIcon size={size} color={color} style={tagStyle} />;
         break;
       case "Tags":
         iconComponent = <TagIcon size={size} color={color} style={tagStyle} />;
@@ -82,9 +87,13 @@ const AppTabsScreen = () => {
       <AppTabs.Screen
         name="ViewMoviesTab"
         component={ViewStack}
-        options={{ title: "View Movies" }}
+        options={{ title: "My Movies" }}
       />
-      <AppTabs.Screen name="Search" component={SearchStack} />
+      <AppTabs.Screen
+        name="Search"
+        component={SearchStack}
+        options={{ title: "Add Movie" }}
+      />
       <AppTabs.Screen name="Tags" component={TagStack} />
     </AppTabs.Navigator>
   );
@@ -98,7 +107,7 @@ const AppNav = () => {
       drawerStyle={{}}
       drawerContent={(props) => <AppNavDrawerContent {...props} />}
     >
-      <Drawer.Screen name="h" component={AppTabsScreen} />
+      <Drawer.Screen name="Home" component={AppTabsScreen} />
       <Drawer.Screen name="Settings" component={SettingsStackScreen} />
       <Drawer.Screen
         options={{ unmountOnBlur: true }}

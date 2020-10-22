@@ -9,7 +9,11 @@ const SearchStack = createStackNavigator();
 
 const SearchStackScreen = () => {
   return (
-    <SearchStack.Navigator>
+    <SearchStack.Navigator
+      screenOptions={(navigation, route) => {
+        // console.log("SearchScreenStack", navigation.route, route);
+      }}
+    >
       <SearchStack.Screen
         name="Search"
         component={SearchScreen}

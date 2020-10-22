@@ -50,7 +50,7 @@ const DetailRecommendations = ({ movieId }) => {
     return (
       <View style={{ flexDirection: "row", justifyContent: "center" }}>
         <Text style={{ fontWeight: "normal", fontSize: 20 }}>
-          No Videos Found
+          No Recommendations Found
         </Text>
       </View>
     );

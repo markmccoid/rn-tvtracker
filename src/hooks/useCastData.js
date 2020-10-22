@@ -1,9 +1,6 @@
 import { useEffect, useState } from "react";
 import { movieGetCredits } from "@markmccoid/tmdb_api";
-import {
-  loadFromAsyncStorage,
-  saveToAsyncStorage,
-} from "../storage/localStorage";
+import { loadFromAsyncStorage, saveToAsyncStorage } from "../storage/asyncStorage";
 
 export function useCastData(movieId) {
   let [castData, setCastData] = useState([]);

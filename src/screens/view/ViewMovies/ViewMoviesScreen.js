@@ -79,12 +79,12 @@ const ViewMoviesScreen = ({ navigation, route }) => {
         data={getFilteredMovies("date", "dec")}
         ref={flatListRef}
         onScroll={(e) => {
-          //   offsetY.setValue(e.nativeEvent.contentOffset.y);
-          //   // console.log("Y", e.nativeEvent.contentOffset.y);
-          //   if (e.nativeEvent.contentOffset.y < -10) {
-          //     // setY(e.nativeEvent.contentOffset.y);
-          //     setShowSearchInput(true);
-          //   }
+          offsetY.setValue(e.nativeEvent.contentOffset.y);
+          // console.log("Y", e.nativeEvent.contentOffset.y);
+          if (e.nativeEvent.contentOffset.y < -50) {
+            // setY(e.nativeEvent.contentOffset.y);
+            setShowSearch(true);
+          }
         }}
         scrollEventThrottle={16}
         // getItemLayout={getItemLayout}
