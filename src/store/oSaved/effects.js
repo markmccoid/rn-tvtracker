@@ -1,44 +1,72 @@
 import {
-  loadSavedMovies,
-  saveMoviesToStorage,
-  saveTagsToStorage,
-  saveUserDataToStorage,
-  loadSavedTags,
-  loadSavedUserData,
-} from "../../storage";
-import {
-  loadUserDocument,
-  storeSavedMovies,
-  storeTagData,
-  storeUserData,
-  storeUserDataSettings,
-  storeSavedFilters,
-} from "../../storage/firestore";
-//* NEW DATA MODEL Funcs
+  isDataStale,
+  refreshLocalData,
+  loadLocalData,
+  saveMoviesToLocal,
+  saveTagsToLocal,
+  saveSettingsToLocal,
+  saveSavedFiltersToLocal,
+} from "../../storage/localData";
+
+import { loadFromAsyncStorage } from "../../storage/asyncStorage";
+
 import {
   addMovieToFirestore,
   deleteMovieFromFirestore,
   storeSettings,
   storeTaggedMovies,
   updateMovieInFirestore,
+  loadUserDocument,
+  storeTagData,
+  storeSavedFilters,
 } from "../../storage/firestore";
 
 import _ from "lodash";
 import { movieGetDetails } from "@markmccoid/tmdb_api";
 
-export const initializeStore = async (uid) => {
-  let userDocument = await loadUserDocument(uid);
-  let savedMovies = userDocument?.savedMovies || [];
-  let tagData = userDocument?.tagData || [];
-  let settings = userDocument?.settings || {};
-  let savedFilters = userDocument?.savedFilters || [];
-  let taggedMovies = userDocument?.taggedMovies || {};
-  return { savedMovies, tagData, settings, savedFilters, taggedMovies };
+//=======================================
+//=======================================
+
+export const initializeStore = async (uid, forceRefresh) => {
+  let dataObj = {};
+  let userDocument;
+  // Check if local data is stale
+  const localStorageDate = await loadFromAsyncStorage(`${uid}-last_stored_date`);
+  // if local data is NOT stale, load from async storage
+  if (!isDataStale(localStorageDate) && !forceRefresh) {
+    dataObj = await loadLocalData(uid);
+    dataObj.dataSource = "local";
+  } else {
+    // data is stale, so load from firebase
+    userDocument = await loadUserDocument(uid);
+    dataObj.savedMovies = userDocument?.savedMovies || [];
+    dataObj.tagData = userDocument?.tagData || [];
+    dataObj.settings = userDocument?.settings || {};
+    dataObj.savedFilters = userDocument?.savedFilters || [];
+    // dataObj.taggedMovies = userDocument?.taggedMovies || {};
+    dataObj.dataSource = "firebase";
+    // Must refresh local data also
+    refreshLocalData(uid, dataObj);
+  }
+  return dataObj;
 };
 
 //* Movie Document DB operations
 export const addMovie = async (movieObj) => {
   await addMovieToFirestore(movieObj);
+};
+
+export const localSaveMovies = async (uid, savedMovies) => {
+  saveMoviesToLocal(uid, savedMovies);
+};
+export const localSaveTags = async (uid, tags) => {
+  saveTagsToLocal(uid, tags);
+};
+export const localSaveSettings = async (uid, settings) => {
+  saveSettingsToLocal(uid, settings);
+};
+export const localSaveSavedFilters = async (uid, settings) => {
+  saveSavedFiltersToLocal(uid, settings);
 };
 
 /**

@@ -8,6 +8,7 @@ export const config = {
     isLoggedIn: undefined,
     appState: {
       movieEditingId: undefined,
+      dataSource: undefined,
     },
   },
   actions,

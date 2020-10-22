@@ -1,7 +1,7 @@
-import React from "react";
 import AsyncStorage from "@react-native-community/async-storage";
 
-// -- Load passed key from Local Storage -- //
+// --------------------------------------------
+// -- LOAD passed key from Local Storage
 export const loadFromAsyncStorage = async (key) => {
   try {
     const data = await AsyncStorage.getItem(key);
@@ -13,27 +13,33 @@ export const loadFromAsyncStorage = async (key) => {
       return undefined;
     }
   } catch (error) {
-    console.log("ERROR loading data", error);
+    console.log("ERROR loading Async Storage data", error);
     return undefined;
   }
 };
 
+// --------------------------------------------
+// -- SAVE data with passed key to Local Storage
 export const saveToAsyncStorage = async (key, data) => {
   try {
     await AsyncStorage.setItem(key, JSON.stringify(data));
   } catch (error) {
-    console.log("ERROR Saving Cast Data", error);
+    console.log("ERROR Saving to Async Storage", error);
   }
 };
 
+// --------------------------------------------
+// -- REMOVE passed key from Local Storage
 export const removeFromAsyncStorage = async (key) => {
   try {
     await AsyncStorage.removeItem(key);
   } catch (error) {
-    console.log("ERROR Removing data", error);
+    console.log("ERROR Removing Async Storage data", error);
   }
 };
 
+// --------------------------------------------
+// -- Gets all keys for the app currently in AsyncStorage
 export const getAllKeys = async () => {
   let keys = [];
   try {

@@ -14,15 +14,11 @@ export const ViewMovieIcon = ({ size, color, style = {} }) => {
 };
 
 export const SearchIcon = ({ size, color, style }) => {
-  return (
-    <MaterialIcons name="search" size={size} color={color} style={style} />
-  );
+  return <MaterialIcons name="search" size={size} color={color} style={style} />;
 };
 
 export const DragHandleIcon = ({ size, color, style }) => {
-  return (
-    <MaterialIcons name="drag-handle" size={size} color={color} style={style} />
-  );
+  return <MaterialIcons name="drag-handle" size={size} color={color} style={style} />;
 };
 
 export const TagIcon = ({ size, color, style }) => {
@@ -49,9 +45,7 @@ export const DeleteIcon = ({ size = 25, color = "#b20a2c", style }) => {
 // };
 // New Check icon has no circle around it
 export const CheckIcon = ({ size, color, style }) => {
-  return (
-    <Ionicons name="ios-checkmark" color={color} size={size} style={style} />
-  );
+  return <Ionicons name="ios-checkmark" color={color} size={size} style={style} />;
 };
 
 export const MenuIcon = ({ size, color, style }) => {
@@ -71,31 +65,23 @@ export const ImagesIcon = ({ size, color, style }) => {
 };
 
 export const CaretRightIcon = ({ size, color, style }) => {
-  return (
-    <FontAwesome name="caret-right" size={size} color={color} style={style} />
-  );
+  return <FontAwesome name="caret-right" size={size} color={color} style={style} />;
 };
 export const CaretDownIcon = ({ size, color, style }) => {
-  return (
-    <FontAwesome name="caret-down" size={size} color={color} style={style} />
-  );
+  return <FontAwesome name="caret-down" size={size} color={color} style={style} />;
 };
 
 //----------------
 //- Drawer Icons
 //----------------
 export const SignOutIcon = ({ size, color, style }) => {
-  return (
-    <FontAwesome name="sign-out" color={color} size={size} style={style} />
-  );
+  return <FontAwesome name="sign-out" color={color} size={size} style={style} />;
 };
 export const HomeIcon = ({ size, color, style }) => {
   return <FontAwesome name="home" color={color} size={size} style={style} />;
 };
 export const SettingsIcon = ({ size, color, style }) => {
-  return (
-    <Ionicons name="ios-settings" color={color} size={size} style={style} />
-  );
+  return <Ionicons name="ios-settings" color={color} size={size} style={style} />;
 };
 export const UserIcon = ({ size, color, style }) => {
   return <FontAwesome name="user" color={color} size={size} style={style} />;
@@ -108,35 +94,31 @@ export const AddIcon = ({ size, color, style }) => {
 // Other Icons
 
 export const ThumbsUpIcon = ({ size, color, style }) => {
-  return (
-    <Ionicons name="ios-thumbs-up" color={color} size={size} style={style} />
-  );
+  return <Ionicons name="ios-thumbs-up" color={color} size={size} style={style} />;
 };
 
 export const YouTubePlayIcon = ({ size, color, style }) => {
-  return (
-    <FontAwesome name="youtube-play" color={color} size={size} style={style} />
-  );
+  return <FontAwesome name="youtube-play" color={color} size={size} style={style} />;
+};
+
+export const SyncIcon = ({ size, color, style }) => {
+  // return <FontAwesome5 name="sync-alt" size={size} color={color} style={style} />;
+  return <MaterialCommunityIcons name="cloud-sync" size={size} color={color} style={style} />;
+};
+
+export const CarouselIcon = ({ size, color, style }) => {
+  // return <FontAwesome5 name="sync-alt" size={size} color={color} style={style} />;
+  return <MaterialIcons name="view-carousel" size={size} color={color} style={style} />;
 };
 
 export const ExpandDownIcon = ({ size, color, style }) => {
   return (
-    <MaterialCommunityIcons
-      name="arrow-expand-down"
-      color={color}
-      size={size}
-      style={style}
-    />
+    <MaterialCommunityIcons name="arrow-expand-down" color={color} size={size} style={style} />
   );
 };
 
 export const CollapseUpIcon = ({ size, color, style }) => {
   return (
-    <MaterialCommunityIcons
-      name="arrow-collapse-up"
-      color={color}
-      size={size}
-      style={style}
-    />
+    <MaterialCommunityIcons name="arrow-collapse-up" color={color} size={size} style={style} />
   );
 };

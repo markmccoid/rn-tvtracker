@@ -1,13 +1,5 @@
 import React from "react";
-import {
-  Alert,
-  View,
-  Text,
-  TextInput,
-  Switch,
-  ScrollView,
-  StyleSheet,
-} from "react-native";
+import { Alert, View, Text, TextInput, Switch, ScrollView, StyleSheet } from "react-native";
 import TagCloud, { TagItem } from "../../components/TagCloud/TagCloud";
 import { Button } from "../../components/common/Buttons";
 import { ButtonGroup } from "react-native-elements";
@@ -25,7 +17,7 @@ const CreateSavedFilterScreen = ({ navigation, route }) => {
   const state = useOState();
   const actions = useOActions();
   const { getTags } = state.oSaved;
-  const { addSavedFilter, updateSavedFilter } = actions.oSaved;
+  const { addSavedFilter } = actions.oSaved;
 
   const filterId = route?.params?.filterId;
   React.useEffect(() => {
@@ -51,10 +43,7 @@ const CreateSavedFilterScreen = ({ navigation, route }) => {
      * showInDrawer
      */
     if (!filterName && !selectedTags.length) {
-      Alert.alert(
-        "Problem Saving",
-        "Must have a filter name at least one tag selected"
-      );
+      Alert.alert("Problem Saving", "Must have a filter name at least one tag selected");
       return;
     }
     const filterObj = {
@@ -84,10 +73,7 @@ const CreateSavedFilterScreen = ({ navigation, route }) => {
         </View>
         <View>
           <Text style={styles.title}>Show On Menu?</Text>
-          <Switch
-            onValueChange={(val) => setShowInDrawer(val)}
-            value={showInDrawer}
-          />
+          <Switch onValueChange={(val) => setShowInDrawer(val)} value={showInDrawer} />
         </View>
         <View>
           <Text style={styles.title}>Select Tag Operator</Text>

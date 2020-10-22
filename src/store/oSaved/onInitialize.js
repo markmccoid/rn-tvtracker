@@ -9,7 +9,7 @@ export const onInitialize = async ({ state, effects, actions }) => {
   unsubscribe = Firebase.auth().onAuthStateChanged((user) => {
     if (user) {
       actions.oAdmin.logUserIn(user);
-      actions.oSaved.hyrdateStore(user.uid);
+      actions.oSaved.hyrdateStore({ uid: user.uid });
       // NOT USED - But example of setting up snapshot that would be called
       // whenever data changed in the users collection and uid doc for logged in user.
       // undo = firestore

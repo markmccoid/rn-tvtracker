@@ -1,10 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import {
-  DrawerContentScrollView,
-  DrawerItemList,
-  DrawerItem,
-} from "@react-navigation/drawer";
+import { DrawerContentScrollView, DrawerItemList, DrawerItem } from "@react-navigation/drawer";
 
 import {
   HomeIcon,
@@ -12,6 +8,8 @@ import {
   SignOutIcon,
   FilterIcon,
   UserIcon,
+  SyncIcon,
+  CarouselIcon,
 } from "../components/common/Icons";
 import { useOState, useOActions } from "../store/overmind";
 
@@ -25,15 +23,13 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 function AppNavDrawerContent(props) {
   const state = useOState();
   const actions = useOActions();
-  const { applySavedFilter, clearFilterTags } = actions.oSaved;
+  const { applySavedFilter, clearFilterTags, hyrdateStore } = actions.oSaved;
   const savedFilters = state.oSaved.getDrawerSavedFilters;
-  const { email } = state.oAdmin;
+  const { email, uid, appState } = state.oAdmin;
 
   return (
     <View style={{ flex: 1 }}>
-      <View
-        style={{ backgroundColor: "#cccccc", height: 50, marginBottom: -50 }}
-      ></View>
+      <View style={{ backgroundColor: "#cccccc", height: 50, marginBottom: -50 }}></View>
       <DrawerContentScrollView {...props}>
         {/* <DrawerItemList {...props} /> */}
         <View style={styles.userInfo}>
@@ -61,26 +57,24 @@ function AppNavDrawerContent(props) {
 
         <View style={styles.menuItemStyle}>
           <DrawerItem
+            label="Carousel View"
+            icon={({ focused, color, size }) => <CarouselIcon size={size} />}
+            onPress={() => props.navigation.navigate("Carousel View")}
+          />
+        </View>
+
+        <View style={styles.menuItemStyle}>
+          <DrawerItem
             label="Settings"
             icon={({ focused, color, size }) => <SettingsIcon size={size} />}
             onPress={() => props.navigation.navigate("Settings")}
           />
         </View>
 
-        <View style={styles.menuItemStyle}>
-          <DrawerItem
-            label="Carousel View"
-            icon={({ focused, color, size }) => <SettingsIcon size={size} />}
-            onPress={() => props.navigation.navigate("Carousel View")}
-          />
-        </View>
-
         <View style={styles.savedFiltersSectionWrapper}>
           <View style={{ marginLeft: 17, flexDirection: "row" }}>
             <FilterIcon size={20} style={{ marginRight: 10 }} />
-            <Text style={[styles.sectionTitle, styles.savedFilterTitle]}>
-              Saved Filters
-            </Text>
+            <Text style={[styles.sectionTitle, styles.savedFilterTitle]}>Saved Filters</Text>
           </View>
 
           <View style={styles.savedFiltersWrapper}>
@@ -100,6 +94,14 @@ function AppNavDrawerContent(props) {
           </View>
         </View>
 
+        <View style={styles.menuItemStyle}>
+          <DrawerItem
+            label={`Sync - Last ${appState.dataSource}`}
+            icon={({ focused, color, size }) => <SyncIcon size={size - 5} />}
+            onPress={() => hyrdateStore({ uid, forceRefresh: true })}
+          />
+        </View>
+
         {/*
           // Drawer example that navigates into details to a specific movie
          <DrawerItem
@@ -116,10 +118,7 @@ function AppNavDrawerContent(props) {
             props.navigation.toggleDrawer();
           }}
         /> */}
-        <DrawerItem
-          label="Close"
-          onPress={() => props.navigation.toggleDrawer()}
-        />
+        <DrawerItem label="Close" onPress={() => props.navigation.toggleDrawer()} />
       </DrawerContentScrollView>
       <View style={styles.signOut}>
         <DrawerItem

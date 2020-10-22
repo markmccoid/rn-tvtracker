@@ -4,12 +4,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 
 import { useOState, useOActions } from "../../store/overmind";
 
-import {
-  FilterIcon,
-  CloseIcon,
-  MenuIcon,
-  SearchIcon,
-} from "../../components/common/Icons";
+import { FilterIcon, CloseIcon, MenuIcon, SearchIcon } from "../../components/common/Icons";
 import { Badge } from "react-native-elements";
 
 import ViewMoviesScreen from "./ViewMovies/ViewMoviesScreen";
@@ -22,16 +17,9 @@ const ViewMovieDetailsStackNav = createStackNavigator();
 
 const ViewMoviesStack = () => {
   return (
-    <ViewMoviesStackNav.Navigator
-      mode="modal"
-      headerMode="none"
-      params="Movies"
-    >
+    <ViewMoviesStackNav.Navigator mode="modal" headerMode="none" params="Movies">
       <ViewMoviesStackNav.Screen name="Movies" component={ViewMoviesScreen} />
-      <ViewMoviesStackNav.Screen
-        name="Filter"
-        component={ViewMoviesFilterScreen}
-      />
+      <ViewMoviesStackNav.Screen name="Filter" component={ViewMoviesFilterScreen} />
     </ViewMoviesStackNav.Navigator>
   );
 };
@@ -39,7 +27,7 @@ const ViewMoviesStack = () => {
 const ViewStackScreen = () => {
   const state = useOState();
   const actions = useOActions();
-  let numFilters = state.oSaved.filterData.tags.length;
+  let numFilters = state.oSaved.getFilterTags.length; //state.oSaved.filterData.tags.length;
   let numGenreFilters = state.oSaved.filterData.genres.length;
   let numMovies = state.oSaved.getFilteredMovies().length;
   let isFiltered = numFilters > 0;
@@ -52,13 +40,9 @@ const ViewStackScreen = () => {
         component={ViewMoviesStack}
         options={({ navigation, route }) => {
           // Using optional chaining because initial route object is for stack
-          let currentScreenName =
-            route?.state?.routeNames[route.state.index] || "Movies";
+          let currentScreenName = route?.state?.routeNames[route.state.index] || "Movies";
           let params = route?.state?.routes[route.state.index].params;
-          let title =
-            currentScreenName === "Movies"
-              ? `${numMovies} Movies`
-              : "Set Filter";
+          let title = currentScreenName === "Movies" ? `${numMovies} Movies` : "Set Filter";
           return {
             title: title,
             headerLeft: () => {
@@ -91,11 +75,7 @@ const ViewStackScreen = () => {
                       onPress={() => navigation.navigate("Filter")}
                       onLongPress={() => clearFilterScreen()}
                     >
-                      <FilterIcon
-                        color="black"
-                        size={30}
-                        style={{ marginRight: 15 }}
-                      />
+                      <FilterIcon color="black" size={30} style={{ marginRight: 15 }} />
                       {isFiltered && (
                         <Badge
                           status="success"
@@ -124,15 +104,9 @@ const ViewStackScreen = () => {
               } else if (currentScreenName === "Filter") {
                 return (
                   <TouchableOpacity
-                    onPress={() =>
-                      navigation.navigate("Movies", { returning: true })
-                    }
+                    onPress={() => navigation.navigate("Movies", { returning: true })}
                   >
-                    <CloseIcon
-                      color="black"
-                      size={30}
-                      style={{ marginRight: 15 }}
-                    />
+                    <CloseIcon color="black" size={30} style={{ marginRight: 15 }} />
                   </TouchableOpacity>
                 );
               }
@@ -145,8 +119,7 @@ const ViewStackScreen = () => {
         component={ViewDetails}
         options={({ navigation, route }) => {
           // Using optional chaining because initial route object is for stack
-          let currentScreenName =
-            route?.state?.routeNames[route.state.index] || "Details";
+          let currentScreenName = route?.state?.routeNames[route.state.index] || "Details";
           return {
             headerRight: () => {
               return null;

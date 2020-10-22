@@ -21,6 +21,8 @@ export const addSavedFilter = ({ state, actions, effects }, savedFilterObj) => {
     });
   }
 
+  // Save data to local
+  effects.oSaved.localSaveSavedFilters(state.oAdmin.uid, state.oSaved.savedFilters);
   // Save to Firebase
   effects.oSaved.saveSavedFilters(state.oSaved.savedFilters);
 };
@@ -30,16 +32,14 @@ export const addSavedFilter = ({ state, actions, effects }, savedFilterObj) => {
  * @param {*} param0
  * @param {string} filterIdToDelete
  */
-export const deleteSavedFilter = (
-  { state, actions, effects },
-  filterIdToDelete
-) => {
+export const deleteSavedFilter = ({ state, actions, effects }, filterIdToDelete) => {
   // TODO Make sure this filter is not used in the side bar or as the default
   // TODO Delete Filter from Store
   const savedFilters = state.oSaved.savedFilters;
-  state.oSaved.savedFilters = savedFilters.filter(
-    (filter) => filter.id !== filterIdToDelete
-  );
+  state.oSaved.savedFilters = savedFilters.filter((filter) => filter.id !== filterIdToDelete);
+
+  // Save data to local
+  effects.oSaved.localSaveSavedFilters(state.oAdmin.uid, state.oSaved.savedFilters);
   // Save to Firebase
   effects.oSaved.saveSavedFilters(state.oSaved.savedFilters);
 };
@@ -49,10 +49,11 @@ export const deleteSavedFilter = (
 //-By applying it, I mean that oSaved.filterData is being set.
 export const applySavedFilter = ({ state, actions }, savedFilterId) => {
   const { addTagToFilter, setTagOperator } = actions.oSaved;
+  //reset filter state
+  state.oSaved.filterData.genres = [];
+  state.oSaved.filterData.tags = [];
   //Filter for the passed id since this returns an array, just grab the first and only one
-  const filterToApply = state.oSaved.savedFilters.filter(
-    (sf) => savedFilterId === sf.id
-  )[0];
+  const filterToApply = state.oSaved.savedFilters.filter((sf) => savedFilterId === sf.id)[0];
   // Loop through and add each tag in the array to the filter
   filterToApply.tags.forEach((tagId) => addTagToFilter(tagId));
   // Add the tagOperator to the filter.
@@ -61,12 +62,12 @@ export const applySavedFilter = ({ state, actions }, savedFilterId) => {
 
 //--------------------------------------------
 //- Set Default Filter -- oSaved.userData.settings.defaultFilter
-export const setDefaultFilter = (
-  { state, actions, effects },
-  defaultFilter
-) => {
+export const setDefaultFilter = ({ state, actions, effects }, defaultFilter) => {
   const userSettings = state.oSaved.settings;
   state.oSaved.settings = { ...userSettings, defaultFilter };
-  //TODO create firebase function and store to firebase.
+
+  // Save data to local
+  effects.oSaved.localSaveSettings(state.oAdmin.uid, state.oSaved.settings);
+  // Save to firestore
   effects.oSaved.saveSettings(state.oSaved.settings);
 };
