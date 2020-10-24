@@ -35,7 +35,9 @@ export const state = {
     // set lodash sort iteratees (either title or a function for date)
     if (sort === "date") {
       // This sort functino will be passed to lodash _.sortBy
-      sort = (el) => el.releaseDate.date;
+      sort = (el) => el.releaseDate.epoch;
+    } else {
+      sort = "title";
     }
     //Determine if any filter criteria is set
     if (
@@ -171,10 +173,7 @@ export const state = {
     return unusedFilterGenres.map((genre) => ({ genre, isSelected: false }));
   }),
   getAllFilterGenres: derived((state) => {
-    const updatedGenreArray = [
-      ...state.getFilterGenres,
-      ...state.getUnusedFilterGenres,
-    ];
+    const updatedGenreArray = [...state.getFilterGenres, ...state.getUnusedFilterGenres];
     //Sort by genre name so they don't "move" when selected
     return _.sortBy(updatedGenreArray, ["genre"]);
   }),

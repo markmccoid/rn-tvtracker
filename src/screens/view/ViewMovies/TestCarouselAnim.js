@@ -69,13 +69,14 @@ const TestCarouselAnim = ({ navigation }) => {
   const { getFilteredMovies } = state.oSaved;
   const flatListRef = React.useRef();
   const scrollX = React.useRef(new Animated.Value(0)).current;
+  const movieList = getFilteredMovies("date", "dec");
   return (
     <View style={styles.container}>
       {/* <StatusBar hidden /> */}
-      <Backdrop movies={getFilteredMovies("date", "asc")} scrollX={scrollX} />
+      <Backdrop movies={movieList} scrollX={scrollX} />
 
       <Animated.FlatList
-        data={getFilteredMovies("date", "asc")}
+        data={movieList}
         ref={flatListRef}
         // getItemLayout={getItemLayout}
         keyboardDismissMode
@@ -120,13 +121,11 @@ const TestCarouselAnim = ({ navigation }) => {
                   transform: [{ translateY }],
                 }}
               >
-                <Image
-                  style={styles.posterImage}
-                  source={{ uri: item.posterURL }}
-                />
+                <Image style={styles.posterImage} source={{ uri: item.posterURL }} />
                 <Text style={{ fontSize: 24 }} numberOfLines={1}>
                   {item.title}
                 </Text>
+                <Text>{item.releaseDate.formatted}</Text>
                 <Text style={{ fontSize: 12 }} numberOfLines={3}>
                   {item.overview}
                 </Text>

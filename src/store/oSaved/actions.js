@@ -89,6 +89,9 @@ export const saveMovie = async ({ state, effects, actions }, movieObj) => {
   }
   // get more movie details from tmdbapi
   const movieDetails = await effects.oSaved.getMovieDetails(movieObj.id);
+  let epoch = movieDetails.data.releaseDate.epoch;
+  let formatted = movieDetails.data.releaseDate.formatted;
+  movieDetails.data.releaseDate = { epoch, formatted };
   state.oSaved.savedMovies = [movieDetails.data, ...state.oSaved.savedMovies];
   // When saving movie user is left on search screen, this will update
   // the screen to show that the selected movige has been saved
@@ -210,7 +213,7 @@ export const addNewTag = async ({ state, effects }, tagName) => {
   state.oSaved.tagData.push(newTag);
 
   // Store tags to Async Storage
-  await effects.oSaved.saveTagsToLocal(state.oAdmin.uid, state.oSaved.tagData);
+  await effects.oSaved.localSaveTags(state.oAdmin.uid, state.oSaved.tagData);
   // Store tags to firestore
   await effects.oSaved.saveTags(state.oSaved.tagData);
 };
@@ -228,7 +231,7 @@ export const deleteTag = async ({ state, effects }, tagId) => {
   state.oSaved.tagData = existingTags.filter((tag) => tag.tagId !== tagId);
 
   // Store tags to Async Storage
-  await effects.oSaved.saveTagsToLocal(state.oAdmin.uid, state.oSaved.tagData);
+  await effects.oSaved.localSaveTags(state.oAdmin.uid, state.oSaved.tagData);
   // Store tags to firestore
   await effects.oSaved.saveTags(state.oSaved.tagData);
 
@@ -264,7 +267,7 @@ export const editTag = async ({ state, effects }, payload) => {
   });
 
   // Store tags to Async Storage
-  await effects.oSaved.saveTagsToLocal(state.oAdmin.uid, state.oSaved.tagData);
+  await effects.oSaved.localSaveTags(state.oAdmin.uid, state.oSaved.tagData);
   // Store tags to firestore
   await effects.oSaved.saveTags(state.oSaved.tagData);
 };
@@ -279,7 +282,7 @@ export const updateTags = async ({ state, effects }, payload) => {
   state.oSaved.tagData = payload;
 
   // Store tags to Async Storage
-  await effects.oSaved.saveTagsToLocal(state.oAdmin.uid, state.oSaved.tagData);
+  await effects.oSaved.localSaveTags(state.oAdmin.uid, state.oSaved.tagData);
   // Store tags to firestore
   await effects.oSaved.saveTags(state.oSaved.tagData);
 };

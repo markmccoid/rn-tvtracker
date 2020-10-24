@@ -96,7 +96,11 @@ function AppNavDrawerContent(props) {
 
         <View style={styles.menuItemStyle}>
           <DrawerItem
-            label={`Sync - Last ${appState.dataSource}`}
+            label={({ focused, color }) => (
+              <Text
+                style={{ color: appState.dataSource === "local" ? "black" : "green" }}
+              >{`Sync - Last ${appState.dataSource}`}</Text>
+            )}
             icon={({ focused, color, size }) => <SyncIcon size={size - 5} />}
             onPress={() => hyrdateStore({ uid, forceRefresh: true })}
           />
