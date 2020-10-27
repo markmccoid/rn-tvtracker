@@ -33,12 +33,13 @@ function AppNavDrawerContent(props) {
       <DrawerContentScrollView {...props}>
         {/* <DrawerItemList {...props} /> */}
         <View style={styles.userInfo}>
-          <UserIcon size={20} style={{ marginLeft: 20, paddingRight: 20 }} />
-          <Text>{email}</Text>
-          {/* <DrawerItem
-            label={state.oAdmin.email}
-            icon={({ focused, color, size }) => <UserIcon size={size} />}
-          /> */}
+          <UserIcon size={20} style={{ marginLeft: 20, paddingRight: 20, paddingTop: 10 }} />
+          <View style={{ flexDirection: "column" }}>
+            <Text>{email}</Text>
+            <Text style={{ paddingLeft: 0, marginTop: 5 }}>
+              Loaded From {appState.dataSource}
+            </Text>
+          </View>
         </View>
         <View style={styles.menuItemStyle}>
           <DrawerItem
@@ -99,10 +100,13 @@ function AppNavDrawerContent(props) {
             label={({ focused, color }) => (
               <Text
                 style={{ color: appState.dataSource === "local" ? "black" : "green" }}
-              >{`Sync - Last ${appState.dataSource}`}</Text>
+              >{`Sync from Cloud`}</Text>
             )}
             icon={({ focused, color, size }) => <SyncIcon size={size - 5} />}
-            onPress={() => hyrdateStore({ uid, forceRefresh: true })}
+            onPress={() => {
+              hyrdateStore({ uid, forceRefresh: true });
+              props.navigation.closeDrawer();
+            }}
           />
         </View>
 

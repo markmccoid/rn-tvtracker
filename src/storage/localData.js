@@ -1,7 +1,7 @@
 import { parseISO, differenceInDays, format } from "date-fns";
 import _ from "lodash";
 
-import { loadFromAsyncStorage, saveToAsyncStorage } from "./asyncStorage";
+import { loadFromAsyncStorage, saveToAsyncStorage, mergeToAsyncStorage } from "./asyncStorage";
 
 /**
  * getKeys - generates keys for use in Async Storage
@@ -47,7 +47,7 @@ export const isDataStale = (storageDate) => {
 export const refreshLocalData = async (uid, dataObj) => {
   // Set the last refresh date
   saveToAsyncStorage(getKey(uid, "lastStoredDate"), format(new Date(), "yyyy-MM-dd"));
-  saveToAsyncStorage(getKey(uid, "savedMovies"), dataObj.savedMovies);
+  saveToAsyncStorage(getKey(uid, "savedMovies"), _.keyBy(dataObj.savedMovies, "id"));
   saveToAsyncStorage(getKey(uid, "tagData"), dataObj.tagData);
   saveToAsyncStorage(getKey(uid, "settings"), dataObj.settings);
   saveToAsyncStorage(getKey(uid, "savedFilters"), dataObj.savedFilters);
@@ -93,8 +93,8 @@ export const saveMoviesToLocal = (uid, savedMovies) => {
  * @param {string} uid - uid for user logged in, use to create keys
  * @param {object} movieMergeObj - object containing data to merge in async storage
  */
-export const mergeMovieToLocal = (uid, movieMergeObj) => {
-  return saveToAsyncStorage(getKey(uid, "savedMovies"), movieMergeObj);
+export const mergeMovieToLocal = async (uid, movieMergeObj) => {
+  await mergeToAsyncStorage(getKey(uid, "savedMovies"), movieMergeObj);
 };
 
 /**
@@ -113,7 +113,7 @@ export const saveTagsToLocal = (uid, tagData) => {
  * @param {object} settings - object containing data to store in async storage
  */
 export const saveSettingsToLocal = (uid, settings) => {
-  saveToAsyncStorage(getKey(uid, "settings"), settings);
+  return saveToAsyncStorage(getKey(uid, "settings"), settings);
 };
 /**
  * saveSavedFiltersToLocal - saved savedFilters

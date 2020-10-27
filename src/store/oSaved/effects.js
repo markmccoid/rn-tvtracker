@@ -6,6 +6,7 @@ import {
   saveTagsToLocal,
   saveSettingsToLocal,
   saveSavedFiltersToLocal,
+  mergeMovieToLocal,
 } from "../../storage/localData";
 
 import { loadFromAsyncStorage } from "../../storage/asyncStorage";
@@ -44,20 +45,21 @@ export const initializeStore = async (uid, forceRefresh) => {
     dataObj.settings = userDocument?.settings || {};
     dataObj.savedFilters = userDocument?.savedFilters || [];
     // dataObj.taggedMovies = userDocument?.taggedMovies || {};
-    dataObj.dataSource = "firebase";
+    dataObj.dataSource = "cloud";
     // Must refresh local data also
     refreshLocalData(uid, dataObj);
   }
   return dataObj;
 };
 
-//* Movie Document DB operations
-export const addMovie = async (movieObj) => {
-  await addMovieToFirestore(movieObj);
-};
-
+//*=================================
+//*- LOCAL storage functions
+//*=================================
 export const localSaveMovies = async (uid, savedMovies) => {
   saveMoviesToLocal(uid, savedMovies);
+};
+export const localMergeMovie = async (uid, movieObj) => {
+  mergeMovieToLocal(uid, movieObj);
 };
 export const localSaveTags = async (uid, tags) => {
   saveTagsToLocal(uid, tags);
@@ -67,6 +69,14 @@ export const localSaveSettings = async (uid, settings) => {
 };
 export const localSaveSavedFilters = async (uid, settings) => {
   saveSavedFiltersToLocal(uid, settings);
+};
+
+//*=================================
+//*- Firestore storage functions
+//*=================================
+
+export const addMovie = async (movieObj) => {
+  await addMovieToFirestore(movieObj);
 };
 
 /**

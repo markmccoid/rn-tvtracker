@@ -54,17 +54,22 @@ export const applySavedFilter = ({ state, actions }, savedFilterId) => {
   state.oSaved.filterData.tags = [];
   //Filter for the passed id since this returns an array, just grab the first and only one
   const filterToApply = state.oSaved.savedFilters.filter((sf) => savedFilterId === sf.id)[0];
-  // Loop through and add each tag in the array to the filter
-  filterToApply.tags.forEach((tagId) => addTagToFilter(tagId));
-  // Add the tagOperator to the filter.
-  setTagOperator(filterToApply.tagOperator);
+  if (filterToApply) {
+    // Loop through and add each tag in the array to the filter
+    filterToApply.tags.forEach((tagId) => addTagToFilter(tagId));
+    // Add the tagOperator to the filter.
+    setTagOperator(filterToApply.tagOperator);
+  }
 };
 
 //--------------------------------------------
 //- Set Default Filter -- oSaved.userData.settings.defaultFilter
 export const setDefaultFilter = ({ state, actions, effects }, defaultFilter) => {
   const userSettings = state.oSaved.settings;
-  state.oSaved.settings = { ...userSettings, defaultFilter };
+  state.oSaved.settings = {
+    ...userSettings,
+    defaultFilter: defaultFilter ? defaultFilter : null,
+  };
 
   // Save data to local
   effects.oSaved.localSaveSettings(state.oAdmin.uid, state.oSaved.settings);

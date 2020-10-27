@@ -35,7 +35,7 @@ export const saveToAsyncStorage = async (key, data) => {
 // --------------------------------------------
 export const mergeToAsyncStorage = async (key, data) => {
   try {
-    await AsyncStorage.mergeItem(key, JSON.stringify(data));
+    return await AsyncStorage.mergeItem(key, JSON.stringify(data));
   } catch (error) {
     console.log("ERROR Saving to Async Storage", error);
   }
@@ -51,6 +51,51 @@ export const removeFromAsyncStorage = async (key) => {
     console.log("ERROR Removing Async Storage data", error);
   }
 };
+
+// export const mergeTest = async (uid) => {
+//   let savedMovies = await loadFromAsyncStorage(`${uid}-saved_movies`);
+
+//   console.log("saved", savedMovies);
+//   let a = {
+//     281: {
+//       id: 281,
+//       name: "mark",
+//       date: {
+//         formatter: "formatteddate",
+//       },
+//       posterURL: "http",
+//     },
+//     381: {
+//       id: 281,
+//       name: "mark",
+//       date: {
+//         formatter: "formatteddate",
+//       },
+//       posterURL: "http",
+//     },
+//   };
+//   let b = {
+//     381: {
+//       posterURL: "changed",
+//     },
+//   };
+//   let c = {
+//     577922: {
+//       posterURL: "https:mccoidco.com",
+//     },
+//   };
+//   await saveToAsyncStorage("mergetest", a);
+//   let storedA = await loadFromAsyncStorage("mergetest");
+//   console.log("StoredA", storedA);
+
+//   await mergeToAsyncStorage("mergetest", b);
+//   let storedAB = await loadFromAsyncStorage("mergetest");
+//   console.log("StoredAB", storedAB);
+
+//   await mergeToAsyncStorage(`${uid}-saved_movies`, c);
+//   savedMovies = await loadFromAsyncStorage(`${uid}-saved_movies`);
+//   console.log("saved", savedMovies);
+// };
 
 // --------------------------------------------
 // -- Gets all keys for the app currently in AsyncStorage
