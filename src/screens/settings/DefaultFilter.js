@@ -15,7 +15,7 @@ const DefaultFilter = () => {
     value: filter.id,
   }));
   //Add an option to have No filter on startup
-  filterItems.unshift({ label: "None", value: "" });
+  filterItems.unshift({ label: "None", value: undefined });
   return (
     <DropDownPicker
       items={filterItems}
