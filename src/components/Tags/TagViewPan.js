@@ -3,6 +3,7 @@ import {
   StyleSheet,
   Text,
   View,
+  KeyboardAvoidingView,
   TouchableOpacity,
   Dimensions,
   PanResponder,
@@ -13,7 +14,7 @@ import { Feather } from "@expo/vector-icons";
 import { useDimensions } from "@react-native-community/hooks";
 import { useOState, useOActions } from "../../store/overmind";
 import { DragHandleIcon } from "../common/Icons";
-import TagRowEdit from "./TagRowEdit";
+import TagRowEditOverlay from "./TagRowEditOverlay";
 
 //TODO -- Overmind save bounce the save
 //---------------------------------
@@ -93,9 +94,7 @@ const TagViewPan = () => {
       startingIdx.current = currentIdx.current;
       active.current = true;
 
-      pointY.setValue(
-        gestureState.y0 - flatListTopOffset.current - rowHeight.current / 2
-      );
+      pointY.setValue(gestureState.y0 - flatListTopOffset.current - rowHeight.current / 2);
       // console.log("START============================================");
       // console.log("GS-moveY, y0", gestureState.moveY, gestureState.y0);
       // console.log(
@@ -114,9 +113,7 @@ const TagViewPan = () => {
       // console.log("GS-moveY, vy", gestureState.moveY, gestureState.vy);
       // console.log("CurrentIndex", currentIdx.current);
       currentY.current = gestureState.moveY - rowHeight.current / 2;
-      pointY.setValue(
-        gestureState.moveY - flatListTopOffset.current - rowHeight.current / 2
-      );
+      pointY.setValue(gestureState.moveY - flatListTopOffset.current - rowHeight.current / 2);
       animateList();
     },
     onPanResponderTerminationRequest: (evt, gestureState) => false,
@@ -153,10 +150,7 @@ const TagViewPan = () => {
     requestAnimationFrame(() => {
       //Check if we are near bottom
 
-      if (
-        currentY.current + 60 >
-        flatListTopOffset.current + flatListHeight.current
-      ) {
+      if (currentY.current + 60 > flatListTopOffset.current + flatListHeight.current) {
         flatListRef.current.scrollToOffset({
           offset: scrollOffset.current + 10,
           animated: false,
@@ -207,20 +201,23 @@ const TagViewPan = () => {
   };
 
   const renderRow = ({ item, index }, usePanResponder = true) => {
+    if (isEditing) {
+      console.log("IsEditing");
+      // Show Overlay passing "setIsEditing", "item.tagId", "item.tagName"
+    }
     return (
       <>
         <View style={styles.mainSwipe}>
           {isEditing === item.tagId ? (
-            <TagRowEdit
+            <TagRowEditOverlay
+              isVisible={true}
               currTagValue={item.tagName}
               tagId={item.tagId}
               setIsEditing={setIsEditing}
             />
           ) : (
             <View
-              onLayout={(e) =>
-                (rowHeight.current = e.nativeEvent.layout.height)
-              }
+              onLayout={(e) => (rowHeight.current = e.nativeEvent.layout.height)}
               style={{
                 backgroundColor: "#e5e5e5",
                 flexDirection: "row",
@@ -255,110 +252,112 @@ const TagViewPan = () => {
     );
   };
   return (
-    <View
-      style={styles.container}
-      ref={viewRef}
-      onLayout={(e) => {
-        viewRef.current.measure((x, y, width, height, pageX, pageY) => {
-          flatListTopOffset.current = pageY;
-          // console.log("VIEWRef", x, y, pageX, pageY, width, height);
-        });
-      }}
-    >
-      {dragging && (
-        <Animated.View
-          style={{
-            top: pointY,
-            position: "absolute",
-            backgroundColor: "black",
-            zIndex: 2,
-            width: width,
-            shadowColor: "#000",
-            shadowOffset: {
-              width: 0,
-              height: 4,
-            },
-            shadowOpacity: 0.32,
-            shadowRadius: 5.46,
-            transform: [
-              {
-                scale: 1.03,
+    <KeyboardAvoidingView style={{ flex: 1 }} behavior="height">
+      <View
+        style={styles.container}
+        ref={viewRef}
+        onLayout={(e) => {
+          viewRef.current.measure((x, y, width, height, pageX, pageY) => {
+            flatListTopOffset.current = pageY;
+            // console.log("VIEWRef", x, y, pageX, pageY, width, height);
+          });
+        }}
+      >
+        {dragging && (
+          <Animated.View
+            style={{
+              top: pointY,
+              position: "absolute",
+              backgroundColor: "black",
+              zIndex: 2,
+              width: width,
+              shadowColor: "#000",
+              shadowOffset: {
+                width: 0,
+                height: 4,
               },
-            ],
-          }}
-        >
-          {renderRow({ item: data[draggingIdx], index: -1 }, false)}
-        </Animated.View>
-      )}
+              shadowOpacity: 0.32,
+              shadowRadius: 5.46,
+              transform: [
+                {
+                  scale: 1.03,
+                },
+              ],
+            }}
+          >
+            {renderRow({ item: data[draggingIdx], index: -1 }, false)}
+          </Animated.View>
+        )}
 
-      {/* <FlatList
-        ref={flatListRef}
-        scrollEnabled={!dragging}
-        style={{
-          width: "100%",
-        }}
-        data={data}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.tagId}
-        onScroll={(e) => (scrollOffset.current = e.nativeEvent.contentOffset.y)}
-        onLayout={(e) => {
-          // flatListTopOffset.current = e.nativeEvent.layout.y;
-          flatListHeight.current = e.nativeEvent.layout.height;
-        }}
-        scrollEventThrottle={16}
-      /> */}
-      <SwipeListView
-        listViewRef={(ref) => {
-          flatListRef.current = ref;
-        }}
-        useFlatList
-        style={{ backgroundColor: "#ccc" }}
-        data={data}
-        scrollEnabled={!dragging}
-        onScroll={(e) => (scrollOffset.current = e.nativeEvent.contentOffset.y)}
-        onLayout={(e) => {
-          // flatListTopOffset.current = e.nativeEvent.layout.y;
-          flatListHeight.current = e.nativeEvent.layout.height;
-        }}
-        scrollEventThrottle={16}
-        keyExtractor={(item) => item.tagId}
-        renderItem={(props) => renderRow(props, true)}
-        renderHiddenItem={(rowData, rowMap) => {
-          return (
-            <>
-              <View style={[styles.backRightBtn, styles.backRightBtnLeft]}>
-                <TouchableOpacity
-                  onPress={() => {
-                    setIsEditing(rowData.item.tagId);
-                    rowMap[rowData.item.tagId].closeRow();
-                  }}
-                >
-                  <Feather name="edit" size={25} />
-                </TouchableOpacity>
-              </View>
-              <View style={[styles.backRightBtn, styles.deleteRightBtn]}>
-                <TouchableOpacity
-                  onPress={() => {
-                    deleteTag(rowData.item.tagId);
-                  }}
-                >
-                  <Feather name="trash-2" size={25} />
-                </TouchableOpacity>
-              </View>
-            </>
-          );
-        }}
-        leftOpenValue={75}
-        rightOpenValue={-75}
-        onRowOpen={(rowKey, rowMap) => {
-          setTimeout(() => {
-            if (rowMap[rowKey]) {
-              rowMap[rowKey].closeRow();
-            }
-          }, 3000);
-        }}
-      />
-    </View>
+        {/* <FlatList
+          ref={flatListRef}
+          scrollEnabled={!dragging}
+          style={{
+            width: "100%",
+          }}
+          data={data}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.tagId}
+          onScroll={(e) => (scrollOffset.current = e.nativeEvent.contentOffset.y)}
+          onLayout={(e) => {
+            // flatListTopOffset.current = e.nativeEvent.layout.y;
+            flatListHeight.current = e.nativeEvent.layout.height;
+          }}
+          scrollEventThrottle={16}
+        /> */}
+        <SwipeListView
+          listViewRef={(ref) => {
+            flatListRef.current = ref;
+          }}
+          useFlatList
+          style={{ backgroundColor: "#ccc" }}
+          data={data}
+          scrollEnabled={!dragging}
+          onScroll={(e) => (scrollOffset.current = e.nativeEvent.contentOffset.y)}
+          onLayout={(e) => {
+            // flatListTopOffset.current = e.nativeEvent.layout.y;
+            flatListHeight.current = e.nativeEvent.layout.height;
+          }}
+          scrollEventThrottle={16}
+          keyExtractor={(item) => item.tagId}
+          renderItem={(props) => renderRow(props, true)}
+          renderHiddenItem={(rowData, rowMap) => {
+            return (
+              <>
+                <View style={[styles.backRightBtn, styles.backRightBtnLeft]}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setIsEditing(rowData.item.tagId);
+                      rowMap[rowData.item.tagId].closeRow();
+                    }}
+                  >
+                    <Feather name="edit" size={25} />
+                  </TouchableOpacity>
+                </View>
+                <View style={[styles.backRightBtn, styles.deleteRightBtn]}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      deleteTag(rowData.item.tagId);
+                    }}
+                  >
+                    <Feather name="trash-2" size={25} />
+                  </TouchableOpacity>
+                </View>
+              </>
+            );
+          }}
+          leftOpenValue={75}
+          rightOpenValue={-75}
+          onRowOpen={(rowKey, rowMap) => {
+            setTimeout(() => {
+              if (rowMap[rowKey]) {
+                rowMap[rowKey].closeRow();
+              }
+            }, 3000);
+          }}
+        />
+      </View>
+    </KeyboardAvoidingView>
   );
 };
 
