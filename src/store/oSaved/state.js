@@ -39,18 +39,15 @@ export const state = {
     } else {
       sort = "title";
     }
-    //Determine if any filter criteria is set
+    //Determine if any filter criteria is set, if not do not call filterMovies helper.
     if (
       state.filterData?.tags.length > 0 ||
       state.filterData?.genres.length > 0 ||
       state.filterData?.searchFilter
     ) {
-      movieList = helpers.filterMovies(
-        state.savedMovies,
-        state.taggedMovies,
-        state.filterData
-      );
+      movieList = helpers.filterMovies(state.savedMovies, state.filterData);
     }
+
     movieList = _.sortBy(movieList, [sort]);
     return direction === "asc" ? movieList : movieList.reverse();
   }),

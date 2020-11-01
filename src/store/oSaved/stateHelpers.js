@@ -23,10 +23,7 @@ export const buildTagObjFromIds = (state, tagIdArray, isSelected) => {
   // return an object { tagId, tagName, isSelected }
   let tagsObj = state.getTags.reduce((final, tagObj) => {
     if (tagIdArray.find((tagId) => tagId === tagObj.tagId)) {
-      final = [
-        ...final,
-        { tagId: tagObj.tagId, tagName: tagObj.tagName, isSelected },
-      ];
+      final = [...final, { tagId: tagObj.tagId, tagName: tagObj.tagName, isSelected }];
     }
     return final;
   }, []);
@@ -39,15 +36,16 @@ export const buildGenreObjFromArray = (filterGenres, isSelected = true) => {
   // console.log(filterGenres.map((genre) => ({ genre, isSelected })));
   // return filterGenres.map((genre) => ({ genre, isSelected }));
 };
+
 /**
  * Filter movies based on the passed in filterData
+ * Version 2, different approach to the search/filter
+ * Thinking that
  *
  * @param {array} savedMoviesIn - array of all movies saved
- * @param {object} taggedMovies - object of all movies that are tagged and their tags
  * @param {*} filterData - data fo filter on
  */
-export const filterMovies = (savedMoviesIn, taggedMovies, filterData) => {
-  let movieTags = taggedMovies;
+export const filterMovies = (savedMoviesIn, filterData) => {
   let {
     tags: filterTags,
     tagOperator,
@@ -55,54 +53,57 @@ export const filterMovies = (savedMoviesIn, taggedMovies, filterData) => {
     genreOperator,
     searchFilter,
   } = filterData;
-  let savedMovies = [...savedMoviesIn];
-  // If we have no tags stored for movies in taggedMovies
-  // then return empty array as no movies will match since no movies have been tagged.
-  if (!movieTags && !searchFilter) {
-    return [];
-  }
-  // Filter movies based on text typed in search box
-  if (searchFilter) {
-    savedMovies = savedMovies.filter((item) =>
-      item.title.toLowerCase().includes(searchFilter)
-    );
-  }
-  //-------------------------
-  // Filter based on Tags
-  if (tagOperator === "AND" && filterTags?.length > 0) {
-    // AND filter for passed tags
-    savedMovies = savedMovies.filter((movie) => {
-      if (movieTags[movie.id]) {
-        return filterTags.every((tag) => movieTags[movie.id].includes(tag));
+  return savedMoviesIn.filter((movie, index) => {
+    // Check each potential filter and bail (return false) on first one that fails.
+    // Flag indicating if this movie should be included, i.e. matches all filter criteria.
+    //shouldIncludeFlag = true;
+    //=========================
+    // Start with SearchFilter
+    if (searchFilter) {
+      // If the movie title doesn't match the search filter, bail on this movie
+      if (!movie.title.toLowerCase().includes(searchFilter)) {
+        return false;
       }
-      return false;
-    });
-  } else if (tagOperator === "OR" && filterTags?.length > 0) {
-    // OR filter for passed tags
-    savedMovies = savedMovies.filter((movie) => {
-      if (movieTags[movie.id]) {
-        return movieTags[movie.id].some((tagId) => filterTags.includes(tagId));
-      }
-      return false;
-    });
-  }
-  //-------------------------
-  // Filter based on Genres
-  if (filterGenres?.length > 0) {
-    if (genreOperator === "AND") {
-      savedMovies = savedMovies.filter((movie) => {
-        return filterGenres.every((genre) => movie.genres.includes(genre));
-      });
-    } else if (genreOperator === "OR") {
-      savedMovies = savedMovies.filter((movie) => {
-        return filterGenres.some((genre) => movie.genres.includes(genre));
-      });
     }
-  }
 
-  return savedMovies;
+    //=========================
+    // Check Genres
+    if (filterGenres?.length > 0) {
+      if (genreOperator === "AND") {
+        if (!filterGenres.every((genre) => movie.genres.includes(genre))) {
+          return false;
+        }
+      } else if (genreOperator === "OR") {
+        if (!filterGenres.some((genre) => movie.genres.includes(genre))) {
+          return false;
+        }
+      }
+    }
+
+    //=========================
+    // Filter based on Tags
+    if (filterTags.length > 0) {
+      if (movie?.taggedWith) {
+        if (tagOperator === "AND" && filterTags?.length > 0) {
+          // AND filter for passed tags
+          if (!filterTags.every((tag) => movie?.taggedWith.includes(tag))) {
+            return false;
+          }
+        } else if (tagOperator === "OR" && filterTags?.length > 0) {
+          // OR filter for passed tags
+          if (!movie?.taggedWith.some((tagId) => filterTags.includes(tagId))) {
+            return false;
+          }
+        }
+      } else {
+        // the movie object has no taggedWith object, meaning not tagged yet
+        // this should not be included in the results
+        return false;
+      }
+    }
+    return true;
+  });
 };
-
 /**
  *
  * @param {array} tagsToSort - Array of tag objects
