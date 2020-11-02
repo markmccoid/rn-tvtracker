@@ -219,8 +219,13 @@ export const initialDataCreation = async ({ state, effects }) => {
     { tagId: uuidv4(), tagName: "Next Up" },
   ];
   state.oSaved.tagData = tagArray;
-  effects.oSaved.saveTags(state.oSaved.tagData);
+
+  // Store tags to Async Storage
+  await effects.oSaved.localSaveTags(state.oAdmin.uid, state.oSaved.tagData);
+  // Store tags to firestore
+  await effects.oSaved.saveTags(state.oSaved.tagData);
 };
+
 export const addNewTag = async ({ state, effects }, tagName) => {
   let existingTags = state.oSaved.tagData;
   // Check to see if tag with same name exists (disregard case)
