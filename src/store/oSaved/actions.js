@@ -99,8 +99,8 @@ export const saveMovie = async ({ state, effects, actions }, movieObj) => {
   }
   // get more movie details from tmdbapi
   const movieDetails = await effects.oSaved.getMovieDetails(movieObj.id);
-  let epoch = movieDetails.data.releaseDate.epoch;
-  let formatted = movieDetails.data.releaseDate.formatted;
+  let epoch = movieDetails.data?.releaseDate?.epoch || "";
+  let formatted = movieDetails.data?.releaseDate?.formatted || "";
   movieDetails.data.releaseDate = { epoch, formatted };
   state.oSaved.savedMovies = [movieDetails.data, ...state.oSaved.savedMovies];
   // When saving movie user is left on search screen, this will update
