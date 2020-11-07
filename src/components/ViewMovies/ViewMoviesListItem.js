@@ -25,7 +25,7 @@ const ViewMoviesListItem = ({ movie, setMovieEditingId, movieEditingId }) => {
   );
 };
 
-export default ViewMoviesListItem;
+export default React.memo(ViewMoviesListItem);
 
 /* <MovieColumnLayout
       movie={movie}

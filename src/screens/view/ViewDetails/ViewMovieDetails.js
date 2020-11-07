@@ -6,11 +6,14 @@ import {
   Image,
   ScrollView,
   Linking,
+  Pressable,
   StyleSheet,
   TouchableWithoutFeedback,
   TouchableOpacity,
   Dimensions,
 } from "react-native";
+
+import { useNavigation, useRoute } from "@react-navigation/native";
 
 import { useOState, useOActions } from "../../../store/overmind";
 import { useDimensions } from "@react-native-community/hooks";
@@ -70,6 +73,9 @@ const ViewSavedMovieDetails = ({ movie, isInSavedMovies }) => {
   let assignedTags = state.oSaved.getMovieTags(movieId);
   let { removeTagFromMovie, addTagToMovie } = actions.oSaved;
   const { width, height } = useDimensions().window;
+
+  const navigation = useNavigation();
+  const route = useRoute();
 
   const Rotate = (toValue) => {
     Animated.timing(iconAnim, {
@@ -178,11 +184,21 @@ const ViewSavedMovieDetails = ({ movie, isInSavedMovies }) => {
             <View>
               <View style={styles.castInfo}>
                 {castData.map((person) => (
-                  <DetailCastInfo
-                    person={person}
-                    screenWidth={width}
+                  <TouchableOpacity
                     key={person.personId}
-                  />
+                    onPress={() =>
+                      navigation.push(`${route.name}Person`, {
+                        personId: person.personId,
+                        fromRouteName: route.name,
+                      })
+                    }
+                  >
+                    <DetailCastInfo
+                      person={person}
+                      screenWidth={width}
+                      key={person.personId}
+                    />
+                  </TouchableOpacity>
                 ))}
               </View>
             </View>

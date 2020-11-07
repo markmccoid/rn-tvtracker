@@ -5,6 +5,7 @@ import { MenuIcon } from "../../components/common/Icons";
 
 import SearchScreen from "./SearchScreen";
 import ViewDetails from "../view/ViewDetails/ViewDetails";
+import DetailPerson from "../view/ViewDetails/DetailPerson";
 const SearchStack = createStackNavigator();
 
 const SearchStackScreen = () => {
@@ -30,6 +31,7 @@ const SearchStackScreen = () => {
         }}
       />
       <SearchStack.Screen name="DetailsFromSearch" component={ViewDetails} />
+      <SearchStack.Screen name="DetailsFromSearchPerson" component={DetailPerson} />
     </SearchStack.Navigator>
   );
 };

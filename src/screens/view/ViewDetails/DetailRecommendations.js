@@ -49,9 +49,7 @@ const DetailRecommendations = ({ movieId }) => {
   if (recommendations.length === 0 && !recommendIsLoading) {
     return (
       <View style={{ flexDirection: "row", justifyContent: "center" }}>
-        <Text style={{ fontWeight: "normal", fontSize: 20 }}>
-          No Recommendations Found
-        </Text>
+        <Text style={{ fontWeight: "normal", fontSize: 20 }}>No Recommendations Found</Text>
       </View>
     );
   }

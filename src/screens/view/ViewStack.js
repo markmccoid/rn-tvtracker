@@ -10,6 +10,7 @@ import { Badge } from "react-native-elements";
 import ViewMoviesScreen from "./ViewMovies/ViewMoviesScreen";
 import ViewMoviesFilterScreen from "./ViewMovies/ViewMoviesFilterScreen";
 import ViewDetails from "./ViewDetails/ViewDetails";
+import DetailPerson from "./ViewDetails/DetailPerson";
 
 const ViewStack = createStackNavigator();
 const ViewMoviesStackNav = createStackNavigator();
@@ -73,7 +74,12 @@ const ViewStackScreen = () => {
                     </TouchableOpacity> */}
                     <TouchableOpacity
                       onPress={() => navigation.navigate("Filter")}
-                      onLongPress={() => clearFilterScreen()}
+                      onLongPress={() => {
+                        clearFilterScreen();
+                        navigation.navigate("Movies", {
+                          filterModified: true,
+                        });
+                      }}
                     >
                       <FilterIcon color="black" size={30} style={{ marginRight: 15 }} />
                       {isFiltered && (
@@ -134,6 +140,7 @@ const ViewStackScreen = () => {
           };
         }}
       />
+      <ViewStack.Screen name="DetailsPerson" component={DetailPerson} />
     </ViewStack.Navigator>
   );
 };

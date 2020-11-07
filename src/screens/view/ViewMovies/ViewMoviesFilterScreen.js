@@ -45,7 +45,7 @@ const ViewMoviesFilterScreen = ({ route, navigation }) => {
             style={styles.buttonStyle}
             title="Done"
             onPress={() => {
-              navigation.navigate("Movies", { returning: true });
+              navigation.navigate("Movies", { returning: true, filterModified: true });
             }}
           />
         </View>

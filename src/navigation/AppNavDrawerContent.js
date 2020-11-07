@@ -85,6 +85,9 @@ function AppNavDrawerContent(props) {
                 onPress={() => {
                   clearFilterTags();
                   applySavedFilter(filterObj.id);
+                  props.navigation.navigate("Movies", {
+                    filterModified: true,
+                  });
                   props.navigation.closeDrawer();
                 }}
                 style={styles.savedFilterItem}

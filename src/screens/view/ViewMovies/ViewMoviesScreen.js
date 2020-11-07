@@ -1,12 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  FlatList,
-  StyleSheet,
-  Animated,
-} from "react-native";
+import { View, Text, TextInput, FlatList, StyleSheet, Animated } from "react-native";
 import { useOState, useOActions } from "../../../store/overmind";
 import { useDimensions } from "@react-native-community/hooks";
 import ListSearchBar from "./ListSearchBar";
@@ -14,7 +7,45 @@ import ListSearchBar from "./ListSearchBar";
 import ViewMoviesListItem from "../../../components/ViewMovies/ViewMoviesListItem";
 import ViewMovieOverlay from "./ViewMovieOverlay";
 
+//----------------------------
+// Based on Finite States Machines, this was a test to
+// make things easier to deal with when the filter status
+// changed.
+// Currently, the ONLY status we get on filter changing is when
+// navigating back to the "Movies" route.  There is a param called
+// "filterModified" that is either true or undefined.
+// This filterMachineConfig and filterMachine are used in the ViewMoviesScreen component
+// useReducer function, which changes the "filterState" variable.
+// There are two useEffect functions that are needed
+// One to monitor the "filterModified" route param
+// and another to monitor the filterState variable.
+// -----
+// Maybe better option would be to have a state variable in Overmind that is set whenever a
+// filter is changed and applied.
+//----------------------------
+const filterMachineConfig = {
+  initial: "idle",
+  states: {
+    idle: {
+      on: {
+        MODIFIED: "filterModified",
+      },
+    },
+    filterModified: {
+      on: {
+        SCROLLDONE: "idle",
+      },
+    },
+  },
+};
+
+const filterMachine = (state, event) => {
+  return filterMachineConfig.states[state]?.on?.[event.type] || state;
+};
+
+//---------------
 const ViewMoviesScreen = ({ navigation, route }) => {
+  const [filterState, dispatch] = React.useReducer(filterMachine, filterMachineConfig.initial);
   const { width, height } = useDimensions().window;
   const [movieDetails, setMovieDetails] = React.useState(undefined);
   const [showSearch, setShowSearch] = useState(false);
@@ -36,17 +67,31 @@ const ViewMoviesScreen = ({ navigation, route }) => {
     };
   };
 
-  // console.log('VIEW MOVIE PARAMS', route);
-
   //NOTE-- posterURL images are 300 x 450
   // Height is 1.5 times the width
   let posterWidth = width / 2;
   let posterHeight = posterWidth * 1.5;
 
-  // Determines whether or not to show the search input box
+  //Next two useEffects are for determining if a filter was modified and if so, then scroll to top
+  //Looking at the filterModified param (true or undefined) coming from the Movies route
+  //* May make sense to instead put a "filter dirty" flag in overmind state
   useEffect(() => {
-    setShowSearch(route.params?.showSearch);
-  }, [route.params?.showSearch]);
+    let dispatchType = route.params?.filterModified ? "MODIFIED" : "SCROLLDONE";
+
+    dispatch({ type: dispatchType });
+    if (route.params?.filterModified) {
+      route.params.filterModified = undefined;
+    }
+  }, [route.params?.filterModified]);
+
+  useEffect(() => {
+    if (filterState === "filterModified") {
+      flatListRef.current.scrollToIndex({ animated: true, index: 0 });
+      dispatch({ type: "SCROLLDONE" });
+    }
+  }, [filterState]);
+  //---------------------------------------------------
+
   //Trying to use this to clear editingId when returning from filter screen.
   //Have to set the "returning" param on both the DONE button in the filter screen component
   //and the header "X"(Close).
@@ -72,9 +117,7 @@ const ViewMoviesScreen = ({ navigation, route }) => {
 
   return (
     <View style={styles.containerForPortrait}>
-      {showSearch ? (
-        <ListSearchBar onCancel={() => setShowSearch(false)} />
-      ) : null}
+      {showSearch ? <ListSearchBar onCancel={() => setShowSearch(false)} /> : null}
       <FlatList
         data={getFilteredMovies("date", "dec")}
         ref={flatListRef}
