@@ -201,10 +201,6 @@ const TagViewPan = () => {
   };
 
   const renderRow = ({ item, index }, usePanResponder = true) => {
-    if (isEditing) {
-      console.log("IsEditing");
-      // Show Overlay passing "setIsEditing", "item.tagId", "item.tagName"
-    }
     return (
       <>
         <View style={styles.mainSwipe}>
