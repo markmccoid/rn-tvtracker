@@ -136,8 +136,10 @@ const ViewMoviesScreen = ({ navigation, route }) => {
         // columnWrapperStyle={{ justifyContent: "space-around" }}
         numColumns={2}
         renderItem={({ item, index }) => {
+          const pURL = item.posterURL;
           return (
             <ViewMoviesListItem
+              posterURL={pURL}
               movie={item}
               setMovieEditingId={setMovieEditingId}
               movieEditingId={movieEditingId}
