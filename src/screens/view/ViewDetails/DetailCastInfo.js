@@ -10,10 +10,12 @@ const imageHeight = (width / IMAGES_ON_SCREEN - IMAGE_PADDING * 2) * 1.5;
 
 const Character = styled.Text`
   font-size: 18px;
-  font-weight: bold;
+  text-align: center;
 `;
 const Actor = styled.Text`
   font-size: 18px;
+  font-weight: bold;
+  text-align: center;
 `;
 
 const DetailCastInfo = ({ person, screenWidth }) => {
@@ -27,8 +29,8 @@ const DetailCastInfo = ({ person, screenWidth }) => {
   return (
     <View style={styles.container}>
       <Image source={imageSource} style={styles.castPicture} />
-      <Character>{characterName}</Character>
       <Actor>{name}</Actor>
+      <Character>{characterName}</Character>
     </View>
   );
 };
@@ -39,6 +41,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
     paddingHorizontal: IMAGE_PADDING,
     width: width / IMAGES_ON_SCREEN,
+    alignItems: "center",
   },
   castPicture: {
     width: imageWidth, //width / 2 - 20,
