@@ -204,7 +204,9 @@ export const updateMoviePosterImage = async ({ state, effects }, payload) => {
 
   const updateStmt = { posterURL: posterURL };
   //Save to firestore
-  await effects.oSaved.updateMovie(movieId, updateStmt);
+  // await effects.oSaved.updateMovie(movieId, updateStmt); //<---OLD non-debounced call
+  //Debounced write to DB
+  effects.oSaved.updatePosterURL(movieId, updateStmt);
 };
 //================================================================
 // - TAG (tagData) Actions
@@ -312,7 +314,7 @@ export const updateTags = async ({ state, effects }, payload) => {
   // Store tags to Async Storage
   await effects.oSaved.localSaveTags(state.oAdmin.uid, state.oSaved.tagData);
   // Store tags to firestore
-  await effects.oSaved.saveTags(state.oSaved.tagData);
+  await effects.oSaved.saveTags([...state.oSaved.tagData]);
 };
 //================================================================
 // - TAGGED MOVIES  Actions
@@ -344,14 +346,14 @@ export const addTagToMovie = async ({ state, effects }, payload) => {
   // }
   //state.oSaved.savedMovies = movieArray;
 
-  //! No longer storing all movies to Async Storage on updates
+  //! No longer storing all movies to Async Storage on updates using merge option in AsyncStorage module
   // await effects.oSaved.localSaveMovies(state.oAdmin.uid, state.oSaved.savedMovies);
   const mergeObj = { [movieId]: { taggedWith: [...taggedMovies[movieId]] } };
   await effects.oSaved.localMergeMovie(state.oAdmin.uid, mergeObj);
 
   const updateStmt = { taggedWith: [...taggedMovies[movieId]] };
   // Update movie document in firestore.
-  await effects.oSaved.updateMovie(movieId, updateStmt);
+  await effects.oSaved.updateMovieTags(movieId, updateStmt);
 };
 
 // -- Remove a tagId to the taggedMovies Object
@@ -375,7 +377,7 @@ export const removeTagFromMovie = async ({ state, effects }, payload) => {
 
   const updateStmt = { taggedWith: [...taggedMovies[movieId]] };
   // Update movie document in firestore.
-  await effects.oSaved.updateMovie(movieId, updateStmt);
+  await effects.oSaved.updateMovieTags(movieId, updateStmt);
 };
 
 //================================================================
