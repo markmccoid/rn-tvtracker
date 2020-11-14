@@ -7,6 +7,7 @@ import {
   Image,
   ScrollView,
   StyleSheet,
+  Linking,
 } from "react-native";
 import { useOActions } from "../../../store/overmind";
 import { getPersonDetails, movieGetPersonCredits } from "@markmccoid/tmdb_api";

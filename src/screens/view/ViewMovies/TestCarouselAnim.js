@@ -69,7 +69,7 @@ const TestCarouselAnim = ({ navigation }) => {
   const { getFilteredMovies } = state.oSaved;
   const flatListRef = React.useRef();
   const scrollX = React.useRef(new Animated.Value(0)).current;
-  const movieList = getFilteredMovies("date", "dec");
+  const movieList = getFilteredMovies();
   return (
     <View style={styles.container}>
       {/* <StatusBar hidden /> */}

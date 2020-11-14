@@ -42,6 +42,7 @@ export const flushDebounced = async () => {
   x = await saveTags.flush();
   x = await updatePosterURL.flush();
   x = await updateMovieTags.flush();
+  x = await updateMovieUserRating.flush();
   x = await saveSettings.flush();
   x = await saveSavedFilters.flush();
 };
@@ -124,8 +125,18 @@ export const deleteMovie = async (movieId) => {
   await deleteMovieFromFirestore(movieId);
 };
 
+//* Debounced UpdatedMovie functions
+//* Even though each of these functions is calling the same firestore function
+//* to update firestore, we need a separate one for each so that
+//* each debounce function doesn't step on the other.
 //! Debounced Function
 export const updateMovieTags = _.debounce(async (movieId, updateStmt) => {
+  await updateMovieInFirestore(movieId, updateStmt);
+  return;
+}, 10000);
+
+//! Debounced Function
+export const updateMovieUserRating = _.debounce(async (movieId, updateStmt) => {
   await updateMovieInFirestore(movieId, updateStmt);
   return;
 }, 10000);

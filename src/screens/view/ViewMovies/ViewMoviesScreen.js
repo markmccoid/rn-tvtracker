@@ -119,7 +119,7 @@ const ViewMoviesScreen = ({ navigation, route }) => {
     <View style={styles.containerForPortrait}>
       {showSearch ? <ListSearchBar onCancel={() => setShowSearch(false)} /> : null}
       <FlatList
-        data={getFilteredMovies("date", "dec")}
+        data={getFilteredMovies()}
         ref={flatListRef}
         onScroll={(e) => {
           offsetY.setValue(e.nativeEvent.contentOffset.y);
