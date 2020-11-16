@@ -5,8 +5,8 @@ import {
   saveMoviesToLocal,
   saveTagsToLocal,
   saveSettingsToLocal,
-  saveSavedFiltersToLocal,
   mergeMovieToLocal,
+  saveSavedFiltersToLocal,
 } from "../../storage/localData";
 
 import { loadFromAsyncStorage } from "../../storage/asyncStorage";
@@ -26,8 +26,35 @@ import _ from "lodash";
 import { movieGetDetails } from "@markmccoid/tmdb_api";
 
 //=======================================
-//=======================================
+//* There are a number of debounced functions in this file.
+// This is so that if the user makes multiple changes we wait a certain amount
+// of time before writing the change to firestore.
+// NOTE: This change is made immediately to the Overmind store (done in Actions)
+// we are just trying to minimize writes to the DB.
+//-------------------------
+//- Flush any debounced functions that may be waiting
+//- Called when user signs out and makes sure any
+//- waiting updates make it into firebase
+export const flushDebounced = async () => {
+  // Had some issues when I didn't have a return var
+  // Doesn't make sense that it would matter, should test more sometime.
+  let x = "";
+  x = await saveTags.flush();
+  x = await updatePosterURL.flush();
+  x = await updateMovieTags.flush();
+  x = await updateMovieUserRating.flush();
+  x = await saveSettings.flush();
+  x = await saveSavedFilters.flush();
+};
 
+/**
+ * initializeStore - determines whether to load from firebase or the local store
+ *  returns a dataObj that actions.oState.hydrateStore can use to initialize the store
+ *
+ * @param {string} uid - uid of user who is logged in
+ * @param {bool} forceRefresh - boolean that will force refresh from firebase
+ *  -- default is false coming from hydrateStore
+ */
 export const initializeStore = async (uid, forceRefresh) => {
   let dataObj = {};
   let userDocument;
@@ -46,7 +73,7 @@ export const initializeStore = async (uid, forceRefresh) => {
     dataObj.savedFilters = userDocument?.savedFilters || [];
     // dataObj.taggedMovies = userDocument?.taggedMovies || {};
     dataObj.dataSource = "cloud";
-    // Must refresh local data also
+    // Must refresh local data also -- Firestore is the source of truth for data.
     refreshLocalData(uid, dataObj);
   }
   return dataObj;
@@ -98,29 +125,50 @@ export const deleteMovie = async (movieId) => {
   await deleteMovieFromFirestore(movieId);
 };
 
+//* Debounced UpdatedMovie functions
+//* Even though each of these functions is calling the same firestore function
+//* to update firestore, we need a separate one for each so that
+//* each debounce function doesn't step on the other.
+//! Debounced Function
+export const updateMovieTags = _.debounce(async (movieId, updateStmt) => {
+  await updateMovieInFirestore(movieId, updateStmt);
+  return;
+}, 10000);
+
+//! Debounced Function
+export const updateMovieUserRating = _.debounce(async (movieId, updateStmt) => {
+  await updateMovieInFirestore(movieId, updateStmt);
+  return;
+}, 10000);
+
+// Debounce the update of the posterURL for 10 seconds
+// Done to reduce writes to DB.
+//! Debounced Function
+export const updatePosterURL = _.debounce(async (movieId, updateStmt) => {
+  await updateMovieInFirestore(movieId, updateStmt);
+  return;
+}, 10000);
+
 //* Settings Object DB Operations -- only save since each time
 //* we overwrite ALL the setting with new settings
-export const saveSettings = async (settings) => {
+//! Debounced Function
+export const saveSettings = _.debounce(async (settings) => {
   await storeSettings(settings);
-};
-
-// Debounce saving tagged movie data.  This is so that if the user makes multiple changes
-// we wait until they are done and then write the change to firebase.
-//NOTE: This change is made immediately to the Overmind store (done in Actions)
-// we are just trying to minimize writes to the DB.
-export const saveTaggedMovies = _.debounce(async (taggedMovies) => {
-  await storeTaggedMovies(taggedMovies);
-}, 8000);
+  return;
+}, 10000);
 
 //* Save the user defined Tag List to the DB
-export const saveTags = async (tags) => {
+//! Debounced Function
+export const saveTags = _.debounce(async (tags) => {
   await storeTagData(tags);
-};
+  return;
+}, 15000);
 
 //* Save the user created filters (savedFilters) to the DB
-export const saveSavedFilters = async (savedFiltersData) => {
+//! Debounced Function
+export const saveSavedFilters = _.debounce(async (savedFiltersData) => {
   await storeSavedFilters(savedFiltersData);
-};
+}, 10000);
 
 //* Get more movie details
 export const getMovieDetails = async (movieId) => {

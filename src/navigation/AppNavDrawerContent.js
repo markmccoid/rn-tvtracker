@@ -24,6 +24,7 @@ function AppNavDrawerContent(props) {
   const state = useOState();
   const actions = useOActions();
   const { applySavedFilter, clearFilterTags, hyrdateStore } = actions.oSaved;
+  const { logUserOut } = actions.oAdmin;
   const savedFilters = state.oSaved.getDrawerSavedFilters;
   const { email, uid, appState } = state.oAdmin;
 
@@ -135,7 +136,7 @@ function AppNavDrawerContent(props) {
         <DrawerItem
           icon={({ focused, color, size }) => <SignOutIcon size={size} />}
           label="Sign Out"
-          onPress={() => Firebase.auth().signOut()}
+          onPress={() => logUserOut()}
         />
       </View>
     </View>

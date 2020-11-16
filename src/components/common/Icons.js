@@ -122,3 +122,7 @@ export const CollapseUpIcon = ({ size, color, style }) => {
     <MaterialCommunityIcons name="arrow-collapse-up" color={color} size={size} style={style} />
   );
 };
+
+export const PowerIcon = ({ size, color, style }) => {
+  return <Feather name="power" color={color} size={size} style={style} />;
+};

@@ -8,9 +8,11 @@ import {
   loadFromAsyncStorage,
 } from "../../storage/asyncStorage";
 import AsyncStorage from "@react-native-community/async-storage";
+import * as defaultConstants from "./defaultContants";
 
 // export actions for saved filters.
 export * from "./actionsSavedFilters";
+
 //================================================================
 // - INITIALIZE (Hydrate Store)
 //================================================================
@@ -20,18 +22,25 @@ export const hyrdateStore = async (
 ) => {
   let userDocData = await effects.oSaved.initializeStore(uid, forceRefresh);
 
-  state.oSaved.savedMovies = userDocData.savedMovies;
+  //! Update all savedMovies items with a userRating if it doesn't already exist
+  //! Should only be needed until final release
+
+  state.oSaved.savedMovies = userRatingsCheck(userDocData.savedMovies);
   state.oSaved.tagData = userDocData.tagData;
-  // loading defaultFilter as undefined first, because if there is no default filter
-  // nothing will be store in firebase for this.
-  state.oSaved.settings = { defaultFilter: undefined, ...userDocData.settings };
   state.oSaved.savedFilters = userDocData.savedFilters;
+  //Update the datasource (loaded from local or cloud(firestore))
+  state.oAdmin.appState.dataSource = userDocData.dataSource;
+
   // Tag data is stored on the movies document.  This function creates the
   // oSaved.taggedMovies data structure within Overmind
   state.oSaved.taggedMovies = internalActions.createTaggedMoviesObj(userDocData.savedMovies);
-
-  state.oAdmin.appState.dataSource = userDocData.dataSource;
-
+  //------------
+  // SETTINGS
+  // loading all settings from state first(holds any defaults), then settings in firestore
+  // this will allow the settings that have been set to override the defaults
+  state.oSaved.settings = { ...state.oSaved.settings, ...userDocData?.settings };
+  // Copy over default sort. This is future proofing, in case we want to let user change current sort on the fly.
+  state.oSaved.currentSort = [...state.oSaved.settings?.defaultSort];
   // If the defaultFilter id doesn't exist in the savedFilters array, then delete the default filter.
   if (!state.oSaved.savedFilters.some((el) => el.id === state.oSaved.settings.defaultFilter)) {
     state.oSaved.settings.defaultFilter = undefined;
@@ -63,7 +72,6 @@ const getGenresFromMovies = (movies) => {
 //================================================================
 // - Reset oSaved on user Logout
 //================================================================
-
 export const resetOSaved = async ({ state, effects, actions }) => {
   state.oSaved.savedMovies = [];
   state.oSaved.tagData = [];
@@ -73,10 +81,11 @@ export const resetOSaved = async ({ state, effects, actions }) => {
   actions.oSaved.clearFilterScreen();
   state.oSaved.savedFilters = [];
   state.oSaved.generated.genres = [];
+  state.oSaved.settings.defaultSort = defaultConstants.defaultSort;
 };
 
 //================================================================
-// - MOVIE (savedMovies) Actions
+// - MOVIE (state.savedMovies) Actions
 //================================================================
 /**
  * saveMovie - save the passed movie object to state and firestore
@@ -84,7 +93,6 @@ export const resetOSaved = async ({ state, effects, actions }) => {
  * @param {*} context
  * @param {Object} movieObj
  */
-//*TODO have save movie use movieGetDetails(movieId) to get full details and save to firebase
 export const saveMovie = async ({ state, effects, actions }, movieObj) => {
   //! We are tagging the result set so that the search screen will know that the movie
   //! is part of our saved movies.
@@ -99,17 +107,23 @@ export const saveMovie = async ({ state, effects, actions }, movieObj) => {
   }
   // get more movie details from tmdbapi
   const movieDetails = await effects.oSaved.getMovieDetails(movieObj.id);
+  // Make sure date isn't undefined and store only epoch and formatted
   let epoch = movieDetails.data?.releaseDate?.epoch || "";
   let formatted = movieDetails.data?.releaseDate?.formatted || "";
   movieDetails.data.releaseDate = { epoch, formatted };
+  //#  Set a default userRating of 0
+  movieDetails.data.userRating = 0;
+
+  // Store movie in overmind state
   state.oSaved.savedMovies = [movieDetails.data, ...state.oSaved.savedMovies];
+
   // When saving movie user is left on search screen, this will update
   // the screen to show that the selected movige has been saved
   state.oSearch.isNewQuery = false;
   state.oSearch.resultData = tagResults(searchData);
   //----------------------------
 
-  // Get movie genres from savedMovies objects
+  // Get movie genres from savedMovies objects and update our genres list in state
   state.oSaved.generated.genres = getGenresFromMovies(state.oSaved.savedMovies);
 
   // Store all movies to Async Storage
@@ -190,6 +204,14 @@ export const updateMovieBackdropImage = async ({ state, effects }, payload) => {
  */
 export const updateMoviePosterImage = async ({ state, effects }, payload) => {
   const { movieId, posterURL } = payload;
+
+  // check if we are updating a different movie.  If so flush
+  state.oSaved.currentMovieId = await checkCurrentMovieId(
+    state.oSaved.currentMovieId,
+    movieId,
+    effects.oSaved.updatePosterURL
+  );
+
   //update the passed movieId's posterURL
   state.oSaved.savedMovies.forEach((movie) => {
     if (movie.id === movieId) {
@@ -204,11 +226,15 @@ export const updateMoviePosterImage = async ({ state, effects }, payload) => {
 
   const updateStmt = { posterURL: posterURL };
   //Save to firestore
-  await effects.oSaved.updateMovie(movieId, updateStmt);
+  // await effects.oSaved.updateMovie(movieId, updateStmt); //<---OLD non-debounced call
+  //Debounced write to DB
+  effects.oSaved.updatePosterURL(movieId, updateStmt);
 };
+
 //================================================================
 // - TAG (tagData) Actions
 //================================================================
+
 //-This function is only run when a person first signs up.
 //-It just sets up any default information in the overmind store
 //-and firestore.
@@ -312,16 +338,25 @@ export const updateTags = async ({ state, effects }, payload) => {
   // Store tags to Async Storage
   await effects.oSaved.localSaveTags(state.oAdmin.uid, state.oSaved.tagData);
   // Store tags to firestore
-  await effects.oSaved.saveTags(state.oSaved.tagData);
+  await effects.oSaved.saveTags([...state.oSaved.tagData]);
 };
-//================================================================
-// - TAGGED MOVIES  Actions
-//================================================================
-// -- Add a tagId to the taggedMovie Object
-// -- payload = { movieId, tagId }
+
+//*================================================================
+//* - TAGGED MOVIES  Actions
+//*================================================================
+//-- Add a tagId to the taggedMovie Object
+//-- Also update the taggedWith property on the savedMovies state.
+//-- payload = { movieId, tagId }
 export const addTagToMovie = async ({ state, effects }, payload) => {
   let taggedMovies = state.oSaved.taggedMovies || {};
   const { movieId, tagId } = payload;
+
+  // check if we are updating a different movie.  If so flush
+  state.oSaved.currentMovieId = await checkCurrentMovieId(
+    state.oSaved.currentMovieId,
+    movieId,
+    effects.oSaved.updateMovieTags
+  );
 
   // if the movieId property doesn't exist then no tags have been added, so add as a new array
   if (!taggedMovies.hasOwnProperty(movieId)) {
@@ -344,14 +379,14 @@ export const addTagToMovie = async ({ state, effects }, payload) => {
   // }
   //state.oSaved.savedMovies = movieArray;
 
-  //! No longer storing all movies to Async Storage on updates
+  //! No longer storing all movies to Async Storage on updates using merge option in AsyncStorage module
   // await effects.oSaved.localSaveMovies(state.oAdmin.uid, state.oSaved.savedMovies);
   const mergeObj = { [movieId]: { taggedWith: [...taggedMovies[movieId]] } };
   await effects.oSaved.localMergeMovie(state.oAdmin.uid, mergeObj);
 
   const updateStmt = { taggedWith: [...taggedMovies[movieId]] };
   // Update movie document in firestore.
-  await effects.oSaved.updateMovie(movieId, updateStmt);
+  await effects.oSaved.updateMovieTags(movieId, updateStmt);
 };
 
 // -- Remove a tagId to the taggedMovies Object
@@ -359,6 +394,14 @@ export const addTagToMovie = async ({ state, effects }, payload) => {
 export const removeTagFromMovie = async ({ state, effects }, payload) => {
   let taggedMovies = state.oSaved.taggedMovies || {};
   const { movieId, tagId } = payload;
+
+  // check if we are updating a different movie.  If so flush
+  state.oSaved.currentMovieId = await checkCurrentMovieId(
+    state.oSaved.currentMovieId,
+    movieId,
+    effects.oSaved.updateMovieTags
+  );
+
   taggedMovies[movieId] = taggedMovies[movieId].filter((tag) => tag !== tagId);
 
   // Find movie that tag is being added to and update state
@@ -375,12 +418,48 @@ export const removeTagFromMovie = async ({ state, effects }, payload) => {
 
   const updateStmt = { taggedWith: [...taggedMovies[movieId]] };
   // Update movie document in firestore.
-  await effects.oSaved.updateMovie(movieId, updateStmt);
+  await effects.oSaved.updateMovieTags(movieId, updateStmt);
 };
 
-//================================================================
-// - FILTER DATA (filterData) Actions
-//================================================================
+//*================================================================
+//* - userRating MOVIES  Actions
+//*================================================================
+//-- userRatings are defined as a number between 1 and 10.
+//-- Their main purpose is to be available to be part of the sort of the movies
+//-- They will be stored on the movie document as *userRating*
+
+/**
+ * addUserRatingToMovie - Add the rating the savedMovies.userRating
+ *  in the store, Async Storage and Firebase.
+ *
+ */
+export const updateUserRatingToMovie = async ({ state, effects }, payload) => {
+  const { movieId, userRating } = payload;
+
+  // check if we are updating a different movie.  If so flush
+  state.oSaved.currentMovieId = await checkCurrentMovieId(
+    state.oSaved.currentMovieId,
+    movieId,
+    effects.oSaved.updateMovieUserRating
+  );
+  // Add userRating to movie
+  state.oSaved.savedMovies = updateUserRatingOnMovie(
+    movieId,
+    [...state.oSaved.savedMovies],
+    userRating
+  );
+
+  const mergeObj = { [movieId]: { userRating: userRating } };
+  await effects.oSaved.localMergeMovie(state.oAdmin.uid, mergeObj);
+
+  const updateStmt = { userRating: userRating };
+  // Update movie document in firestore.
+  await effects.oSaved.updateMovieUserRating(movieId, updateStmt);
+};
+
+//*================================================================
+//* - FILTER DATA (filterData) Actions
+//*================================================================
 export const addTagToFilter = ({ state }, tagId) => {
   let filterData = state.oSaved.filterData;
   filterData.tags.push(tagId);
@@ -402,8 +481,10 @@ export const clearFilterScreen = ({ state }) => {
 export const setTagOperator = ({ state }, tagOperator) => {
   state.oSaved.filterData.tagOperator = tagOperator;
 };
-//-----------------------
-// GENRE Actions
+
+//*================================================================
+//* GENRE Actions
+//*================================================================
 export const addGenreToFilter = ({ state }, genre) => {
   let filterData = state.oSaved.filterData;
   filterData.genres.push(genre);
@@ -431,10 +512,30 @@ export const setSearchFilter = pipe(
   })
 );
 
-//==============================================
-//- ACTION HELPERS
-//==============================================
+//*==============================================
+//*- SORT Actions
+//*==============================================
+export const updateDefaultSortItem = ({ state, effects }, payload) => {
+  const { title, active, direction } = payload;
+  //Update the settings.defaultSort AND currentSort
+  const newSortArray = state.oSaved.settings.defaultSort.map((sortItem) => {
+    if (sortItem.title === title) {
+      return { ...sortItem, active, sortDirection: direction };
+    }
+    return sortItem;
+  });
+  state.oSaved.settings.defaultSort = newSortArray;
+  state.oSaved.currentSort = newSortArray;
 
+  // Save data to local
+  effects.oSaved.localSaveSettings(state.oAdmin.uid, state.oSaved.settings);
+  // Save to firestore
+  effects.oSaved.saveSettings(state.oSaved.settings);
+};
+
+//*==============================================
+//*- ACTION HELPERS
+//*==============================================
 function updateTaggedWithOnMovie(movieId, movieArray, taggedWithArray) {
   for (let i = 0; i < movieArray.length; i++) {
     if (movieArray[i].id === movieId) {
@@ -443,4 +544,28 @@ function updateTaggedWithOnMovie(movieId, movieArray, taggedWithArray) {
     }
   }
   return movieArray;
+}
+
+function updateUserRatingOnMovie(movieId, movieArray, userRating) {
+  for (let i = 0; i < movieArray.length; i++) {
+    if (movieArray[i].id === movieId) {
+      movieArray[i] = { ...movieArray[i], userRating };
+      break;
+    }
+  }
+  return movieArray;
+}
+
+async function checkCurrentMovieId(currentMovieId, newMovieId, debounceToFlush) {
+  // check if we are updating a different movie.  If so flush
+  if (currentMovieId !== newMovieId) {
+    await debounceToFlush.flush();
+  }
+  return newMovieId;
+}
+
+function userRatingsCheck(savedMovies) {
+  return savedMovies.map((movie) => {
+    return { userRating: 0, ...movie };
+  });
 }

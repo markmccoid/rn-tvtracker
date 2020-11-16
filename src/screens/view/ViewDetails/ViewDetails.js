@@ -25,9 +25,7 @@ import { TouchableOpacity } from "react-native-gesture-handler";
  */
 const ViewDetails = ({ navigation, route }) => {
   const [movieData, setMovieData] = useState(undefined);
-  const [isInSavedMovies, setIsInSavedMovies] = useState(
-    !route.params?.notSaved
-  );
+  const [isInSavedMovies, setIsInSavedMovies] = useState(!route.params?.notSaved);
 
   const state = useOState();
   const actions = useOActions();
@@ -44,21 +42,6 @@ const ViewDetails = ({ navigation, route }) => {
     }
     setMovieData(movieTemp);
   }, [route.params?.movieId, route.params?.movie, route.params?.notSaved]);
-
-  // let movieId = undefined;
-  // let movie = undefined;
-  // let movieTitle = "Movie";
-  // console.log("RERENDER", isInSavedMovies, Object.keys(route.params));
-  // if (isInSavedMovies) {
-  //   movieId = route.params?.movieId;
-  //   movie = state.oSaved.getMovieDetails(movieId);
-  //   // movieTitle = movie.title;
-  // } else {
-  //   movie = route.params?.movie;
-  //   movieId = route.params?.movie?.id;
-  //   // movieTitle = movie.title;
-  // }
-  // console.log("AFTER IF", Object.keys(movie));
 
   //---- Set navigation options for detail screen -----
   // 1. Set the title to the current movie title
@@ -114,9 +97,7 @@ const ViewDetails = ({ navigation, route }) => {
     return <ActivityIndicator size="large" />;
   }
 
-  return (
-    <ViewMovieDetails movie={movieData} isInSavedMovies={isInSavedMovies} />
-  );
+  return <ViewMovieDetails movie={movieData} isInSavedMovies={isInSavedMovies} />;
 };
 
 //`imdb:///find?q=${movie.title}`

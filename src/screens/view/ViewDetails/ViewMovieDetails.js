@@ -31,6 +31,7 @@ import PickImage from "./PickImage";
 import HiddenContainer from "../../../components/HiddenContainer/HiddenContainer";
 import DetailSelectTags from "./DetailSelectTags";
 import DetailButtonBar from "./DetailButtonBar";
+import UserRating from "../../../components/UserRating/UserRating";
 
 // Need to figure out how to have multiple transition sets for a single transitioning view
 // OR maybe wrap both in their own transitioning view
@@ -103,6 +104,7 @@ const ViewSavedMovieDetails = ({ movie, isInSavedMovies }) => {
         }}
       />
       <ScrollView style={{ flex: 1 }}>
+        {isInSavedMovies && <UserRating movieId={movieId} />}
         <DetailMainInfo movie={movie} />
         {/* Saved Details button Bar and components
         ------------------------------------------- */}
