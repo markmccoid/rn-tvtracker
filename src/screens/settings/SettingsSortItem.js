@@ -15,7 +15,7 @@ function getButtonState(active, direction) {
   }
   return indexMap[direction];
 }
-const SortItem = ({ title, direction, active, updateDefaultSortItem }) => {
+const SettingsSortItem = ({ title, direction, active, updateDefaultSortItem }) => {
   const [buttonIndex, setButtonIndex] = React.useState(() =>
     getButtonState(active, direction)
   );
@@ -56,15 +56,15 @@ const SortItem = ({ title, direction, active, updateDefaultSortItem }) => {
           containerStyle={{ width: 125, height: 30, borderColor: "gray" }}
           selectedButtonStyle={{ backgroundColor: "red" }}
         />
-        <TouchableOpacity style={styles.dragHandle} onPress={() => console.log("TOUCHED")}>
+        {/* <TouchableOpacity style={styles.dragHandle} onPress={() => console.log("TOUCHED")}>
           <DragHandleIcon size={30} />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
     </View>
   );
 };
 
-export default SortItem;
+export default SettingsSortItem;
 
 const styles = StyleSheet.create({
   container: {

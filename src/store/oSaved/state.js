@@ -1,6 +1,7 @@
 import { derived } from "overmind";
 import _ from "lodash";
 import * as helpers from "./stateHelpers";
+import * as defaultConstants from "./defaultContants";
 
 export const state = {
   savedMovies: [], // Movie data pulled from @markmccoid/tmdb_api
@@ -11,16 +12,7 @@ export const state = {
   //Settings object
   settings: {
     defaultFilter: undefined,
-    defaultSort: [
-      { sortField: "userRating", title: "User Rating", sortDirection: "desc", active: true },
-      { sortField: "title", title: "Title", sortDirection: "asc", active: true },
-      {
-        sortField: "releaseDate.epoch",
-        title: "Release Date",
-        sortDirection: "desc",
-        active: false,
-      },
-    ],
+    defaultSort: defaultConstants.defaultSort,
   },
   // Object containing any filter data
   filterData: {
@@ -142,7 +134,10 @@ export const state = {
   }),
   //*--------------
   getMovieUserRating: derived((state) => (movieId) => {
-    return state.savedMovies.filter((movie) => movie.id === movieId)[0].userRating || 0;
+    if (!state.savedMovies.length) {
+      return;
+    }
+    return state.savedMovies.filter((movie) => movie.id === movieId)[0]?.userRating || 0;
   }),
   //*--------------
   // Returns on the tags that are currently

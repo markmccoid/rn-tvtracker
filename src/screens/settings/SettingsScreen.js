@@ -5,6 +5,7 @@ import SavedFiltersView from "../../components/settings/SavedFiltersView";
 
 import DefaultFilter from "./DefaultFilter";
 import DefaultSort from "./DefaultSort";
+import SettingSortPan from "./SettingSortPan";
 
 const Settings = ({ navigation }) => {
   const state = useOState();

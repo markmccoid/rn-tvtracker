@@ -8,9 +8,11 @@ import {
   loadFromAsyncStorage,
 } from "../../storage/asyncStorage";
 import AsyncStorage from "@react-native-community/async-storage";
+import * as defaultConstants from "./defaultContants";
 
 // export actions for saved filters.
 export * from "./actionsSavedFilters";
+
 //================================================================
 // - INITIALIZE (Hydrate Store)
 //================================================================
@@ -32,8 +34,8 @@ export const hyrdateStore = async (
   // Tag data is stored on the movies document.  This function creates the
   // oSaved.taggedMovies data structure within Overmind
   state.oSaved.taggedMovies = internalActions.createTaggedMoviesObj(userDocData.savedMovies);
-  //*------------
-  //* SETTINGS
+  //------------
+  // SETTINGS
   // loading all settings from state first(holds any defaults), then settings in firestore
   // this will allow the settings that have been set to override the defaults
   state.oSaved.settings = { ...state.oSaved.settings, ...userDocData?.settings };
@@ -79,6 +81,7 @@ export const resetOSaved = async ({ state, effects, actions }) => {
   actions.oSaved.clearFilterScreen();
   state.oSaved.savedFilters = [];
   state.oSaved.generated.genres = [];
+  state.oSaved.settings.defaultSort = defaultConstants.defaultSort;
 };
 
 //================================================================
@@ -108,7 +111,7 @@ export const saveMovie = async ({ state, effects, actions }, movieObj) => {
   let epoch = movieDetails.data?.releaseDate?.epoch || "";
   let formatted = movieDetails.data?.releaseDate?.formatted || "";
   movieDetails.data.releaseDate = { epoch, formatted };
-  //* Set a default userRating of 0
+  //#  Set a default userRating of 0
   movieDetails.data.userRating = 0;
 
   // Store movie in overmind state
@@ -523,6 +526,11 @@ export const updateDefaultSortItem = ({ state, effects }, payload) => {
   });
   state.oSaved.settings.defaultSort = newSortArray;
   state.oSaved.currentSort = newSortArray;
+
+  // Save data to local
+  effects.oSaved.localSaveSettings(state.oAdmin.uid, state.oSaved.settings);
+  // Save to firestore
+  effects.oSaved.saveSettings(state.oSaved.settings);
 };
 
 //*==============================================

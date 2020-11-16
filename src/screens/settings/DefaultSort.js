@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, Text, View, ScrollView } from "react-native";
-import SortItem from "./SortItem";
+import SettingsSortItem from "./SettingsSortItem";
 import { useOActions, useOState } from "../../store/overmind";
 
 const DefaultSort = () => {
@@ -11,15 +11,16 @@ const DefaultSort = () => {
 
   return (
     <ScrollView style={styles.container}>
-      {defaultSort.map((sortItem) => (
-        <SortItem
-          title={sortItem.title}
-          key={sortItem.title}
-          active={sortItem.active}
-          direction={sortItem.sortDirection}
-          updateDefaultSortItem={updateDefaultSortItem}
-        />
-      ))}
+      {defaultSort &&
+        defaultSort.map((sortItem) => (
+          <SettingsSortItem
+            title={sortItem.title}
+            key={sortItem.title}
+            active={sortItem.active}
+            direction={sortItem.sortDirection}
+            updateDefaultSortItem={updateDefaultSortItem}
+          />
+        ))}
     </ScrollView>
   );
 };

@@ -7,14 +7,13 @@ import {
   TouchableOpacity,
   Dimensions,
   PanResponder,
+  FlatList,
   Animated,
 } from "react-native";
-import { SwipeListView } from "react-native-swipe-list-view";
 import { Feather } from "@expo/vector-icons";
 import { useDimensions } from "@react-native-community/hooks";
 import { useOState, useOActions } from "../../store/overmind";
-import { DragHandleIcon } from "../common/Icons";
-import TagRowEditOverlay from "./TagRowEditOverlay";
+import { DragHandleIcon } from "../../components/common/Icons";
 
 //---------------------------------
 //-----------------------------------
@@ -39,7 +38,7 @@ function reOrder(arr, from, to) {
   }, []);
 }
 
-const TagViewPan = () => {
+const SettingSortPan = () => {
   const [isEditing, setIsEditing] = React.useState(undefined);
   const [dragging, setDragging] = React.useState(false);
   const [draggingIdx, setDraggingIdx] = React.useState(-1);
@@ -60,18 +59,20 @@ const TagViewPan = () => {
   const state = useOState();
   const actions = useOActions();
   // tagData = [ { tagId, tagName }, ...]
-  const [data, setData] = React.useState();
-  const { tagData } = state.oSaved;
-  const { updateTags, deleteTag } = actions.oSaved;
+  const { defaultSort } = state.oSaved.settings;
+  const [data, setData] = React.useState(defaultSort);
+  const { updateDefaultSortItem } = actions.oSaved;
+
+  console.log(defaultSort);
 
   // Sets our local data array whenever Overmind's data changes length
   // We only need to update the local array if an tag is ADDED or REMOVED
   // OR EDITED
-  React.useEffect(() => {
-    if (!isEditing) {
-      setData([...tagData]);
-    }
-  }, [tagData.length, isEditing]);
+  // React.useEffect(() => {
+  //   if (!isEditing) {
+  //     setData([...tagData]);
+  //   }
+  // }, [tagData.length, isEditing]);
 
   const _panResponder = PanResponder.create({
     // Ask to be the responder:
@@ -120,7 +121,7 @@ const TagViewPan = () => {
       // responder. This typically means a gesture has succeeded
       reset();
       if (currentIdx.current !== startingIdx.current) {
-        updateTags(data);
+        updateDefaultSortItem(data);
       }
     },
     onPanResponderTerminate: (evt, gestureState) => {
@@ -199,48 +200,38 @@ const TagViewPan = () => {
   };
 
   const renderRow = ({ item, index }, usePanResponder = true) => {
+    console.log(item);
     return (
       <>
-        <View style={styles.mainSwipe}>
-          {isEditing === item.tagId ? (
-            <TagRowEditOverlay
-              isVisible={true}
-              currTagValue={item.tagName}
-              tagId={item.tagId}
-              setIsEditing={setIsEditing}
-            />
-          ) : (
-            <View
-              onLayout={(e) => (rowHeight.current = e.nativeEvent.layout.height)}
-              style={{
-                backgroundColor: "#e5e5e5",
-                flexDirection: "row",
-                alignItems: "center",
-                opacity: draggingIdx === index ? 0 : 1,
-              }}
-            >
-              <Text
-                style={{
-                  fontSize: 18,
-                  color: "black",
-                  marginLeft: 15,
-                  padding: 10,
-                  flex: 1,
-                }}
-              >
-                {item.tagName}
-              </Text>
-              <View
-                style={{
-                  padding: 10,
-                  margin: 0,
-                }}
-                {...(usePanResponder ? _panResponder.panHandlers : {})}
-              >
-                <DragHandleIcon color="black" size={30} />
-              </View>
-            </View>
-          )}
+        <View
+          onLayout={(e) => (rowHeight.current = e.nativeEvent.layout.height)}
+          style={{
+            backgroundColor: "#e5e5e5",
+            flexDirection: "row",
+            alignItems: "center",
+            opacity: draggingIdx === index ? 0 : 1,
+          }}
+        >
+          <Text
+            style={{
+              fontSize: 18,
+              color: "black",
+              marginLeft: 15,
+              padding: 10,
+              flex: 1,
+            }}
+          >
+            {item.title}
+          </Text>
+          <View
+            style={{
+              padding: 10,
+              margin: 0,
+            }}
+            {...(usePanResponder ? _panResponder.panHandlers : {})}
+          >
+            <DragHandleIcon color="black" size={30} />
+          </View>
         </View>
       </>
     );
@@ -299,11 +290,10 @@ const TagViewPan = () => {
           }}
           scrollEventThrottle={16}
         /> */}
-        <SwipeListView
-          listViewRef={(ref) => {
+        <FlatList
+          ref={(ref) => {
             flatListRef.current = ref;
           }}
-          useFlatList
           style={{ backgroundColor: "#ccc" }}
           data={data}
           scrollEnabled={!dragging}
@@ -315,47 +305,13 @@ const TagViewPan = () => {
           scrollEventThrottle={16}
           keyExtractor={(item) => item.tagId}
           renderItem={(props) => renderRow(props, true)}
-          renderHiddenItem={(rowData, rowMap) => {
-            return (
-              <>
-                <View style={[styles.backRightBtn, styles.backRightBtnLeft]}>
-                  <TouchableOpacity
-                    onPress={() => {
-                      setIsEditing(rowData.item.tagId);
-                      rowMap[rowData.item.tagId].closeRow();
-                    }}
-                  >
-                    <Feather name="edit" size={25} />
-                  </TouchableOpacity>
-                </View>
-                <View style={[styles.backRightBtn, styles.deleteRightBtn]}>
-                  <TouchableOpacity
-                    onPress={() => {
-                      deleteTag(rowData.item.tagId);
-                    }}
-                  >
-                    <Feather name="trash-2" size={25} />
-                  </TouchableOpacity>
-                </View>
-              </>
-            );
-          }}
-          leftOpenValue={75}
-          rightOpenValue={-75}
-          onRowOpen={(rowKey, rowMap) => {
-            setTimeout(() => {
-              if (rowMap[rowKey]) {
-                rowMap[rowKey].closeRow();
-              }
-            }, 3000);
-          }}
         />
       </View>
     </KeyboardAvoidingView>
   );
 };
 
-export default TagViewPan;
+export default SettingSortPan;
 
 const styles = StyleSheet.create({
   container: {
