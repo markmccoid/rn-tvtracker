@@ -104,8 +104,8 @@ const ViewSavedMovieDetails = ({ movie, isInSavedMovies }) => {
         }}
       />
       <ScrollView style={{ flex: 1 }}>
-        {isInSavedMovies && <UserRating movieId={movieId} />}
-        <DetailMainInfo movie={movie} />
+        {/* {isInSavedMovies && <UserRating movieId={movieId} />} */}
+        <DetailMainInfo movie={movie} isInSavedMovies={isInSavedMovies} />
         {/* Saved Details button Bar and components
         ------------------------------------------- */}
         {isInSavedMovies && (

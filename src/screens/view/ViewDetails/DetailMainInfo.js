@@ -1,20 +1,46 @@
-import React from "react";
-import { View, Text, Image, StyleSheet } from "react-native";
+import React, { useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  ScrollView,
+  Alert,
+  TouchableOpacity,
+} from "react-native";
 
 import { useDimensions } from "@react-native-community/hooks";
+import { LessIcon, MoreIcon } from "../../../components/common/Icons";
+import SetUserRating from "./SetUserRating";
+import { useOActions, useOState } from "../../../store/overmind";
+import UserRating from "../../../components/UserRating/UserRating";
 
-const DetailMainInfo = ({ movie }) => {
+const DetailMainInfo = ({ movie, isInSavedMovies }) => {
+  const [overviewHeight, setOverviewHeight] = useState(225);
+  const [showUserRating, setShowUserRating] = useState(false);
+  const actions = useOActions();
+  const state = useOState();
+  const { updateUserRatingToMovie } = actions.oSaved;
+  const { getMovieUserRating } = state.oSaved;
+  // const [movieUserRating, setUserRating] = useState(0);
+  // maybe needs to be in useEffect??? or memoized
+  const movieUserRating = getMovieUserRating(movie.id);
+  // useEffect(() => {
+  //   console.log("in useffect", movie.id, movieUserRating, getMovieUserRating(movie.id));
+  //   setUserRating(getMovieUserRating(movie.id));
+  // }, [movie.id, getMovieUserRating(movie.id)]);
   const { width, height } = useDimensions().window;
   // If poster doesn't exist use the placeholder image
-  let movieURL = movie.posterURL
-    ? { uri: movie.posterURL }
-    : require("./placeholder.png");
+  let movieURL = movie.posterURL ? { uri: movie.posterURL } : require("./placeholder.png");
   // Get data to use from movie object
   const { overview = "", releaseDate = "", imdbURL = "", runtime = "" } = movie;
+
+  const toggleOverview = () => setOverviewHeight((curr) => (curr ? undefined : 225));
   return (
     <View style={styles.container}>
       <View
         style={{
+          flex: 1,
           flexDirection: "row",
           justifyContent: "flex-start",
           width: width,
@@ -23,15 +49,65 @@ const DetailMainInfo = ({ movie }) => {
           // backgroundColor: "#3b544199",
         }}
       >
-        <View style={[styles.posterWrapper, styles.posterImage]}>
-          <Image
-            style={styles.posterImage}
-            source={movieURL}
-            resizeMode="contain"
-          />
+        {isInSavedMovies && (
+          <View
+            style={{
+              position: "absolute",
+              left: 35,
+              bottom: -5,
+              zIndex: 100,
+              // marginTop: 5,
+              // height: showUserRating ? 50 : 30,
+              //width: showUserRating ? width : undefined,
+            }}
+          >
+            <SetUserRating
+              movieId={movie.id}
+              setShowUserRating={setShowUserRating}
+              userRating={movieUserRating}
+              updateUserRating={(userRating) =>
+                updateUserRatingToMovie({ movieId: movie.id, userRating })
+              }
+            />
+            {/* {showUserRating && <UserRating movieId={movie.id} />} */}
+            <Text>{showUserRating}</Text>
+          </View>
+        )}
+        <View>
+          <View style={[styles.posterWrapper, styles.posterImage]}>
+            <Image style={styles.posterImage} source={movieURL} resizeMode="contain" />
+          </View>
+          {/*---------------------
+          ------------------------*/}
         </View>
-        <View style={{ width: width - 145, paddingLeft: 5 }}>
-          <Text style={{ fontSize: 18 }}>{overview}</Text>
+        <View style={{ flex: 1, paddingHorizontal: 5, height: overviewHeight }}>
+          <ScrollView style={{ overflow: "scroll" }}>
+            <Text style={{ fontSize: 18 }}>{overview}</Text>
+          </ScrollView>
+          {overview.length > 270 && (
+            <View
+              style={{
+                position: "absolute",
+                bottom: -30,
+                right: 0,
+                margin: 10,
+                // backgroundColor: "#ffffff77",
+                zIndex: 100,
+                // borderColor: "black",
+                // borderWidth: 1,
+                // borderRadius: 10,
+                padding: 5,
+              }}
+            >
+              <TouchableOpacity onPress={toggleOverview}>
+                {overviewHeight ? (
+                  <MoreIcon size={20} color="black" />
+                ) : (
+                  <LessIcon size={20} color="black" />
+                )}
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
       </View>
       <View>

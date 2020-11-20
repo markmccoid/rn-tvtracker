@@ -71,6 +71,14 @@ export const CaretDownIcon = ({ size, color, style }) => {
   return <FontAwesome name="caret-down" size={size} color={color} style={style} />;
 };
 
+//# More (down) Less (up) icons
+export const MoreIcon = ({ size, color, style }) => {
+  return <AntDesign name="downcircleo" size={size} color={color} style={style} />;
+};
+export const LessIcon = ({ size, color, style }) => {
+  return <AntDesign name="upcircleo" size={size} color={color} style={style} />;
+};
+
 //----------------
 //- Drawer Icons
 //----------------
@@ -125,4 +133,24 @@ export const CollapseUpIcon = ({ size, color, style }) => {
 
 export const PowerIcon = ({ size, color, style }) => {
   return <Feather name="power" color={color} size={size} style={style} />;
+};
+
+//# SORT Icons
+export const AscAlphaIcon = ({ size, color, style }) => {
+  return <FontAwesome name="sort-alpha-asc" color={color} size={size} style={style} />;
+};
+export const DescAlphaIcon = ({ size, color, style }) => {
+  return <FontAwesome name="sort-alpha-desc" color={color} size={size} style={style} />;
+};
+export const AscNumIcon = ({ size, color, style }) => {
+  return <FontAwesome name="sort-numeric-asc" color={color} size={size} style={style} />;
+};
+export const DescNumIcon = ({ size, color, style }) => {
+  return <FontAwesome name="sort-numeric-desc" color={color} size={size} style={style} />;
+};
+export const AscOtherIcon = ({ size, color, style }) => {
+  return <FontAwesome name="sort-amount-asc" color={color} size={size} style={style} />;
+};
+export const DescOtherIcon = ({ size, color, style }) => {
+  return <FontAwesome name="sort-amount-desc" color={color} size={size} style={style} />;
 };
