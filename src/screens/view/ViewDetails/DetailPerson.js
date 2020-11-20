@@ -8,6 +8,7 @@ import {
   ScrollView,
   StyleSheet,
   Linking,
+  TouchableOpacity,
 } from "react-native";
 import { useOActions } from "../../../store/overmind";
 import { getPersonDetails, movieGetPersonCredits } from "@markmccoid/tmdb_api";
@@ -17,8 +18,11 @@ import DataRow from "../../../components/common/DataRow";
 import SearchResultItem from "../../../components/search/SearchResultItem";
 import { useGetPersonMovies } from "../../../hooks/useGetPersonMovies";
 
+import { LessIcon, MoreIcon } from "../../../components/common/Icons";
+
 const { width, height } = Dimensions.get("window");
 const PICTURE_WIDTH = (width - 5) / 3;
+const MARGIN = 5;
 const PICTURE_HEIGHT = PICTURE_WIDTH * (9 / 6);
 
 const returnImageURI = (imageURL) => {
@@ -84,9 +88,13 @@ const DetailPerson = ({ navigation, route }) => {
           }}
         >
           <View>
-            <DataRow label="Born:" value={personInfo?.birthday?.formatted} newLine />
-            <DataRow label="Died:" value={personInfo?.deathDay?.formatted} newLine />
-            <DataRow label="Birthplace:" value={personInfo?.placeOfBirth?.trim()} newLine />
+            <DataRow label="Born:" value={personInfo?.birthday?.formatted} />
+            <DataRow label="Died:" value={personInfo?.deathDay?.formatted} />
+            <DataRow
+              label="Birthplace:"
+              value={personInfo?.placeOfBirth?.trim()}
+              size={width - PICTURE_WIDTH - MARGIN}
+            />
           </View>
           <View
             style={{
@@ -125,12 +133,13 @@ const DetailPerson = ({ navigation, route }) => {
         <View
           style={{ alignItems: "flex-end", marginRight: 15, marginBottom: 15, marginTop: -5 }}
         >
-          <Button
-            onPress={toggleShowBio}
-            title={showBio ? "Less" : "More"}
-            small
-            width={width / 3}
-          />
+          <TouchableOpacity onPress={toggleShowBio}>
+            {showBio ? (
+              <LessIcon size={20} color="black" />
+            ) : (
+              <MoreIcon size={20} color="black" />
+            )}
+          </TouchableOpacity>
         </View>
       </View>
 
@@ -140,7 +149,7 @@ const DetailPerson = ({ navigation, route }) => {
             <ActivityIndicator size="large" />
           </View>
         ) : (
-          personMovieData.map((item) => {
+          personMovieData.map((item, idx) => {
             return (
               <SearchResultItem
                 key={item.id}
@@ -166,7 +175,7 @@ const styles = StyleSheet.create({
   profilePic: {
     width: PICTURE_WIDTH,
     height: PICTURE_HEIGHT,
-    margin: 5,
+    margin: MARGIN,
     borderColor: "black",
     borderWidth: 1,
     borderRadius: 5,

@@ -1,11 +1,5 @@
 import React, { useEffect } from "react";
-import {
-  View,
-  TextInput,
-  TouchableOpacity,
-  Text,
-  StyleSheet,
-} from "react-native";
+import { View, TextInput, TouchableOpacity, Text, StyleSheet } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useOActions, useOState } from "../../../store/overmind";
 
@@ -23,7 +17,6 @@ const ListSearchBar = ({ onCancel = () => null }) => {
         placeholder="Search Movie Title"
         onChangeText={(e) => setSearchFilter(e)}
         value={searchFilter}
-        autoFocus
         clearButtonMode="while-editing"
       />
       <TouchableOpacity
