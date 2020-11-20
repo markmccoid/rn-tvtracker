@@ -41,6 +41,7 @@ const styles = StyleSheet.create({
   },
   settingsContainer: {
     margin: 5,
+    marginTop: 15,
   },
   settingsText: {
     fontSize: 18,

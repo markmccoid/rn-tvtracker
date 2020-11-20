@@ -1,34 +1,62 @@
 import React from "react";
-import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import { StyleSheet, Switch, Text, View, TouchableOpacity } from "react-native";
 import { ButtonGroup } from "react-native-elements";
 import {
   DragHandleIcon,
-  ExpandDownIcon,
-  CollapseUpIcon,
-  PowerIcon,
+  AscAlphaIcon,
+  AscNumIcon,
+  AscOtherIcon,
+  DescNumIcon,
+  DescAlphaIcon,
+  DescOtherIcon,
 } from "../../components/common/Icons";
 
 function getButtonState(active, direction) {
-  const indexMap = { asc: 1, desc: 2 };
-  if (!active) {
-    return 0;
-  }
+  const indexMap = { asc: 0, desc: 1 };
   return indexMap[direction];
 }
-const SettingsSortItem = ({ title, direction, active, updateDefaultSortItem }) => {
-  const [buttonIndex, setButtonIndex] = React.useState(() =>
-    getButtonState(active, direction)
-  );
+const SettingsSortItem = ({
+  title,
+  direction,
+  active,
+  type = "num",
+  updateDefaultSortItem,
+}) => {
+  const directionMap = { asc: 0, desc: 1 };
+  const [buttonIndex, setButtonIndex] = React.useState(directionMap[direction]);
   let disabledStyle = {};
-  // const buttons = ["UP", "DOWN"];
-  const buttons = [
-    { element: () => <PowerIcon size={20} /> },
-    { element: () => <CollapseUpIcon size={20} /> },
-    { element: () => <ExpandDownIcon size={20} /> },
-  ];
-  if (buttonIndex === 0) {
+  if (!active) {
     disabledStyle = { backgroundColor: "#ccc" };
   }
+
+  const buttons = {
+    alpha: [
+      { element: () => <AscAlphaIcon size={20} color={active ? "" : "#777"} /> },
+      { element: () => <DescAlphaIcon size={20} color={active ? "" : "#777"} /> },
+    ],
+    num: [
+      { element: () => <AscNumIcon size={20} color={active ? "" : "#777"} /> },
+      { element: () => <DescNumIcon size={20} color={active ? "" : "#777"} /> },
+    ],
+    date: [
+      { element: () => <AscOtherIcon size={20} color={active ? "" : "#777"} /> },
+      { element: () => <DescOtherIcon size={20} color={active ? "" : "#777"} /> },
+    ],
+  };
+  const sortDescription = {
+    alpha: {
+      asc: "Sort Text from A to Z",
+      desc: "Sort Text from Z to A",
+    },
+    num: {
+      asc: "Sort Number from Lowest to Highest",
+      desc: "Sort Number from Highest to Lowest",
+    },
+    date: {
+      asc: "Sort Dates from Oldest to Most Recent",
+      desc: "Sort Dates from Most Recent to Oldest",
+    },
+  };
 
   React.useEffect(() => {
     setButtonIndex(getButtonState(active, direction));
@@ -36,30 +64,39 @@ const SettingsSortItem = ({ title, direction, active, updateDefaultSortItem }) =
 
   const handleSortItemUpdate = (index) => {
     let payload = { title, active, direction };
-    let directionMap = { 1: "asc", 2: "desc" };
-    if (index === 0) {
-      //not active
-      payload = { ...payload, active: false };
-    } else {
-      payload = { ...payload, active: true, direction: directionMap[index] };
-    }
+    let indexDecodeMap = { 0: "asc", 1: "desc" };
+    payload = { ...payload, active: true, direction: indexDecodeMap[index] };
     updateDefaultSortItem(payload);
   };
+  const toggleActive = (_) => {
+    updateDefaultSortItem({ active: !active, title, direction });
+  };
   return (
-    <View style={[styles.container, disabledStyle]}>
-      <Text style={styles.title}>{title}</Text>
-      <View style={styles.buttonDragContainer}>
-        <ButtonGroup
-          onPress={(index) => handleSortItemUpdate(index)}
-          buttons={buttons}
-          selectedIndex={buttonIndex}
-          containerStyle={{ width: 125, height: 30, borderColor: "gray" }}
-          selectedButtonStyle={{ backgroundColor: "red" }}
-        />
-        {/* <TouchableOpacity style={styles.dragHandle} onPress={() => console.log("TOUCHED")}>
-          <DragHandleIcon size={30} />
-        </TouchableOpacity> */}
+    <View style={styles.container}>
+      <View style={[styles.rowContainer, disabledStyle]}>
+        <Text style={[styles.title, !active ? { color: "#555" } : {}]}>{title}</Text>
+        <View style={styles.buttonDragContainer}>
+          <Switch value={active} onChange={toggleActive} />
+          <ButtonGroup
+            disabled={!active}
+            disabledStyle={{ backgroundColor: "#e3e6e8" }}
+            onPress={(index) => handleSortItemUpdate(index)}
+            buttons={buttons[type]}
+            selectedIndex={buttonIndex}
+            containerStyle={{ width: 125, height: 30, borderColor: "gray" }}
+            buttonStyle={{ backgroundColor: "#e3e6e8" }}
+            selectedButtonStyle={{ backgroundColor: "#34c759" }}
+          />
+          {/* <TouchableOpacity style={styles.dragHandle} onPress={() => console.log("TOUCHED")}>
+            <DragHandleIcon size={30} />
+          </TouchableOpacity> */}
+        </View>
       </View>
+      {active && (
+        <View style={styles.sortItemDesc}>
+          <Text>{sortDescription[type][direction]}</Text>
+        </View>
+      )}
     </View>
   );
 };
@@ -68,6 +105,10 @@ export default SettingsSortItem;
 
 const styles = StyleSheet.create({
   container: {
+    borderColor: "#888",
+    borderWidth: 1,
+  },
+  rowContainer: {
     flex: 1,
     flexDirection: "row",
     borderColor: "#ccc",
@@ -79,6 +120,10 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     fontSize: 15,
     fontWeight: "600",
+  },
+  sortItemDesc: {
+    paddingHorizontal: 10,
+    paddingVertical: 2,
   },
   buttonDragContainer: {
     flexDirection: "row",
