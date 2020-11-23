@@ -11,13 +11,14 @@ import {
 
 import { useDimensions } from "@react-native-community/hooks";
 import { LessIcon, MoreIcon } from "../../../components/common/Icons";
-import SetUserRating from "./SetUserRating";
+import ForceTouchUserRating from "./ForceTouchUserRating";
 import { useOActions, useOState } from "../../../store/overmind";
+import { ForceTouchGestureHandler } from "react-native-gesture-handler";
 import UserRating from "../../../components/UserRating/UserRating";
 
 const DetailMainInfo = ({ movie, isInSavedMovies }) => {
   const [overviewHeight, setOverviewHeight] = useState(225);
-  const [showUserRating, setShowUserRating] = useState(false);
+  const [userRatingActivated, setUserRatingActivated] = useState(false);
   const actions = useOActions();
   const state = useOState();
   const { updateUserRatingToMovie } = actions.oSaved;
@@ -38,6 +39,7 @@ const DetailMainInfo = ({ movie, isInSavedMovies }) => {
   const toggleOverview = () => setOverviewHeight((curr) => (curr ? undefined : 225));
   return (
     <View style={styles.container}>
+      {!ForceTouchGestureHandler.forceTouchAvailable && <UserRating movieId={movie.id} />}
       <View
         style={{
           flex: 1,
@@ -54,23 +56,17 @@ const DetailMainInfo = ({ movie, isInSavedMovies }) => {
             style={{
               position: "absolute",
               left: 35,
-              bottom: -5,
+              bottom: 5,
               zIndex: 100,
-              // marginTop: 5,
-              // height: showUserRating ? 50 : 30,
-              //width: showUserRating ? width : undefined,
             }}
           >
-            <SetUserRating
+            <ForceTouchUserRating
               movieId={movie.id}
-              setShowUserRating={setShowUserRating}
               userRating={movieUserRating}
               updateUserRating={(userRating) =>
                 updateUserRatingToMovie({ movieId: movie.id, userRating })
               }
             />
-            {/* {showUserRating && <UserRating movieId={movie.id} />} */}
-            <Text>{showUserRating}</Text>
           </View>
         )}
         <View>
