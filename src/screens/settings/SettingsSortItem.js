@@ -31,16 +31,16 @@ const SettingsSortItem = ({
 
   const buttons = {
     alpha: [
-      { element: () => <AscAlphaIcon size={20} color={active ? "" : "#777"} /> },
-      { element: () => <DescAlphaIcon size={20} color={active ? "" : "#777"} /> },
+      { element: () => <AscAlphaIcon size={20} color={active ? null : "#777"} /> },
+      { element: () => <DescAlphaIcon size={20} color={active ? null : "#777"} /> },
     ],
     num: [
-      { element: () => <AscNumIcon size={20} color={active ? "" : "#777"} /> },
-      { element: () => <DescNumIcon size={20} color={active ? "" : "#777"} /> },
+      { element: () => <AscNumIcon size={20} color={active ? null : "#777"} /> },
+      { element: () => <DescNumIcon size={20} color={active ? null : "#777"} /> },
     ],
     date: [
-      { element: () => <AscOtherIcon size={20} color={active ? "" : "#777"} /> },
-      { element: () => <DescOtherIcon size={20} color={active ? "" : "#777"} /> },
+      { element: () => <AscOtherIcon size={20} color={active ? null : "#777"} /> },
+      { element: () => <DescOtherIcon size={20} color={active ? null : "#777"} /> },
     ],
   };
   const sortDescription = {

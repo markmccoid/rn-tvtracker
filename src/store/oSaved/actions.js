@@ -130,7 +130,7 @@ export const saveMovie = async ({ state, effects, actions }, movieObj) => {
   await effects.oSaved.localSaveMovies(state.oAdmin.uid, state.oSaved.savedMovies);
 
   // Add movie to firebase
-  await effects.oSaved.addMovie(movieDetails.data);
+  return await effects.oSaved.addMovie(movieDetails.data);
 };
 
 /**
@@ -155,6 +155,9 @@ export const deleteMovie = async ({ state, effects, actions }, movieId) => {
   state.oSearch.isNewQuery = false;
   state.oSearch.resultData = tagResults(searchData);
   //----------------------------
+
+  // Cancel any debounced functions
+  effects.oSaved.cancelDebounced();
 
   // Clear any items associated with movie that might be saved in Async storage
   removeFromAsyncStorage(`castdata-${movieId}`);

@@ -30,10 +30,12 @@ const SearchResultItem = ({
   // The DetailsFromSearch screen is in the SearchStack.js file, but points to
   // the same component as the the details screen from the ViewStack.js screen.
   // Both point to ViewDetails.js
+  // The navigateToScreen prop will be either "DetailsFromSearch" from the SearchStack.js
+  // OR "Details" from the ViewStack.js.  This is determined if the starting point was "My Movies"(ViewStack)
+  // OR "Add Movie"(SearchStack)
   // NOTE: using push instead of navigate so that each screen is pushed onto stack
   const navigateToDetails = () => {
     setOnDetailsPage(true);
-
     if (movie.existsInSaved) {
       push(navigateToScreen, {
         movieId: movie.id,
@@ -58,9 +60,7 @@ const SearchResultItem = ({
             <Image
               source={{ url: movie.posterURL }}
               style={styles.image}
-              PlaceholderContent={
-                <MaterialIcons name="broken-image" size={64} />
-              }
+              PlaceholderContent={<MaterialIcons name="broken-image" size={64} />}
             />
           </View>
         ) : (
@@ -73,9 +73,7 @@ const SearchResultItem = ({
       <TouchableOpacity
         activeOpacity={0.7}
         style={{ flex: 1 }}
-        onPress={() =>
-          movie.existsInSaved ? deleteMovie(movie.id) : saveMovie(movie)
-        }
+        onPress={() => (movie.existsInSaved ? deleteMovie(movie.id) : saveMovie(movie))}
       >
         <View
           style={[
@@ -88,17 +86,9 @@ const SearchResultItem = ({
           </Text>
         </View>
 
-        <View
-          style={[styles.addMovieButton, movie.existsInSaved && styles.exists]}
-        >
-          <View
-            style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
-          >
-            {movie.existsInSaved ? (
-              <CheckIcon size={20} />
-            ) : (
-              <AddIcon size={20} />
-            )}
+        <View style={[styles.addMovieButton, movie.existsInSaved && styles.exists]}>
+          <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+            {movie.existsInSaved ? <CheckIcon size={20} /> : <AddIcon size={20} />}
           </View>
         </View>
       </TouchableOpacity>

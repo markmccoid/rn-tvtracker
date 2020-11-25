@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import * as React from "react";
 import {
   View,
   Text,
@@ -17,13 +17,14 @@ import { ForceTouchGestureHandler } from "react-native-gesture-handler";
 import UserRating from "../../../components/UserRating/UserRating";
 
 const DetailMainInfo = ({ movie, isInSavedMovies }) => {
-  const [overviewHeight, setOverviewHeight] = useState(225);
-  const [userRatingActivated, setUserRatingActivated] = useState(false);
+  const [overviewHeight, setOverviewHeight] = React.useState(225);
+  const [userRatingActivated, setUserRatingActivated] = React.useState(false);
+  const movieURL = React.useRef(require("./placeholder.png"));
   const actions = useOActions();
   const state = useOState();
   const { updateUserRatingToMovie } = actions.oSaved;
   const { getMovieUserRating } = state.oSaved;
-  // const [movieUserRating, setUserRating] = useState(0);
+  // const [movieUserRating, setUserRating] = React.useState(0);
   // maybe needs to be in useEffect??? or memoized
   const movieUserRating = getMovieUserRating(movie.id);
   // useEffect(() => {
@@ -31,15 +32,22 @@ const DetailMainInfo = ({ movie, isInSavedMovies }) => {
   //   setUserRating(getMovieUserRating(movie.id));
   // }, [movie.id, getMovieUserRating(movie.id)]);
   const { width, height } = useDimensions().window;
-  // If poster doesn't exist use the placeholder image
-  let movieURL = movie.posterURL ? { uri: movie.posterURL } : require("./placeholder.png");
+
   // Get data to use from movie object
   const { overview = "", releaseDate = "", imdbURL = "", runtime = "" } = movie;
+  React.useEffect(() => {
+    // If poster doesn't exist use the placeholder image
+    movieURL.current = movie.posterURL
+      ? { uri: movie.posterURL }
+      : require("./placeholder.png");
+  }, [movie.posterURL]);
 
   const toggleOverview = () => setOverviewHeight((curr) => (curr ? undefined : 225));
   return (
     <View style={styles.container}>
-      {!ForceTouchGestureHandler.forceTouchAvailable && <UserRating movieId={movie.id} />}
+      {!ForceTouchGestureHandler.forceTouchAvailable && isInSavedMovies && (
+        <UserRating movieId={movie.id} />
+      )}
       <View
         style={{
           flex: 1,
@@ -71,7 +79,7 @@ const DetailMainInfo = ({ movie, isInSavedMovies }) => {
         )}
         <View>
           <View style={[styles.posterWrapper, styles.posterImage]}>
-            <Image style={styles.posterImage} source={movieURL} resizeMode="contain" />
+            <Image style={styles.posterImage} source={movieURL.current} resizeMode="contain" />
           </View>
           {/*---------------------
           ------------------------*/}
