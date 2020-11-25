@@ -43,7 +43,11 @@ export const hyrdateStore = async (
   state.oSaved.currentSort = [...state.oSaved.settings?.defaultSort];
   // If the defaultFilter id doesn't exist in the savedFilters array, then delete the default filter.
   if (!state.oSaved.savedFilters.some((el) => el.id === state.oSaved.settings.defaultFilter)) {
-    state.oSaved.settings.defaultFilter = undefined;
+    state.oSaved.settings.defaultFilter = null;
+    // Save data to local
+    await effects.oSaved.localSaveSettings(state.oAdmin.uid, state.oSaved.settings);
+    // Save to firestore
+    await effects.oSaved.saveSettings(state.oSaved.settings);
   }
   // Apply a default filter, if one has been selected in settings and we are not doing a forced refresh
   const defaultFilterId = state.oSaved.settings?.defaultFilter;
@@ -130,7 +134,7 @@ export const saveMovie = async ({ state, effects, actions }, movieObj) => {
   await effects.oSaved.localSaveMovies(state.oAdmin.uid, state.oSaved.savedMovies);
 
   // Add movie to firebase
-  await effects.oSaved.addMovie(movieDetails.data);
+  return await effects.oSaved.addMovie(movieDetails.data);
 };
 
 /**
@@ -155,6 +159,9 @@ export const deleteMovie = async ({ state, effects, actions }, movieId) => {
   state.oSearch.isNewQuery = false;
   state.oSearch.resultData = tagResults(searchData);
   //----------------------------
+
+  // Cancel any debounced functions
+  effects.oSaved.cancelDebounced();
 
   // Clear any items associated with movie that might be saved in Async storage
   removeFromAsyncStorage(`castdata-${movieId}`);

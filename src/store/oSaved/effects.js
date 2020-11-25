@@ -46,6 +46,20 @@ export const flushDebounced = async () => {
   x = await saveSettings.flush();
   x = await saveSavedFilters.flush();
 };
+//- Cancel any debounced functions that may be waiting
+//- Called when user deletes a movie
+//- ensures we don't try to save something to firebase that no longer exists
+export const cancelDebounced = async () => {
+  // Had some issues when I didn't have a return var
+  // Doesn't make sense that it would matter, should test more sometime.
+  let x = "";
+  x = await saveTags.cancel();
+  x = await updatePosterURL.cancel();
+  x = await updateMovieTags.cancel();
+  x = await updateMovieUserRating.cancel();
+  x = await saveSettings.cancel();
+  x = await saveSavedFilters.cancel();
+};
 
 /**
  * initializeStore - determines whether to load from firebase or the local store

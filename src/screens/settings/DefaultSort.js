@@ -10,18 +10,19 @@ const DefaultSort = () => {
   const { updateDefaultSortItem } = actions.oSaved;
 
   return (
-    <ScrollView style={styles.container}>
+    <View style={styles.container}>
       {defaultSort &&
         defaultSort.map((sortItem) => (
           <SettingsSortItem
-            title={sortItem.title}
             key={sortItem.title}
+            title={sortItem.title}
+            type={sortItem.type}
             active={sortItem.active}
             direction={sortItem.sortDirection}
             updateDefaultSortItem={updateDefaultSortItem}
           />
         ))}
-    </ScrollView>
+    </View>
   );
 };
 
@@ -31,5 +32,6 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: "white",
     marginRight: 5,
+    marginTop: 5,
   },
 });

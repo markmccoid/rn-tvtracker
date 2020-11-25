@@ -104,8 +104,8 @@ const ViewSavedMovieDetails = ({ movie, isInSavedMovies }) => {
         }}
       />
       <ScrollView style={{ flex: 1 }}>
-        {isInSavedMovies && <UserRating movieId={movieId} />}
-        <DetailMainInfo movie={movie} />
+        {/* {isInSavedMovies && <UserRating movieId={movieId} />} */}
+        <DetailMainInfo movie={movie} isInSavedMovies={isInSavedMovies} />
         {/* Saved Details button Bar and components
         ------------------------------------------- */}
         {isInSavedMovies && (
@@ -185,9 +185,9 @@ const ViewSavedMovieDetails = ({ movie, isInSavedMovies }) => {
           <HiddenContainer title="Cast" startOpen>
             <View>
               <View style={styles.castInfo}>
-                {castData.map((person) => (
+                {castData.map((person, idx) => (
                   <TouchableOpacity
-                    key={person.personId}
+                    key={person.personId + idx.toString()}
                     onPress={() =>
                       navigation.push(`${route.name}Person`, {
                         personId: person.personId,

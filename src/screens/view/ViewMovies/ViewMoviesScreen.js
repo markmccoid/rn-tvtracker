@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, TextInput, FlatList, StyleSheet, Animated } from "react-native";
+import { View, Text, TextInput, FlatList, StyleSheet, Animated, Easing } from "react-native";
 import { useOState, useOActions } from "../../../store/overmind";
 import { useDimensions } from "@react-native-community/hooks";
 import ListSearchBar from "./ListSearchBar";
@@ -85,7 +85,7 @@ const ViewMoviesScreen = ({ navigation, route }) => {
   }, [route.params?.filterModified]);
 
   useEffect(() => {
-    if (filterState === "filterModified") {
+    if (filterState === "filterModified" && getFilteredMovies().length > 0) {
       flatListRef.current.scrollToIndex({ animated: true, index: 0 });
       dispatch({ type: "SCROLLDONE" });
     }
@@ -103,12 +103,15 @@ const ViewMoviesScreen = ({ navigation, route }) => {
     }
   }, [route.params?.returning]);
 
+  //! Should be able to delete the useEffect below since we don't show
+  //! the search with a button, but only when list is at top
   // When we show the search bar scroll to the top of the flatlist
-  useEffect(() => {
-    if (showSearch) {
-      flatListRef.current.scrollToIndex({ animated: true, index: 0 });
-    }
-  }, [showSearch]);
+  // useEffect(() => {
+  //   if (showSearch) {
+  //     flatListRef.current.scrollToIndex({ animated: true, index: 0 });
+  //   }
+  // }, [showSearch]);
+
   // Get movie details when movie is selected/edit mode
   // probably should move whole overlay section to a separate file
   useEffect(() => {

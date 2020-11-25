@@ -18,7 +18,7 @@ const Settings = ({ navigation }) => {
           <Text style={styles.settingsText}>Saved Filters</Text>
           <SavedFiltersView />
         </View>
-        <View style={styles.settingsContainer}>
+        <View style={[styles.settingsContainer, { zIndex: 100 }]}>
           <Text style={styles.settingsText}>Set Default Filter</Text>
           <Text>Choose a saved filter to be run when app starts.</Text>
           <DefaultFilter />
@@ -41,6 +41,7 @@ const styles = StyleSheet.create({
   },
   settingsContainer: {
     margin: 5,
+    marginTop: 15,
   },
   settingsText: {
     fontSize: 18,

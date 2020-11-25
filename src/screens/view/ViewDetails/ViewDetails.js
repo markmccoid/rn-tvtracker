@@ -25,14 +25,14 @@ import { TouchableOpacity } from "react-native-gesture-handler";
  */
 const ViewDetails = ({ navigation, route }) => {
   const [movieData, setMovieData] = useState(undefined);
-  const [isInSavedMovies, setIsInSavedMovies] = useState(!route.params?.notSaved);
+  const [isInSavedMovies, setIsInSavedMovies] = useState(!!!route.params?.notSaved);
 
   const state = useOState();
   const actions = useOActions();
   const { saveMovie, deleteMovie } = actions.oSaved;
 
   useEffect(() => {
-    setIsInSavedMovies(!route.params?.notSaved); //if undefined or false, return true
+    setIsInSavedMovies(!!!route.params?.notSaved); //if undefined or false, return true
     let movieTemp = {};
     if (route.params?.movieId) {
       movieTemp = state.oSaved.getMovieDetails(route.params?.movieId);
@@ -60,10 +60,11 @@ const ViewDetails = ({ navigation, route }) => {
           return (
             <TouchableOpacity
               style={{ marginRight: 15 }}
-              onPress={() => {
-                saveMovie(movieData);
+              onPress={async () => {
+                await saveMovie(movieData);
                 navigation.navigate(route.name, {
                   movieId: movieData.id,
+                  movie: undefined,
                   notSaved: false,
                 });
                 // navigation.goBack();

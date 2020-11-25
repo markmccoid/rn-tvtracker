@@ -202,45 +202,44 @@ const TagViewPan = () => {
     return (
       <>
         <View style={styles.mainSwipe}>
-          {isEditing === item.tagId ? (
+          {isEditing === item.tagId && (
             <TagRowEditOverlay
               isVisible={true}
               currTagValue={item.tagName}
               tagId={item.tagId}
               setIsEditing={setIsEditing}
             />
-          ) : (
-            <View
-              onLayout={(e) => (rowHeight.current = e.nativeEvent.layout.height)}
+          )}
+          <View
+            onLayout={(e) => (rowHeight.current = e.nativeEvent.layout.height)}
+            style={{
+              backgroundColor: "#e5e5e5",
+              flexDirection: "row",
+              alignItems: "center",
+              opacity: draggingIdx === index ? 0 : 1,
+            }}
+          >
+            <Text
               style={{
-                backgroundColor: "#e5e5e5",
-                flexDirection: "row",
-                alignItems: "center",
-                opacity: draggingIdx === index ? 0 : 1,
+                fontSize: 18,
+                color: "black",
+                marginLeft: 15,
+                padding: 10,
+                flex: 1,
               }}
             >
-              <Text
-                style={{
-                  fontSize: 18,
-                  color: "black",
-                  marginLeft: 15,
-                  padding: 10,
-                  flex: 1,
-                }}
-              >
-                {item.tagName}
-              </Text>
-              <View
-                style={{
-                  padding: 10,
-                  margin: 0,
-                }}
-                {...(usePanResponder ? _panResponder.panHandlers : {})}
-              >
-                <DragHandleIcon color="black" size={30} />
-              </View>
+              {item.tagName}
+            </Text>
+            <View
+              style={{
+                padding: 10,
+                margin: 0,
+              }}
+              {...(usePanResponder ? _panResponder.panHandlers : {})}
+            >
+              <DragHandleIcon color="black" size={30} />
             </View>
-          )}
+          </View>
         </View>
       </>
     );

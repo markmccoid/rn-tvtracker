@@ -1,13 +1,13 @@
-import React from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
-const DataRow = ({ label, value, newLine = false }) => {
+const DataRow = ({ label, value, size }) => {
   // If value is undefined, then return null
   if (!value) {
     return null;
   }
   return (
-    <View style={[styles.container, { flexDirection: newLine ? "column" : "row" }]}>
+    <View style={[styles.container, { flexDirection: "row" }]}>
       <Text style={styles.label}>{label}</Text>
       <Text style={styles.value}>{value}</Text>
     </View>
