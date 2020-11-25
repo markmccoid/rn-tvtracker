@@ -85,7 +85,7 @@ const ViewMoviesScreen = ({ navigation, route }) => {
   }, [route.params?.filterModified]);
 
   useEffect(() => {
-    if (filterState === "filterModified") {
+    if (filterState === "filterModified" && getFilteredMovies().length > 0) {
       flatListRef.current.scrollToIndex({ animated: true, index: 0 });
       dispatch({ type: "SCROLLDONE" });
     }

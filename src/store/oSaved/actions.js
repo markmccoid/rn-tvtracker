@@ -43,7 +43,11 @@ export const hyrdateStore = async (
   state.oSaved.currentSort = [...state.oSaved.settings?.defaultSort];
   // If the defaultFilter id doesn't exist in the savedFilters array, then delete the default filter.
   if (!state.oSaved.savedFilters.some((el) => el.id === state.oSaved.settings.defaultFilter)) {
-    state.oSaved.settings.defaultFilter = undefined;
+    state.oSaved.settings.defaultFilter = null;
+    // Save data to local
+    await effects.oSaved.localSaveSettings(state.oAdmin.uid, state.oSaved.settings);
+    // Save to firestore
+    await effects.oSaved.saveSettings(state.oSaved.settings);
   }
   // Apply a default filter, if one has been selected in settings and we are not doing a forced refresh
   const defaultFilterId = state.oSaved.settings?.defaultFilter;
