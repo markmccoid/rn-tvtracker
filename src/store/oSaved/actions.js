@@ -21,7 +21,6 @@ export const hyrdateStore = async (
   { uid, forceRefresh = false }
 ) => {
   let userDocData = await effects.oSaved.initializeStore(uid, forceRefresh);
-
   //! Update all savedMovies items with a userRating if it doesn't already exist
   //! Should only be needed until final release
 
@@ -45,7 +44,7 @@ export const hyrdateStore = async (
   if (!state.oSaved.savedFilters.some((el) => el.id === state.oSaved.settings.defaultFilter)) {
     state.oSaved.settings.defaultFilter = null;
     // Save data to local
-    await effects.oSaved.localSaveSettings(state.oAdmin.uid, state.oSaved.settings);
+    await effects.oSaved.localSaveSettings(uid, state.oSaved.settings);
     // Save to firestore
     await effects.oSaved.saveSettings(state.oSaved.settings);
   }
@@ -134,7 +133,7 @@ export const saveMovie = async ({ state, effects, actions }, movieObj) => {
   await effects.oSaved.localSaveMovies(state.oAdmin.uid, state.oSaved.savedMovies);
 
   // Add movie to firebase
-  return await effects.oSaved.addMovie(movieDetails.data);
+  await effects.oSaved.addMovie(movieDetails.data);
 };
 
 /**
@@ -238,27 +237,22 @@ export const updateMoviePosterImage = async ({ state, effects }, payload) => {
   effects.oSaved.updatePosterURL(movieId, updateStmt);
 };
 
-//================================================================
-// - TAG (tagData) Actions
-//================================================================
+//*================================================================
+//* - TAG (tagData) Actions
+//*================================================================
 
 //-This function is only run when a person first signs up.
-//-It just sets up any default information in the overmind store
-//-and firestore.
-export const initialDataCreation = async ({ state, effects }) => {
+//-It just returns the default tags that a user starts with.
+export const initialTagCreation = ({ state, effects }) => {
   let tagArray = [
     { tagId: uuidv4(), tagName: "Favorites" },
     { tagId: uuidv4(), tagName: "Watched" },
     { tagId: uuidv4(), tagName: "Next Up" },
   ];
-  state.oSaved.tagData = tagArray;
-
-  // Store tags to Async Storage
-  await effects.oSaved.localSaveTags(state.oAdmin.uid, state.oSaved.tagData);
-  // Store tags to firestore
-  await effects.oSaved.saveTags(state.oSaved.tagData);
+  return tagArray;
 };
 
+//-
 export const addNewTag = async ({ state, effects }, tagName) => {
   let existingTags = state.oSaved.tagData;
   // Check to see if tag with same name exists (disregard case)

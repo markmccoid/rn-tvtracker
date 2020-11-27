@@ -20,8 +20,8 @@ const SignIn = ({ navigation, route }) => {
   const state = useOState();
   const actions = useOActions();
   let { isLoggedIn } = state.oAdmin;
-  const { initialDataCreation } = actions.oSaved;
-
+  const { initialTagCreation } = actions.oSaved;
+  const tagData = initialTagCreation();
   // const [isLoading, setIsLoading] = React.useState(
   //   route.params?.authStatus === 'loading' ? true : false
   // );
@@ -67,15 +67,10 @@ const SignIn = ({ navigation, route }) => {
       Firebase.auth()
         .createUserWithEmailAndPassword(email, password)
         .then((resp) => {
-          return firestore
-            .collection("users")
-            .doc(resp.user.uid)
-            .set({
-              email,
-            })
-            .then((resp) => {
-              initialDataCreation();
-            });
+          firestore.collection("users").doc(resp.user.uid).set({
+            email,
+            tagData,
+          });
         })
         .catch((error) => {
           setIsLoading(false);
@@ -136,9 +131,7 @@ const SignIn = ({ navigation, route }) => {
             secureTextEntry={true}
             returnKeyType={isSignIn ? "go" : "next"}
             onChangeText={setPassword}
-            onSubmitEditing={
-              isSignIn ? onSubmit : () => confirmPasswordRef.current.focus()
-            }
+            onSubmitEditing={isSignIn ? onSubmit : () => confirmPasswordRef.current.focus()}
           />
 
           {!isSignIn ? (
@@ -164,13 +157,9 @@ const SignIn = ({ navigation, route }) => {
                 Haven't signed up yet?
               </Text>
               <TouchableOpacity
-                onPress={() =>
-                  navigation.push("CreateAccount", { screenFunction: "create" })
-                }
+                onPress={() => navigation.push("CreateAccount", { screenFunction: "create" })}
               >
-                <Text
-                  style={{ fontSize: 16, color: "#333", fontWeight: "bold" }}
-                >
+                <Text style={{ fontSize: 16, color: "#333", fontWeight: "bold" }}>
                   Sign Up
                 </Text>
               </TouchableOpacity>

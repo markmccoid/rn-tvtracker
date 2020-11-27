@@ -35,7 +35,7 @@ export const saveToAsyncStorage = async (key, data) => {
 // --------------------------------------------
 export const mergeToAsyncStorage = async (key, data) => {
   try {
-    return await AsyncStorage.mergeItem(key, JSON.stringify(data));
+    await AsyncStorage.mergeItem(key, JSON.stringify(data));
   } catch (error) {
     console.log("ERROR Saving to Async Storage", error);
   }

@@ -97,19 +97,19 @@ export const initializeStore = async (uid, forceRefresh) => {
 //*- LOCAL storage functions
 //*=================================
 export const localSaveMovies = async (uid, savedMovies) => {
-  saveMoviesToLocal(uid, savedMovies);
+  return saveMoviesToLocal(uid, savedMovies);
 };
 export const localMergeMovie = async (uid, movieObj) => {
-  mergeMovieToLocal(uid, movieObj);
+  return mergeMovieToLocal(uid, movieObj);
 };
 export const localSaveTags = async (uid, tags) => {
-  saveTagsToLocal(uid, tags);
+  return saveTagsToLocal(uid, tags);
 };
 export const localSaveSettings = async (uid, settings) => {
-  saveSettingsToLocal(uid, settings);
+  return saveSettingsToLocal(uid, settings);
 };
 export const localSaveSavedFilters = async (uid, settings) => {
-  saveSavedFiltersToLocal(uid, settings);
+  return saveSavedFiltersToLocal(uid, settings);
 };
 
 //*=================================

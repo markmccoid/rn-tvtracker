@@ -80,10 +80,10 @@ export const loadLocalData = async (uid) => {
  * @param {string} uid - uid for user logged in, use to create keys
  * @param {object} savedMovies - object containing data to store in async storage
  */
-export const saveMoviesToLocal = (uid, savedMovies) => {
+export const saveMoviesToLocal = async (uid, savedMovies) => {
   // Convert savedMovies
   savedMoviesObj = _.keyBy(savedMovies, "id");
-  return saveToAsyncStorage(getKey(uid, "savedMovies"), savedMoviesObj);
+  await saveToAsyncStorage(getKey(uid, "savedMovies"), savedMoviesObj);
 };
 
 /**
@@ -103,8 +103,8 @@ export const mergeMovieToLocal = async (uid, movieMergeObj) => {
  * @param {string} uid - uid for user logged in, use to create keys
  * @param {object} tagData - object containing data to store in async storage
  */
-export const saveTagsToLocal = (uid, tagData) => {
-  return saveToAsyncStorage(getKey(uid, "tagData"), tagData);
+export const saveTagsToLocal = async (uid, tagData) => {
+  await saveToAsyncStorage(getKey(uid, "tagData"), tagData);
 };
 /**
  * saveSettingsToLocal - saved passed settings
@@ -112,8 +112,8 @@ export const saveTagsToLocal = (uid, tagData) => {
  * @param {string} uid - uid for user logged in, use to create keys
  * @param {object} settings - object containing data to store in async storage
  */
-export const saveSettingsToLocal = (uid, settings) => {
-  return saveToAsyncStorage(getKey(uid, "settings"), settings);
+export const saveSettingsToLocal = async (uid, settings) => {
+  await saveToAsyncStorage(getKey(uid, "settings"), settings);
 };
 /**
  * saveSavedFiltersToLocal - saved savedFilters
@@ -121,6 +121,6 @@ export const saveSettingsToLocal = (uid, settings) => {
  * @param {string} uid - uid for user logged in, use to create keys
  * @param {object} savedFilters - object containing data to store in async storage
  */
-export const saveSavedFiltersToLocal = (uid, savedFilters) => {
-  return saveToAsyncStorage(getKey(uid, "savedFilters"), savedFilters);
+export const saveSavedFiltersToLocal = async (uid, savedFilters) => {
+  await saveToAsyncStorage(getKey(uid, "savedFilters"), savedFilters);
 };
