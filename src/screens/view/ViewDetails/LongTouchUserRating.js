@@ -1,12 +1,15 @@
+import { last } from "lodash";
 import React from "react";
 import { Dimensions } from "react-native";
 import { StyleSheet, Text, View, Animated } from "react-native";
-import { State, ForceTouchGestureHandler } from "react-native-gesture-handler";
+import { State, LongPressGestureHandler } from "react-native-gesture-handler";
+import * as Haptics from "expo-haptics";
 
+import UserRating from "../../../components/UserRating/UserRating";
 const { width, height } = Dimensions.get("window");
 const positionFactor = Math.floor((width - 50) / 10);
 
-const ForceTouchUserRating = ({ userRating, updateUserRating }) => {
+const LongTouchUserRating = ({ userRating, updateUserRating }) => {
   const forceVal = React.useRef(new Animated.Value(0)).current;
   const xPos = React.useRef(new Animated.Value(0)).current;
   // Used to set User Rating Text higher when gesture active
@@ -38,30 +41,34 @@ const ForceTouchUserRating = ({ userRating, updateUserRating }) => {
     }).start();
 
   const _onGestureEvent = (event) => {
-    let { force, absoluteY, y, absoluteX, x, oldState, state } = event.nativeEvent;
+    let { absoluteY, y, absoluteX, x, oldState, state } = event.nativeEvent;
     setGestureActive(true);
     xPos.setValue(absoluteX - 66);
-    if (Math.floor(absoluteX / positionFactor) >= 10) {
-      setCurrRating(10);
-    } else {
-      setCurrRating(Math.floor(absoluteX / positionFactor));
+    let calcCurrRating =
+      Math.floor(absoluteX / positionFactor) >= 10
+        ? 10
+        : Math.floor(absoluteX / positionFactor);
+    if (currRating !== calcCurrRating) {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     }
+    setCurrRating(calcCurrRating);
   };
 
   const _onHandlerStateChange = (event) => {
     // console.log(State.ACTIVE, State.UNDETERMINED, State.BEGAN, State.END);
     // Event is over
-
     let { oldState, state } = event.nativeEvent;
-    if (state === State.BEGAN) {
+
+    // When long gesture is actived do this
+    if (state === State.ACTIVE) {
       gestureStartAnim();
+      // Haptics.selectionAsync();
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     }
+
+    // When long gesture ends, do this
     if (state === State.END) {
       gestureEndAnim();
-    }
-    if (oldState === State.ACTIVE) {
-      //forceVal.setValue(0);
-      //xPos.setValue(0);
       EndXPosAnim();
       updateUserRating(currRating);
     }
@@ -71,46 +78,44 @@ const ForceTouchUserRating = ({ userRating, updateUserRating }) => {
     setCurrRating(userRating);
   }, [userRating]);
 
-  // If force touch not available, don't return anything
-  // Calling component needs to have fallback (UserRating component)
-  if (!ForceTouchGestureHandler.forceTouchAvailable) {
-    return null;
-  }
   return (
     <View>
-      <ForceTouchGestureHandler
+      <LongPressGestureHandler
         feedbackOnActivation
-        minForce={0.5}
+        minDurationMs={500}
+        maxDist={width}
         onGestureEvent={_onGestureEvent}
         onHandlerStateChange={_onHandlerStateChange}
       >
-        <Animated.View
-          style={[
-            styles.box,
-            gestureActive ? { justifyContent: "flex-start" } : { justifyContent: "center" },
-            {
-              transform: [
-                { translateX: xPos },
-                {
-                  translateY: forceVal.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [0, -35],
-                    extrapolate: "clamp",
-                  }),
-                },
-                { scale: Animated.add(1, forceVal) },
-              ],
-            },
-          ]}
-        >
-          <Text style={styles.userRating}>{currRating}</Text>
-        </Animated.View>
-      </ForceTouchGestureHandler>
+        <View style={{ position: "absolute", bottom: -25, paddingBottom: 30 }}>
+          <Animated.View
+            style={[
+              styles.box,
+              gestureActive ? { justifyContent: "flex-start" } : { justifyContent: "center" },
+              {
+                transform: [
+                  { translateX: xPos },
+                  {
+                    translateY: forceVal.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [0, -35],
+                      extrapolate: "clamp",
+                    }),
+                  },
+                  { scale: Animated.add(1, forceVal) },
+                ],
+              },
+            ]}
+          >
+            <Text style={styles.userRating}>{currRating}</Text>
+          </Animated.View>
+        </View>
+      </LongPressGestureHandler>
     </View>
   );
 };
 
-export default ForceTouchUserRating;
+export default LongTouchUserRating;
 
 const styles = StyleSheet.create({
   box: {

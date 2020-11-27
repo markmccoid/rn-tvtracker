@@ -11,8 +11,8 @@ import {
 
 import { useDimensions } from "@react-native-community/hooks";
 import { LessIcon, MoreIcon } from "../../../components/common/Icons";
-import ForceTouchUserRating from "./ForceTouchUserRating";
 import { useOActions, useOState } from "../../../store/overmind";
+import LongTouchUserRating from "./LongTouchUserRating";
 import { ForceTouchGestureHandler } from "react-native-gesture-handler";
 import UserRating from "../../../components/UserRating/UserRating";
 
@@ -45,9 +45,9 @@ const DetailMainInfo = ({ movie, isInSavedMovies }) => {
   const toggleOverview = () => setOverviewHeight((curr) => (curr ? undefined : 225));
   return (
     <View style={styles.container}>
-      {!ForceTouchGestureHandler.forceTouchAvailable && isInSavedMovies && (
+      {/* {!ForceTouchGestureHandler.forceTouchAvailable && isInSavedMovies && (
         <UserRating movieId={movie.id} />
-      )}
+      )} */}
       <View
         style={{
           flex: 1,
@@ -68,13 +68,20 @@ const DetailMainInfo = ({ movie, isInSavedMovies }) => {
               zIndex: 100,
             }}
           >
-            <ForceTouchUserRating
+            <LongTouchUserRating
               movieId={movie.id}
               userRating={movieUserRating}
               updateUserRating={(userRating) =>
                 updateUserRatingToMovie({ movieId: movie.id, userRating })
               }
             />
+            {/* <ForceTouchUserRating
+              movieId={movie.id}
+              userRating={movieUserRating}
+              updateUserRating={(userRating) =>
+                updateUserRatingToMovie({ movieId: movie.id, userRating })
+              }
+            /> */}
           </View>
         )}
         <View>
