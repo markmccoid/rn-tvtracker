@@ -21,7 +21,7 @@ const SignIn = ({ navigation, route }) => {
   const actions = useOActions();
   let { isLoggedIn } = state.oAdmin;
   const { initialTagCreation } = actions.oSaved;
-  const tagData = initialTagCreation();
+
   // const [isLoading, setIsLoading] = React.useState(
   //   route.params?.authStatus === 'loading' ? true : false
   // );
@@ -64,6 +64,7 @@ const SignIn = ({ navigation, route }) => {
           Alert.alert(error.message);
         });
     } else {
+      const tagData = initialTagCreation();
       Firebase.auth()
         .createUserWithEmailAndPassword(email, password)
         .then((resp) => {
