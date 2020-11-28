@@ -1,12 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, TextInput, FlatList, StyleSheet, Animated, Easing } from "react-native";
+import {
+  View,
+  Text,
+  Dimensions,
+  FlatList,
+  StyleSheet,
+  Animated,
+  TouchableOpacity,
+} from "react-native";
 import { useOState, useOActions } from "../../../store/overmind";
-import { useDimensions } from "@react-native-community/hooks";
 import ListSearchBar from "./ListSearchBar";
+import { AddIcon, FilterIcon } from "../../../components/common/Icons";
 
 import ViewMoviesListItem from "../../../components/ViewMovies/ViewMoviesListItem";
 import ViewMovieOverlay from "./ViewMovieOverlay";
 
+const { width, height } = Dimensions.get("window");
 //----------------------------
 // Based on Finite States Machines, this was a test to
 // make things easier to deal with when the filter status
@@ -46,7 +55,6 @@ const filterMachine = (state, event) => {
 //---------------
 const ViewMoviesScreen = ({ navigation, route }) => {
   const [filterState, dispatch] = React.useReducer(filterMachine, filterMachineConfig.initial);
-  const { width, height } = useDimensions().window;
   const [movieDetails, setMovieDetails] = React.useState(undefined);
   const [showSearch, setShowSearch] = useState(false);
   const flatListRef = React.useRef();
@@ -150,6 +158,7 @@ const ViewMoviesScreen = ({ navigation, route }) => {
           );
         }}
       />
+
       {/* Only show when editing a movie - this happens on a long press on movie */}
       <ViewMovieOverlay
         movieId={movieEditingId}
@@ -157,6 +166,38 @@ const ViewMoviesScreen = ({ navigation, route }) => {
         isVisible={!!movieEditingId}
         movieDetails={movieDetails}
       />
+      {/* If there are NO movies after the filters are applied then show a message and Filter button  */}
+      {getFilteredMovies().length === 0 && state.oSaved.savedMovies.length !== 0 && (
+        <View style={[styles.noMoviesShownPosition, { alignItems: "center" }]}>
+          <Text style={{ fontSize: 20, fontWeight: "600", marginBottom: 10 }}>
+            No Movies match current filter.
+          </Text>
+          <Text style={{ fontSize: 20, fontWeight: "600", marginBottom: 10 }}>
+            Modify filter.
+          </Text>
+
+          <TouchableOpacity
+            style={[
+              styles.noMoviesShownBtnView,
+              { width: 75, height: 75, justifyContent: "center", alignItems: "center" },
+            ]}
+            onPress={() => navigation.navigate("Filter")}
+          >
+            <FilterIcon size={40} />
+          </TouchableOpacity>
+        </View>
+      )}
+
+      {state.oSaved.savedMovies.length === 0 && (
+        <View style={[styles.noMoviesShownPosition, styles.noMoviesShownBtnView]}>
+          <TouchableOpacity
+            style={{ width: 75, height: 75, justifyContent: "center", alignItems: "center" }}
+            onPress={() => navigation.navigate("Search")}
+          >
+            <AddIcon size={50} />
+          </TouchableOpacity>
+        </View>
+      )}
     </View>
   );
 };
@@ -169,6 +210,23 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "column",
     alignItems: "center",
+  },
+  noMoviesShownPosition: {
+    position: "absolute",
+    top: height / 4,
+  },
+  noMoviesShownBtnView: {
+    borderRadius: 15,
+    borderColor: "black",
+    borderWidth: 2,
+    backgroundColor: "white",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 4,
+      height: 5,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 4.65,
   },
 });
 
