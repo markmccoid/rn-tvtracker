@@ -17,8 +17,7 @@ import { ForceTouchGestureHandler } from "react-native-gesture-handler";
 import UserRating from "../../../components/UserRating/UserRating";
 
 const DetailMainInfo = ({ movie, isInSavedMovies }) => {
-  const [overviewHeight, setOverviewHeight] = React.useState(225);
-  const [userRatingActivated, setUserRatingActivated] = React.useState(false);
+  const [overviewHeight, setOverviewHeight] = React.useState(205);
   const movieURL = React.useRef(require("./placeholder.png"));
   const actions = useOActions();
   const state = useOState();
@@ -42,7 +41,7 @@ const DetailMainInfo = ({ movie, isInSavedMovies }) => {
       : require("./placeholder.png");
   }, [movie.posterURL]);
 
-  const toggleOverview = () => setOverviewHeight((curr) => (curr ? undefined : 225));
+  const toggleOverview = () => setOverviewHeight((curr) => (curr ? undefined : 205));
   return (
     <View style={styles.container}>
       {/* {!ForceTouchGestureHandler.forceTouchAvailable && isInSavedMovies && (
@@ -56,10 +55,10 @@ const DetailMainInfo = ({ movie, isInSavedMovies }) => {
           width: width,
           paddingTop: 5,
           paddingBottom: 15,
-          // backgroundColor: "#3b544199",
+          marginBottom: 20,
         }}
       >
-        {isInSavedMovies && (
+        {/* {isInSavedMovies && (
           <View
             style={{
               position: "absolute",
@@ -75,22 +74,29 @@ const DetailMainInfo = ({ movie, isInSavedMovies }) => {
                 updateUserRatingToMovie({ movieId: movie.id, userRating })
               }
             />
-            {/* <ForceTouchUserRating
+          </View>
+        )} */}
+        <View style={[styles.posterWrapper, styles.posterImage, { zIndex: 200 }]}>
+          <View
+            style={{
+              position: "absolute",
+              left: 35,
+              bottom: -40,
+              zIndex: 200,
+            }}
+          >
+            <LongTouchUserRating
               movieId={movie.id}
               userRating={movieUserRating}
               updateUserRating={(userRating) =>
                 updateUserRatingToMovie({ movieId: movie.id, userRating })
               }
-            /> */}
+            />
           </View>
-        )}
-        <View>
-          <View style={[styles.posterWrapper, styles.posterImage]}>
-            <Image style={styles.posterImage} source={movieURL.current} resizeMode="contain" />
-          </View>
-          {/*---------------------
-          ------------------------*/}
+          <Image style={styles.posterImage} source={movieURL.current} resizeMode="contain" />
         </View>
+        {/*---------------------
+          ------------------------*/}
         <View style={{ flex: 1, paddingHorizontal: 5, height: overviewHeight }}>
           <ScrollView style={{ overflow: "scroll" }}>
             <Text style={{ fontSize: 18 }}>{overview}</Text>
@@ -102,7 +108,7 @@ const DetailMainInfo = ({ movie, isInSavedMovies }) => {
                 bottom: -30,
                 right: 0,
                 margin: 10,
-                // backgroundColor: "#ffffff77",
+                // backgroundColor: "#ffffff",
                 zIndex: 100,
                 // borderColor: "black",
                 // borderWidth: 1,

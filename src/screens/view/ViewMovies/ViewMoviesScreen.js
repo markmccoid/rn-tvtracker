@@ -61,7 +61,7 @@ const ViewMoviesScreen = ({ navigation, route }) => {
   const state = useOState();
   const actions = useOActions();
   const { setMovieEditingId } = actions.oAdmin;
-  const { movieEditingId } = state.oAdmin.appState;
+  const { movieEditingId, hydrating } = state.oAdmin.appState;
   const { getFilteredMovies, getAllMovieTags, getMovieDetails } = state.oSaved;
   // For use in showing the search input component
   const offsetY = React.useRef(new Animated.Value(0)).current;
@@ -188,7 +188,7 @@ const ViewMoviesScreen = ({ navigation, route }) => {
         </View>
       )}
 
-      {state.oSaved.savedMovies.length === 0 && (
+      {state.oSaved.savedMovies.length === 0 && !hydrating && (
         <View style={[styles.noMoviesShownPosition, styles.noMoviesShownBtnView]}>
           <TouchableOpacity
             style={{ width: 75, height: 75, justifyContent: "center", alignItems: "center" }}

@@ -152,7 +152,7 @@ const DetailPerson = ({ navigation, route }) => {
           personMovieData.map((item, idx) => {
             return (
               <SearchResultItem
-                key={item.id}
+                key={item.id + idx.toString()}
                 movie={item}
                 saveMovie={saveMovie}
                 deleteMovie={deleteMovie}
