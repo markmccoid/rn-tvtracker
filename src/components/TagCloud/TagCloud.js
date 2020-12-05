@@ -1,8 +1,8 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { View, Text, LayoutAnimation } from 'react-native';
-import { AntDesign } from '@expo/vector-icons';
-import { TagContainer, Tag, TagIcon, TagText } from './TagCloudStyles';
+import React from "react";
+import PropTypes from "prop-types";
+import { View, Text, LayoutAnimation } from "react-native";
+import { AntDesign } from "@expo/vector-icons";
+import { TagContainer, Tag, TagIcon, TagText } from "./TagCloudStyles";
 
 export const TagItem = ({
   tagId,
@@ -10,7 +10,7 @@ export const TagItem = ({
   onSelectTag,
   onDeSelectTag,
   tagName,
-  size = 'm',
+  size = "m",
 }) => {
   return (
     <Tag
@@ -22,8 +22,8 @@ export const TagItem = ({
       <TagIcon>
         <AntDesign
           style={{ paddingRight: 5 }}
-          name={isSelected ? 'tag' : 'tago'}
-          size={size === 's' ? 15 : 20}
+          name={isSelected ? "tag" : "tago"}
+          size={size === "s" ? 15 : 20}
         />
         <TagText size={size}>{tagName}</TagText>
       </TagIcon>

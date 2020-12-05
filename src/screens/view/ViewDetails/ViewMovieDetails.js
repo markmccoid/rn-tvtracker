@@ -21,6 +21,7 @@ import { useCastData } from "../../../hooks/useCastData";
 import { Transitioning, Transition } from "react-native-reanimated";
 
 import TagCloud, { TagItem } from "../../../components/TagCloud/TagCloud";
+import HidableView from "../../../components/common/HidableView";
 import { CaretRightIcon, ImagesIcon } from "../../../components/common/Icons";
 
 import DetailMainInfo from "./DetailMainInfo";
@@ -39,16 +40,19 @@ const transition = (
   <Transition.Together>
     <Transition.In durationMs={400} type="scale" interpolation="linear" />
     <Transition.Change durationMs={400} interpolation="easein" />
-    <Transition.Out durationMs={300} type="scale" interpolation="linear" />
+    <Transition.Out durationMs={3000} type="scale" interpolation="linear" />
   </Transition.Together>
 );
 
 const transition2 = (
-  <Transition.Together>
-    <Transition.In durationMs={400} type="fade" interpolation="linear" />
-    <Transition.Change durationMs={400} interpolation="easein" />
-    <Transition.Out durationMs={300} type="fade" interpolation="linear" />
-  </Transition.Together>
+  <Transition.Sequence>
+    <Transition.Out durationMs={100} type="fade" interpolation="linear" />
+    <Transition.Together>
+      <Transition.In durationMs={300} type="fade" interpolation="linear" />
+      <Transition.In durationMs={300} type="scale" interpolation="linear" />
+    </Transition.Together>
+    <Transition.Change durationMs={100} interpolation="easein" />
+  </Transition.Sequence>
 );
 
 const ViewSavedMovieDetails = ({ movie, isInSavedMovies }) => {
@@ -105,48 +109,18 @@ const ViewSavedMovieDetails = ({ movie, isInSavedMovies }) => {
       />
       <ScrollView style={{ flex: 1 }}>
         {/* {isInSavedMovies && <UserRating movieId={movieId} />} */}
-        <DetailMainInfo movie={movie} isInSavedMovies={isInSavedMovies} />
+        <DetailMainInfo
+          movie={movie}
+          isInSavedMovies={isInSavedMovies}
+          viewTags={viewTags}
+          setViewTags={setViewTags}
+          transitionRef={ref}
+        />
         {/* Saved Details button Bar and components
         ------------------------------------------- */}
         {isInSavedMovies && (
           <View>
-            <View>
-              <TagCloud>
-                {assignedTags.map((tagObj) => {
-                  return (
-                    <TagItem
-                      key={tagObj.tagId}
-                      tagId={tagObj.tagId}
-                      tagName={tagObj.tagName}
-                      isSelected={tagObj.isSelected}
-                      size="s"
-                      onDeSelectTag={() =>
-                        removeTagFromMovie({
-                          movieId: movie.id,
-                          tagId: tagObj.tagId,
-                        })
-                      }
-                    />
-                  );
-                })}
-              </TagCloud>
-            </View>
-          </View>
-        )}
-        <DetailButtonBar
-          viewTags={viewTags}
-          setViewTags={setViewTags}
-          viewPickImage={viewPickImage}
-          setPickImage={setPickImage}
-          setvpiAnimation={setvpiAnimation}
-          transitionRef={ref}
-          imdbId={movie.imdbId}
-          isInSavedMovies={isInSavedMovies}
-        />
-
-        <Transitioning.View ref={ref} transition={transition2}>
-          {isInSavedMovies && (
-            <View>
+            <Transitioning.View ref={ref} transition={transition2}>
               <DetailSelectTags
                 viewTags={viewTags}
                 tags={tags}
@@ -160,6 +134,59 @@ const ViewSavedMovieDetails = ({ movie, isInSavedMovies }) => {
                   })
                 }
               />
+
+              <HidableView visible={!viewTags}>
+                <TagCloud>
+                  {assignedTags.map((tagObj) => {
+                    return (
+                      <TagItem
+                        key={tagObj.tagId}
+                        tagId={tagObj.tagId}
+                        tagName={tagObj.tagName}
+                        isSelected={tagObj.isSelected}
+                        size="s"
+                        onDeSelectTag={() =>
+                          removeTagFromMovie({
+                            movieId: movie.id,
+                            tagId: tagObj.tagId,
+                          })
+                        }
+                      />
+                    );
+                  })}
+                </TagCloud>
+              </HidableView>
+            </Transitioning.View>
+          </View>
+        )}
+        <DetailButtonBar
+          viewTags={viewTags}
+          setViewTags={setViewTags}
+          viewPickImage={viewPickImage}
+          setPickImage={setPickImage}
+          setvpiAnimation={setvpiAnimation}
+          transitionRef={ref}
+          imdbId={movie.imdbId}
+          movieTitle={movie.title}
+          isInSavedMovies={isInSavedMovies}
+        />
+
+        <Transitioning.View>
+          {isInSavedMovies && (
+            <View>
+              {/* <DetailSelectTags
+                viewTags={viewTags}
+                tags={tags}
+                onSelectTag={(tagObj) =>
+                  addTagToMovie({ movieId: movie.id, tagId: tagObj.tagId })
+                }
+                removeTagFromMovie={(tagObj) =>
+                  removeTagFromMovie({
+                    movieId: movie.id,
+                    tagId: tagObj.tagId,
+                  })
+                }
+              /> */}
 
               {!!!viewPickImage && (
                 <PickImage

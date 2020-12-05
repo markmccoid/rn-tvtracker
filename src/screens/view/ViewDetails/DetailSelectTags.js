@@ -3,12 +3,7 @@ import { StyleSheet, Text, View } from "react-native";
 
 import TagCloud, { TagItem } from "../../../components/TagCloud/TagCloud";
 
-const DetailSelectTags = ({
-  viewTags,
-  tags,
-  onSelectTag,
-  removeTagFromMovie,
-}) => {
+const DetailSelectTags = ({ viewTags, tags, onSelectTag, removeTagFromMovie }) => {
   // console.log(onSelectTag({ tagId: "tag" }));
   if (!viewTags) {
     return null;

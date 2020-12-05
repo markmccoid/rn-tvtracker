@@ -55,6 +55,7 @@ const ViewDetails = ({ navigation, route }) => {
 
     navigation.setOptions({
       title: movieData.title,
+
       headerRight: () => {
         if (!isInSavedMovies) {
           return (

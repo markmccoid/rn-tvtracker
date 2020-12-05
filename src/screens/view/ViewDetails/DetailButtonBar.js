@@ -21,6 +21,7 @@ const DetailButtonBar = ({
   setvpiAnimation,
   transitionRef,
   imdbId,
+  movieTitle,
   isInSavedMovies,
 }) => {
   // Animated Icons
@@ -35,7 +36,15 @@ const DetailButtonBar = ({
   };
   if (!isInSavedMovies) {
     return (
-      <View style={{ flex: 1, alignItems: "center", marginBottom: 10 }}>
+      <View
+        style={{
+          flex: 1,
+          flexDirection: "row",
+          justifyContent: "center",
+          alignItems: "center",
+          marginBottom: 10,
+        }}
+      >
         <Button
           onPress={() =>
             Linking.openURL(`imdb:///title/${imdbId}`).catch((err) => {
@@ -48,9 +57,25 @@ const DetailButtonBar = ({
           bgOpacity="ff"
           bgColor={colors.primary}
           small
-          width={width / 2}
+          // width={width / 3}
           wrapperStyle={{
-            borderRadius: 0,
+            borderRadius: 10,
+            marginRight: 10,
+          }}
+          color="#fff"
+          noBorder
+        />
+        <Button
+          onPress={() =>
+            Linking.openURL(`https://google.com/search?query=${movieTitle} movie`)
+          }
+          title="Google It"
+          bgOpacity="ff"
+          bgColor={colors.primary}
+          small
+          // width={width / 3}
+          wrapperStyle={{
+            borderRadius: 10,
           }}
           color="#fff"
           noBorder
@@ -58,9 +83,10 @@ const DetailButtonBar = ({
       </View>
     );
   }
+
   return (
     <View style={styles.buttonBar}>
-      <Button
+      {/* <Button
         onPress={() => {
           if (transitionRef.current) {
             transitionRef.current.animateNextTransition();
@@ -71,25 +97,38 @@ const DetailButtonBar = ({
         bgOpacity="ff"
         bgColor={colors.primary}
         small
-        width={100}
-        wrapperStyle={{ borderRadius: 0 }}
+        // width={100}
+        wrapperStyle={{ borderRadius: 10, paddingLeft: 10, paddingRight: 10 }}
         color="#fff"
         noBorder
-      />
+      /> */}
       <Button
         onPress={() =>
           Linking.openURL(`imdb:///title/${imdbId}`).catch((err) => {
-            Linking.openURL(
-              "https://apps.apple.com/us/app/imdb-movies-tv-shows/id342792525"
-            );
+            Linking.openURL("https://apps.apple.com/us/app/imdb-movies-tv-shows/id342792525");
           })
         }
         title="Open in IMDB"
         bgOpacity="ff"
         bgColor={colors.primary}
         small
-        width={150}
-        wrapperStyle={{ borderRadius: 0 }}
+        // width={150}
+        wrapperStyle={{ borderRadius: 10, paddingLeft: 15, paddingRight: 15 }}
+        color="#fff"
+        noBorder
+      />
+      <Button
+        onPress={() => Linking.openURL(`https://google.com/search?query=${movieTitle} movie`)}
+        title="Google It"
+        bgOpacity="ff"
+        bgColor={colors.primary}
+        small
+        // width={width / 3}
+        wrapperStyle={{
+          borderRadius: 10,
+          paddingLeft: 15,
+          paddingRight: 15,
+        }}
         color="#fff"
         noBorder
       />
@@ -100,19 +139,18 @@ const DetailButtonBar = ({
           if (transitionRef.current) {
             transitionRef.current.animateNextTransition();
           }
-          viewPickImage === 1
-            ? setvpiAnimation("open")
-            : setvpiAnimation("closing");
+          viewPickImage === 1 ? setvpiAnimation("open") : setvpiAnimation("closing");
           setPickImage((prevValue) => (prevValue === 0 ? 1 : 0));
         }}
       >
         <View
           style={{
-            borderRadius: 0,
+            borderRadius: 10,
             flexDirection: "row",
             padding: 5,
             backgroundColor: colors.primary,
-            width: 100,
+            // width: 100,
+            paddingHorizontal: 15,
             justifyContent: "center",
           }}
         >

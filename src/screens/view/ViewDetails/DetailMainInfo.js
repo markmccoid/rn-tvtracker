@@ -15,8 +15,10 @@ import { useOActions, useOState } from "../../../store/overmind";
 import LongTouchUserRating from "./LongTouchUserRating";
 import { ForceTouchGestureHandler } from "react-native-gesture-handler";
 import UserRating from "../../../components/UserRating/UserRating";
+import { Button } from "../../../components/common/Buttons";
+import { colors } from "../../../globalStyles";
 
-const DetailMainInfo = ({ movie, isInSavedMovies }) => {
+const DetailMainInfo = ({ movie, isInSavedMovies, viewTags, setViewTags, transitionRef }) => {
   const [overviewHeight, setOverviewHeight] = React.useState(205);
   const movieURL = React.useRef(require("./placeholder.png"));
   const actions = useOActions();
@@ -85,13 +87,15 @@ const DetailMainInfo = ({ movie, isInSavedMovies }) => {
               zIndex: 200,
             }}
           >
-            <LongTouchUserRating
-              movieId={movie.id}
-              userRating={movieUserRating}
-              updateUserRating={(userRating) =>
-                updateUserRatingToMovie({ movieId: movie.id, userRating })
-              }
-            />
+            {isInSavedMovies && (
+              <LongTouchUserRating
+                movieId={movie.id}
+                userRating={movieUserRating}
+                updateUserRating={(userRating) =>
+                  updateUserRatingToMovie({ movieId: movie.id, userRating })
+                }
+              />
+            )}
           </View>
           <Image style={styles.posterImage} source={movieURL.current} resizeMode="contain" />
         </View>
@@ -127,24 +131,52 @@ const DetailMainInfo = ({ movie, isInSavedMovies }) => {
           )}
         </View>
       </View>
-      <View>
-        <View style={styles.textRow}>
-          <Text style={styles.textRowLabel}>Released:</Text>
-          <Text style={{ fontSize: 18 }}>{releaseDate.formatted}</Text>
-        </View>
-        {runtime ? (
+      {/* Release Date, Length, Genres + ShowTags button */}
+      <View style={{ flexDirection: "row", flex: 1 }}>
+        <View>
           <View style={styles.textRow}>
-            <Text style={styles.textRowLabel}>Length: </Text>
-            <Text style={{ fontSize: 18 }}>{runtime} minutes</Text>
+            <Text style={styles.textRowLabel}>Released:</Text>
+            <Text style={{ fontSize: 18 }}>{releaseDate.formatted}</Text>
           </View>
-        ) : null}
-        <View style={[styles.textRow, { flexWrap: "wrap" }]}>
-          <Text style={styles.textRowLabel}>Genre(s): </Text>
-          {movie.genres.map((genre, idx) => (
-            <Text key={genre} style={{ fontSize: 18 }}>{`${
-              idx === 0 ? "" : ", "
-            }${genre}`}</Text>
-          ))}
+          {runtime ? (
+            <View style={styles.textRow}>
+              <Text style={styles.textRowLabel}>Length: </Text>
+              <Text style={{ fontSize: 18 }}>{runtime} minutes</Text>
+            </View>
+          ) : null}
+          <View style={[styles.textRow, { flexWrap: "wrap" }]}>
+            <Text style={styles.textRowLabel}>Genre(s): </Text>
+            {movie.genres.map((genre, idx) => (
+              <Text key={genre} style={{ fontSize: 18 }}>{`${
+                idx === 0 ? "" : ", "
+              }${genre}`}</Text>
+            ))}
+          </View>
+        </View>
+        <View
+          style={{
+            justifyContent: "flex-end",
+            alignItems: "center",
+            marginBottom: 10,
+            flexGrow: 1,
+          }}
+        >
+          <Button
+            onPress={() => {
+              if (transitionRef.current) {
+                transitionRef.current.animateNextTransition();
+              }
+              setViewTags((prev) => !prev);
+            }}
+            title={viewTags ? "Hide Tags" : "Show Tags"}
+            bgOpacity="ff"
+            bgColor={colors.primary}
+            small
+            // width={100}
+            wrapperStyle={{ borderRadius: 10, paddingLeft: 10, paddingRight: 10 }}
+            color="#fff"
+            noBorder
+          />
         </View>
       </View>
     </View>
