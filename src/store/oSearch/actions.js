@@ -24,16 +24,24 @@ export const searchPassingTitle = pipe(
   mutate(async ({ state, effects, actions }) => {
     let { oSearch } = state;
     oSearch.isLoading = true;
-    if (oSearch.searchString.length === 0) {
+    if (oSearch.searchString.trim().length === 0 || !oSearch.searchString) {
+      oSearch.queryType = "popular";
       oSearch.resultData = [];
       oSearch.resultTotalPages = undefined;
       oSearch.resultCurrentPage = undefined;
+      //Get popular movies if no search string
+      let results = await effects.oSearch.getPopularMovies();
+      let taggedMovies = actions.oSearch.internal.tagResults(results.data);
+      oSearch.resultData = taggedMovies;
+      oSearch.resultTotalPages = results.totalPages;
+      oSearch.resultCurrentPage = results.currentPage;
+
       oSearch.isLoading = false;
+
       return;
     }
-    let results = await effects.oSearch.searchMovieByTitle(
-      oSearch.searchString
-    );
+    oSearch.queryType = "title";
+    let results = await effects.oSearch.searchMovieByTitle(oSearch.searchString);
     let taggedMovies = actions.oSearch.internal.tagResults(results.data);
     oSearch.resultData = taggedMovies;
     oSearch.resultTotalPages = results.totalPages;
@@ -42,13 +50,25 @@ export const searchPassingTitle = pipe(
   })
 );
 
+export const getPopularMovies = async ({ state, actions, effects }) => {
+  let { oSearch } = state;
+  oSearch.isLoading = true;
+  let results = await effects.oSearch.getPopularMovies();
+  let taggedMovies = actions.oSearch.internal.tagResults(results.data);
+  oSearch.resultData = taggedMovies;
+  oSearch.resultTotalPages = results.totalPages;
+  oSearch.resultCurrentPage = results.currentPage;
+  oSearch.isLoading = false;
+};
+
 export const tagOtherMovieResults = ({ actions }, movies) => {
   return actions.oSearch.internal.tagResults(movies);
 };
+
 export const clearSearchStringAndData = ({ state }) => {
   state.oSearch.searchString = "";
   state.oSearch.resultData = [];
-  // state.oSearch.isMoreData = false;
+  state.oSearch.queryType = "popular";
   state.oSearch.isNewQuery = true;
 };
 /**
@@ -58,10 +78,30 @@ export const searchByTitle = async ({ state, effects, actions }, page = 1) => {
   let { oSearch } = state;
   oSearch.isLoading = true;
   // oSearch.isNewQuery = false;
-  let results = await effects.oSearch.searchMovieByTitle(
-    oSearch.searchString,
-    page
-  );
+  let results = await effects.oSearch.searchMovieByTitle(oSearch.searchString, page);
+  let taggedMovies = actions.oSearch.internal.tagResults(results.data);
+  oSearch.resultData = oSearch.isNewQuery
+    ? taggedMovies
+    : [...oSearch.resultData, ...taggedMovies];
+  oSearch.resultTotalPages = results.totalPages;
+  oSearch.resultCurrentPage = results.currentPage;
+  oSearch.isLoading = false;
+};
+
+/**
+ * Assumes that the searchString has/is set
+ * Will load the next page of movies.
+ * If the query type is popular, then from popular otherwise from title search
+ */
+export const loadNextPageMovies = async ({ state, effects, actions }, page = 1) => {
+  let { oSearch } = state;
+  let results = [];
+  oSearch.isLoading = true;
+  if (oSearch.queryType === "popular") {
+    results = await effects.oSearch.getPopularMovies(page);
+  } else {
+    results = await effects.oSearch.searchMovieByTitle(oSearch.searchString, page);
+  }
   let taggedMovies = actions.oSearch.internal.tagResults(results.data);
   oSearch.resultData = oSearch.isNewQuery
     ? taggedMovies

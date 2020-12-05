@@ -20,16 +20,18 @@ export const hyrdateStore = async (
   { state, actions, effects },
   { uid, forceRefresh = false }
 ) => {
+  //Used in View Movies to "know" when loading is complete
+  state.oAdmin.appState.hydrating = true;
+
   let userDocData = await effects.oSaved.initializeStore(uid, forceRefresh);
   //! Update all savedMovies items with a userRating if it doesn't already exist
   //! Should only be needed until final release
-
   state.oSaved.savedMovies = userRatingsCheck(userDocData.savedMovies);
+
   state.oSaved.tagData = userDocData.tagData;
   state.oSaved.savedFilters = userDocData.savedFilters;
   //Update the datasource (loaded from local or cloud(firestore))
   state.oAdmin.appState.dataSource = userDocData.dataSource;
-
   // Tag data is stored on the movies document.  This function creates the
   // oSaved.taggedMovies data structure within Overmind
   state.oSaved.taggedMovies = internalActions.createTaggedMoviesObj(userDocData.savedMovies);
@@ -57,6 +59,7 @@ export const hyrdateStore = async (
   }
   // Get movie genres from savedMovies objects
   state.oSaved.generated.genres = getGenresFromMovies(state.oSaved.savedMovies);
+  state.oAdmin.appState.hydrating = false;
 };
 
 /**
