@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator } from "react-native";
+import { ActivityIndicator, ScrollView, View, Image, Dimensions } from "react-native";
 import { AddIcon, DeleteIcon } from "../../../components/common/Icons";
 import { useOState, useOActions } from "../../../store/overmind";
 
@@ -7,6 +7,7 @@ import ViewMovieDetails from "./ViewMovieDetails";
 
 import { TouchableOpacity } from "react-native-gesture-handler";
 
+const { width, height } = Dimensions.get("window");
 /**
  * The ViewDetails screen can show the details for a movie in two states:
  * 1. The movie already exists in your saved movies
@@ -55,7 +56,6 @@ const ViewDetails = ({ navigation, route }) => {
 
     navigation.setOptions({
       title: movieData.title,
-
       headerRight: () => {
         if (!isInSavedMovies) {
           return (
@@ -99,7 +99,25 @@ const ViewDetails = ({ navigation, route }) => {
     return <ActivityIndicator size="large" />;
   }
 
-  return <ViewMovieDetails movie={movieData} isInSavedMovies={isInSavedMovies} />;
+  return (
+    <View style={{ flex: 1 }}>
+      <Image
+        style={{
+          position: "absolute",
+          width,
+          height,
+          resizeMode: "cover",
+          opacity: 0.1,
+        }}
+        source={{
+          uri: movieData.posterURL,
+        }}
+      />
+      <ScrollView>
+        <ViewMovieDetails movie={movieData} isInSavedMovies={isInSavedMovies} />
+      </ScrollView>
+    </View>
+  );
 };
 
 //`imdb:///find?q=${movie.title}`

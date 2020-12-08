@@ -12,6 +12,8 @@ import { useOState, useOActions } from "../../../store/overmind";
 import ListSearchBar from "./ListSearchBar";
 import { AddIcon, FilterIcon } from "../../../components/common/Icons";
 
+import { useFocusEffect, useNavigationState } from "@react-navigation/native";
+
 import ViewMoviesListItem from "../../../components/ViewMovies/ViewMoviesListItem";
 import ViewMovieOverlay from "./ViewMovieOverlay";
 
@@ -84,18 +86,20 @@ const ViewMoviesScreen = ({ navigation, route }) => {
   //Looking at the filterModified param (true or undefined) coming from the Movies route
   //* May make sense to instead put a "filter dirty" flag in overmind state
   useEffect(() => {
+    if (!route.params?.filterModified) return;
     let dispatchType = route.params?.filterModified ? "MODIFIED" : "SCROLLDONE";
 
     dispatch({ type: dispatchType });
-    if (route.params?.filterModified) {
-      route.params.filterModified = undefined;
-    }
+    // if (route.params?.filterModified) {
+    //   route.params.filterModified = undefined;
+    // }
   }, [route.params?.filterModified]);
 
   useEffect(() => {
     if (filterState === "filterModified" && getFilteredMovies().length > 0) {
       flatListRef.current.scrollToIndex({ animated: true, index: 0 });
       dispatch({ type: "SCROLLDONE" });
+      route.params.filterModified = undefined;
     }
   }, [filterState]);
   //---------------------------------------------------

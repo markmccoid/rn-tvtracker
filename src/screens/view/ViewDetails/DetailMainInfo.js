@@ -144,12 +144,11 @@ const DetailMainInfo = ({ movie, isInSavedMovies, viewTags, setViewTags, transit
               <Text style={{ fontSize: 18 }}>{runtime} minutes</Text>
             </View>
           ) : null}
-          <View style={[styles.textRow, { flexWrap: "wrap" }]}>
+          <View style={[styles.textRow, { flexWrap: "wrap", width: width / 1.5 }]}>
             <Text style={styles.textRowLabel}>Genre(s): </Text>
+
             {movie.genres.map((genre, idx) => (
-              <Text key={genre} style={{ fontSize: 18 }}>{`${
-                idx === 0 ? "" : ", "
-              }${genre}`}</Text>
+              <Text key={genre} style={{ fontSize: 18 }}>{`${genre}  `}</Text>
             ))}
           </View>
         </View>

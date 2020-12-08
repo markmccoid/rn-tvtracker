@@ -18,10 +18,10 @@ const HiddenContainer = ({ children, title, startOpen = false }) => {
       style={{
         flex: 1,
         backgroundColor: "#ffffff85",
-        borderTopColor: "#aaa",
+        borderTopColor: "#777",
         borderBottomColor: "#aaa",
-        borderBottomWidth: 2,
-        borderTopWidth: 2,
+        borderBottomWidth: viewContents ? 1 : 0,
+        borderTopWidth: 1,
         marginVertical: 5,
       }}
     >
@@ -46,9 +46,7 @@ const HiddenContainer = ({ children, title, startOpen = false }) => {
             marginLeft: 25,
           }}
         >
-          <Text style={{ fontSize: 20, fontWeight: "bold", marginRight: 15 }}>
-            {title}
-          </Text>
+          <Text style={{ fontSize: 20, fontWeight: "bold", marginRight: 15 }}>{title}</Text>
         </View>
         <View
           style={{

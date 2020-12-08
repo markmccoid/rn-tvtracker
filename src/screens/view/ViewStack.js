@@ -1,6 +1,9 @@
 import React from "react";
-import { View, TouchableOpacity, ActivityIndicator } from "react-native";
+import { View, TouchableOpacity, Text, ActivityIndicator } from "react-native";
+
 import { createStackNavigator } from "@react-navigation/stack";
+import { enableScreens } from "react-native-screens";
+import { createNativeStackNavigator } from "react-native-screens/native-stack";
 
 import { useOState, useOActions } from "../../store/overmind";
 
@@ -12,15 +15,43 @@ import ViewMoviesFilterScreen from "./ViewMovies/ViewMoviesFilterScreen";
 import ViewDetails from "./ViewDetails/ViewDetails";
 import DetailPerson from "./ViewDetails/DetailPerson";
 
-const ViewStack = createStackNavigator();
-const ViewMoviesStackNav = createStackNavigator();
-const ViewMovieDetailsStackNav = createStackNavigator();
+// const ViewStack = createStackNavigator();
+// const ViewMoviesStackNav = createStackNavigator();
+// const ViewMovieDetailsStackNav = createStackNavigator();
+
+const ViewStack = createNativeStackNavigator();
+const ViewMoviesStackNav = createNativeStackNavigator();
+const ViewMovieDetailsStackNav = createNativeStackNavigator();
+
+enableScreens();
 
 const ViewMoviesStack = () => {
   return (
-    <ViewMoviesStackNav.Navigator mode="modal" headerMode="none" params="Movies">
-      <ViewMoviesStackNav.Screen name="Movies" component={ViewMoviesScreen} />
-      <ViewMoviesStackNav.Screen name="Filter" component={ViewMoviesFilterScreen} />
+    // <ViewMoviesStackNav.Navigator mode="modal" headerMode="none" params="Movies">
+    <ViewMoviesStackNav.Navigator
+      initialRouteName="Movies"
+      screenOptions={{
+        stackAnimation: "default",
+        stackPresentation: "modal",
+      }}
+      // mode="modal"
+      // headerMode="none"
+      // params="Movies"
+    >
+      <ViewMoviesStackNav.Screen
+        name="Movies"
+        component={ViewMoviesScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <ViewMoviesStackNav.Screen
+        name="Filter"
+        component={ViewMoviesFilterScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
     </ViewMoviesStackNav.Navigator>
   );
 };
@@ -34,8 +65,9 @@ const ViewStackScreen = () => {
   let isFiltered = numFilters > 0;
   const isGenreFiltered = numGenreFilters > 0;
   const { clearFilterScreen } = actions.oSaved;
+
   return (
-    <ViewStack.Navigator>
+    <ViewStack.Navigator initialRouteName="Movies">
       <ViewStack.Screen
         name="ViewMovies"
         component={ViewMoviesStack}
@@ -43,9 +75,19 @@ const ViewStackScreen = () => {
           // Using optional chaining because initial route object is for stack
           let currentScreenName = route?.state?.routeNames[route.state.index] || "Movies";
           let params = route?.state?.routes[route.state.index].params;
-          let title = currentScreenName === "Movies" ? `${numMovies} Movies` : "Set Filter";
+
+          // const movieIndex = route?.state?.routeNames?.indexOf("Movies");
+          // let movieKey;
+          // if (movieIndex >= 0) {
+          //   movieKey = route?.state?.routes[movieIndex]?.key;
+          // }
+          // let title = currentScreenName === "Movies" ? `${numMovies} Movies` : "Set Filter";
           return {
-            title: title,
+            // Found that the "title" property was not updated often enough, not sure when it was updated
+            // headerCenter seems to be more reliable
+            headerCenter: () => (
+              <Text style={{ fontSize: 16, fontWeight: "600" }}>{`${numMovies} Movies`}</Text>
+            ),
             headerLeft: () => {
               if (currentScreenName === "Movies") {
                 return (
@@ -108,13 +150,14 @@ const ViewStackScreen = () => {
                   </View>
                 );
               } else if (currentScreenName === "Filter") {
-                return (
-                  <TouchableOpacity
-                    onPress={() => navigation.navigate("Movies", { returning: true })}
-                  >
-                    <CloseIcon color="black" size={30} style={{ marginRight: 15 }} />
-                  </TouchableOpacity>
-                );
+                // Used to be X button for closing filter, now, using createNativeStackNav we don't need.
+                return null;
+                // <TouchableOpacity
+                //   // onPress={() => navigation.navigate("Movies", { returning: true })}
+                //   onPress={() => navigation.goBack()}
+                // >
+                //   <CloseIcon color="black" size={30} style={{ marginRight: 15 }} />
+                // </TouchableOpacity>
               }
             },
           };
@@ -127,6 +170,7 @@ const ViewStackScreen = () => {
           // Using optional chaining because initial route object is for stack
           let currentScreenName = route?.state?.routeNames[route.state.index] || "Details";
           return {
+            title: "",
             headerRight: () => {
               return null;
             },

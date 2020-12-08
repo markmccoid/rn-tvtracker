@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, ScrollView } from "react-native";
 import { Button, ButtonGroup } from "react-native-elements";
 import { useOState, useOActions } from "../../../store/overmind";
 import TagCloud, { TagItem } from "../../../components/TagCloud/TagCloud";
+import { CommonActions, useFocusEffect, useNavigationState } from "@react-navigation/native";
 import _ from "lodash";
 
 const ViewMoviesFilterScreen = ({ route, navigation }) => {
@@ -22,6 +23,66 @@ const ViewMoviesFilterScreen = ({ route, navigation }) => {
     clearFilterTags,
     clearFilterGenres,
   } = actions.oSaved;
+
+  // Get the key for the Movies route
+  // Used in teh dismiss listener
+  const moviesKey = useNavigationState((state) => {
+    return state.routes[state.routeNames.indexOf("Movies")].key;
+  });
+
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     console.log("UFE-Filter");
+  //     return () => {
+  //       console.log("returning from UEF -> navigating");
+  //       //navigation.navigate("Movies", { returning: true, filterModified: true });
+  //       console.log("returning AFTERfrom UEF -> navigating");
+  //     };
+  //   }, [])
+  // );
+  // //------------------------------
+  // React.useEffect(() => {
+  //   const unsubscribe = navigation.addListener("appear", (e) => {
+  //     console.log("In Filter Appear");
+  //   });
+
+  //   return () => {
+  //     unsubscribe();
+  //     console.log("Unsub - Appear");
+  //   };
+  // }, [navigation]);
+
+  // Listener for when a screen is dismissed using the dismiss gesture
+  // When this happens we set the filterModified Param for the Movies route
+  // Letting the ViewMoviesScreen know that the filter was modified.
+  React.useEffect(() => {
+    const unsubscribe = navigation.addListener("dismiss", (e) => {
+      navigation.dispatch({
+        ...CommonActions.setParams({ filterModified: true }),
+        source: moviesKey,
+      });
+    });
+
+    return () => {
+      unsubscribe();
+      // console.log("Unsub - Dismiss");
+    };
+  }, [navigation]);
+
+  // React.useEffect(() => {
+  //   const unsubscribe = navigation.addListener("transitionStart", (e) => {
+  //     if (e.data.closing) {
+  //       console.log("Will be Dismiss");
+  //     } else {
+  //       console.log("WIll Appear");
+  //     }
+  //   });
+
+  //   return unsubscribe;
+  // }, [navigation]);
+
+  //------------------------------
+
   //---TESTING  Probably should be a getter in the store.+
   const tagOperators = ["AND", "OR"];
   const genreOperators = ["AND", "OR"];
@@ -45,7 +106,8 @@ const ViewMoviesFilterScreen = ({ route, navigation }) => {
             style={styles.buttonStyle}
             title="Done"
             onPress={() => {
-              navigation.navigate("Movies", { returning: true, filterModified: true });
+              navigation.navigate("Movies", { filterModified: true });
+              // navigation.goBack();
             }}
           />
         </View>

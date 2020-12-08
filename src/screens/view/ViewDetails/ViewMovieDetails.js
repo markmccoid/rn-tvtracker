@@ -95,86 +95,73 @@ const ViewSavedMovieDetails = ({ movie, isInSavedMovies }) => {
   }
   return (
     <View style={{ flex: 1 }}>
-      <Image
-        style={{
-          position: "absolute",
-          width,
-          height,
-          resizeMode: "cover",
-          opacity: 0.3,
-        }}
-        source={{
-          uri: movie.posterURL,
-        }}
+      {/* {isInSavedMovies && <UserRating movieId={movieId} />} */}
+      <DetailMainInfo
+        movie={movie}
+        isInSavedMovies={isInSavedMovies}
+        viewTags={viewTags}
+        setViewTags={setViewTags}
+        transitionRef={ref}
       />
-      <ScrollView style={{ flex: 1 }}>
-        {/* {isInSavedMovies && <UserRating movieId={movieId} />} */}
-        <DetailMainInfo
-          movie={movie}
-          isInSavedMovies={isInSavedMovies}
-          viewTags={viewTags}
-          setViewTags={setViewTags}
-          transitionRef={ref}
-        />
-        {/* Saved Details button Bar and components
+      {/* Saved Details button Bar and components
         ------------------------------------------- */}
+      {isInSavedMovies && (
+        <View>
+          <Transitioning.View ref={ref} transition={transition2}>
+            <DetailSelectTags
+              viewTags={viewTags}
+              tags={tags}
+              onSelectTag={(tagObj) =>
+                addTagToMovie({ movieId: movie.id, tagId: tagObj.tagId })
+              }
+              removeTagFromMovie={(tagObj) =>
+                removeTagFromMovie({
+                  movieId: movie.id,
+                  tagId: tagObj.tagId,
+                })
+              }
+            />
+
+            <HidableView visible={!viewTags}>
+              <TagCloud>
+                {assignedTags.map((tagObj) => {
+                  return (
+                    <TagItem
+                      key={tagObj.tagId}
+                      tagId={tagObj.tagId}
+                      tagName={tagObj.tagName}
+                      isSelected={tagObj.isSelected}
+                      size="s"
+                      onDeSelectTag={() =>
+                        removeTagFromMovie({
+                          movieId: movie.id,
+                          tagId: tagObj.tagId,
+                        })
+                      }
+                    />
+                  );
+                })}
+              </TagCloud>
+            </HidableView>
+          </Transitioning.View>
+        </View>
+      )}
+      <DetailButtonBar
+        viewTags={viewTags}
+        setViewTags={setViewTags}
+        viewPickImage={viewPickImage}
+        setPickImage={setPickImage}
+        setvpiAnimation={setvpiAnimation}
+        transitionRef={ref}
+        imdbId={movie.imdbId}
+        movieTitle={movie.title}
+        isInSavedMovies={isInSavedMovies}
+      />
+
+      <Transitioning.View>
         {isInSavedMovies && (
           <View>
-            <Transitioning.View ref={ref} transition={transition2}>
-              <DetailSelectTags
-                viewTags={viewTags}
-                tags={tags}
-                onSelectTag={(tagObj) =>
-                  addTagToMovie({ movieId: movie.id, tagId: tagObj.tagId })
-                }
-                removeTagFromMovie={(tagObj) =>
-                  removeTagFromMovie({
-                    movieId: movie.id,
-                    tagId: tagObj.tagId,
-                  })
-                }
-              />
-
-              <HidableView visible={!viewTags}>
-                <TagCloud>
-                  {assignedTags.map((tagObj) => {
-                    return (
-                      <TagItem
-                        key={tagObj.tagId}
-                        tagId={tagObj.tagId}
-                        tagName={tagObj.tagName}
-                        isSelected={tagObj.isSelected}
-                        size="s"
-                        onDeSelectTag={() =>
-                          removeTagFromMovie({
-                            movieId: movie.id,
-                            tagId: tagObj.tagId,
-                          })
-                        }
-                      />
-                    );
-                  })}
-                </TagCloud>
-              </HidableView>
-            </Transitioning.View>
-          </View>
-        )}
-        <DetailButtonBar
-          viewTags={viewTags}
-          setViewTags={setViewTags}
-          viewPickImage={viewPickImage}
-          setPickImage={setPickImage}
-          setvpiAnimation={setvpiAnimation}
-          transitionRef={ref}
-          imdbId={movie.imdbId}
-          movieTitle={movie.title}
-          isInSavedMovies={isInSavedMovies}
-        />
-
-        <Transitioning.View>
-          {isInSavedMovies && (
-            <View>
-              {/* <DetailSelectTags
+            {/* <DetailSelectTags
                 viewTags={viewTags}
                 tags={tags}
                 onSelectTag={(tagObj) =>
@@ -188,52 +175,47 @@ const ViewSavedMovieDetails = ({ movie, isInSavedMovies }) => {
                 }
               /> */}
 
-              {!!!viewPickImage && (
-                <PickImage
-                  movieId={movie.id}
-                  setViewPickImage={setPickImage}
-                  vpiAnimation={vpiAnimation}
-                />
-              )}
-            </View>
-          )}
+            {!!!viewPickImage && (
+              <PickImage
+                movieId={movie.id}
+                setViewPickImage={setPickImage}
+                vpiAnimation={vpiAnimation}
+              />
+            )}
+          </View>
+        )}
 
-          {/* ------------------------------------------- 
+        {/* ------------------------------------------- 
          END Saved Details button Bar and components 
          ------------------------------------------- */}
-          <HiddenContainer title="Recommendations">
-            <DetailRecommendations movieId={movie.id} />
-          </HiddenContainer>
+        <HiddenContainer title="Recommendations">
+          <DetailRecommendations movieId={movie.id} />
+        </HiddenContainer>
 
-          <HiddenContainer title="Videos">
-            <DetailVideos movieId={movie.id} />
-          </HiddenContainer>
+        <HiddenContainer title="Videos">
+          <DetailVideos movieId={movie.id} />
+        </HiddenContainer>
 
-          <HiddenContainer title="Cast" startOpen>
-            <View>
-              <View style={styles.castInfo}>
-                {castData.map((person, idx) => (
-                  <TouchableOpacity
-                    key={person.personId + idx.toString()}
-                    onPress={() =>
-                      navigation.push(`${route.name}Person`, {
-                        personId: person.personId,
-                        fromRouteName: route.name,
-                      })
-                    }
-                  >
-                    <DetailCastInfo
-                      person={person}
-                      screenWidth={width}
-                      key={person.personId}
-                    />
-                  </TouchableOpacity>
-                ))}
-              </View>
+        <HiddenContainer title="Cast" startOpen>
+          <View>
+            <View style={styles.castInfo}>
+              {castData.map((person, idx) => (
+                <TouchableOpacity
+                  key={person.personId + idx.toString()}
+                  onPress={() =>
+                    navigation.push(`${route.name}Person`, {
+                      personId: person.personId,
+                      fromRouteName: route.name,
+                    })
+                  }
+                >
+                  <DetailCastInfo person={person} screenWidth={width} key={person.personId} />
+                </TouchableOpacity>
+              ))}
             </View>
-          </HiddenContainer>
-        </Transitioning.View>
-      </ScrollView>
+          </View>
+        </HiddenContainer>
+      </Transitioning.View>
     </View>
   );
 };
