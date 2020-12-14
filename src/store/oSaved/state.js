@@ -18,6 +18,7 @@ export const state = {
   filterData: {
     tagOperator: "OR",
     tags: [],
+    excludeTagOperator: "AND",
     genreOperator: "OR",
     genres: [],
     searchFilter: undefined,
@@ -93,7 +94,8 @@ export const state = {
     }
     return {};
   }),
-  //*--------------
+  //*---------------------
+  //* TAG State Functions
   // Return tag object with all tags { tagId, tagName }
   getTags: derived((state) => state.tagData),
 
@@ -132,14 +134,18 @@ export const state = {
       sortedTagArray: state.getTags,
     });
   }),
-  //*--------------
+
+  //*----------------------------
+  //* USER RATING State Function
   getMovieUserRating: derived((state) => (movieId) => {
     if (!state.savedMovies.length) {
       return;
     }
     return state.savedMovies.filter((movie) => movie.id === movieId)[0]?.userRating || 0;
   }),
-  //*--------------
+
+  //*----------------------------
+  //* FILTER TAG State Functions
   // Returns on the tags that are currently
   // being used to filter data
   // NOTE: filter tags only store the tag id, which is why we need to

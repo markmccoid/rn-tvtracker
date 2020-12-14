@@ -474,16 +474,33 @@ export const removeTagFromFilter = ({ state }, tagId) => {
   filterData.tags = filterData.tags.filter((item) => item !== tagId);
 };
 
+export const setTagOperator = ({ state }, tagOperator) => {
+  state.oSaved.filterData.tagOperator = tagOperator;
+};
+
+// --- Exclude tag options ------
+export const addExcludeTagToFilter = ({ state }, tagId) => {
+  let filterData = state.oSaved.filterData;
+  filterData.excludeTags.push(tagId);
+};
+
+export const removeExcludeTagFromFilter = ({ state }, tagId) => {
+  let filterData = state.oSaved.filterData;
+  filterData.excludeTags = filterData.excludeTags.filter((item) => item !== tagId);
+};
+
+export const setExcludeTagOperator = ({ state }, tagOperator) => {
+  state.oSaved.filterData.excludeTagOperator = tagOperator;
+};
+
 export const clearFilterTags = ({ state }) => {
   state.oSaved.filterData.tags = [];
+  state.oSaved.filterData.excludeTags = [];
 };
 export const clearFilterScreen = ({ state }) => {
   state.oSaved.filterData.tags = [];
+  state.oSaved.filterData.excludeTags = [];
   state.oSaved.filterData.genres = [];
-};
-
-export const setTagOperator = ({ state }, tagOperator) => {
-  state.oSaved.filterData.tagOperator = tagOperator;
 };
 
 //*================================================================
