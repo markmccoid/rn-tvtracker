@@ -3,6 +3,9 @@ import { View, Text, StyleSheet, ScrollView } from "react-native";
 import { Button, ButtonGroup } from "react-native-elements";
 import { useOState, useOActions } from "../../../store/overmind";
 import TagCloud, { TagItem } from "../../../components/TagCloud/TagCloud";
+import TagCloudEnhanced, {
+  TagItemEnhanced,
+} from "../../../components/TagCloud/TagCloudEnhanced";
 import { CommonActions, useFocusEffect, useNavigationState } from "@react-navigation/native";
 import _ from "lodash";
 
@@ -15,6 +18,8 @@ const ViewMoviesFilterScreen = ({ route, navigation }) => {
   const {
     addTagToFilter,
     removeTagFromFilter,
+    addExcludeTagToFilter,
+    removeExcludeTagFromFilter,
     clearFilterScreen,
     setTagOperator,
     addGenreToFilter,
@@ -61,20 +66,22 @@ const ViewMoviesFilterScreen = ({ route, navigation }) => {
             buttons={tagOperators}
             selectedIndex={tagOperators.indexOf(tagOperator)}
           />
-          <TagCloud>
+          <TagCloudEnhanced>
             {getAllFilterTags.map((tagObj) => {
               return (
-                <TagItem
+                <TagItemEnhanced
                   key={tagObj.tagId}
                   tagId={tagObj.tagId}
                   tagName={tagObj.tagName}
-                  isSelected={tagObj.isSelected}
-                  onSelectTag={() => addTagToFilter(tagObj.tagId)}
-                  onDeSelectTag={() => removeTagFromFilter(tagObj.tagId)}
+                  tagState={tagObj.tagState}
+                  onAddIncludeTag={() => addTagToFilter(tagObj.tagId)}
+                  onRemoveIncludeTag={() => removeTagFromFilter(tagObj.tagId)}
+                  onAddExcludeTag={() => addExcludeTagToFilter(tagObj.tagId)}
+                  onRemoveExcludeTag={() => removeExcludeTagFromFilter(tagObj.tagId)}
                 />
               );
             })}
-          </TagCloud>
+          </TagCloudEnhanced>
         </View>
 
         <View>

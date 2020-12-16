@@ -2,7 +2,8 @@ import React from "react";
 import PropTypes from "prop-types";
 import { View, Text, LayoutAnimation } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
-import { TagContainer, Tag, TagIcon, TagText } from "./TagCloudStyles";
+import { UnTagIcon } from "../common/Icons";
+import { TagContainer, TagExtended, TagIcon, TagText } from "./TagCloudStyles";
 /**
  * logic to determine if we should DeSelect Tag, SelectTag or SelectExcluded tag
  * These tags can be in one of three states
@@ -25,40 +26,56 @@ import { TagContainer, Tag, TagIcon, TagText } from "./TagCloudStyles";
  * }
  * @returns
  */
-const TagItem = ({
+export const TagItemEnhanced = ({
   tagId,
-  isSelected,
-  onSelectTag,
-  onSelectExclude,
-  onDeSelectTag,
+  tagState,
+  onAddIncludeTag,
+  onRemoveIncludeTag,
+  onAddExcludeTag,
+  onRemoveExcludeTag,
   tagName,
   size = "m",
 }) => {
-  const onToggleSelect = (tagId) => {};
+  const onToggleSelect = (tagId) => {
+    if (tagState === "inactive") {
+      onAddIncludeTag();
+    } else if (tagState === "include") {
+      onRemoveIncludeTag();
+      onAddExcludeTag();
+    } else if (tagState === "exclude") {
+      onRemoveExcludeTag();
+    }
+  };
   return (
-    <Tag
+    <TagExtended
       key={tagId}
       size={size}
-      onPress={() => (isSelected ? onDeSelectTag(tagId) : onSelectTag(tagId))}
-      isSelected={isSelected} //used in styled components
+      onPress={onToggleSelect}
+      isSelected={tagState} //used in styled components
     >
       <TagIcon>
-        <AntDesign
-          style={{ paddingRight: 5 }}
-          name={isSelected ? "tag" : "tago"}
-          size={size === "s" ? 15 : 20}
-        />
-        <TagText size={size}>{tagName}</TagText>
+        {tagState === "exclude" ? (
+          <UnTagIcon style={{ paddingRight: 5 }} size={size === "s" ? 15 : 20} color="white" />
+        ) : (
+          <AntDesign
+            style={{ paddingRight: 5 }}
+            name={tagState !== "inactive" ? "tag" : "tago"}
+            size={size === "s" ? 15 : 20}
+          />
+        )}
+        <TagText size={size} style={{ color: tagState === "exclude" ? "white" : "black" }}>
+          {tagName}
+        </TagText>
       </TagIcon>
-    </Tag>
+    </TagExtended>
   );
 };
 
-const TagCloud = ({ children }) => {
+const TagCloudEnhanced = ({ children }) => {
   return <TagContainer>{children}</TagContainer>;
 };
 
-TagItem.propTypes = {
+TagItemEnhanced.propTypes = {
   tagId: PropTypes.string,
   isSelected: PropTypes.bool,
   onSelectTag: PropTypes.func,
@@ -66,7 +83,7 @@ TagItem.propTypes = {
   tagName: PropTypes.string,
   size: PropTypes.string,
 };
-export default TagCloud;
+export default TagCloudEnhanced;
 
 /*
 Usage Example:

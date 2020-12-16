@@ -7,6 +7,7 @@ import {
   MaterialIcons,
   MaterialCommunityIcons,
   Ionicons,
+  Entypo,
 } from "@expo/vector-icons";
 
 export const ViewMovieIcon = ({ size, color, style = {} }) => {
@@ -23,6 +24,10 @@ export const DragHandleIcon = ({ size, color, style }) => {
 
 export const TagIcon = ({ size, color, style }) => {
   return <FontAwesome name="tags" color={color} size={size} style={style} />;
+};
+
+export const UnTagIcon = ({ size, color, style }) => {
+  return <Entypo name="untag" color={color} size={size} style={style} />;
 };
 
 export const FilterIcon = ({ size, color, style }) => {

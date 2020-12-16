@@ -590,3 +590,10 @@ function userRatingsCheck(savedMovies) {
     return { userRating: 0, ...movie };
   });
 }
+
+// function initializeFilterTags(tags) {
+//   return tags.map((tagObj) => ({
+//     ...tagObj,
+//     tagState: "inactive",
+//   }));
+// }

@@ -19,6 +19,7 @@ export const state = {
     tagOperator: "OR",
     tags: [],
     excludeTagOperator: "AND",
+    excludeTags: [],
     genreOperator: "OR",
     genres: [],
     searchFilter: undefined,
@@ -59,6 +60,7 @@ export const state = {
     //Determine if any filter criteria is set, if not do not call filterMovies helper.
     if (
       state.filterData?.tags.length > 0 ||
+      state.filterData?.excludeTags.length > 0 ||
       state.filterData?.genres.length > 0 ||
       state.filterData?.searchFilter
     ) {
@@ -105,7 +107,7 @@ export const state = {
     // Since we are only storing the tagId, we need to
     // extract the tagName for the stored tagIds.
     // This helper function will do that
-    return helpers.buildTagObjFromIds(state, movieTags, true);
+    return helpers.buildTagObjFromIds(state, movieTags, { isSelected: true });
   }),
 
   //*--------------
@@ -114,9 +116,9 @@ export const state = {
     let allTagIds = helpers.retrieveTagIds(state.getTags);
 
     let unusedTagIds = _.difference(allTagIds, movieTagIds);
-    return helpers.buildTagObjFromIds(state, unusedTagIds, false);
+    return helpers.buildTagObjFromIds(state, unusedTagIds, { isSelected: false });
   }),
-  //--------------
+  //*--------------
   getAllMovieTags: derived((state) => (movieId) => {
     // Take the array of movie tag objects (that have the isSelected property set)
     // and convert to an object with the tagId as the key.
@@ -128,10 +130,11 @@ export const state = {
 
     // We want to return the tags sorted as they are in the original array
     // Pull all the tags and return the array sorted tag with the isSelected
-    // property pulled from unsorted tags
+    // property (attribute) pulled from unsorted tags
     return helpers.tagSorter(unsortedTags, {
       sortType: "fromarray",
       sortedTagArray: state.getTags,
+      attribute: "isSelected",
     });
   }),
 
@@ -153,7 +156,11 @@ export const state = {
   // tag object returned { tagId, tagName, isSelected }
   getFilterTags: derived((state) => {
     let filterTagIds = state.filterData.tags;
-    return helpers.buildTagObjFromIds(state, filterTagIds, true);
+    let filterExcludeTagIds = state.filterData.excludeTags;
+    return [
+      ...helpers.buildTagObjFromIds(state, filterTagIds, { tagState: "include" }),
+      ...helpers.buildTagObjFromIds(state, filterExcludeTagIds, { tagState: "exclude" }),
+    ];
   }),
   //--------------
   // Returns only the tags that are NOT being used to filter data currently
@@ -165,7 +172,10 @@ export const state = {
     let unusedFilterTagIds = allTagIds.filter(
       (tagId) => !filterTagIds.find((tag) => tag === tagId)
     );
-    return helpers.buildTagObjFromIds(state, unusedFilterTagIds, false);
+    // Could turn below in to helper if needed
+    // It will take unused tag and create object { tagId, tagName, tagState }
+
+    return helpers.buildTagObjFromIds(state, unusedFilterTagIds, { tagState: "inactive" });
   }),
   //--------------
   getAllFilterTags: derived((state) => {
@@ -182,10 +192,12 @@ export const state = {
     return helpers.tagSorter(unsortedTags, {
       sortType: "fromarray",
       sortedTagArray: state.getTags,
+      attribute: "tagState",
     });
   }),
 
-  //GENRE
+  //*----------------------------
+  //* GENRE State Functions
   getFilterGenres: derived((state) => {
     let filterGenres = state.filterData.genres;
     if (filterGenres.length > 0) {
