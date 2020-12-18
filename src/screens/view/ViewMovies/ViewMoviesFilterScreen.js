@@ -2,19 +2,23 @@ import React from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
 import { Button, ButtonGroup } from "react-native-elements";
 import { useOState, useOActions } from "../../../store/overmind";
+import _ from "lodash";
+
+import { colors, styleHelpers } from "../../../globalStyles";
+
 import TagCloud, { TagItem } from "../../../components/TagCloud/TagCloud";
 import TagCloudEnhanced, {
   TagItemEnhanced,
 } from "../../../components/TagCloud/TagCloudEnhanced";
-import { CommonActions, useFocusEffect, useNavigationState } from "@react-navigation/native";
-import _ from "lodash";
+import FilterTagsContainer from "../../../components/Filter/FilterByTagsContainer";
+// import { CommonActions, useFocusEffect, useNavigationState } from "@react-navigation/native";
 
 const ViewMoviesFilterScreen = ({ route, navigation }) => {
   const state = useOState();
   const actions = useOActions();
   const { getAllFilterTags, getAllFilterGenres } = state.oSaved;
   // const { genres } = state.oSaved.generated;
-  const { tagOperator, genreOperator } = state.oSaved.filterData;
+  const { tagOperator, excludeTagOperator, genreOperator } = state.oSaved.filterData;
   const {
     addTagToFilter,
     removeTagFromFilter,
@@ -22,6 +26,7 @@ const ViewMoviesFilterScreen = ({ route, navigation }) => {
     removeExcludeTagFromFilter,
     clearFilterScreen,
     setTagOperator,
+    setExcludeTagOperator,
     addGenreToFilter,
     removeGenreFromFilter,
     setGenreOperator,
@@ -33,9 +38,10 @@ const ViewMoviesFilterScreen = ({ route, navigation }) => {
 
   //---TESTING  Probably should be a getter in the store.+
   const tagOperators = ["AND", "OR"];
+  const excludeTagOperators = ["AND", "OR"];
   const genreOperators = ["AND", "OR"];
   return (
-    <ScrollView>
+    <ScrollView bounces={false}>
       <View style={styles.container}>
         <View
           style={{
@@ -51,7 +57,7 @@ const ViewMoviesFilterScreen = ({ route, navigation }) => {
             onPress={() => clearFilterScreen()}
           />
           <Button
-            style={styles.buttonStyle}
+            buttonStyle={[styles.buttonStyle, { backgroundColor: colors.primary }]}
             title="Done"
             onPress={() => {
               navigation.navigate("Movies", { filterModified: true });
@@ -61,11 +67,81 @@ const ViewMoviesFilterScreen = ({ route, navigation }) => {
         </View>
         <View>
           <Text style={styles.title}>Filter by Tags</Text>
-          <ButtonGroup
-            onPress={(index) => setTagOperator(tagOperators[index])}
-            buttons={tagOperators}
-            selectedIndex={tagOperators.indexOf(tagOperator)}
-          />
+          <View>
+            <FilterTagsContainer
+              allFilterTags={getAllFilterTags}
+              tagOperators={tagOperators}
+              excludeTagOperators={excludeTagOperators}
+              values={{ tagOperator, excludeTagOperator }}
+              filterFunctions={{
+                onAddIncludeTag: addTagToFilter,
+                onRemoveIncludeTag: removeTagFromFilter,
+                onAddExcludeTag: addExcludeTagToFilter,
+                onRemoveExcludeTag: removeExcludeTagFromFilter,
+                setTagOperator,
+                setExcludeTagOperator,
+              }}
+            />
+          </View>
+
+          {/* <View style={{ flex: 1, flexDirection: "row", justifyContent: "space-between" }}>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                borderWidth: 1,
+                borderColor: "black",
+                borderRadius: 10,
+                backgroundColor: "white",
+                paddingLeft: 5,
+              }}
+            >
+              <Text style={{ fontWeight: "bold", width: 60, textAlign: "center" }}>
+                Include Tags
+              </Text>
+              <ButtonGroup
+                containerStyle={{
+                  width: 100,
+                  borderRadius: 10,
+                  height: 30,
+                  borderColor: "black",
+                  borderWidth: 1,
+                }}
+                selectedButtonStyle={{ backgroundColor: colors.includeGreen }}
+                onPress={(index) => setTagOperator(tagOperators[index])}
+                buttons={tagOperators}
+                selectedIndex={tagOperators.indexOf(tagOperator)}
+              />
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                borderWidth: 1,
+                borderColor: "black",
+                borderRadius: 10,
+                backgroundColor: "white",
+                paddingLeft: 5,
+              }}
+            >
+              <Text style={{ fontWeight: "bold", width: 60, textAlign: "center" }}>
+                Exclude Tags
+              </Text>
+              <ButtonGroup
+                containerStyle={{
+                  width: 100,
+                  borderRadius: 10,
+                  height: 30,
+                  borderColor: "black",
+                  borderWidth: 1,
+                }}
+                selectedButtonStyle={{ backgroundColor: colors.excludeRed }}
+                onPress={(index) => setExcludeTagOperator(excludeTagOperators[index])}
+                buttons={excludeTagOperators}
+                selectedIndex={excludeTagOperators.indexOf(excludeTagOperator)}
+              />
+            </View>
+          </View>
           <TagCloudEnhanced>
             {getAllFilterTags.map((tagObj) => {
               return (
@@ -81,17 +157,41 @@ const ViewMoviesFilterScreen = ({ route, navigation }) => {
                 />
               );
             })}
-          </TagCloudEnhanced>
+          </TagCloudEnhanced> */}
         </View>
 
-        <View>
+        <View style={{ flex: 1, flexDirection: "column" }}>
           <Text style={styles.title}>Filter by Genre</Text>
-          <ButtonGroup
-            onPress={(index) => setGenreOperator(genreOperators[index])}
-            buttons={genreOperators}
-            selectedIndex={genreOperators.indexOf(genreOperator)}
-          />
-
+          <View style={{ flex: 1, flexDirection: "row" }}>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                borderWidth: 1,
+                borderColor: "black",
+                borderRadius: 10,
+                backgroundColor: "white",
+                paddingLeft: 5,
+              }}
+            >
+              <Text style={{ fontWeight: "bold", width: 60, textAlign: "center" }}>
+                Include Genres
+              </Text>
+              <ButtonGroup
+                containerStyle={{
+                  width: 100,
+                  borderRadius: 10,
+                  height: 30,
+                  borderColor: "black",
+                  borderWidth: 1,
+                }}
+                selectedButtonStyle={{ backgroundColor: colors.includeGreen }}
+                onPress={(index) => setGenreOperator(genreOperators[index])}
+                buttons={genreOperators}
+                selectedIndex={genreOperators.indexOf(genreOperator)}
+              />
+            </View>
+          </View>
           <TagCloud>
             {getAllFilterGenres.map((genreObj) => {
               const { genre, isSelected } = genreObj;

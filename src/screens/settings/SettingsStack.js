@@ -13,10 +13,7 @@ const SettingsStackScreen = () => {
   // -- if you have some screens you don't want to be model then you will need to embed another Stack within
   // -- i.e. the main "Settings" screen will be a stack.
   return (
-    <SettingsStack.Navigator
-      screenOptions={{ animationEnabled: false }}
-      mode="modal"
-    >
+    <SettingsStack.Navigator screenOptions={{ animationEnabled: false }} mode="modal">
       <SettingsStack.Screen
         name="Settings"
         component={SettingsScreen}
@@ -31,9 +28,7 @@ const SettingsStackScreen = () => {
             },
             headerRight: () => {
               return (
-                <TouchableOpacity
-                  onPress={() => navigation.navigate("ViewMovies")}
-                >
+                <TouchableOpacity onPress={() => navigation.navigate("ViewMovies")}>
                   <HomeIcon size={30} style={{ marginRight: 10 }} />
                 </TouchableOpacity>
               );
@@ -45,9 +40,6 @@ const SettingsStackScreen = () => {
         name="CreateSavedFilter"
         component={CreateSavedFilterScreen}
         options={({ navigation, route }) => {
-          // Using optional chaining because initial route object is for stack
-          let currentScreenName =
-            route?.state?.routeNames[route.state.index] || "Movies";
           return {
             animationEnabled: true,
             title: "Create Saved Filter",
@@ -56,14 +48,8 @@ const SettingsStackScreen = () => {
             },
             headerRight: () => {
               return (
-                <TouchableOpacity
-                  onPress={() => navigation.navigate("Settings")}
-                >
-                  <CloseIcon
-                    color="black"
-                    size={30}
-                    style={{ marginRight: 15 }}
-                  />
+                <TouchableOpacity onPress={() => navigation.navigate("Settings")}>
+                  <CloseIcon color="black" size={30} style={{ marginRight: 15 }} />
                 </TouchableOpacity>
               );
             },

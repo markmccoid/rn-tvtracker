@@ -4,6 +4,7 @@ import { View, TouchableOpacity, Text, ActivityIndicator } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { enableScreens } from "react-native-screens";
 import { createNativeStackNavigator } from "react-native-screens/native-stack";
+import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
 
 import { useOState, useOActions } from "../../store/overmind";
 
@@ -72,9 +73,10 @@ const ViewStackScreen = () => {
         name="ViewMovies"
         component={ViewMoviesStack}
         options={({ navigation, route }) => {
-          // Using optional chaining because initial route object is for stack
-          let currentScreenName = route?.state?.routeNames[route.state.index] || "Movies";
-          let params = route?.state?.routes[route.state.index].params;
+          // If the focused route is not found, we need to assume it's the initial screen
+          // This can happen during if there hasn't been any navigation inside the screen
+          // In our case, it's "Feed" as that's the first screen inside the navigator
+          const currentScreenName = getFocusedRouteNameFromRoute(route) ?? "Movies";
 
           // const movieIndex = route?.state?.routeNames?.indexOf("Movies");
           // let movieKey;
@@ -167,8 +169,6 @@ const ViewStackScreen = () => {
         name="Details"
         component={ViewDetails}
         options={({ navigation, route }) => {
-          // Using optional chaining because initial route object is for stack
-          let currentScreenName = route?.state?.routeNames[route.state.index] || "Details";
           return {
             title: "",
             headerRight: () => {

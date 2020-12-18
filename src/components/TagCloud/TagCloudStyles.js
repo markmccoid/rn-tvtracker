@@ -1,4 +1,5 @@
 import styled, { css } from "styled-components";
+import { colors } from "../../globalStyles";
 
 export const TagContainer = styled.View`
   flex-direction: row;
@@ -7,7 +8,7 @@ export const TagContainer = styled.View`
 `;
 
 export const Tag = styled.TouchableOpacity`
-  background-color: ${(props) => (props.isSelected ? "lightgreen" : "white")};
+  background-color: ${(props) => (props.isSelected ? colors.includeGreen : "white")};
   border: 1px solid black;
   border-radius: 10px;
   padding: 5px;
@@ -39,9 +40,9 @@ export const TagText = styled.Text`
 export const TagExtended = styled.TouchableOpacity`
   background-color: ${(props) =>
     props.isSelected === "include"
-      ? "lightgreen"
+      ? colors.includeGreen
       : props.isSelected === "exclude"
-      ? "#6e1e19"
+      ? colors.excludeRed
       : "white"};
   border: 1px solid black;
   border-radius: 10px;

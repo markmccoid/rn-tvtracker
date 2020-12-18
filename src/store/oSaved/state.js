@@ -16,9 +16,9 @@ export const state = {
   },
   // Object containing any filter data
   filterData: {
-    tagOperator: "OR",
+    tagOperator: "AND",
     tags: [],
-    excludeTagOperator: "AND",
+    excludeTagOperator: "OR",
     excludeTags: [],
     genreOperator: "OR",
     genres: [],
