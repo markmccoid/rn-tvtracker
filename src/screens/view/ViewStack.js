@@ -60,10 +60,10 @@ const ViewMoviesStack = () => {
 const ViewStackScreen = () => {
   const state = useOState();
   const actions = useOActions();
-  let numFilters = state.oSaved.getFilterTags.length; //state.oSaved.filterData.tags.length;
   let numGenreFilters = state.oSaved.filterData.genres.length;
   let numMovies = state.oSaved.getFilteredMovies().length;
-  let isFiltered = numFilters > 0;
+  let numIncludeFilters = state.oSaved.filterData.tags.length;
+  let numExcludeFilters = state.oSaved.filterData.excludeTags.length;
   const isGenreFiltered = numGenreFilters > 0;
   const { clearFilterScreen } = actions.oSaved;
 
@@ -126,14 +126,25 @@ const ViewStackScreen = () => {
                       }}
                     >
                       <FilterIcon color="black" size={30} style={{ marginRight: 15 }} />
-                      {isFiltered && (
+                      {numIncludeFilters > 0 && (
                         <Badge
                           status="success"
-                          value={numFilters}
+                          value={numIncludeFilters}
                           containerStyle={{
                             position: "absolute",
                             top: -5,
                             right: 10,
+                          }}
+                        />
+                      )}
+                      {numExcludeFilters > 0 && (
+                        <Badge
+                          status="error"
+                          value={numExcludeFilters}
+                          containerStyle={{
+                            position: "absolute",
+                            top: 15,
+                            left: 5,
                           }}
                         />
                       )}

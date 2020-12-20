@@ -5,14 +5,30 @@ import { colors, styleHelpers } from "../../globalStyles";
 
 import TagCloudEnhanced, { TagItemEnhanced } from "../../components/TagCloud/TagCloudEnhanced";
 
+/** props
+ *   allFilterTags - array of filter tags in format of { tagId, tagName, tagState }
+ *   tagOperators - array of tagOperators, ['AND', 'OR']
+ *   excludeTagOperators - array of ExcludeTagOperators, ['AND', 'OR']
+ *   operatorValues - current value of operators - { tagOperator, excludeTagOperator }
+ *   filterFunctions - functions needed by TagCloud -
+ *   { onAddIncludeTag:
+ *     onRemoveIncludeTag: removeTagFromFilter,
+ *     onAddExcludeTag: addExcludeTagToFilter,
+ *     onRemoveExcludeTag: removeExcludeTagFromFilter,
+ *     setTagOperator,
+ *     setExcludeTagOperator,
+ *    }
+ *
+ */
+
 const FilterByTagsContainer = ({
   allFilterTags,
   tagOperators,
   excludeTagOperators,
-  values,
+  operatorValues,
   filterFunctions,
 }) => {
-  const { tagOperator, excludeTagOperator } = values;
+  const { tagOperator, excludeTagOperator } = operatorValues;
   const {
     onAddIncludeTag,
     onRemoveIncludeTag,
@@ -24,7 +40,16 @@ const FilterByTagsContainer = ({
 
   return (
     <View>
-      <View style={{ flex: 1, flexDirection: "row", justifyContent: "space-between" }}>
+      <View
+        style={{
+          flex: 1,
+          flexDirection: "row",
+          flexWrap: "wrap",
+          justifyContent: "center",
+          alignItems: "center",
+          marginBottom: 5,
+        }}
+      >
         <View
           style={{
             flexDirection: "row",
@@ -34,6 +59,7 @@ const FilterByTagsContainer = ({
             borderRadius: 10,
             backgroundColor: "white",
             paddingLeft: 5,
+            margin: 5,
           }}
         >
           <Text style={{ fontWeight: "bold", width: 60, textAlign: "center" }}>

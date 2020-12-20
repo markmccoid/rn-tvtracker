@@ -5,19 +5,74 @@ import { Button } from "../../components/common/Buttons";
 import { ButtonGroup } from "react-native-elements";
 import { useOState, useOActions } from "../../store/overmind";
 
+import FilterTagsContainer from "../../components/Filter/FilterByTagsContainer";
+
+const buildTagObjFromIds = (allTags, tagIdArray, isSelected) => {
+  // loop through all tags and when find a match in passed tagIdArray
+  // return an object { tagId, tagName, isSelected }
+  let tagsObj = allTags.reduce((final, tagObj) => {
+    if (tagIdArray.find((tagId) => tagId === tagObj.tagId)) {
+      final = [...final, { tagId: tagObj.tagId, tagName: tagObj.tagName, ...isSelected }];
+    }
+    return final;
+  }, []);
+  return tagsObj;
+};
+
+const tagReducer = (state, action) => {
+  // action.payload = {tagId, tagState}
+  // state = [ { tagId, tagName, tagState }, ... ]
+  const { tagId, tagState } = action.payload;
+  switch (action.type) {
+    case "UPDATE_TAGSTATE":
+      // map to return new state array with tagState update with payload info.
+      return state.map((tagObj) => {
+        if (tagObj.tagId === tagId) {
+          return {
+            ...tagObj,
+            tagState,
+          };
+        }
+        return tagObj;
+      });
+    default:
+      return state;
+  }
+};
+
 const CreateSavedFilterScreen = ({ navigation, route }) => {
+  const state = useOState();
+  const actions = useOActions();
+  const { getTags, getInitialTagsSavedFilter } = state.oSaved;
+  const { addSavedFilter } = actions.oSaved;
+
+  // tagsArray = {[{tagId, tagName, tagState}, ...]}
+  // initialState should be getTags sent to function to put tagState and name on all
+  const [tagsState, dispatch] = React.useReducer(tagReducer, getInitialTagsSavedFilter);
+
   const [selectedTags, setSelectedTags] = React.useState([]);
   const [filterName, setFilterName] = React.useState(undefined);
+
   const [tagOperator, setTagOperator] = React.useState("AND");
+  const [excludeTagOperator, setExcludeTagOperator] = React.useState("OR");
+
   const [showInDrawer, setShowInDrawer] = React.useState(false);
   const [inEditFilter, setInEditFilter] = React.useState(false);
 
   const tagOperators = ["AND", "OR"];
-
-  const state = useOState();
-  const actions = useOActions();
-  const { getTags } = state.oSaved;
-  const { addSavedFilter } = actions.oSaved;
+  const excludeTagOperators = ["AND", "OR"];
+  const filterFunctions = {
+    onAddIncludeTag: (tagId) =>
+      dispatch({ type: "UPDATE_TAGSTATE", payload: { tagId, tagState: "include" } }),
+    onRemoveIncludeTag: (tagId) =>
+      dispatch({ type: "UPDATE_TAGSTATE", payload: { tagId, tagState: "inactive" } }),
+    onAddExcludeTag: (tagId) =>
+      dispatch({ type: "UPDATE_TAGSTATE", payload: { tagId, tagState: "exclude" } }),
+    onRemoveExcludeTag: (tagId) =>
+      dispatch({ type: "UPDATE_TAGSTATE", payload: { tagId, tagState: "inactive" } }),
+    setTagOperator,
+    setExcludeTagOperator,
+  };
 
   const filterId = route?.params?.filterId;
   React.useEffect(() => {
@@ -26,31 +81,58 @@ const CreateSavedFilterScreen = ({ navigation, route }) => {
       const filterObj = state.oSaved.getSavedFilter(filterId);
       setFilterName(filterObj.name);
       setTagOperator(filterObj.tagOperator);
+      setExcludeTagOperator(filterObj.excludeTagOperator || "OR");
       setShowInDrawer(filterObj.showInDrawer);
-      setSelectedTags(filterObj.tags);
+      // setSelectedTags(filterObj.tags);
+      filterObj.tags.forEach((tagId) =>
+        dispatch({ type: "UPDATE_TAGSTATE", payload: { tagId, tagState: "include" } })
+      );
+      // update tagsState with excluded Tags in filter
+      filterObj?.excludeTags?.forEach((tagId) =>
+        dispatch({ type: "UPDATE_TAGSTATE", payload: { tagId, tagState: "exclude" } })
+      );
       setInEditFilter(true);
     }
   }, []);
 
   const onSaveFilter = () => {
+    //Take "tagsState" and create a "selectedTags" and "excludedTags" var to store in firebase
+    const includeTags = tagsState.reduce((selectedTags, tagObj) => {
+      if (tagObj.tagState === "include") {
+        selectedTags.push(tagObj.tagId);
+      }
+      return selectedTags;
+    }, []);
+
+    const excludeTags = tagsState.reduce((selectedTags, tagObj) => {
+      if (tagObj.tagState === "exclude") {
+        selectedTags.push(tagObj.tagId);
+      }
+      return selectedTags;
+    }, []);
+
     //Make sure Filter name is filled in
     //AND that at least one tag has been selected
     /**
      * id: created in action
-     * name:
+     * name
      * tagOperator
      * tags
+     * excludeTagOperator
+     * excludeTags
      * showInDrawer
      */
-    if (!filterName && !selectedTags.length) {
+    if (!filterName && (!selectedTags.length > 0 || !excludeTags.length > 0)) {
       Alert.alert("Problem Saving", "Must have a filter name at least one tag selected");
       return;
     }
     const filterObj = {
       id: filterId,
       name: filterName,
-      tags: selectedTags,
+      tags: includeTags,
+      excludeTags,
       tagOperator,
+      excludeTagOperator,
       showInDrawer,
     };
     addSavedFilter(filterObj);
@@ -75,36 +157,17 @@ const CreateSavedFilterScreen = ({ navigation, route }) => {
           <Text style={styles.title}>Show On Menu?</Text>
           <Switch onValueChange={(val) => setShowInDrawer(val)} value={showInDrawer} />
         </View>
-        <View>
-          <Text style={styles.title}>Select Tag Operator</Text>
-          <ButtonGroup
-            onPress={(index) => setTagOperator(tagOperators[index])}
-            buttons={tagOperators}
-            selectedIndex={tagOperators.indexOf(tagOperator)}
-          />
-        </View>
+        {/* Start of Tag */}
+
         <View style={styles.tagContainer}>
           <Text style={styles.title}>Select Tags for Filter</Text>
-          <TagCloud>
-            {getTags.map((tagObj) => {
-              return (
-                <TagItem
-                  key={tagObj.tagId}
-                  tagId={tagObj.tagId}
-                  tagName={tagObj.tagName}
-                  isSelected={selectedTags.includes(tagObj.tagId)}
-                  onSelectTag={() =>
-                    setSelectedTags((currTags) => [...currTags, tagObj.tagId])
-                  }
-                  onDeSelectTag={() =>
-                    setSelectedTags((currTags) =>
-                      currTags.filter((tag) => tag !== tagObj.tagId)
-                    )
-                  }
-                />
-              );
-            })}
-          </TagCloud>
+          <FilterTagsContainer
+            allFilterTags={tagsState}
+            tagOperators={tagOperators}
+            excludeTagOperators={excludeTagOperators}
+            operatorValues={{ tagOperator, excludeTagOperator }}
+            filterFunctions={filterFunctions}
+          />
         </View>
         <View>
           <Button

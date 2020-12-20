@@ -90,7 +90,6 @@ const SearchScreen = ({ navigation }) => {
   // to 20 movies per page
   const fetchMoreData = async () => {
     if (isMoreData) {
-      console.log("fetchMoreData");
       setIsNewQuery(false);
       await loadNextPageMovies(currentPage + 1);
     }

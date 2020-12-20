@@ -98,7 +98,11 @@ export const loadNextPageMovies = async ({ state, effects, actions }, page = 1) 
   let results = [];
   oSearch.isLoading = true;
   if (oSearch.queryType === "popular") {
-    results = await effects.oSearch.getPopularMovies(page);
+    try {
+      results = await effects.oSearch.getPopularMovies(page);
+    } catch (error) {
+      console.log(`Error Fetching popular movies Page ${page}--${error}`);
+    }
   } else {
     results = await effects.oSearch.searchMovieByTitle(oSearch.searchString, page);
   }

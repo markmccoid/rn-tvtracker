@@ -63,8 +63,6 @@ const SettingSortPan = () => {
   const [data, setData] = React.useState(defaultSort);
   const { updateDefaultSortItem } = actions.oSaved;
 
-  console.log(defaultSort);
-
   // Sets our local data array whenever Overmind's data changes length
   // We only need to update the local array if an tag is ADDED or REMOVED
   // OR EDITED
@@ -200,7 +198,6 @@ const SettingSortPan = () => {
   };
 
   const renderRow = ({ item, index }, usePanResponder = true) => {
-    console.log(item);
     return (
       <>
         <View

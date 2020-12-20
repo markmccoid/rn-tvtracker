@@ -197,6 +197,33 @@ export const state = {
   }),
 
   //*----------------------------
+  //* SAVED FILTER State Functions
+  //--------------
+  // Returns only the tags that are NOT being used to filter data currently
+  getInitialTagsSavedFilter: derived((state) => {
+    // All tags defined in the system
+    let allTagIds = helpers.retrieveTagIds(state.getTags);
+
+    // Could turn below in to helper if needed
+    // It will take unused tag and create object { tagId, tagName, tagState }
+    const unsortedTags = _.keyBy(
+      helpers.buildTagObjFromIds(state, allTagIds, {
+        tagState: "inactive",
+      }),
+      "tagId"
+    );
+
+    // We want to return the tags sorted as they are in the original array
+    // Pull all the tags and return the array sorted tag with the isSelected
+    // property pulled from unsorted tags
+    return helpers.tagSorter(unsortedTags, {
+      sortType: "fromarray",
+      sortedTagArray: state.getTags,
+      attribute: "tagState",
+    });
+  }),
+
+  //*----------------------------
   //* GENRE State Functions
   getFilterGenres: derived((state) => {
     let filterGenres = state.filterData.genres;

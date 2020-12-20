@@ -48,20 +48,45 @@ export const deleteSavedFilter = ({ state, actions, effects }, filterIdToDelete)
 //-Takes the passed savedFilterId, finds it and applies it
 //-By applying it, I mean that oSaved.filterData is being set.
 export const applySavedFilter = ({ state, actions }, savedFilterId) => {
-  const { addTagToFilter, setTagOperator } = actions.oSaved;
+  const {
+    addTagToFilter,
+    addExcludeTagToFilter,
+    setTagOperator,
+    setExcludeTagOperator,
+  } = actions.oSaved;
   //reset filter state
   state.oSaved.filterData.genres = [];
   state.oSaved.filterData.tags = [];
+  state.oSaved.filterData.excludeTags = [];
   //Filter for the passed id since this returns an array, just grab the first and only one
-  const filterToApply = state.oSaved.savedFilters.filter((sf) => savedFilterId === sf.id)[0];
-  if (filterToApply) {
+  const filterToApply = getFilterToApply(state.oSaved.savedFilters, savedFilterId);
+  if (filterToApply.wasFound) {
     // Loop through and add each tag in the array to the filter
     filterToApply.tags.forEach((tagId) => addTagToFilter(tagId));
+    filterToApply.excludeTags.forEach((tagId) => addExcludeTagToFilter(tagId));
     // Add the tagOperator to the filter.
     setTagOperator(filterToApply.tagOperator);
+    setExcludeTagOperator(filterToApply.excludeTagOperator || "OR");
   }
 };
 
+function getFilterToApply(savedFilters, filterId) {
+  // If the filter exists return and initialized filter object
+  const filterToApply = savedFilters.filter((sf) => filterId === sf.id)[0];
+  if (filterToApply) {
+    // add wasFound flag
+    // Initialize all values in case some are not preset in saved filter
+    return {
+      wasFound: true,
+      tags: [],
+      excludeTags: [],
+      tagOperator: "AND",
+      excludeTagOperator: "OR",
+      ...filterToApply,
+    };
+  }
+  return { wasFound: false };
+}
 //--------------------------------------------
 //- Set Default Filter -- oSaved.userData.settings.defaultFilter
 export const setDefaultFilter = ({ state, actions, effects }, defaultFilter) => {
