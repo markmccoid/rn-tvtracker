@@ -1,9 +1,20 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Switch,
+  Dimensions,
+  TouchableOpacity,
+  Alert,
+} from "react-native";
 import { ButtonGroup } from "react-native-elements";
 import { colors, styleHelpers } from "../../globalStyles";
+import { InfoIcon } from "../../components/common/Icons";
 
 import TagCloudEnhanced, { TagItemEnhanced } from "../../components/TagCloud/TagCloudEnhanced";
+import FilterTagsInfoOverlay from "./FilterTagsInfoOverlay";
+import { useDecodedFilter } from "../../hooks/useDecodedFilter";
 
 /** props
  *   allFilterTags - array of filter tags in format of { tagId, tagName, tagState }
@@ -20,6 +31,19 @@ import TagCloudEnhanced, { TagItemEnhanced } from "../../components/TagCloud/Tag
  *    }
  *
  */
+
+/*
+ TAG Logic Descriptions
+AND/OR (=1) - Find movies that have the tag Favorite
+AND (>1) - Find movies that have ALL of the tags Favorite and New and ...
+OR (=1) - Find movies that have ONE of the tags Favorite Or new Or ...
+AND ALSO
+NOT AND/OR (=1) - Find movies the Do NOT have the tag Favorite
+NOT AND (>1) - Find movies that Do NOT have ALL(Any) of the tags Favorite and New and ...
+NOT OR (>1) - Find movies that Do NOT have ONE of the tags Favorite Or New Or ...
+ */
+
+const { width, height } = Dimensions.get("window");
 
 const FilterByTagsContainer = ({
   allFilterTags,
@@ -38,75 +62,36 @@ const FilterByTagsContainer = ({
     setExcludeTagOperator,
   } = filterFunctions;
 
+  const [overlayVisible, setOverlayVisible] = React.useState(false);
+
+  const { finalMessage, MessageComponent } = useDecodedFilter(allFilterTags, {
+    tagOperator,
+    excludeTagOperator,
+  });
+
   return (
     <View>
-      <View
-        style={{
-          flex: 1,
-          flexDirection: "row",
-          flexWrap: "wrap",
-          justifyContent: "center",
-          alignItems: "center",
-          marginBottom: 5,
-        }}
-      >
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            borderWidth: 1,
-            borderColor: "black",
-            borderRadius: 10,
-            backgroundColor: "white",
-            paddingLeft: 5,
-            margin: 5,
-          }}
-        >
-          <Text style={{ fontWeight: "bold", width: 60, textAlign: "center" }}>
-            Include Tags
-          </Text>
-          <ButtonGroup
-            containerStyle={{
-              width: 100,
-              borderRadius: 10,
-              height: 30,
-              borderColor: "black",
-              borderWidth: 1,
+      <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 5 }}>
+        <Text style={[styles.title, { paddingRight: 10 }]}>Filter by Tags</Text>
+        <TouchableOpacity onPress={() => setOverlayVisible((prev) => !prev)}>
+          <InfoIcon size={25} />
+        </TouchableOpacity>
+
+        {overlayVisible && (
+          <FilterTagsInfoOverlay
+            filtersDecodedMessage={finalMessage}
+            MessageComponent={MessageComponent}
+            operatorValues={{ tagOperator, excludeTagOperator }}
+            tagOperators={tagOperators}
+            excludeTagOperators={excludeTagOperators}
+            filterFunctions={{
+              setTagOperator,
+              setExcludeTagOperator,
             }}
-            selectedButtonStyle={{ backgroundColor: colors.includeGreen }}
-            onPress={(index) => setTagOperator(tagOperators[index])}
-            buttons={tagOperators}
-            selectedIndex={tagOperators.indexOf(tagOperator)}
+            isVisible={overlayVisible}
+            toggleVisibility={() => setOverlayVisible((prev) => !prev)}
           />
-        </View>
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            borderWidth: 1,
-            borderColor: "black",
-            borderRadius: 10,
-            backgroundColor: "white",
-            paddingLeft: 5,
-          }}
-        >
-          <Text style={{ fontWeight: "bold", width: 60, textAlign: "center" }}>
-            Exclude Tags
-          </Text>
-          <ButtonGroup
-            containerStyle={{
-              width: 100,
-              borderRadius: 10,
-              height: 30,
-              borderColor: "black",
-              borderWidth: 1,
-            }}
-            selectedButtonStyle={{ backgroundColor: colors.excludeRed }}
-            onPress={(index) => setExcludeTagOperator(excludeTagOperators[index])}
-            buttons={excludeTagOperators}
-            selectedIndex={excludeTagOperators.indexOf(excludeTagOperator)}
-          />
-        </View>
+        )}
       </View>
       <TagCloudEnhanced>
         {allFilterTags.map((tagObj) => {
@@ -130,4 +115,32 @@ const FilterByTagsContainer = ({
 
 export default FilterByTagsContainer;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 5,
+  },
+  buttonStyle: {
+    width: 150,
+  },
+  booleanContainer: {
+    marginVertical: 10,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  switchContainer: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "white",
+    borderRadius: 5,
+    borderColor: "black",
+    borderWidth: 1,
+    padding: 5,
+  },
+  switchText: {
+    fontWeight: "bold",
+    marginLeft: 10,
+  },
+});
