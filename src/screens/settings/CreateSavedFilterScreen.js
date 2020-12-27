@@ -5,7 +5,8 @@ import { Button } from "../../components/common/Buttons";
 import { ButtonGroup } from "react-native-elements";
 import { useOState, useOActions } from "../../store/overmind";
 
-import FilterTagsContainer from "../../components/Filter/FilterByTagsContainer";
+import FilterByTagsContainer from "../../components/Filter/FilterByTagsContainer";
+import { useDecodedFilter } from "../../hooks/useDecodedFilter";
 
 const buildTagObjFromIds = (allTags, tagIdArray, isSelected) => {
   // loop through all tags and when find a match in passed tagIdArray
@@ -59,6 +60,11 @@ const CreateSavedFilterScreen = ({ navigation, route }) => {
   const [showInDrawer, setShowInDrawer] = React.useState(false);
   const [inEditFilter, setInEditFilter] = React.useState(false);
 
+  const decodedMessageObj = useDecodedFilter(tagsState, {
+    tagOperator,
+    excludeTagOperator,
+  });
+
   const tagOperators = ["AND", "OR"];
   const excludeTagOperators = ["AND", "OR"];
   const filterFunctions = {
@@ -75,6 +81,7 @@ const CreateSavedFilterScreen = ({ navigation, route }) => {
   };
 
   const filterId = route?.params?.filterId;
+  // useEffect to check if Editing a filter and if so, apply fields
   React.useEffect(() => {
     // Get the filterId of the filter being edited
     if (filterId) {
@@ -161,8 +168,9 @@ const CreateSavedFilterScreen = ({ navigation, route }) => {
 
         <View style={styles.tagContainer}>
           <Text style={styles.title}>Select Tags for Filter</Text>
-          <FilterTagsContainer
+          <FilterByTagsContainer
             allFilterTags={tagsState}
+            filterDecodedMessage={decodedMessageObj.finalMessage}
             tagOperators={tagOperators}
             excludeTagOperators={excludeTagOperators}
             operatorValues={{ tagOperator, excludeTagOperator }}

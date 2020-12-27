@@ -1,17 +1,24 @@
 import React from "react";
-import { View, Text, StyleSheet, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  Dimensions,
+} from "react-native";
 import { Button, ButtonGroup } from "react-native-elements";
 import { useOState, useOActions } from "../../../store/overmind";
 import _ from "lodash";
 
 import { colors, styleHelpers } from "../../../globalStyles";
 
+import { InfoIcon } from "../../../components/common/Icons";
 import TagCloud, { TagItem } from "../../../components/TagCloud/TagCloud";
 import TagCloudEnhanced, {
   TagItemEnhanced,
 } from "../../../components/TagCloud/TagCloudEnhanced";
-import FilterTagsContainer from "../../../components/Filter/FilterByTagsContainer";
-// import { CommonActions, useFocusEffect, useNavigationState } from "@react-navigation/native";
+import FilterByTagsContainer from "../../../components/Filter/FilterByTagsContainer";
 
 const ViewMoviesFilterScreen = ({ route, navigation }) => {
   const state = useOState();
@@ -40,6 +47,7 @@ const ViewMoviesFilterScreen = ({ route, navigation }) => {
   const tagOperators = ["AND", "OR"];
   const excludeTagOperators = ["AND", "OR"];
   const genreOperators = ["AND", "OR"];
+
   return (
     <ScrollView bounces={false}>
       <View style={styles.container}>
@@ -66,27 +74,25 @@ const ViewMoviesFilterScreen = ({ route, navigation }) => {
           />
         </View>
         <View>
-          <Text style={styles.title}>Filter by Tags</Text>
-          <View>
-            <FilterTagsContainer
-              allFilterTags={getAllFilterTags}
-              tagOperators={tagOperators}
-              excludeTagOperators={excludeTagOperators}
-              operatorValues={{ tagOperator, excludeTagOperator }}
-              filterFunctions={{
-                onAddIncludeTag: addTagToFilter,
-                onRemoveIncludeTag: removeTagFromFilter,
-                onAddExcludeTag: addExcludeTagToFilter,
-                onRemoveExcludeTag: removeExcludeTagFromFilter,
-                setTagOperator,
-                setExcludeTagOperator,
-              }}
-            />
-          </View>
+          <FilterByTagsContainer
+            allFilterTags={getAllFilterTags}
+            tagOperators={tagOperators}
+            excludeTagOperators={excludeTagOperators}
+            operatorValues={{ tagOperator, excludeTagOperator }}
+            filterFunctions={{
+              onAddIncludeTag: addTagToFilter,
+              onRemoveIncludeTag: removeTagFromFilter,
+              onAddExcludeTag: addExcludeTagToFilter,
+              onRemoveExcludeTag: removeExcludeTagFromFilter,
+              setTagOperator,
+              setExcludeTagOperator,
+            }}
+          />
         </View>
 
         <View style={{ flex: 1, flexDirection: "column" }}>
           <Text style={styles.title}>Filter by Genre</Text>
+
           <View style={{ flex: 1, flexDirection: "row" }}>
             <View
               style={{
