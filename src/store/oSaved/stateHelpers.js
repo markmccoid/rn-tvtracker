@@ -92,11 +92,11 @@ export const filterMovies = (savedMoviesIn, filterData) => {
       return true;
     }
 
-    // If filter tags do exist, but the movie doesn't have any tags assigned
+    // If INCLUDE filter tags do exist, but the movie doesn't have any tags assigned
     // then return false as this movie can't match the tags
     // if taggedWith doesn't exists, I expect movie?.taggedWith to return undefined, using !!! to
     // turn to boolean and flip so that undefined becomes truthy and if taggedWith exists, becomes falsey
-    if (filterTagsExist && !!!movie?.taggedWith) {
+    if (filterTags.length > 0 && !!!movie?.taggedWith) {
       return false;
     }
 
