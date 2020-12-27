@@ -1,7 +1,8 @@
 export const colors = {
   primary: "#4285ec",
   background: "#f2f2f2",
-  excludeRed: "#6e1e19",
+  // excludeRed: "#6e1e19",
+  excludeRed: "#a61000",
   includeGreen: "#6cb043",
 };
 

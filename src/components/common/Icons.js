@@ -31,7 +31,22 @@ export const UnTagIcon = ({ size, color, style }) => {
 };
 
 export const FilterIcon = ({ size, color, style }) => {
-  return <Feather name="filter" size={size} color={color} style={style} />;
+  return (
+    <Feather
+      name="filter"
+      size={size}
+      color={color}
+      style={[
+        style,
+        {
+          shadowColor: "rgba(0,0,0, .4)",
+          shadowOffset: { height: 1, width: 1 },
+          shadowOpacity: 1,
+          shadowRadius: 1,
+        },
+      ]}
+    />
+  );
 };
 
 export const CloseIcon = ({ size, color, style }) => {
@@ -138,6 +153,11 @@ export const CollapseUpIcon = ({ size, color, style }) => {
 
 export const PowerIcon = ({ size, color, style }) => {
   return <Feather name="power" color={color} size={size} style={style} />;
+};
+
+//# Other Icons
+export const InfoIcon = ({ size, color, style }) => {
+  return <Feather name="info" color={color} size={size} style={style} />;
 };
 
 //# SORT Icons
