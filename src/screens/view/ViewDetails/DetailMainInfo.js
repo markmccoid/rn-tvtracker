@@ -33,7 +33,6 @@ const DetailMainInfo = ({ movie, isInSavedMovies, viewTags, setViewTags, transit
 
   const posterWidth = width * 0.35;
   const posterHeight = posterWidth * 1.5;
-  console.log(posterWidth, posterHeight);
 
   // Get data to use from movie object
   const { overview = "", releaseDate = "", imdbURL = "", runtime = "" } = movie;
