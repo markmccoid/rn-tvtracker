@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { DrawerContentScrollView, DrawerItemList, DrawerItem } from "@react-navigation/drawer";
-
+import { LinearGradient } from "expo-linear-gradient";
 import {
   HomeIcon,
   SettingsIcon,
@@ -13,8 +13,9 @@ import {
 } from "../components/common/Icons";
 import { useOState, useOActions } from "../store/overmind";
 
-import Firebase from "../storage/firebase";
 import { TouchableOpacity } from "react-native-gesture-handler";
+
+import { colors } from "../globalStyles";
 // The DrawerContentScrollView takes care of housekeeping for scroll view (notches, etc)
 // The DrawerItemList displays the screens that you pass as children to your drawer
 // The DrawerItem components are your custom components
@@ -29,17 +30,19 @@ function AppNavDrawerContent(props) {
   const { email, uid, appState } = state.oAdmin;
 
   return (
-    <View style={{ flex: 1 }}>
-      <View style={{ backgroundColor: "#cccccc", height: 50, marginBottom: -50 }}></View>
+    <View style={{ flex: 1, backgroundColor: colors.background }}>
+      <View style={{ backgroundColor: colors.darkbg, height: 50, marginBottom: -55 }}></View>
       <DrawerContentScrollView {...props}>
         {/* <DrawerItemList {...props} /> */}
         <View style={styles.userInfo}>
-          <UserIcon size={20} style={{ marginLeft: 20, paddingRight: 20, paddingTop: 10 }} />
+          <UserIcon
+            size={20}
+            color={colors.darkfg}
+            style={{ marginLeft: 20, paddingRight: 20, paddingTop: 10 }}
+          />
           <View style={{ flexDirection: "column" }}>
-            <Text>{email}</Text>
-            <Text style={{ paddingLeft: 0, marginTop: 5 }}>
-              Loaded From {appState.dataSource}
-            </Text>
+            <Text style={styles.userText}>{email}</Text>
+            <Text style={styles.userText}>Loaded From {appState.dataSource}</Text>
           </View>
         </View>
         <View style={styles.menuItemStyle}>
@@ -134,8 +137,10 @@ function AppNavDrawerContent(props) {
       </DrawerContentScrollView>
       <View style={styles.signOut}>
         <DrawerItem
-          icon={({ focused, color, size }) => <SignOutIcon size={size} />}
-          label="Sign Out"
+          icon={({ focused, color, size }) => (
+            <SignOutIcon size={size} color={colors.darkfg} />
+          )}
+          label={({ focused, color }) => <Text style={styles.signOutLabel}>Sign Out</Text>}
           onPress={() => logUserOut()}
         />
       </View>
@@ -145,16 +150,23 @@ function AppNavDrawerContent(props) {
 
 const styles = StyleSheet.create({
   signOut: {
-    marginBottom: 15,
+    paddingBottom: 15,
     borderTopColor: "black",
     borderTopWidth: 1,
+    backgroundColor: colors.darkbg,
+  },
+  signOutLabel: {
+    color: colors.darkfg,
   },
   userInfo: {
     borderBottomColor: "black",
     borderBottomWidth: 2,
     paddingVertical: 15,
-    backgroundColor: "#ccc",
+    backgroundColor: colors.darkbg,
     flexDirection: "row",
+  },
+  userText: {
+    color: colors.darkfg,
   },
   menuItemStyle: {
     borderBottomColor: "black",
@@ -176,16 +188,18 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   savedFilterLabel: {
-    color: "black",
-    fontSize: 14,
+    color: colors.darkfg,
+    fontSize: 15,
   },
   savedFilterItem: {
     padding: 10,
     marginVertical: 4,
-    marginHorizontal: 10,
-    borderRadius: 8,
-    backgroundColor: "#cccaaa",
-    borderColor: "#555",
+    marginLeft: 10,
+    borderTopLeftRadius: 5,
+    borderBottomLeftRadius: 5,
+    backgroundColor: colors.darkbg,
+    borderColor: "#777",
+    borderRightColor: colors.darkbg,
     borderWidth: 1,
   },
 });
