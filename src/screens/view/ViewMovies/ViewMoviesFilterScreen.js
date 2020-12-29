@@ -7,12 +7,12 @@ import {
   TouchableOpacity,
   Dimensions,
 } from "react-native";
-import { Button, ButtonGroup, Divider } from "react-native-elements";
+import { ButtonGroup, Divider } from "react-native-elements";
 import { useOState, useOActions } from "../../../store/overmind";
 import _ from "lodash";
 
 import { colors, styleHelpers } from "../../../globalStyles";
-
+import { Button } from "../../../components/common/Buttons";
 import FilterByTagsContainer from "../../../components/Filter/FilterByTagsContainer";
 import FilterByGenreContainer from "../../../components/Filter/FilterByGenreContainer";
 
@@ -42,7 +42,7 @@ const ViewMoviesFilterScreen = ({ route, navigation }) => {
   const titleSize = "l";
 
   return (
-    <ScrollView bounces={false}>
+    <ScrollView bounces={false} style={styles.scrollContainer}>
       <View style={styles.container}>
         <View
           style={{
@@ -54,11 +54,13 @@ const ViewMoviesFilterScreen = ({ route, navigation }) => {
           <Button
             style={styles.buttonStyle}
             title="Clear Filters"
-            type="outline"
+            bgColor="white"
+            color={colors.primary}
             onPress={() => clearFilterScreen()}
           />
           <Button
-            buttonStyle={[styles.buttonStyle, { backgroundColor: colors.primary }]}
+            bgColor={colors.primary}
+            color="white"
             title="Done"
             onPress={() => {
               navigation.navigate("Movies", { filterModified: true });
@@ -102,11 +104,15 @@ const ViewMoviesFilterScreen = ({ route, navigation }) => {
 };
 
 const styles = StyleSheet.create({
+  scrollContainer: {
+    backgroundColor: colors.background,
+  },
   container: {
     flex: 1,
     flexDirection: "column",
     justifyContent: "space-between",
     margin: 5,
+    // backgroundColor: colors.background,
     // borderColor: "black",
     // borderWidth: 1,
     padding: 5,
