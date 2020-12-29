@@ -239,7 +239,7 @@ const CreateSavedFilterScreen = ({ navigation, route }) => {
             filterFunctions={genreFilterFunctions}
           />
         </View>
-        <View>
+        <View style={styles.saveButton}>
           <Button
             title={inEditFilter ? "Update Filter" : "Save Filter"}
             onPress={() => onSaveFilter()}
@@ -271,6 +271,9 @@ const styles = StyleSheet.create({
   },
   tagContainer: {
     marginVertical: 10,
+  },
+  saveButton: {
+    marginBottom: 50,
   },
 });
 
