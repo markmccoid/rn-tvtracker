@@ -43,9 +43,6 @@ const tagReducer = (state, action) => {
   }
 };
 
-const titleFontSize = { s: "sizeSmall", m: "sizeMedium", l: "sizeLarge" };
-const titleIconSize = { s: 15, m: 18, l: 22 };
-
 const CreateSavedFilterScreen = ({ navigation, route }) => {
   const state = useOState();
   const actions = useOActions();

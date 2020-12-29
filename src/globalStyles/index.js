@@ -1,15 +1,19 @@
 export const colors = {
   primary: "#4285ec",
-  background: "#f2f2f2",
-  // excludeRed: "#6e1e19",
+  background: "#dee9f7",
+  // background: "#f2f2f2",
+  darkbg: "#2f6eb5", // Background used for buttons, etc
+  darkfg: "white", // Foreground color to be used with darkbg
   excludeRed: "#a61000",
   includeGreen: "#6cb043",
+  tagListbg: "#EFF4FB",
+  tagListfg: "black",
 };
 
 export const fonts = {
-  sizeSmall: 15,
-  sizeMedium: 18,
-  sizeLarge: 22,
+  s: 16,
+  m: 18,
+  l: 22,
 };
 export const styleHelpers = {
   debugBorders: {
