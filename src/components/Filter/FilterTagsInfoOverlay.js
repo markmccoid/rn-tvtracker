@@ -30,6 +30,7 @@ const FilterTagsInfoOverlay = ({
       overlayStyle={styles.container}
       isVisible={isVisible}
       onBackdropPress={toggleVisibility}
+      animationType="fade"
     >
       <View style={{ flex: 1 }}>
         <View

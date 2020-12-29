@@ -25,6 +25,9 @@ export const DragHandleIcon = ({ size, color, style }) => {
 export const TagIcon = ({ size, color, style }) => {
   return <FontAwesome name="tags" color={color} size={size} style={style} />;
 };
+export const GenreIcon = ({ size, color, style }) => {
+  return <MaterialCommunityIcons name="tag-faces" color={color} size={size} style={style} />;
+};
 
 export const UnTagIcon = ({ size, color, style }) => {
   return <Entypo name="untag" color={color} size={size} style={style} />;

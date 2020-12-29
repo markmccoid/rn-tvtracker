@@ -11,11 +11,11 @@ import {
 import { Overlay, Divider } from "react-native-elements";
 
 import { colors } from "../../globalStyles";
-import { FilterIcon, TagIcon, CloseIcon } from "../common/Icons";
+import { FilterIcon, GenreIcon, CloseIcon } from "../common/Icons";
 
 const { width, height } = Dimensions.get("window");
 
-const FilterTagsInfoOverlay = ({
+const FilterGenreInfoOverlay = ({
   MessageComponent,
   genreOperator,
   setGenreOperator,
@@ -27,6 +27,7 @@ const FilterTagsInfoOverlay = ({
       overlayStyle={styles.container}
       isVisible={isVisible}
       onBackdropPress={toggleVisibility}
+      animationType="fade"
     >
       <View style={{ flex: 1 }}>
         <View
@@ -69,7 +70,7 @@ const FilterTagsInfoOverlay = ({
             <View style={styles.tagTypeContainer}>
               <View style={{ flexDirection: "row", alignItems: "center" }}>
                 <Text style={{ fontSize: 20, fontWeight: "600", marginRight: 5 }}>Genres</Text>
-                <TagIcon color={colors.includeGreen} size={25} />
+                <GenreIcon color={colors.includeGreen} size={25} />
               </View>
               <View>
                 <Text style={styles.describeText}>
@@ -179,4 +180,4 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
 });
-export default FilterTagsInfoOverlay;
+export default FilterGenreInfoOverlay;
