@@ -7,6 +7,7 @@ import { useOState, useOActions } from "../../store/overmind";
 
 import FilterByTagsContainer from "../../components/Filter/FilterByTagsContainer";
 import FilterByGenreContainer from "../../components/Filter/FilterByGenreContainer";
+import { colors } from "../../globalStyles";
 
 const buildTagObjFromIds = (allTags, tagIdArray, isSelected) => {
   // loop through all tags and when find a match in passed tagIdArray
@@ -194,7 +195,7 @@ const CreateSavedFilterScreen = ({ navigation, route }) => {
   };
   const titleSize = "m";
   return (
-    <ScrollView>
+    <ScrollView style={styles.scrollViewContainer}>
       <View style={styles.container}>
         <Text style={styles.title}>Filter Name:</Text>
         <View>
@@ -240,8 +241,8 @@ const CreateSavedFilterScreen = ({ navigation, route }) => {
           <Button
             title={inEditFilter ? "Update Filter" : "Save Filter"}
             onPress={() => onSaveFilter()}
-            bgColor="#aeaeae"
-            bgOpacity="aa"
+            bgColor={colors.primary}
+            color="white"
           />
         </View>
       </View>
@@ -250,6 +251,9 @@ const CreateSavedFilterScreen = ({ navigation, route }) => {
 };
 
 const styles = StyleSheet.create({
+  scrollViewContainer: {
+    backgroundColor: colors.background,
+  },
   container: {
     marginVertical: 10,
     marginHorizontal: 15,

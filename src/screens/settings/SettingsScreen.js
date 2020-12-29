@@ -5,7 +5,8 @@ import SavedFiltersView from "../../components/settings/SavedFiltersView";
 
 import DefaultFilter from "./DefaultFilter";
 import DefaultSort from "./DefaultSort";
-import SettingSortPan from "./SettingSortPan";
+
+import { colors } from "../../globalStyles";
 
 const Settings = ({ navigation }) => {
   const state = useOState();
@@ -13,7 +14,7 @@ const Settings = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView>
+      <ScrollView style={styles.scrollContainer}>
         <View style={styles.settingsContainer}>
           <Text style={styles.settingsText}>Saved Filters</Text>
           <SavedFiltersView />
@@ -36,6 +37,9 @@ const Settings = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: colors.background,
+  },
+  scrollContainer: {
     marginTop: 10,
     marginHorizontal: 10,
   },
