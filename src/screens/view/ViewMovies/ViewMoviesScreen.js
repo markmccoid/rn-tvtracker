@@ -84,24 +84,25 @@ const ViewMoviesScreen = ({ navigation, route }) => {
 
   //Next two useEffects are for determining if a filter was modified and if so, then scroll to top
   //Looking at the filterModified param (true or undefined) coming from the Movies route
-  //* May make sense to instead put a "filter dirty" flag in overmind state
-  useEffect(() => {
-    if (!route.params?.filterModified) return;
-    let dispatchType = route.params?.filterModified ? "MODIFIED" : "SCROLLDONE";
+  //!! Commented out so DONE button on filter screen acts the same as a pull down dismiss
+  //!! This was code that would scroll to top whenever a filter was applied
+  // useEffect(() => {
+  //   if (!route.params?.filterModified) return;
+  //   let dispatchType = route.params?.filterModified ? "MODIFIED" : "SCROLLDONE";
 
-    dispatch({ type: dispatchType });
-    // if (route.params?.filterModified) {
-    //   route.params.filterModified = undefined;
-    // }
-  }, [route.params?.filterModified]);
+  //   dispatch({ type: dispatchType });
+  //   // if (route.params?.filterModified) {
+  //   //   route.params.filterModified = undefined;
+  //   // }
+  // }, [route.params?.filterModified]);
 
-  useEffect(() => {
-    if (filterState === "filterModified" && getFilteredMovies().length > 0) {
-      flatListRef.current.scrollToIndex({ animated: true, index: 0 });
-      dispatch({ type: "SCROLLDONE" });
-      route.params.filterModified = undefined;
-    }
-  }, [filterState]);
+  // useEffect(() => {
+  //   if (filterState === "filterModified" && getFilteredMovies().length > 0) {
+  //     flatListRef.current.scrollToIndex({ animated: true, index: 0 });
+  //     dispatch({ type: "SCROLLDONE" });
+  //     route.params.filterModified = undefined;
+  //   }
+  // }, [filterState]);
   //---------------------------------------------------
 
   //Trying to use this to clear editingId when returning from filter screen.

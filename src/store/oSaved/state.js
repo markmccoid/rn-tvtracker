@@ -204,7 +204,6 @@ export const state = {
     // All tags defined in the system
     let allTagIds = helpers.retrieveTagIds(state.getTags);
 
-    // Could turn below in to helper if needed
     // It will take unused tag and create object { tagId, tagName, tagState }
     const unsortedTags = _.keyBy(
       helpers.buildTagObjFromIds(state, allTagIds, {

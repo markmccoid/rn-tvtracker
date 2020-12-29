@@ -57,6 +57,10 @@ export const DeleteIcon = ({ size = 25, color = "#b20a2c", style }) => {
   return <AntDesign name="delete" size={size} color={color} style={style} />;
 };
 
+export const EraserIcon = ({ size = 25, color, style }) => {
+  return <MaterialCommunityIcons name="eraser" size={size} color={color} style={style} />;
+};
+
 //OLD Check icon has circle around it
 // export const CheckIcon = ({ size, color, style }) => {
 //   return (

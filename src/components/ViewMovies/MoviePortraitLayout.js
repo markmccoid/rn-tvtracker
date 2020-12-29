@@ -1,14 +1,10 @@
 import React from "react";
-import { View, Text, Image, StyleSheet, LayoutAnimation } from "react-native";
+import { View, Text, StyleSheet, LayoutAnimation } from "react-native";
+import { Image } from "react-native-elements";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { useDimensions } from "@react-native-community/hooks";
 
-const MoviePortraitLayout = ({
-  movie,
-  setMovieEditingId,
-  navigateToDetails,
-  inEditState,
-}) => {
+const MoviePortraitLayout = ({ movie, setMovieEditingId, navigateToDetails, inEditState }) => {
   const { width, height } = useDimensions().window;
   const movieReleaseDate = movie.releaseDate?.formatted || " - ";
 
@@ -37,17 +33,25 @@ const MoviePortraitLayout = ({
       shadowRadius: 3,
       elevation: 1,
     },
+    imageBackupText: {
+      fontSize: 22,
+      fontWeight: "bold",
+      textAlign: "center",
+    },
   });
+  const movieImageURI = movie.posterURL ? { uri: movie.posterURL } : {};
   return (
     <View style={styles.movieCard}>
       <TouchableOpacity
         onPress={navigateToDetails}
-        onLongPress={() =>
-          inEditState ? setMovieEditingId() : setMovieEditingId(movie.id)
-        }
+        onLongPress={() => (inEditState ? setMovieEditingId() : setMovieEditingId(movie.id))}
       >
         <View>
-          <Image style={styles.posterImage} source={{ uri: movie.posterURL }} />
+          <Image
+            style={styles.posterImage}
+            source={movieImageURI}
+            PlaceholderContent={<Text style={styles.imageBackupText}>{movie.title}</Text>}
+          />
         </View>
       </TouchableOpacity>
       {/* Icon row */}

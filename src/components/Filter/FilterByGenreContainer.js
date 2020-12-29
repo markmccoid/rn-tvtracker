@@ -1,27 +1,17 @@
 import React from "react";
 import PropTypes from "prop-types";
-import {
-  StyleSheet,
-  Text,
-  View,
-  Switch,
-  Dimensions,
-  TouchableOpacity,
-  Alert,
-} from "react-native";
-
+import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { fonts } from "../../globalStyles";
 import { EraserIcon, InfoIcon } from "../../components/common/Icons";
 
-import TagCloudEnhanced, { TagItemEnhanced } from "../../components/TagCloud/TagCloudEnhanced";
-import FilterTagsInfoOverlay from "./FilterTagsInfoOverlay";
 import { useDecodedFilter } from "../../hooks/useDecodedFilter";
+import TagCloud, { TagItem } from "../../components/TagCloud/TagCloud";
+import FilterGenreInfoOverlay from "./FilterGenreInfoOverlay";
 
 /** props
- *   allFilterTags - array of filter tags in format of { tagId, tagName, tagState }
- *   tagOperators - array of tagOperators, ['AND', 'OR']
- *   excludeTagOperators - array of ExcludeTagOperators, ['AND', 'OR']
- *   operatorValues - current value of operators - { tagOperator, excludeTagOperator }
+ *   allGenreFilterTags - array of filter tags in format of { genre, isSelected }
+ *   genreOperators - array of tagOperators, ['AND', 'OR']
+ *   genreOperator - current value of genre operator
  *   filterFunctions - functions needed by TagCloud -
  *   { onAddIncludeTag:
  *     onRemoveIncludeTag: removeTagFromFilter,
@@ -44,34 +34,25 @@ NOT AND (>1) - Find movies that Do NOT have ALL(Any) of the tags Favorite and Ne
 NOT OR (>1) - Find movies that Do NOT have ONE of the tags Favorite Or New Or ...
  */
 
-const { width, height } = Dimensions.get("window");
-
-const FilterByTagsContainer = ({
+const FilterByGenreContainer = ({
   titleSize = "m",
-  title = "Filter by Tags",
-  allFilterTags,
-  operatorValues,
+  title = "Filter by Genre",
+  allGenreFilters,
+  genreOperator,
   filterFunctions,
 }) => {
-  const { tagOperator, excludeTagOperator } = operatorValues;
   const {
-    onAddIncludeTag,
-    onRemoveIncludeTag,
-    onAddExcludeTag,
-    onRemoveExcludeTag,
-    setTagOperator,
-    setExcludeTagOperator,
-    clearFilterTags, //Optional
+    addGenreToFilter,
+    removeGenreFromFilter,
+    setGenreOperator,
+    clearFilterGenres, //Optional
   } = filterFunctions;
 
   const [overlayVisible, setOverlayVisible] = React.useState(false);
 
-  const { TagMessageComponent } = useDecodedFilter({
-    filterTags: allFilterTags,
-    filterData: {
-      tagOperator,
-      excludeTagOperator,
-    },
+  const { GenreMessageComponent } = useDecodedFilter({
+    filterGenres: allGenreFilters,
+    filterData: { genreOperator },
   });
 
   const titleFontSize = { s: "sizeSmall", m: "sizeMedium", l: "sizeLarge" };
@@ -101,46 +82,44 @@ const FilterByTagsContainer = ({
               <InfoIcon size={titleIconSize[titleSize]} />
             </View>
           </TouchableOpacity>
-          {clearFilterTags && (
-            <TouchableOpacity onPress={clearFilterTags}>
+          {clearFilterGenres && (
+            <TouchableOpacity onPress={clearFilterGenres}>
               <EraserIcon size={titleIconSize[titleSize]} />
             </TouchableOpacity>
           )}
         </View>
+
         {overlayVisible && (
-          <FilterTagsInfoOverlay
-            MessageComponent={TagMessageComponent}
-            operatorValues={{ tagOperator, excludeTagOperator }}
-            filterFunctions={{
-              setTagOperator,
-              setExcludeTagOperator,
-            }}
+          <FilterGenreInfoOverlay
+            filtersDecodedMessage={`genre decoded message`}
+            MessageComponent={GenreMessageComponent}
+            genreOperator={genreOperator}
+            setGenreOperator={setGenreOperator}
             isVisible={overlayVisible}
             toggleVisibility={() => setOverlayVisible((prev) => !prev)}
           />
         )}
       </View>
-      <TagCloudEnhanced>
-        {allFilterTags.map((tagObj) => {
+      <TagCloud>
+        {allGenreFilters.map((genreObj) => {
+          const { genre, isSelected } = genreObj;
           return (
-            <TagItemEnhanced
-              key={tagObj.tagId}
-              tagId={tagObj.tagId}
-              tagName={tagObj.tagName}
-              tagState={tagObj.tagState}
-              onAddIncludeTag={() => onAddIncludeTag(tagObj.tagId)}
-              onRemoveIncludeTag={() => onRemoveIncludeTag(tagObj.tagId)}
-              onAddExcludeTag={() => onAddExcludeTag(tagObj.tagId)}
-              onRemoveExcludeTag={() => onRemoveExcludeTag(tagObj.tagId)}
+            <TagItem
+              key={genre}
+              tagId={genre}
+              tagName={genre}
+              isSelected={isSelected}
+              onSelectTag={() => addGenreToFilter(genre)}
+              onDeSelectTag={() => removeGenreFromFilter(genre)}
             />
           );
         })}
-      </TagCloudEnhanced>
+      </TagCloud>
     </View>
   );
 };
 
-export default FilterByTagsContainer;
+export default FilterByGenreContainer;
 
 const styles = StyleSheet.create({
   title: {
@@ -170,27 +149,20 @@ const styles = StyleSheet.create({
   },
 });
 
-FilterByTagsContainer.propTypes = {
+FilterByGenreContainer.propTypes = {
   titleSize: PropTypes.string,
   title: PropTypes.string,
-  allFilterTags: PropTypes.arrayOf(
+  allGenreFilters: PropTypes.arrayOf(
     PropTypes.shape({
-      tagId: PropTypes.string.isRequired,
-      tagName: PropTypes.string.isRequired,
-      tagState: PropTypes.string.isRequired,
+      genre: PropTypes.string,
+      isSelected: PropTypes.bool,
     })
   ),
-  operatorValues: PropTypes.shape({
-    tagOperator: PropTypes.oneOf(["AND", "OR"]),
-    excludeTagOperator: PropTypes.oneOf(["AND", "OR"]),
-  }),
+  genreOperator: PropTypes.oneOf(["AND", "OR"]),
   filterFunctions: PropTypes.shape({
-    onAddIncludeTag: PropTypes.func.isRequired,
-    onRemoveIncludeTag: PropTypes.func.isRequired,
-    onAddExcludeTag: PropTypes.func.isRequired,
-    onRemoveExcludeTag: PropTypes.func.isRequired,
-    setTagOperator: PropTypes.func.isRequired,
-    setExcludeTagOperator: PropTypes.func.isRequired,
-    clearFilterTags: PropTypes.func,
+    addGenreToFilter: PropTypes.func.isRequired,
+    removeGenreFromFilter: PropTypes.func.isRequired,
+    setGenreOperator: PropTypes.func.isRequired,
+    clearFilterGenres: PropTypes.func,
   }),
 };

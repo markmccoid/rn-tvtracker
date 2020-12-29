@@ -51,8 +51,10 @@ export const applySavedFilter = ({ state, actions }, savedFilterId) => {
   const {
     addTagToFilter,
     addExcludeTagToFilter,
+    addGenreToFilter,
     setTagOperator,
     setExcludeTagOperator,
+    setGenreOperator,
   } = actions.oSaved;
   //reset filter state
   state.oSaved.filterData.genres = [];
@@ -62,11 +64,13 @@ export const applySavedFilter = ({ state, actions }, savedFilterId) => {
   const filterToApply = getFilterToApply(state.oSaved.savedFilters, savedFilterId);
   if (filterToApply.wasFound) {
     // Loop through and add each tag in the array to the filter
-    filterToApply.tags.forEach((tagId) => addTagToFilter(tagId));
-    filterToApply.excludeTags.forEach((tagId) => addExcludeTagToFilter(tagId));
+    filterToApply?.tags?.forEach((tagId) => addTagToFilter(tagId));
+    filterToApply?.excludeTags?.forEach((tagId) => addExcludeTagToFilter(tagId));
+    filterToApply?.genres?.forEach((genre) => addGenreToFilter(genre));
     // Add the tagOperator to the filter.
-    setTagOperator(filterToApply.tagOperator);
-    setExcludeTagOperator(filterToApply.excludeTagOperator || "OR");
+    setTagOperator(filterToApply?.tagOperator || "AND");
+    setExcludeTagOperator(filterToApply?.excludeTagOperator || "OR");
+    setGenreOperator(filterToApply?.genreOperator || "OR");
   }
 };
 

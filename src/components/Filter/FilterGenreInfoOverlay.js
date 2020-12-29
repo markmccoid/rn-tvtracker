@@ -10,21 +10,18 @@ import {
 } from "react-native";
 import { Overlay, Divider } from "react-native-elements";
 
-import { colors, styleHelpers } from "../../globalStyles";
-import { FilterIcon, TagIcon, UnTagIcon, CloseIcon } from "../common/Icons";
-import { color } from "react-native-reanimated";
+import { colors } from "../../globalStyles";
+import { FilterIcon, TagIcon, CloseIcon } from "../common/Icons";
+
 const { width, height } = Dimensions.get("window");
 
 const FilterTagsInfoOverlay = ({
   MessageComponent,
-  operatorValues,
-  filterFunctions,
+  genreOperator,
+  setGenreOperator,
   isVisible,
   toggleVisibility,
 }) => {
-  const { tagOperator, excludeTagOperator } = operatorValues;
-  const { setTagOperator, setExcludeTagOperator } = filterFunctions;
-
   return (
     <Overlay
       overlayStyle={styles.container}
@@ -39,7 +36,7 @@ const FilterTagsInfoOverlay = ({
           ]}
         >
           <FilterIcon size={30} color={colors.includeGreen} />
-          <Text style={[styles.title, { marginLeft: 15 }]}>Advanced Filter Info</Text>
+          <Text style={[styles.title, { marginLeft: 15 }]}>Advanced Filter Info (Genres)</Text>
 
           <TouchableOpacity
             onPress={toggleVisibility}
@@ -71,72 +68,36 @@ const FilterTagsInfoOverlay = ({
           <View style={styles.booleanContainer}>
             <View style={styles.tagTypeContainer}>
               <View style={{ flexDirection: "row", alignItems: "center" }}>
-                <Text style={{ fontSize: 20, fontWeight: "600", marginRight: 5 }}>
-                  Include Tags
-                </Text>
+                <Text style={{ fontSize: 20, fontWeight: "600", marginRight: 5 }}>Genres</Text>
                 <TagIcon color={colors.includeGreen} size={25} />
               </View>
               <View>
                 <Text style={styles.describeText}>
-                  Green tags will search for movies that INCLUDE those tags. The green switch,
-                  when on, allows you to choose if the movies returned should be tagged with
+                  Green (selected) genres will search for movies that INCLUDE those genres. The
+                  green switch, when on, allows you to choose if the movies returned should
+                  have
                   <Text style={[styles.describeText, { fontWeight: "600" }]}>{` ALL `}</Text>
-                  of the green tags selected. When the switch is off, the movies returned will
-                  be tagged with
+                  of the selected genres. When the switch is off, the movies returned will have
                   <Text style={[styles.describeText, { fontWeight: "600" }]}>
                     {` ONE OR MORE `}
                   </Text>
-                  of the green tags selected. This is AND / OR boolean logic.
+                  of the selected genres. This is AND / OR boolean logic.
                 </Text>
               </View>
               <View style={styles.switchContainer}>
                 <Switch
                   trackColor={{ false: "", true: "green" }}
                   thumbColor={colors.includeGreen}
-                  value={tagOperator === "AND" ? true : false}
-                  onValueChange={(val) => setTagOperator(val ? "AND" : "OR")}
+                  value={genreOperator === "AND" ? true : false}
+                  onValueChange={(val) => setGenreOperator(val ? "AND" : "OR")}
                 />
                 <Text style={[styles.switchText, {}]}>
-                  {tagOperator === "OR" ? "One Or More (OR)" : "All (AND)"}
+                  {genreOperator === "OR" ? "One Or More (OR)" : "All (AND)"}
                 </Text>
               </View>
             </View>
 
             <Divider style={styles.dividerStyle} />
-
-            <View style={styles.tagTypeContainer}>
-              <View style={{ flexDirection: "row", alignItems: "center" }}>
-                <Text style={{ fontSize: 20, fontWeight: "600", marginRight: 5 }}>
-                  Does NOT have Tags
-                </Text>
-                <UnTagIcon color={colors.excludeRed} size={25} />
-              </View>
-              <View>
-                <Text style={styles.describeText}>
-                  Red tags will search for movies that EXCLUDE (do not have) those tags. The
-                  red switch, when on, will return movies
-                  <Text style={[styles.describeText, { fontWeight: "600" }]}>
-                    {` NOT tagged will ALL `}
-                  </Text>
-                  of the red tags selected. When the switch is off, the movies returned will
-                  <Text style={[styles.describeText, { fontWeight: "600" }]}>
-                    {` NOT be tagged with ONE OR MORE `}
-                  </Text>
-                  of the red tags selected. This is AND / OR boolean logic.
-                </Text>
-              </View>
-              <View style={[styles.switchContainer]}>
-                <Switch
-                  trackColor={{ false: "red", true: "red" }}
-                  thumbColor={colors.excludeRed}
-                  value={excludeTagOperator === "AND" ? true : false}
-                  onValueChange={(val) => setExcludeTagOperator(val ? "AND" : "OR")}
-                />
-                <Text style={[styles.switchText, {}]}>
-                  NOT {excludeTagOperator === "OR" ? "One Or More (OR)" : "All (AND)"}
-                </Text>
-              </View>
-            </View>
           </View>
         </ScrollView>
       </View>

@@ -50,9 +50,9 @@ export const hyrdateStore = async (
     // Save to firestore
     await effects.oSaved.saveSettings(state.oSaved.settings);
   }
+
   // Apply a default filter, if one has been selected in settings and we are not doing a forced refresh
   const defaultFilterId = state.oSaved.settings?.defaultFilter;
-
   if (defaultFilterId && !forceRefresh) {
     //Apply default Filter
     actions.oSaved.applySavedFilter(defaultFilterId);

@@ -36,6 +36,10 @@ export const TagItemEnhanced = ({
   tagName,
   size = "m",
 }) => {
+  // ToggleSelect action
+  // inactive --> include
+  // include --> exclude
+  // exclude --> inactive
   const onToggleSelect = (tagId) => {
     if (tagState === "inactive") {
       onAddIncludeTag();
@@ -46,11 +50,25 @@ export const TagItemEnhanced = ({
       onRemoveExcludeTag();
     }
   };
+  // Long press action
+  // inactive --> exclude
+  // include --> inactive
+  // exclude --> inactive
+  const onLongPress = () => {
+    if (tagState === "inactive") {
+      onAddExcludeTag();
+    } else if (tagState === "include") {
+      onRemoveIncludeTag();
+    } else if (tagState === "exclude") {
+      onRemoveExcludeTag();
+    }
+  };
   return (
     <TagExtended
       key={tagId}
       size={size}
       onPress={onToggleSelect}
+      onLongPress={onLongPress}
       isSelected={tagState} //used in styled components
     >
       <TagIcon>

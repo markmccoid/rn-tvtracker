@@ -7,18 +7,14 @@ import {
   TouchableOpacity,
   Dimensions,
 } from "react-native";
-import { Button, ButtonGroup } from "react-native-elements";
+import { Button, ButtonGroup, Divider } from "react-native-elements";
 import { useOState, useOActions } from "../../../store/overmind";
 import _ from "lodash";
 
 import { colors, styleHelpers } from "../../../globalStyles";
 
-import { InfoIcon } from "../../../components/common/Icons";
-import TagCloud, { TagItem } from "../../../components/TagCloud/TagCloud";
-import TagCloudEnhanced, {
-  TagItemEnhanced,
-} from "../../../components/TagCloud/TagCloudEnhanced";
 import FilterByTagsContainer from "../../../components/Filter/FilterByTagsContainer";
+import FilterByGenreContainer from "../../../components/Filter/FilterByGenreContainer";
 
 const ViewMoviesFilterScreen = ({ route, navigation }) => {
   const state = useOState();
@@ -43,10 +39,7 @@ const ViewMoviesFilterScreen = ({ route, navigation }) => {
 
   //------------------------------
 
-  //---TESTING  Probably should be a getter in the store.+
-  const tagOperators = ["AND", "OR"];
-  const excludeTagOperators = ["AND", "OR"];
-  const genreOperators = ["AND", "OR"];
+  const titleSize = "l";
 
   return (
     <ScrollView bounces={false}>
@@ -75,9 +68,8 @@ const ViewMoviesFilterScreen = ({ route, navigation }) => {
         </View>
         <View>
           <FilterByTagsContainer
+            titleSize={titleSize}
             allFilterTags={getAllFilterTags}
-            tagOperators={tagOperators}
-            excludeTagOperators={excludeTagOperators}
             operatorValues={{ tagOperator, excludeTagOperator }}
             filterFunctions={{
               onAddIncludeTag: addTagToFilter,
@@ -86,58 +78,23 @@ const ViewMoviesFilterScreen = ({ route, navigation }) => {
               onRemoveExcludeTag: removeExcludeTagFromFilter,
               setTagOperator,
               setExcludeTagOperator,
+              clearFilterTags,
             }}
           />
         </View>
-
-        <View style={{ flex: 1, flexDirection: "column" }}>
-          <Text style={styles.title}>Filter by Genre</Text>
-
-          <View style={{ flex: 1, flexDirection: "row" }}>
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                borderWidth: 1,
-                borderColor: "black",
-                borderRadius: 10,
-                backgroundColor: "white",
-                paddingLeft: 5,
-              }}
-            >
-              <Text style={{ fontWeight: "bold", width: 60, textAlign: "center" }}>
-                Include Genres
-              </Text>
-              <ButtonGroup
-                containerStyle={{
-                  width: 100,
-                  borderRadius: 10,
-                  height: 30,
-                  borderColor: "black",
-                  borderWidth: 1,
-                }}
-                selectedButtonStyle={{ backgroundColor: colors.includeGreen }}
-                onPress={(index) => setGenreOperator(genreOperators[index])}
-                buttons={genreOperators}
-                selectedIndex={genreOperators.indexOf(genreOperator)}
-              />
-            </View>
-          </View>
-          <TagCloud>
-            {getAllFilterGenres.map((genreObj) => {
-              const { genre, isSelected } = genreObj;
-              return (
-                <TagItem
-                  key={genre}
-                  tagId={genre}
-                  tagName={genre}
-                  isSelected={isSelected}
-                  onSelectTag={() => addGenreToFilter(genre)}
-                  onDeSelectTag={() => removeGenreFromFilter(genre)}
-                />
-              );
-            })}
-          </TagCloud>
+        <Divider style={{ backgroundColor: "black", marginTop: 10 }} />
+        <View style={{ flex: 1, flexDirection: "column", marginTop: 10 }}>
+          <FilterByGenreContainer
+            titleSize={titleSize}
+            allGenreFilters={getAllFilterGenres}
+            genreOperator={genreOperator}
+            filterFunctions={{
+              addGenreToFilter,
+              removeGenreFromFilter,
+              setGenreOperator,
+              clearFilterGenres,
+            }}
+          />
         </View>
       </View>
     </ScrollView>

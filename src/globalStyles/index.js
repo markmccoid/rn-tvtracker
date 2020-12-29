@@ -6,6 +6,11 @@ export const colors = {
   includeGreen: "#6cb043",
 };
 
+export const fonts = {
+  sizeSmall: 15,
+  sizeMedium: 18,
+  sizeLarge: 22,
+};
 export const styleHelpers = {
   debugBorders: {
     borderWidth: 1,
