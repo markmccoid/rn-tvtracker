@@ -88,13 +88,9 @@ const DetailPerson = ({ navigation, route }) => {
           }}
         >
           <View>
-            <DataRow label="Born:" value={personInfo?.birthday?.formatted} />
-            <DataRow label="Died:" value={personInfo?.deathDay?.formatted} />
-            <DataRow
-              label="Birthplace:"
-              value={personInfo?.placeOfBirth?.trim()}
-              size={width - PICTURE_WIDTH - MARGIN}
-            />
+            <DataRow label="Born:" value={personInfo?.birthday?.formatted} size="s" />
+            <DataRow label="Died:" value={personInfo?.deathDay?.formatted} size="s" />
+            <DataRow label="Birthplace:" value={personInfo?.placeOfBirth?.trim()} size="s" />
           </View>
           <View
             style={{
