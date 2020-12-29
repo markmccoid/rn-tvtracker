@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { ActivityIndicator, ScrollView, View, Image, Dimensions } from "react-native";
 import { AddIcon, DeleteIcon } from "../../../components/common/Icons";
 import { useOState, useOActions } from "../../../store/overmind";
@@ -27,21 +27,28 @@ const { width, height } = Dimensions.get("window");
 const ViewDetails = ({ navigation, route }) => {
   const [movieData, setMovieData] = useState(undefined);
   const [isInSavedMovies, setIsInSavedMovies] = useState(!!!route.params?.notSaved);
-
+  const [isLoading, setIsLoading] = useState(false);
   const state = useOState();
   const actions = useOActions();
-  const { saveMovie, deleteMovie } = actions.oSaved;
+  const { saveMovie, deleteMovie, apiGetMovieDetails } = actions.oSaved;
+  const getTempMovieDetails = async (movieId) => {
+    movieTemp = await apiGetMovieDetails(movieId);
+    setMovieData(movieTemp.data);
+  };
 
   useEffect(() => {
     setIsInSavedMovies(!!!route.params?.notSaved); //if undefined or false, return true
     let movieTemp = {};
     if (route.params?.movieId) {
       movieTemp = state.oSaved.getMovieDetails(route.params?.movieId);
+      setMovieData(movieTemp);
+      return;
     }
     if (route.params?.movie) {
-      movieTemp = route.params?.movie;
+      // movieTemp = route.params?.movie;
+      getTempMovieDetails(route.params?.movie.id);
+      return;
     }
-    setMovieData(movieTemp);
   }, [route.params?.movieId, route.params?.movie, route.params?.notSaved]);
 
   //---- Set navigation options for detail screen -----
@@ -57,17 +64,22 @@ const ViewDetails = ({ navigation, route }) => {
     navigation.setOptions({
       title: movieData.title,
       headerRight: () => {
+        if (isLoading) {
+          return <ActivityIndicator style={{ marginRight: 20 }} />;
+        }
         if (!isInSavedMovies) {
           return (
             <TouchableOpacity
               style={{ marginRight: 15 }}
               onPress={async () => {
+                setIsLoading(true);
                 await saveMovie(movieData);
                 navigation.navigate(route.name, {
                   movieId: movieData.id,
                   movie: undefined,
                   notSaved: false,
                 });
+                setIsLoading(false);
                 // navigation.goBack();
               }}
             >
@@ -78,10 +90,11 @@ const ViewDetails = ({ navigation, route }) => {
           return (
             <TouchableOpacity
               style={{ marginRight: 15 }}
-              onPress={() => {
-                //route.params.movieId = undefined;
-                deleteMovie(movieData.id);
+              onPress={async () => {
+                setIsLoading(true);
+                await deleteMovie(movieData.id);
                 navigation.goBack();
+                setIsLoading(false);
               }}
             >
               <DeleteIcon size={25} />
@@ -90,7 +103,7 @@ const ViewDetails = ({ navigation, route }) => {
         }
       },
     });
-  }, [movieData, isInSavedMovies]);
+  }, [movieData, isInSavedMovies, isLoading]);
 
   // No movieId and no movie passed via params, then just return null
   //TODO: probably need a better "message", but we really should only hit this
