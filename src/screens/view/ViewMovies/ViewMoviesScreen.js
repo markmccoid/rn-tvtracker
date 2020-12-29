@@ -12,10 +12,9 @@ import { useOState, useOActions } from "../../../store/overmind";
 import ListSearchBar from "./ListSearchBar";
 import { AddIcon, FilterIcon } from "../../../components/common/Icons";
 
-import { useFocusEffect, useNavigationState } from "@react-navigation/native";
-
 import ViewMoviesListItem from "../../../components/ViewMovies/ViewMoviesListItem";
 import ViewMovieOverlay from "./ViewMovieOverlay";
+import { colors } from "../../../globalStyles";
 
 const { width, height } = Dimensions.get("window");
 //----------------------------
@@ -215,6 +214,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "column",
     alignItems: "center",
+    backgroundColor: colors.background,
   },
   noMoviesShownPosition: {
     position: "absolute",

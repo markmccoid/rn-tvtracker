@@ -1,18 +1,14 @@
 import React from "react";
-import { View, Text, StyleSheet, Image, Animated } from "react-native";
-import { Overlay } from "react-native-elements";
+import { View, Text, StyleSheet, Animated } from "react-native";
+import { Overlay, Image } from "react-native-elements";
 import { useDimensions } from "@react-native-community/hooks";
 import { useOState, useOActions } from "../../../store/overmind";
 import { Button } from "../../../components/common/Buttons";
 
 import TagCloud, { TagItem } from "../../../components/TagCloud/TagCloud";
+import PosterImage from "../../../components/common/PosterImage";
 
-const ViewMovieOverlay = ({
-  movieId,
-  isVisible,
-  movieDetails,
-  setMovieEditingId,
-}) => {
+const ViewMovieOverlay = ({ movieId, isVisible, movieDetails, setMovieEditingId }) => {
   const { width, height } = useDimensions().window;
   const state = useOState();
   const actions = useOActions();
@@ -39,9 +35,11 @@ const ViewMovieOverlay = ({
           <Text style={styles.title}>{movieDetails?.title}</Text>
         </View>
         <View style={styles.imageAndButtons}>
-          <Image
-            source={{ uri: movieDetails?.posterURL }}
-            style={{ width: posterWidth, height: posterHeight }}
+          <PosterImage
+            uri={movieDetails?.posterURL}
+            posterWidth={posterWidth}
+            posterHeight={posterHeight}
+            placeholderText={movieDetails?.title}
           />
           <View style={styles.buttonsWrapper}>
             <Button

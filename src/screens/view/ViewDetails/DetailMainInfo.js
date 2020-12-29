@@ -16,34 +16,30 @@ import LongTouchUserRating from "./LongTouchUserRating";
 import { ForceTouchGestureHandler } from "react-native-gesture-handler";
 import UserRating from "../../../components/UserRating/UserRating";
 import { Button } from "../../../components/common/Buttons";
+import PosterImage from "../../../components/common/PosterImage";
 import { colors } from "../../../globalStyles";
 
 const DetailMainInfo = ({ movie, isInSavedMovies, viewTags, setViewTags, transitionRef }) => {
   const [overviewHeight, setOverviewHeight] = React.useState(205);
-  const movieURL = React.useRef(require("./placeholder.png"));
   const actions = useOActions();
   const state = useOState();
   const { updateUserRatingToMovie } = actions.oSaved;
   const { getMovieUserRating } = state.oSaved;
-  // const [movieUserRating, setUserRating] = React.useState(0);
+
   // maybe needs to be in useEffect??? or memoized
   const movieUserRating = getMovieUserRating(movie.id);
-  // useEffect(() => {
-  //   console.log("in useffect", movie.id, movieUserRating, getMovieUserRating(movie.id));
-  //   setUserRating(getMovieUserRating(movie.id));
-  // }, [movie.id, getMovieUserRating(movie.id)]);
+
   const { width, height } = useDimensions().window;
+
+  const posterWidth = width * 0.35;
+  const posterHeight = posterWidth * 1.5;
+  console.log(posterWidth, posterHeight);
 
   // Get data to use from movie object
   const { overview = "", releaseDate = "", imdbURL = "", runtime = "" } = movie;
-  React.useEffect(() => {
-    // If poster doesn't exist use the placeholder image
-    movieURL.current = movie.posterURL
-      ? { uri: movie.posterURL }
-      : require("./placeholder.png");
-  }, [movie.posterURL]);
 
   const toggleOverview = () => setOverviewHeight((curr) => (curr ? undefined : 205));
+
   return (
     <View style={styles.container}>
       {/* {!ForceTouchGestureHandler.forceTouchAvailable && isInSavedMovies && (
@@ -78,7 +74,13 @@ const DetailMainInfo = ({ movie, isInSavedMovies, viewTags, setViewTags, transit
             />
           </View>
         )} */}
-        <View style={[styles.posterWrapper, styles.posterImage, { zIndex: 200 }]}>
+        <View
+          style={[
+            styles.posterWrapper,
+            styles.posterImage(posterWidth, posterHeight),
+            { zIndex: 200 },
+          ]}
+        >
           <View
             style={{
               position: "absolute",
@@ -97,11 +99,17 @@ const DetailMainInfo = ({ movie, isInSavedMovies, viewTags, setViewTags, transit
               />
             )}
           </View>
-          <Image style={styles.posterImage} source={movieURL.current} resizeMode="contain" />
+          {/* <Image style={styles.posterImage} source={movieURL.current} resizeMode="contain" /> */}
+          <PosterImage
+            uri={movie.posterURL}
+            posterWidth={posterWidth}
+            posterHeight={posterHeight}
+            placeholderText={movie?.title}
+          />
         </View>
         {/*---------------------
           ------------------------*/}
-        <View style={{ flex: 1, paddingHorizontal: 5, height: overviewHeight }}>
+        <View style={{ flex: 1, paddingHorizontal: 8, height: overviewHeight }}>
           <ScrollView style={{ overflow: "scroll" }}>
             <Text style={{ fontSize: 18 }}>{overview}</Text>
           </ScrollView>
@@ -205,10 +213,10 @@ const styles = StyleSheet.create({
     marginRight: 5,
     // marginTop: 10,
   },
-  posterImage: {
-    width: 130,
-    height: 200,
-  },
+  posterImage: (width, height) => ({
+    width,
+    height,
+  }),
   textRow: {
     flexDirection: "row",
   },

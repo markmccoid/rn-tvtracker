@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, LayoutAnimation } from "react-native";
 import { Image } from "react-native-elements";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { useDimensions } from "@react-native-community/hooks";
+import PosterImage from "../common/PosterImage";
 
 const MoviePortraitLayout = ({ movie, setMovieEditingId, navigateToDetails, inEditState }) => {
   const { width, height } = useDimensions().window;
@@ -14,10 +15,6 @@ const MoviePortraitLayout = ({ movie, setMovieEditingId, navigateToDetails, inEd
   let posterHeight = posterWidth * 1.5;
 
   const styles = StyleSheet.create({
-    posterImage: {
-      width: posterWidth,
-      height: posterHeight,
-    },
     movieCard: {
       width: "100%",
       marginVertical: 5,
@@ -39,7 +36,7 @@ const MoviePortraitLayout = ({ movie, setMovieEditingId, navigateToDetails, inEd
       textAlign: "center",
     },
   });
-  const movieImageURI = movie.posterURL ? { uri: movie.posterURL } : {};
+
   return (
     <View style={styles.movieCard}>
       <TouchableOpacity
@@ -47,10 +44,11 @@ const MoviePortraitLayout = ({ movie, setMovieEditingId, navigateToDetails, inEd
         onLongPress={() => (inEditState ? setMovieEditingId() : setMovieEditingId(movie.id))}
       >
         <View>
-          <Image
-            style={styles.posterImage}
-            source={movieImageURI}
-            PlaceholderContent={<Text style={styles.imageBackupText}>{movie.title}</Text>}
+          <PosterImage
+            uri={movie.posterURL}
+            posterWidth={posterWidth}
+            posterHeight={posterHeight}
+            placeholderText={movie.title}
           />
         </View>
       </TouchableOpacity>
