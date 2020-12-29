@@ -74,7 +74,6 @@ const FilterByTagsContainer = ({
     },
   });
 
-  const titleFontSize = { s: "sizeSmall", m: "sizeMedium", l: "sizeLarge" };
   const titleIconSize = { s: 15, m: 18, l: 22 };
 
   return (
@@ -90,12 +89,7 @@ const FilterByTagsContainer = ({
         >
           <TouchableOpacity onPress={() => setOverlayVisible((prev) => !prev)}>
             <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 5 }}>
-              <Text
-                style={[
-                  styles.title,
-                  { paddingRight: 10, fontSize: fonts[titleFontSize[titleSize]] },
-                ]}
-              >
+              <Text style={[styles.title, { paddingRight: 10, fontSize: fonts[titleSize] }]}>
                 {title}
               </Text>
               <InfoIcon size={titleIconSize[titleSize]} />
