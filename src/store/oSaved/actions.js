@@ -139,6 +139,15 @@ export const saveMovie = async ({ state, effects, actions }, movieObj) => {
   await effects.oSaved.addMovie(movieDetails.data);
 };
 
+export const apiGetMovieDetails = async ({ state, effects, actions }, movieId) => {
+  // get more movie details from tmdbapi
+  const movieDetails = await effects.oSaved.getMovieDetails(movieId);
+  // Make sure date isn't undefined and store only epoch and formatted
+  let epoch = movieDetails.data?.releaseDate?.epoch || "";
+  let formatted = movieDetails.data?.releaseDate?.formatted || "";
+  movieDetails.data.releaseDate = { epoch, formatted };
+  return movieDetails;
+};
 /**
  *
  * deleteMovie - delete the passed movieId and save to state and firestore
