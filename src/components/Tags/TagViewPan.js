@@ -15,6 +15,7 @@ import { useDimensions } from "@react-native-community/hooks";
 import { useOState, useOActions } from "../../store/overmind";
 import { DragHandleIcon } from "../common/Icons";
 import TagRowEditOverlay from "./TagRowEditOverlay";
+import { colors } from "../../globalStyles";
 
 //---------------------------------
 //-----------------------------------
@@ -213,7 +214,7 @@ const TagViewPan = () => {
           <View
             onLayout={(e) => (rowHeight.current = e.nativeEvent.layout.height)}
             style={{
-              backgroundColor: "#e5e5e5",
+              backgroundColor: colors.tagListbg,
               flexDirection: "row",
               alignItems: "center",
               opacity: draggingIdx === index ? 0 : 1,
@@ -222,7 +223,7 @@ const TagViewPan = () => {
             <Text
               style={{
                 fontSize: 18,
-                color: "black",
+                color: colors.tagListfg,
                 marginLeft: 15,
                 padding: 10,
                 flex: 1,
@@ -303,7 +304,7 @@ const TagViewPan = () => {
             flatListRef.current = ref;
           }}
           useFlatList
-          style={{ backgroundColor: "#ccc" }}
+          style={{ backgroundColor: colors.background }}
           data={data}
           scrollEnabled={!dragging}
           onScroll={(e) => (scrollOffset.current = e.nativeEvent.contentOffset.y)}
