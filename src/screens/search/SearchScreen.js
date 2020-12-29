@@ -1,17 +1,17 @@
 import React from "react";
 import {
   View,
-  Text,
+  StyleSheet,
   FlatList,
   Keyboard,
   TouchableWithoutFeedback,
   ActivityIndicator,
 } from "react-native";
-import { Button } from "../../components/common/Buttons";
 import { useOState, useOActions } from "../../store/overmind";
 import SearchForMovie from "../../components/search/SearchForMovie";
 import SearchResultItem from "../../components/search/SearchResultItem";
 import { useFocusEffect, useIsFocused } from "@react-navigation/native";
+import { colors } from "../../globalStyles";
 
 const SearchScreen = ({ navigation }) => {
   //Lets us know if we are returning from details page
@@ -123,7 +123,7 @@ const SearchScreen = ({ navigation }) => {
   }
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={{ flex: 1 }}>
+      <View style={styles.searchContainer}>
         <SearchForMovie />
 
         {isLoading && !isMoreData ? (
@@ -135,4 +135,10 @@ const SearchScreen = ({ navigation }) => {
   );
 };
 
+const styles = StyleSheet.create({
+  searchContainer: {
+    flex: 1,
+    backgroundColor: colors.background,
+  },
+});
 export default SearchScreen;
