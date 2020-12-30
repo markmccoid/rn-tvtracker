@@ -200,6 +200,7 @@ const styles = StyleSheet.create({
   },
   posterWrapper: {
     borderWidth: 1,
+    backgroundColor: "white",
     borderRadius: 2,
     borderColor: "#ddd",
     borderBottomWidth: 0,

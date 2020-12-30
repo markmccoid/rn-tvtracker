@@ -4,6 +4,7 @@ import { Image } from "react-native-elements";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { useDimensions } from "@react-native-community/hooks";
 import PosterImage from "../common/PosterImage";
+import { colors } from "../../globalStyles";
 
 const MoviePortraitLayout = ({ movie, setMovieEditingId, navigateToDetails, inEditState }) => {
   const { width, height } = useDimensions().window;
@@ -16,6 +17,7 @@ const MoviePortraitLayout = ({ movie, setMovieEditingId, navigateToDetails, inEd
 
   const styles = StyleSheet.create({
     movieCard: {
+      backgroundColor: colors.background,
       width: "100%",
       marginVertical: 5,
       margin: 5,

@@ -1,5 +1,5 @@
 import React from "react";
-import { View, TextInput, StyleSheet } from "react-native";
+import { View, TextInput, StyleSheet, Alert } from "react-native";
 // import { Input, Button, ListItem } from "react-native-elements";
 import { Button } from "../common/Buttons";
 import { useOActions } from "../../store/overmind";
@@ -31,6 +31,9 @@ const TagInput = () => {
           medium
           width="100%"
           onPress={() => {
+            if (tagValue.trim().length === 0) {
+              return;
+            }
             addNewTag(tagValue);
             setTagValue("");
           }}
