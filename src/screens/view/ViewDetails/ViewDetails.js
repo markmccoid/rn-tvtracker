@@ -93,8 +93,8 @@ const ViewDetails = ({ navigation, route }) => {
               onPress={async () => {
                 setIsLoading(true);
                 await deleteMovie(movieData.id);
-                navigation.goBack();
                 setIsLoading(false);
+                navigation.goBack();
               }}
             >
               <DeleteIcon size={25} />

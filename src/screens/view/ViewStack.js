@@ -85,6 +85,7 @@ const ViewStackScreen = () => {
           // }
           // let title = currentScreenName === "Movies" ? `${numMovies} Movies` : "Set Filter";
           return {
+            title: "Movies",
             // Found that the "title" property was not updated often enough, not sure when it was updated
             // headerCenter seems to be more reliable
             headerCenter: () => (
