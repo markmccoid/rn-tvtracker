@@ -1,8 +1,8 @@
 export const colors = {
   primary: "#4285ec",
-  background: "#dee9f7",
+  background: "#ebf4ff", //#dee9f7",
   // background: "#f2f2f2",
-  darkbg: "#2f6eb5", // Background used for buttons, etc
+  darkbg: "#037aff", //"#005fcc", //"#2f6eb5", // Background used for buttons, etc
   darkfg: "white", // Foreground color to be used with darkbg
   excludeRed: "#a61000",
   includeGreen: "#6cb043",
