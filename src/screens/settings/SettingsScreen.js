@@ -3,6 +3,9 @@ import { SafeAreaView, View, Text, ScrollView, StyleSheet } from "react-native";
 import { useOState } from "../../store/overmind";
 import SavedFiltersView from "../../components/settings/SavedFiltersView";
 
+import SavedFiltersViewScroll from "../../components/settings/SavedFiltersViewScroll";
+import SavedFiltersSort from "../../components/settings/sortable/SavedFiltersSort";
+
 import DefaultFilter from "./DefaultFilter";
 import DefaultSort from "./DefaultSort";
 
@@ -14,6 +17,10 @@ const Settings = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <View style={styles.settingsContainer}>
+        <Text style={styles.settingsText}>Saved Filters</Text>
+        <SavedFiltersSort />
+      </View>
       <ScrollView style={styles.scrollContainer}>
         <View style={styles.settingsContainer}>
           <Text style={styles.settingsText}>Saved Filters</Text>

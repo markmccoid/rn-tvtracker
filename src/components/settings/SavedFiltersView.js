@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, ScrollView } from "react-native";
 import { useOState } from "../../store/overmind";
 import { useNavigation } from "@react-navigation/native";
 import { Button } from "../common/Buttons";
