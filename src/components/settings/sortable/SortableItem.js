@@ -2,6 +2,7 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { PanGestureHandler } from "react-native-gesture-handler";
 import Animated, {
+  scrollTo,
   useAnimatedStyle,
   useAnimatedGestureHandler,
   useSharedValue,
@@ -15,16 +16,20 @@ import Animated, {
 const SortableItem = ({
   index,
   positions,
+  scrollRef,
+  scrollY,
+  containerHeight,
+  contentHeight,
   id,
-  width,
+  Handle,
   height,
+  width,
   activeIndex,
   reSort,
   children,
 }) => {
   const isGestureActive = useSharedValue(false);
-  const translateY = useSharedValue(0);
-
+  const translateY = useSharedValue(positions.value[id] * height);
   //https://docs.swmansion.com/react-native-reanimated/docs/next/api/useAnimatedReaction
   // The first argument (prepare) is a function and is used to do two things:
   // 1. Tells when to run the reaction (when the value passed back changes)
@@ -39,7 +44,8 @@ const SortableItem = ({
     (newIndex) => {
       if (!isGestureActive.value) {
         const pos = newIndex * height;
-        translateY.value = withSpring(pos);
+        translateY.value = pos;
+        // translateY.value = withSpring(pos);
       }
     }
   );
@@ -52,12 +58,17 @@ const SortableItem = ({
       activeIndex.value = index;
       // based on the index of the item, we caclulate the starting "top" value
       // so our gesture starts moving it at the correct location
-      ctx.offsetY = positions.value[id] * height; //currentOffset.value;
+      ctx.offsetY = translateY.value; // positions.value[id] * height; //currentOffset.value;
     },
 
     onActive: (event, ctx) => {
       // Move the item to its new position (used in the Animated Style)
-      translateY.value = event.translationY + ctx.offsetY;
+      if (event.translationY + ctx.offsetY > contentHeight - height) {
+        translateY.value = contentHeight - height;
+      } else {
+        translateY.value =
+          event.translationY + ctx.offsetY < 0 ? 0 : event.translationY + ctx.offsetY;
+      }
       // offsetY is the "correct" y (top) value based on the dragging
       // However this is calculated in the useAnimatedReaction() effect.
       //const offsetY = Math.round(translateY.value / height) * height;
@@ -81,15 +92,46 @@ const SortableItem = ({
           positions.value = newPositions;
         }
       }
+      const lowerBound = scrollY.value; // scrollY is technically the current top of the scrollview hence it is always the lower bound
+      const upperBound = lowerBound + containerHeight - height;
+      const maxScroll = contentHeight - containerHeight;
+      const scrollLeft = maxScroll - scrollY.value;
+      if (translateY.value < lowerBound) {
+        const diff = Math.min(lowerBound - translateY.value, lowerBound);
+        scrollY.value -= diff;
+        scrollTo(scrollRef, 0, scrollY.value, false);
+        ctx.offsetY -= diff;
+        translateY.value = ctx.offsetY + event.translationX;
+      }
+      // console.log("SCROLLY", scrollY.value, contentHeight, containerHeight, height);
+      // console.log("BOUNDS", upperBound, translateY.value, maxScroll, scrollLeft);
+      if (translateY.value > upperBound) {
+        const diff = Math.min(translateY.value - upperBound, scrollLeft);
+        scrollY.value += diff;
+        // console.log("MAXSCROLL: SCROLL LEFT", maxScroll, scrollLeft);
+        // console.log("CONTENT: CONTAINER HEIGHT", contentHeight, containerHeight);
+        // console.log(
+        //   "INSIDE",
+        //   scrollY.value,
+        //   translateY.value,
+        //   upperBound,
+        //   maxScroll,
+        //   scrollLeft,
+        //   diff
+        // );
+        scrollTo(scrollRef, 0, scrollY.value, false);
+        ctx.offsetY += diff;
+        translateY.value = ctx.offsetY + event.translationY;
+      }
     },
 
     onEnd: (event, ctx) => {
       isGestureActive.value = false;
+      runOnJS(reSort)(positions.value);
       // Make sure to position the moving ITEM to its new home by calculating its
       // index (Math.round(yValue/height)) and then multiplying the index by the height
       // to get the y value for the top position of our ITEM.
       translateY.value = withSpring(Math.round(translateY.value / height) * height);
-      reSort(positions.value);
     },
   });
 
@@ -107,19 +149,32 @@ const SortableItem = ({
     position: "absolute",
     top: 0,
     left: 0,
+    flexDirection: "row",
+    flex: 1,
     width,
     height,
+
     zIndex: activeIndex.value === index ? 100 : 1,
     transform: [
       { translateY: translateY.value },
-      { scale: withSpring(isGestureActive.value ? 1.05 : 1) },
+      { scale: withSpring(isGestureActive.value ? 0.95 : 1) },
     ],
   }));
   return (
-    <PanGestureHandler {...{ onGestureEvent }}>
-      <Animated.View style={style}>{children}</Animated.View>
-    </PanGestureHandler>
+    <Animated.View style={style}>
+      <PanGestureHandler {...{ onGestureEvent }}>
+        <Animated.View>
+          <Handle />
+        </Animated.View>
+      </PanGestureHandler>
+      {children}
+    </Animated.View>
   );
+  // return (
+  //   <PanGestureHandler {...{ onGestureEvent }}>
+  //     <Animated.View style={style}>{children}</Animated.View>
+  //   </PanGestureHandler>
+  // );
 };
 
 export default SortableItem;

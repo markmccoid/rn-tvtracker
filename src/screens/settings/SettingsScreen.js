@@ -17,15 +17,15 @@ const Settings = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.settingsContainer}>
-        <Text style={styles.settingsText}>Saved Filters</Text>
-        <SavedFiltersSort />
-      </View>
       <ScrollView style={styles.scrollContainer}>
         <View style={styles.settingsContainer}>
           <Text style={styles.settingsText}>Saved Filters</Text>
-          <SavedFiltersView />
+          <SavedFiltersSort />
         </View>
+        {/* <View style={styles.settingsContainer}>
+          <Text style={styles.settingsText}>Saved Filters</Text>
+          <SavedFiltersView />
+        </View> */}
         <View style={[styles.settingsContainer, { zIndex: 100 }]}>
           <Text style={styles.settingsText}>Set Default Filter</Text>
           <Text>Choose a saved filter to be run when app starts.</Text>

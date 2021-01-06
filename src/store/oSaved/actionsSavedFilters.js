@@ -1,4 +1,14 @@
 import uuidv4 from "uuid/v4";
+
+export const updateSavedFilterOrder = ({ state, actions, effects }, savedFilterArray) => {
+  state.oSaved.savedFilters = [...savedFilterArray];
+
+  // // Save data to local
+  // effects.oSaved.localSaveSavedFilters(state.oAdmin.uid, state.oSaved.savedFilters);
+  // // Save to Firebase
+  // effects.oSaved.saveSavedFilters(state.oSaved.savedFilters);
+};
+
 /**
  * addSavedFilter - Adds a new saved filter to the store and then stores it in Firebase.
  * @param {*} param0
