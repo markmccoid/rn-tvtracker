@@ -6,12 +6,21 @@ import Animated, {
   useSharedValue,
   scrollTo,
 } from "react-native-reanimated";
-import SortableItem from "./SortableItem";
+import DragItem from "./DragItem";
 
 import { DragHandleIcon } from "../../common/Icons";
-const SortableList = ({ children, item: { width, height }, reSort }) => {
+
+const DragToSort = ({
+  data,
+  renderItem,
+  index,
+  itemsToShow = 2, // number of list items to show
+  keyExtractor,
+  handle,
+  item: { width, height },
+  reSort,
+}) => {
   // const offsets = children.map((_, index) => ({
-  //   // eslint-disable-next-line react-hooks/rules-of-hooks
   //   y: useSharedValue(index * height),
   //   newIndex: index,
   // }));
@@ -29,7 +38,8 @@ const SortableList = ({ children, item: { width, height }, reSort }) => {
   // '4fdasdf4': 1
   //    ...
   const positions = useSharedValue(
-    Object.assign({}, ...children.map((child, index) => ({ [child.props.id]: index })))
+    // Object.assign({}, ...data.map((item, index) => ({ [item.id]: index })))
+    Object.assign({}, ...data.map((item) => ({ [item.id]: item.index })))
   );
   const activeIndex = useSharedValue(-1);
   const scrollRef = useAnimatedRef();
@@ -39,6 +49,11 @@ const SortableList = ({ children, item: { width, height }, reSort }) => {
       scrollY.value = contentOffset.y;
     },
   });
+  // Set up Variables
+  const numberOfItems = data.length;
+  const shownItems = itemsToShow > data.length ? data.length : itemsToShow;
+
+  console.log("DATA LE", positions.value);
 
   const [scrollWidth, setScrollWidth] = React.useState(0);
   const Handle = () => (
@@ -56,7 +71,7 @@ const SortableList = ({ children, item: { width, height }, reSort }) => {
 
   return (
     <View
-      style={{ height: height * 4 }}
+      style={{ height: height * shownItems }}
       onLayout={(event) => {
         const { x, y, width, height } = event.nativeEvent.layout;
         setScrollWidth(width);
@@ -64,32 +79,32 @@ const SortableList = ({ children, item: { width, height }, reSort }) => {
     >
       <Animated.ScrollView
         contentContainerStyle={{
-          height: height * children.length,
+          height: height * numberOfItems,
         }}
         ref={scrollRef}
         scrollEventThrottle={16}
         bounces={false}
         onScroll={onScroll}
       >
-        {children.map((child, index) => {
+        {data.map((item) => {
           return (
-            <SortableItem
-              id={child.props.id}
-              key={index}
+            <DragItem
+              id={item.id}
+              key={item.id}
               scrollRef={scrollRef}
               scrollY={scrollY}
-              contentHeight={height * children.length}
-              containerHeight={height * (children.length - 2)}
+              contentHeight={height * numberOfItems}
+              containerHeight={height * shownItems}
               positions={positions}
-              index={index}
+              index={item.index}
               width={scrollWidth}
               height={height}
               activeIndex={activeIndex}
               reSort={reSort}
               Handle={Handle}
             >
-              {child}
-            </SortableItem>
+              {renderItem({ item })}
+            </DragItem>
           );
         })}
       </Animated.ScrollView>
@@ -97,4 +112,4 @@ const SortableList = ({ children, item: { width, height }, reSort }) => {
   );
 };
 
-export default SortableList;
+export default DragToSort;

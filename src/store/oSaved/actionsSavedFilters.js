@@ -1,12 +1,17 @@
 import uuidv4 from "uuid/v4";
+import _ from "lodash";
 
 export const updateSavedFilterOrder = ({ state, actions, effects }, savedFilterArray) => {
-  state.oSaved.savedFilters = [...savedFilterArray];
+  // Always saved filter array SORTED.
+  state.oSaved.savedFilters = _.sortBy(savedFilterArray, ["index"]).map((filter, index) => ({
+    ...filter,
+    index,
+  }));
 
-  // // Save data to local
-  // effects.oSaved.localSaveSavedFilters(state.oAdmin.uid, state.oSaved.savedFilters);
-  // // Save to Firebase
-  // effects.oSaved.saveSavedFilters(state.oSaved.savedFilters);
+  // Save data to local
+  effects.oSaved.localSaveSavedFilters(state.oAdmin.uid, state.oSaved.savedFilters);
+  // Save to Firebase
+  effects.oSaved.saveSavedFilters(state.oSaved.savedFilters);
 };
 
 /**
@@ -18,7 +23,11 @@ export const addSavedFilter = ({ state, actions, effects }, savedFilterObj) => {
   // If id is undefined, then add id using uuid
   // If id is NOT undefined, the assume updating existing filter.
   if (!savedFilterObj.id) {
-    savedFilterObj = { ...savedFilterObj, id: uuidv4() };
+    savedFilterObj = {
+      ...savedFilterObj,
+      id: uuidv4(),
+      index: state.oSaved.savedFilters.length || 0,
+    };
     // push onto current saved filters
     state.oSaved.savedFilters.push(savedFilterObj);
   } else {
@@ -45,8 +54,15 @@ export const addSavedFilter = ({ state, actions, effects }, savedFilterObj) => {
 export const deleteSavedFilter = ({ state, actions, effects }, filterIdToDelete) => {
   // TODO Make sure this filter is not used in the side bar or as the default
   // TODO Delete Filter from Store
-  const savedFilters = state.oSaved.savedFilters;
-  state.oSaved.savedFilters = savedFilters.filter((filter) => filter.id !== filterIdToDelete);
+  // const savedFilters = state.oSaved.savedFilters;
+
+  //# Sort savedFilters by index property
+  const savedFilters = _.sortBy(state.oSaved.savedFilters, ["index"]);
+  //# Delete the filter Id to Delete
+  //# Reindex since array will now be in index order -- could optimize by only reindex after index of id deleted
+  state.oSaved.savedFilters = savedFilters
+    .filter((filter) => filter.id !== filterIdToDelete)
+    .map((filter, index) => ({ ...filter, index }));
 
   // Save data to local
   effects.oSaved.localSaveSavedFilters(state.oAdmin.uid, state.oSaved.savedFilters);

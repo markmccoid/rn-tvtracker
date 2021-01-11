@@ -55,7 +55,7 @@ const CreateSavedFilterScreen = ({ navigation, route }) => {
   // initialState should be getTags sent to function to put tagState and name on all
   const [tagsState, dispatch] = React.useReducer(tagReducer, getInitialTagsSavedFilter);
 
-  // const [selectedTags, setSelectedTags] = React.useState([]);
+  const [filterIndex, setFilterIndex] = React.useState(-1);
   const [filterName, setFilterName] = React.useState(undefined);
 
   const [tagOperator, setTagOperator] = React.useState("AND");
@@ -111,6 +111,7 @@ const CreateSavedFilterScreen = ({ navigation, route }) => {
       const filterGenres = filterObj?.genres || [];
 
       setFilterName(filterObj.name);
+      setFilterIndex(filterObj.index);
       setTagOperator(filterObj?.tagOperator);
       setExcludeTagOperator(filterObj?.excludeTagOperator || "OR");
       setGenreOperator(filterObj?.genreOperator || "OR");
@@ -189,6 +190,7 @@ const CreateSavedFilterScreen = ({ navigation, route }) => {
       genres: selectedGenres,
       genreOperator,
       showInDrawer,
+      index: filterIndex,
     };
     addSavedFilter(filterObj);
     navigation.goBack();

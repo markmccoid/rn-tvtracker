@@ -5,6 +5,7 @@ import SavedFiltersView from "../../components/settings/SavedFiltersView";
 
 import SavedFiltersViewScroll from "../../components/settings/SavedFiltersViewScroll";
 import SavedFiltersSort from "../../components/settings/sortable/SavedFiltersSort";
+import SavedFiltersDragMain from "../../components/settings/dragToSort/SavedFiltersDragMain";
 
 import DefaultFilter from "./DefaultFilter";
 import DefaultSort from "./DefaultSort";
@@ -20,7 +21,8 @@ const Settings = ({ navigation }) => {
       <ScrollView style={styles.scrollContainer}>
         <View style={styles.settingsContainer}>
           <Text style={styles.settingsText}>Saved Filters</Text>
-          <SavedFiltersSort />
+          {/* <SavedFiltersSort /> */}
+          <SavedFiltersDragMain />
         </View>
         {/* <View style={styles.settingsContainer}>
           <Text style={styles.settingsText}>Saved Filters</Text>

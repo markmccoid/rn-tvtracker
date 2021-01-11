@@ -42,6 +42,11 @@ export const hyrdateStore = async (
   state.oSaved.settings = { ...state.oSaved.settings, ...userDocData?.settings };
   // Copy over default sort. This is future proofing, in case we want to let user change current sort on the fly.
   state.oSaved.currentSort = [...state.oSaved.settings?.defaultSort];
+  //#TEMP adding index to savedFilters if they don't exist
+  state.oSaved.savedFilters = state.oSaved.savedFilters.map((filter, index) => ({
+    index,
+    ...filter,
+  }));
   // If the defaultFilter id doesn't exist in the savedFilters array, then delete the default filter.
   if (!state.oSaved.savedFilters.some((el) => el.id === state.oSaved.settings.defaultFilter)) {
     state.oSaved.settings.defaultFilter = null;

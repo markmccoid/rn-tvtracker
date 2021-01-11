@@ -47,8 +47,7 @@ const SortableItem = ({
     (newIndex) => {
       if (!isGestureActive.value) {
         const pos = newIndex * height;
-        // translateY.value = withTiming(pos, { duration: 300 });
-        translateY.value = pos;
+        translateY.value = withTiming(pos, { duration: 300 });
         // opacity.value = withTiming(1, { duration: 500 });
       }
     }
@@ -133,13 +132,13 @@ const SortableItem = ({
       //# Below line just places moved item in correct position.  Assumes resort happens before
       // translateY.value = withSpring(ctx.newIndex * height, {}, () => {});
       translateY.value = withTiming(ctx.newIndex * height, { duration: 100 }, () => {
-        // opacity.value = withTiming(0, { duration: 5000 }, () => {
-        //   opacity.value = withTiming(1, { duration: 1000 });
-        // runOnJS(reSort)(positions.value);
-      });
-      console.log("OnEND index", positions.value[id], index);
-      runOnJS(reSort)(positions.value);
+        opacity.value = withTiming(0, { duration: 5000 }, () => {
+          opacity.value = withTiming(1, { duration: 1000 });
+          // runOnJS(reSort)(positions.value);
+        });
 
+        runOnJS(reSort)(positions.value);
+      });
       isGestureActive.value = false;
       activeIndex.value = -1;
 

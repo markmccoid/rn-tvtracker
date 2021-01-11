@@ -38,6 +38,7 @@ const SavedFiltersSort = () => {
     Object.values(orderedObject).forEach((id) => {
       newSavedFilters.push(savedFilters.find((filter) => filter.id === id));
     });
+    console.log("resorting", newSavedFilters);
     updateSavedFilterOrder(newSavedFilters);
   };
   return (

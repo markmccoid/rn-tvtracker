@@ -7,43 +7,40 @@ import { Button } from "../../common/Buttons";
 
 import SavedFiltersItem from "../SavedFiltersItem";
 
-import SortableList from "../sortable/SortableList";
+import DragToSort from "./DragToSort";
 
 const ITEM_HEIGHT = 40;
 const { width, height } = Dimensions.get("window");
 
-const SavedFiltersSort = () => {
+const SavedFiltersDragMain = () => {
   const state = useOState();
   const actions = useOActions();
   const navigation = useNavigation();
   const { savedFilters } = state.oSaved;
   const { updateSavedFilterOrder } = actions.oSaved;
-  // React.useEffect(() => {
-  //   console.log("storedFilter update");
-  //   setStoredSavedFilters(savedFilters);
-  // }, []);
 
-  const reSort = async (positions) => {
-    // "worklet";
-    // positions is object { [id_of_filter]: index position}
-    // Flip positions object so it is { 0: 'id', 1: 'id', ... }
-    const orderedObject = Object.keys(positions).reduce((final, key) => {
-      final = { ...final, [positions[key]]: key };
-      return final;
-    }, {});
-
-    let newSavedFilters = [];
-    // loop through Object.values (which will be the ids for filters)
-    // on flipped object getting id to pull from the saved filters
-    Object.values(orderedObject).forEach((id) => {
-      newSavedFilters.push(savedFilters.find((filter) => filter.id === id));
+  const reSort = (positions, baseArray) => {
+    // positions is object { [id_of_filter]: index position }, so this: { 'id': 0, 'id': 1, ... }
+    // Assumption is that positions object will ALWAYS have an entery for EVERY savedFilter id
+    // Loop through the keys of the positions object (id of savedFilter), find the index of that filter
+    // in the passed baseArray (savedFilterArray), then replace the index property in said filter with the
+    // one from the positions object
+    const updateArray = Object.keys(positions).map((id) => {
+      filterToUpdate = baseArray.findIndex((filter) => filter.id === id);
+      return { ...baseArray[filterToUpdate], index: positions[id] };
     });
-    updateSavedFilterOrder(newSavedFilters);
+    // Update saved filters
+    updateSavedFilterOrder(updateArray);
   };
   return (
     <View style={styles.container}>
-      <SortableList item={{ height: ITEM_HEIGHT }} reSort={reSort}>
-        {savedFilters.map((item, index) => {
+      <DragToSort
+        item={{ height: ITEM_HEIGHT }}
+        reSort={(positions) => reSort(positions, savedFilters)}
+        data={savedFilters}
+        itemsToShow={5}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => {
           return (
             <View
               style={{
@@ -51,14 +48,13 @@ const SavedFiltersSort = () => {
                 borderColor: "#ccc",
                 borderWidth: 1,
               }}
-              key={index}
               id={item.id}
             >
               <SavedFiltersItem savedFilter={item} />
             </View>
           );
-        })}
-      </SortableList>
+        }}
+      />
       <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
         <Button
           title="Create"
@@ -70,7 +66,7 @@ const SavedFiltersSort = () => {
   );
 };
 
-export default SavedFiltersSort;
+export default SavedFiltersDragMain;
 
 const styles = StyleSheet.create({
   container: {

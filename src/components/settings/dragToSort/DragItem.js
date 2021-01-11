@@ -14,7 +14,7 @@ import Animated, {
   runOnJS,
 } from "react-native-reanimated";
 
-const SortableItem = ({
+const DragItem = ({
   index,
   positions,
   scrollRef,
@@ -30,7 +30,8 @@ const SortableItem = ({
   children,
 }) => {
   const isGestureActive = useSharedValue(false);
-  const translateY = useSharedValue(positions.value[id] * height);
+  // const translateY = useSharedValue(positions.value[id] * height);
+  const translateY = useSharedValue(index * height);
   const boundY = contentHeight - height;
   const opacity = useSharedValue(1);
   //https://docs.swmansion.com/react-native-reanimated/docs/next/api/useAnimatedReaction
@@ -47,12 +48,24 @@ const SortableItem = ({
     (newIndex) => {
       if (!isGestureActive.value) {
         const pos = newIndex * height;
-        // translateY.value = withTiming(pos, { duration: 300 });
-        translateY.value = pos;
+        // translateY.value = withTiming(pos, { duration: 500 });
+        translateY.value = withSpring(pos);
+        // translateY.value = pos;
         // opacity.value = withTiming(1, { duration: 500 });
       }
     }
   );
+  // useAnimatedReaction(
+  //   () => positions.value[id],
+  //   (newIndex) => {
+  //     if (!isGestureActive.value) {
+  //       const pos = newIndex * height;
+  //       translateY.value = withTiming(pos, { duration: 300 });
+  //       // translateY.value = pos;
+  //       // opacity.value = withTiming(1, { duration: 500 });
+  //     }
+  //   }
+  // );
 
   const onGestureEvent = useAnimatedGestureHandler({
     onStart: (event, ctx) => {
@@ -193,4 +206,4 @@ const SortableItem = ({
   // );
 };
 
-export default SortableItem;
+export default DragItem;
