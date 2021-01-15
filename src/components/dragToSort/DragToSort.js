@@ -8,16 +8,15 @@ import Animated, {
 } from "react-native-reanimated";
 import DragItem from "./DragItem";
 
-import { DragHandleIcon } from "../../common/Icons";
+import { DragHandleIcon } from "../common/Icons";
+import { colors } from "../../globalStyles";
 
 const DragToSort = ({
   data,
   renderItem,
-  index,
   itemsToShow = 2, // number of list items to show
-  keyExtractor,
-  handle,
-  item: { width, height },
+  Handle,
+  itemDetail: { width, height },
   reSort,
 }) => {
   // const offsets = children.map((_, index) => ({
@@ -49,33 +48,56 @@ const DragToSort = ({
       scrollY.value = contentOffset.y;
     },
   });
+
   // Set up Variables
   const numberOfItems = data.length;
+  // make sure if itemsToShow is more than the number of items that we only show as many as we have
   const shownItems = itemsToShow > data.length ? data.length : itemsToShow;
 
-  console.log("DATA LE", positions.value);
+  // Needed for effect that runs when number of data items changes
+  // first time we don't want to scroll to end.
+  const firstRender = React.useRef(true);
+  React.useEffect(() => {
+    if (firstRender.current) {
+      firstRender.current = false;
+      return;
+    }
+    // When a saved filter is created or deleted, scroll to the end of the list
+    const scrollValue = (numberOfItems - shownItems) * height;
+    scrollRef.current.scrollTo({ x: 0, y: scrollValue, animated: true });
+  }, [data.length]);
 
-  const [scrollWidth, setScrollWidth] = React.useState(0);
-  const Handle = () => (
+  const DefaultHandle = () => (
     <View
       style={{
         borderWidth: 1,
-        borderColor: "#ccc",
-        height,
+        borderColor: colors.listItemBorder,
+        height: "100%",
         justifyContent: "center",
       }}
     >
       <DragHandleIcon size={30} />
     </View>
   );
+  // Determine if Handle was passed.  If not use default
+  if (typeof Handle !== "function") {
+    Handle = DefaultHandle;
+  }
 
+  // Set height of scroll container
+  const scrollContainerHeight = height * shownItems + 2;
   return (
     <View
-      style={{ height: height * shownItems }}
-      onLayout={(event) => {
-        const { x, y, width, height } = event.nativeEvent.layout;
-        setScrollWidth(width);
+      style={{
+        height: scrollContainerHeight,
+        backgroundColor: colors.listBackground,
+        borderColor: colors.listBorder,
+        borderWidth: 1,
       }}
+      // onLayout={(event) => {
+      //   const { x, y, width, height } = event.nativeEvent.layout;
+      //   setScrollWidth(width);
+      // }}
     >
       <Animated.ScrollView
         contentContainerStyle={{
@@ -83,7 +105,7 @@ const DragToSort = ({
         }}
         ref={scrollRef}
         scrollEventThrottle={16}
-        bounces={false}
+        bounces={true}
         onScroll={onScroll}
       >
         {data.map((item) => {
@@ -97,7 +119,6 @@ const DragToSort = ({
               containerHeight={height * shownItems}
               positions={positions}
               index={item.index}
-              width={scrollWidth}
               height={height}
               activeIndex={activeIndex}
               reSort={reSort}

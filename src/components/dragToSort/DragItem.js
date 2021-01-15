@@ -1,20 +1,20 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
 import { PanGestureHandler } from "react-native-gesture-handler";
-import { clamp, withBouncing } from "react-native-redash";
+import { clamp } from "react-native-redash";
+
 import Animated, {
   scrollTo,
   useAnimatedStyle,
   useAnimatedGestureHandler,
   useSharedValue,
   withSpring,
-  useDerivedValue,
   useAnimatedReaction,
   withTiming,
   runOnJS,
 } from "react-native-reanimated";
+import { colors } from "../../globalStyles";
 
-const SortableItem = ({
+const DragItem = ({
   index,
   positions,
   scrollRef,
@@ -30,9 +30,10 @@ const SortableItem = ({
   children,
 }) => {
   const isGestureActive = useSharedValue(false);
-  const translateY = useSharedValue(positions.value[id] * height);
+  // const translateY = useSharedValue(positions.value[id] * height);
+  const translateY = useSharedValue(index * height);
   const boundY = contentHeight - height;
-  const opacity = useSharedValue(1);
+  const borderAnim = useSharedValue(1);
   //https://docs.swmansion.com/react-native-reanimated/docs/next/api/useAnimatedReaction
   // The first argument (prepare) is a function and is used to do two things:
   // 1. Tells when to run the reaction (when the value passed back changes)
@@ -47,9 +48,7 @@ const SortableItem = ({
     (newIndex) => {
       if (!isGestureActive.value) {
         const pos = newIndex * height;
-        // translateY.value = withTiming(pos, { duration: 300 });
-        translateY.value = pos;
-        // opacity.value = withTiming(1, { duration: 500 });
+        translateY.value = withSpring(pos);
       }
     }
   );
@@ -104,22 +103,11 @@ const SortableItem = ({
         ctx.offsetY -= diff;
         translateY.value = ctx.offsetY + event.translationX;
       }
-      // console.log("SCROLLY", scrollY.value, contentHeight, containerHeight, height);
-      // console.log("BOUNDS", upperBound, translateY.value, maxScroll, scrollLeft);
+
       if (translateY.value > upperBound) {
         const diff = Math.min(translateY.value - upperBound, scrollLeft);
         scrollY.value += diff;
-        // console.log("MAXSCROLL: SCROLL LEFT", maxScroll, scrollLeft);
-        // console.log("CONTENT: CONTAINER HEIGHT", contentHeight, containerHeight);
-        // console.log(
-        //   "INSIDE",
-        //   scrollY.value,
-        //   translateY.value,
-        //   upperBound,
-        //   maxScroll,
-        //   scrollLeft,
-        //   diff
-        // );
+
         scrollTo(scrollRef, 0, scrollY.value, false);
         ctx.offsetY += diff;
         translateY.value = ctx.offsetY + event.translationY;
@@ -130,24 +118,12 @@ const SortableItem = ({
       // Make sure to position the moving ITEM to its new home by calculating its
       // index (Math.round(yValue/height)) and then multiplying the index by the height
       // to get the y value for the top position of our ITEM.
-      //# Below line just places moved item in correct position.  Assumes resort happens before
-      // translateY.value = withSpring(ctx.newIndex * height, {}, () => {});
-      translateY.value = withTiming(ctx.newIndex * height, { duration: 100 }, () => {
-        // opacity.value = withTiming(0, { duration: 5000 }, () => {
-        //   opacity.value = withTiming(1, { duration: 1000 });
-        // runOnJS(reSort)(positions.value);
-      });
-      console.log("OnEND index", positions.value[id], index);
+
+      translateY.value = withTiming(ctx.newIndex * height, { duration: 300 });
       runOnJS(reSort)(positions.value);
 
       isGestureActive.value = false;
       activeIndex.value = -1;
-
-      // runOnJS(reSort)(positions.value);
-      //# Below places item being moved in correct final position and then runs resort
-      // translateY.value = withSpring(Math.round(translateY.value / height) * height, {}, () =>
-      //   runOnJS(reSort)(positions.value)
-      // );
     },
   });
 
@@ -161,15 +137,14 @@ const SortableItem = ({
   //   }
   // });
   const style = useAnimatedStyle(() => ({
-    backgroundColor: "white",
+    backgroundColor: colors.listItemBackground,
     position: "absolute",
     top: 0,
     left: 0,
     flexDirection: "row",
-    flex: 1,
-    width,
+    flexGrow: 1,
+    width: "100%",
     height,
-    opacity: opacity.value,
     zIndex: activeIndex.value === index ? 100 : 1,
     transform: [
       { translateY: translateY.value },
@@ -193,4 +168,4 @@ const SortableItem = ({
   // );
 };
 
-export default SortableItem;
+export default DragItem;
