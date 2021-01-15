@@ -24,9 +24,10 @@ export const hyrdateStore = async (
   state.oAdmin.appState.hydrating = true;
 
   let userDocData = await effects.oSaved.initializeStore(uid, forceRefresh);
+
   //! Update all savedMovies items with a userRating if it doesn't already exist
   //! Should only be needed until final release
-  state.oSaved.savedMovies = userRatingsCheck(userDocData.savedMovies);
+  state.oSaved.savedMovies = newFieldsCheck(userDocData.savedMovies);
 
   state.oSaved.tagData = userDocData.tagData;
   state.oSaved.savedFilters = userDocData.savedFilters;
@@ -39,14 +40,36 @@ export const hyrdateStore = async (
   // SETTINGS
   // loading all settings from state first(holds any defaults), then settings in firestore
   // this will allow the settings that have been set to override the defaults
-  state.oSaved.settings = { ...state.oSaved.settings, ...userDocData?.settings };
-  // Copy over default sort. This is future proofing, in case we want to let user change current sort on the fly.
-  state.oSaved.currentSort = [...state.oSaved.settings?.defaultSort];
-  //#TEMP adding index to savedFilters if they don't exist
+  // NOTE: must do each nested setting individually since some are nested objects or arrays
+  const baseSortCount = state.oSaved.settings.defaultSort.length;
+  const storedSortCount = userDocData?.settings?.defaultSort?.length || 0;
+  // If the number of sort Items stored is different from the default, just keep the default
+  // Yes, this will wipe out any stored sort.
+  if (baseSortCount === storedSortCount) {
+    state.oSaved.settings.defaultSort = userDocData?.settings?.defaultSort;
+  }
+
+  state.oSaved.settings.defaultFilter = userDocData?.settings?.defaultFilter;
+
+  //! TEMP adding index to savedFilters if they don't exist
+  //! added in version 1.0.9, but should remove once Lori gets her DB updated.
+  //! Adding index fields to data we want to be able to drag/drop sort.
   state.oSaved.savedFilters = state.oSaved.savedFilters.map((filter, index) => ({
     index,
     ...filter,
   }));
+  state.oSaved.settings.defaultSort = state.oSaved.settings.defaultSort.map(
+    (sortItem, index) => ({
+      index,
+      id: sortItem.sortField,
+      ...sortItem,
+    })
+  );
+  //!-- END Updates for new fields --
+
+  // Copy over default sort. This is future proofing, in case we want to let user change current sort on the fly.
+  state.oSaved.currentSort = [...state.oSaved.settings?.defaultSort];
+
   // If the defaultFilter id doesn't exist in the savedFilters array, then delete the default filter.
   if (!state.oSaved.savedFilters.some((el) => el.id === state.oSaved.settings.defaultFilter)) {
     state.oSaved.settings.defaultFilter = null;
@@ -122,8 +145,11 @@ export const saveMovie = async ({ state, effects, actions }, movieObj) => {
   let epoch = movieDetails.data?.releaseDate?.epoch || "";
   let formatted = movieDetails.data?.releaseDate?.formatted || "";
   movieDetails.data.releaseDate = { epoch, formatted };
+
+  //* Fields NOT from API
   //#  Set a default userRating of 0
   movieDetails.data.userRating = 0;
+  movieDetails.data.savedDate = new Date();
 
   // Store movie in overmind state
   state.oSaved.savedMovies = [movieDetails.data, ...state.oSaved.savedMovies];
@@ -229,6 +255,7 @@ export const updateMoviePosterImage = async ({ state, effects }, payload) => {
   const { movieId, posterURL } = payload;
 
   // check if we are updating a different movie.  If so flush
+  // This has to do with the debounce we do on updating the posterImage
   state.oSaved.currentMovieId = await checkCurrentMovieId(
     state.oSaved.currentMovieId,
     movieId,
@@ -568,6 +595,22 @@ export const updateDefaultSortItem = ({ state, effects }, payload) => {
   effects.oSaved.saveSettings(state.oSaved.settings);
 };
 
+//* update when sort item order is changed
+export const updateDefaultSortOrder = ({ state, effects }, newlyIndexedArray) => {
+  // Always saved filter array SORTED.
+  state.oSaved.settings.defaultSort = _.sortBy(newlyIndexedArray, ["index"]).map(
+    (sortItem, index) => ({
+      ...sortItem,
+      index,
+    })
+  );
+  state.oSaved.currentSort = [...state.oSaved.settings.defaultSort];
+
+  // Save data to local
+  effects.oSaved.localSaveSettings(state.oAdmin.uid, state.oSaved.settings);
+  // Save to firestore
+  effects.oSaved.saveSettings(state.oSaved.settings);
+};
 //*==============================================
 //*- ACTION HELPERS
 //*==============================================
@@ -599,9 +642,9 @@ async function checkCurrentMovieId(currentMovieId, newMovieId, debounceToFlush) 
   return newMovieId;
 }
 
-function userRatingsCheck(savedMovies) {
+function newFieldsCheck(savedMovies) {
   return savedMovies.map((movie) => {
-    return { userRating: 0, ...movie };
+    return { userRating: 0, savedDate: new Date(), ...movie };
   });
 }
 

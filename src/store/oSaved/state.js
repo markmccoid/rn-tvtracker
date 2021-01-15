@@ -44,7 +44,8 @@ export const state = {
   //------- Getters -----------//
   getFilteredMovies: derived((state) => () => {
     let movieList = state.savedMovies;
-    //
+    // Define the sortFields and sortDirections that we will pass to the
+    // lodash sortBy function before returning the data array
     const { sortFields, sortDirections } = state.currentSort
       .filter((sort) => sort.active)
       .reduce(
