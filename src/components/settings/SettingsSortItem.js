@@ -1,8 +1,7 @@
 import React from "react";
-import { StyleSheet, Switch, Text, View, TouchableOpacity } from "react-native";
+import { StyleSheet, Switch, Text, View } from "react-native";
 import { ButtonGroup } from "react-native-elements";
 import {
-  DragHandleIcon,
   AscAlphaIcon,
   AscNumIcon,
   AscOtherIcon,
@@ -24,11 +23,8 @@ const SettingsSortItem = ({
 }) => {
   const directionMap = { asc: 0, desc: 1 };
   const [buttonIndex, setButtonIndex] = React.useState(directionMap[direction]);
-  let disabledStyle = {};
-  if (!active) {
-    disabledStyle = { backgroundColor: "#ccc" };
-  }
 
+  const disabledStyle = !active ? { backgroundColor: "#ccc" } : {};
   const buttons = {
     alpha: [
       { element: () => <AscAlphaIcon size={20} color={active ? null : "#777"} /> },
@@ -92,11 +88,10 @@ const SettingsSortItem = ({
           </TouchableOpacity> */}
         </View>
       </View>
-      {active && (
-        <View style={styles.sortItemDesc}>
-          <Text>{sortDescription[type][direction]}</Text>
-        </View>
-      )}
+
+      <View style={[styles.sortItemDesc, disabledStyle]}>
+        <Text>{sortDescription[type][direction]}</Text>
+      </View>
     </View>
   );
 };
@@ -105,14 +100,15 @@ export default SettingsSortItem;
 
 const styles = StyleSheet.create({
   container: {
-    borderColor: "#888",
-    borderWidth: 1,
+    // borderColor: "#888",
+    // borderWidth: 1,
+    flex: 1,
   },
   rowContainer: {
     flex: 1,
     flexDirection: "row",
-    borderColor: "#ccc",
-    borderWidth: 1,
+    borderBottomColor: "#ccc",
+    borderBottomWidth: 1,
     alignItems: "center",
     justifyContent: "space-between",
   },

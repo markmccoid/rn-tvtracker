@@ -1,14 +1,10 @@
 import React from "react";
-import { SafeAreaView, View, Text, ScrollView, StyleSheet } from "react-native";
+import { SafeAreaView, View, ScrollView, StyleSheet } from "react-native";
 import { useOState } from "../../store/overmind";
-import SavedFiltersView from "../../components/settings/SavedFiltersView";
 
-import SavedFiltersViewScroll from "../../components/settings/SavedFiltersViewScroll";
-import SavedFiltersSort from "../../components/settings/sortable/SavedFiltersSort";
-import SavedFiltersDragMain from "../../components/settings/dragToSort/SavedFiltersDragMain";
-
-import DefaultFilter from "./DefaultFilter";
-import DefaultSort from "./DefaultSort";
+import SectionSavedFilters from "./SectionSavedFilters";
+import SectionDefaultFilter from "./SectionDefaultFilter";
+import SectionSort from "./SectionSort";
 
 import { colors } from "../../globalStyles";
 
@@ -16,27 +12,22 @@ const Settings = ({ navigation }) => {
   const state = useOState();
   const { savedFilters } = state.oSaved;
 
+  //# When savedFilters gets updated in the drag component, it isn't updated here
+  //# TEST - maybe use this as the driver and send the data down OR figure out why not updating
+  // React.useEffect(() => {
+  //   console.log("saved filters updated", savedFilters.length);
+  // }, [savedFilters.length]);
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollContainer}>
         <View style={styles.settingsContainer}>
-          <Text style={styles.settingsText}>Saved Filters</Text>
-          {/* <SavedFiltersSort /> */}
-          <SavedFiltersDragMain />
+          <SectionSavedFilters />
         </View>
-        {/* <View style={styles.settingsContainer}>
-          <Text style={styles.settingsText}>Saved Filters</Text>
-          <SavedFiltersView />
-        </View> */}
         <View style={[styles.settingsContainer, { zIndex: 100 }]}>
-          <Text style={styles.settingsText}>Set Default Filter</Text>
-          <Text>Choose a saved filter to be run when app starts.</Text>
-          <DefaultFilter />
+          <SectionDefaultFilter />
         </View>
         <View style={styles.settingsContainer}>
-          <Text style={styles.settingsText}>Set Default Sort</Text>
-          <Text>Choose a default sort order for viewing movies.</Text>
-          <DefaultSort />
+          <SectionSort />
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -49,7 +40,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
   },
   scrollContainer: {
-    marginTop: 10,
     marginHorizontal: 10,
   },
   settingsContainer: {
