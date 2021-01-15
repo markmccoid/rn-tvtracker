@@ -74,11 +74,13 @@ export const initializeStore = async (uid, forceRefresh) => {
   let userDocument;
   // Check if local data is stale
   const localStorageDate = await loadFromAsyncStorage(`${uid}-last_stored_date`);
-  // if local data is NOT stale, load from async storage
+  // if local data is NOT stale AND we are not forcing Refresh with cloud (forceRefresh===true), load from async storage
   if (!isDataStale(localStorageDate) && !forceRefresh) {
     dataObj = await loadLocalData(uid);
     dataObj.dataSource = "local";
   } else {
+    // Before we pull data from Firestore, we must flush any debounced calls waiting
+    flushDebounced();
     // data is stale, so load from firebase
     userDocument = await loadUserDocument(uid);
     dataObj.savedMovies = userDocument?.savedMovies || [];
