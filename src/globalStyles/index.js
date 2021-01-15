@@ -8,6 +8,10 @@ export const colors = {
   includeGreen: "#6cb043",
   tagListbg: "#EFF4FB",
   tagListfg: "black",
+  listBorder: "#777",
+  listItemBorder: "#ccc",
+  listBackground: "white",
+  listItemBackground: "white",
 };
 
 export const fonts = {
@@ -19,5 +23,12 @@ export const styleHelpers = {
   debugBorders: {
     borderWidth: 1,
     borderColor: "red",
+  },
+};
+
+export const commonStyles = {
+  headerText: {
+    fontSize: 18,
+    fontWeight: "bold",
   },
 };

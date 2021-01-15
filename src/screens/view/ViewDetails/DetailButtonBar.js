@@ -86,22 +86,6 @@ const DetailButtonBar = ({
 
   return (
     <View style={styles.buttonBar}>
-      {/* <Button
-        onPress={() => {
-          if (transitionRef.current) {
-            transitionRef.current.animateNextTransition();
-          }
-          setViewTags((prev) => !prev);
-        }}
-        title={viewTags ? "Hide Tags" : "Show Tags"}
-        bgOpacity="ff"
-        bgColor={colors.primary}
-        small
-        // width={100}
-        wrapperStyle={{ borderRadius: 10, paddingLeft: 10, paddingRight: 10 }}
-        color="#fff"
-        noBorder
-      /> */}
       <Button
         onPress={() =>
           Linking.openURL(`imdb:///title/${imdbId}`).catch((err) => {

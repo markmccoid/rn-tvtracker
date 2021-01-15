@@ -55,24 +55,6 @@ const DetailMainInfo = ({ movie, isInSavedMovies, viewTags, setViewTags, transit
           marginBottom: 20,
         }}
       >
-        {/* {isInSavedMovies && (
-          <View
-            style={{
-              position: "absolute",
-              left: 35,
-              bottom: 5,
-              zIndex: 100,
-            }}
-          >
-            <LongTouchUserRating
-              movieId={movie.id}
-              userRating={movieUserRating}
-              updateUserRating={(userRating) =>
-                updateUserRatingToMovie({ movieId: movie.id, userRating })
-              }
-            />
-          </View>
-        )} */}
         <View
           style={[
             styles.posterWrapper,
