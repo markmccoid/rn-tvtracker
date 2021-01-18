@@ -25,6 +25,7 @@ import {
 import _ from "lodash";
 import { movieGetDetails } from "@markmccoid/tmdb_api";
 
+const DEBOUCE_WAIT = 12000;
 //=======================================
 //* There are a number of debounced functions in this file.
 // This is so that if the user makes multiple changes we wait a certain amount
@@ -149,13 +150,13 @@ export const deleteMovie = async (movieId) => {
 export const updateMovieTags = _.debounce(async (movieId, updateStmt) => {
   await updateMovieInFirestore(movieId, updateStmt);
   return;
-}, 10000);
+}, DEBOUCE_WAIT);
 
 //! Debounced Function
 export const updateMovieUserRating = _.debounce(async (movieId, updateStmt) => {
   await updateMovieInFirestore(movieId, updateStmt);
   return;
-}, 10000);
+}, DEBOUCE_WAIT);
 
 // Debounce the update of the posterURL for 10 seconds
 // Done to reduce writes to DB.
@@ -163,7 +164,7 @@ export const updateMovieUserRating = _.debounce(async (movieId, updateStmt) => {
 export const updatePosterURL = _.debounce(async (movieId, updateStmt) => {
   await updateMovieInFirestore(movieId, updateStmt);
   return;
-}, 10000);
+}, DEBOUCE_WAIT);
 
 //* Settings Object DB Operations -- only save since each time
 //* we overwrite ALL the setting with new settings
@@ -171,20 +172,20 @@ export const updatePosterURL = _.debounce(async (movieId, updateStmt) => {
 export const saveSettings = _.debounce(async (settings) => {
   await storeSettings(settings);
   return;
-}, 10000);
+}, DEBOUCE_WAIT);
 
 //* Save the user defined Tag List to the DB
 //! Debounced Function
 export const saveTags = _.debounce(async (tags) => {
   await storeTagData(tags);
   return;
-}, 15000);
+}, DEBOUCE_WAIT);
 
 //* Save the user created filters (savedFilters) to the DB
 //! Debounced Function
 export const saveSavedFilters = _.debounce(async (savedFiltersData) => {
   await storeSavedFilters(savedFiltersData);
-}, 10000);
+}, DEBOUCE_WAIT);
 
 //* Get more movie details
 export const getMovieDetails = async (movieId) => {
