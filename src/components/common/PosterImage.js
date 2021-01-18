@@ -7,12 +7,13 @@ const PosterImage = ({
   placeholderText,
   posterWidth,
   posterHeight,
+  style = {},
   fallbackStyle = { container: {}, text: {} },
 }) => {
   if (uri) {
     return (
       <Image
-        style={styles.posterImage(posterWidth, posterHeight)}
+        style={[style, styles.posterImage(posterWidth, posterHeight)]}
         source={{ uri }}
         resizeMode="cover"
       />
@@ -23,6 +24,7 @@ const PosterImage = ({
       style={[
         styles.posterImage(posterWidth, posterHeight),
         styles.fallbackContainer,
+        style,
         fallbackStyle.container,
       ]}
     >

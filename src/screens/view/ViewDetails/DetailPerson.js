@@ -10,6 +10,8 @@ import {
   Linking,
   TouchableOpacity,
 } from "react-native";
+
+import PosterImage from "../../../components/common/PosterImage";
 import { useOActions } from "../../../store/overmind";
 import { getPersonDetails, movieGetPersonCredits } from "@markmccoid/tmdb_api";
 import { Button } from "../../../components/common/Buttons";
@@ -25,15 +27,6 @@ const PICTURE_WIDTH = (width - 5) / 3;
 const MARGIN = 5;
 const PICTURE_HEIGHT = PICTURE_WIDTH * (9 / 6);
 
-const returnImageURI = (imageURL) => {
-  let imageSource;
-  if (imageURL) {
-    imageSource = { uri: imageURL };
-  } else {
-    imageSource = require("../../../../assets/personplaceholder.png");
-  }
-  return imageSource;
-};
 //--Main Component
 const DetailPerson = ({ navigation, route }) => {
   const { personId, fromRouteName } = route.params;
@@ -74,7 +67,13 @@ const DetailPerson = ({ navigation, route }) => {
     <ScrollView style={styles.container}>
       <View style={{ flexDirection: "row" }}>
         <View>
-          <Image style={styles.profilePic} source={returnImageURI(personInfo?.profileImage)} />
+          <PosterImage
+            style={styles.profilePic}
+            uri={personInfo?.profileImage}
+            posterHeight={PICTURE_HEIGHT}
+            posterWidth={PICTURE_WIDTH}
+          />
+          {/* <Image style={styles.profilePic} source={returnImageURI(personInfo?.profileImage)} /> */}
         </View>
         <View
           style={{

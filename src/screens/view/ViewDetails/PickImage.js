@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 
+import PosterImage from "../../../components/common/PosterImage";
 import { useOState, useOActions } from "../../../store/overmind";
 import { useImageDims } from "../../../hooks/useImageDims";
 import { movieGetImages } from "@markmccoid/tmdb_api";
@@ -87,9 +88,10 @@ const PickImage = ({ movieId, vpiAnimation, setViewPickImage }) => {
     return (
       <View style={styles.largeImageContainer}>
         <TouchableOpacity onPress={() => setLargeImage(undefined)}>
-          <Image
-            source={{ uri: largeImage }}
-            style={{ width: posterWidthLarge, height: posterHeightLarge }}
+          <PosterImage
+            uri={largeImage}
+            posterWidth={posterWidthLarge}
+            posterHeight={posterHeightLarge}
           />
         </TouchableOpacity>
       </View>
@@ -122,7 +124,8 @@ const PickImage = ({ movieId, vpiAnimation, setViewPickImage }) => {
                 onLongPress={() => setLargeImage(posterURL)}
               >
                 <View style={styles.imageShadow}>
-                  <Image
+                  <PosterImage
+                    uri={posterURL}
                     style={[
                       {
                         width: posterWidth,
@@ -132,7 +135,8 @@ const PickImage = ({ movieId, vpiAnimation, setViewPickImage }) => {
                       },
                       styles.image,
                     ]}
-                    source={{ uri: posterURL }}
+                    posterWidth={posterWidth}
+                    posterHeight={posterHeight}
                   />
                 </View>
               </TouchableOpacity>

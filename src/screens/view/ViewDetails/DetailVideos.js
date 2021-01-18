@@ -10,6 +10,7 @@ import {
   StyleSheet,
 } from "react-native";
 
+import PosterImage from "../../../components/common/PosterImage";
 import { YouTubePlayIcon } from "../../../components/common/Icons";
 import { useVideoData } from "../../../hooks/useVideoData";
 
@@ -37,9 +38,7 @@ const DetailVideos = ({ movieId }) => {
   if (videoData.length === 0 && !videoDataLoading) {
     return (
       <View style={{ flexDirection: "row", justifyContent: "center" }}>
-        <Text style={{ fontWeight: "normal", fontSize: 20 }}>
-          No Videos Found
-        </Text>
+        <Text style={{ fontWeight: "normal", fontSize: 20 }}>No Videos Found</Text>
       </View>
     );
   }
@@ -57,9 +56,7 @@ const DetailVideos = ({ movieId }) => {
                 }}
                 onPress={() => Linking.openURL(video.videoURL)}
               >
-                <Text style={{ fontSize: 15, fontWeight: "bold" }}>
-                  {video.type}
-                </Text>
+                <Text style={{ fontSize: 15, fontWeight: "bold" }}>{video.type}</Text>
                 <View
                   style={{
                     position: "absolute",
@@ -70,11 +67,12 @@ const DetailVideos = ({ movieId }) => {
                 >
                   <YouTubePlayIcon size={60} style={{ opacity: 0.7 }} />
                 </View>
-                <Image
-                  source={{ uri: video.videoThumbnailURL }}
+
+                <PosterImage
+                  uri={video.videoThumbnailURL}
+                  posterWidth={THUMBNAIL_WIDTH}
+                  posterHeight={THUMBNAIL_HEIGHT}
                   style={{
-                    width: THUMBNAIL_WIDTH,
-                    height: THUMBNAIL_HEIGHT,
                     borderRadius: 10,
                     opacity: 0.7,
                     borderColor: "#777",

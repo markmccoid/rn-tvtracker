@@ -8,13 +8,12 @@ import {
   Alert,
   TouchableOpacity,
 } from "react-native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 
 import { useDimensions } from "@react-native-community/hooks";
 import { LessIcon, MoreIcon } from "../../../components/common/Icons";
 import { useOActions, useOState } from "../../../store/overmind";
 import LongTouchUserRating from "./LongTouchUserRating";
-import { ForceTouchGestureHandler } from "react-native-gesture-handler";
-import UserRating from "../../../components/UserRating/UserRating";
 import { Button } from "../../../components/common/Buttons";
 import PosterImage from "../../../components/common/PosterImage";
 import { colors } from "../../../globalStyles";
@@ -23,9 +22,10 @@ const DetailMainInfo = ({ movie, isInSavedMovies, viewTags, setViewTags, transit
   const [overviewHeight, setOverviewHeight] = React.useState(205);
   const actions = useOActions();
   const state = useOState();
-  const { updateUserRatingToMovie } = actions.oSaved;
+  const { updateUserRatingToMovie, refreshMovie } = actions.oSaved;
   const { getMovieUserRating } = state.oSaved;
-
+  const navigation = useNavigation();
+  const route = useRoute();
   // maybe needs to be in useEffect??? or memoized
   const movieUserRating = getMovieUserRating(movie.id);
 
@@ -80,13 +80,24 @@ const DetailMainInfo = ({ movie, isInSavedMovies, viewTags, setViewTags, transit
               />
             )}
           </View>
-          {/* <Image style={styles.posterImage} source={movieURL.current} resizeMode="contain" /> */}
-          <PosterImage
-            uri={movie.posterURL}
-            posterWidth={posterWidth}
-            posterHeight={posterHeight}
-            placeholderText={movie?.title}
-          />
+          <TouchableOpacity
+            disabled={!isInSavedMovies}
+            onPress={async () => {
+              await refreshMovie(movie.id);
+              navigation.navigate(route.name, {
+                movieId: movie.id,
+                movie: undefined,
+                notSaved: false,
+              });
+            }}
+          >
+            <PosterImage
+              uri={movie.posterURL}
+              posterWidth={posterWidth}
+              posterHeight={posterHeight}
+              placeholderText={movie?.title}
+            />
+          </TouchableOpacity>
         </View>
         {/*---------------------
           ------------------------*/}

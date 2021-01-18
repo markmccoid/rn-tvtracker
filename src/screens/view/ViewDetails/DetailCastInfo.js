@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, Dimensions, Image, StyleSheet } from "react-native";
 import styled from "styled-components";
+import PosterImage from "../../../components/common/PosterImage";
 
 const width = Dimensions.get("window").width;
 const IMAGE_PADDING = 10;
@@ -20,15 +21,15 @@ const Actor = styled.Text`
 
 const DetailCastInfo = ({ person, screenWidth }) => {
   const { name, characterName, profileURL } = person;
-  let imageSource;
-  if (profileURL) {
-    imageSource = { uri: profileURL };
-  } else {
-    imageSource = require("../../../../assets/personplaceholder.png");
-  }
+
   return (
     <View style={styles.container}>
-      <Image source={imageSource} style={styles.castPicture} />
+      <PosterImage
+        uri={profileURL}
+        style={styles.castPicture}
+        posterWidth={imageWidth}
+        posterHeight={imageHeight}
+      />
       <Actor>{name}</Actor>
       <Character>{characterName}</Character>
     </View>

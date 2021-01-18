@@ -12,6 +12,7 @@ import {
 
 import { LinearGradient } from "expo-linear-gradient";
 
+import PosterImage from "../../../components/common/PosterImage";
 import { useOState } from "../../../store/overmind";
 
 const { width, height } = Dimensions.get("window");
@@ -43,9 +44,11 @@ const Backdrop = ({ movies, scrollX }) => {
                 transform: [{ translateX }],
               }}
             >
-              <Image
-                source={{ uri: item.posterURL }}
-                style={{ width, height: BACKDROP_HEIGHT, resizeMode: "cover" }}
+              <PosterImage
+                uri={item.posterURL}
+                posterWidth={width}
+                posterHeight={BACKDROP_HEIGHT}
+                style={{ resizeMode: "cover" }}
               />
             </Animated.View>
           );
@@ -121,7 +124,11 @@ const TestCarouselAnim = ({ navigation }) => {
                   transform: [{ translateY }],
                 }}
               >
-                <Image style={styles.posterImage} source={{ uri: item.posterURL }} />
+                <PosterImage
+                  uri={item.posterURL}
+                  posterWidth="100%"
+                  posterHeight={ITEM_SIZE * 1.2}
+                />
                 <Text style={{ fontSize: 24 }} numberOfLines={1}>
                   {item.title}
                 </Text>
