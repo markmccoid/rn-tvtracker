@@ -49,8 +49,8 @@ const SettingsSortItem = ({
       desc: "Sort Number from Highest to Lowest",
     },
     date: {
-      asc: "Sort Dates from Oldest to Most Recent",
-      desc: "Sort Dates from Most Recent to Oldest",
+      asc: "Sort Dates from Most Recent to Oldest",
+      desc: "Sort Dates from Oldest to Most Recent",
     },
   };
 
