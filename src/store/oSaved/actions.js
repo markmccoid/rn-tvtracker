@@ -125,31 +125,34 @@ export const refreshMovie = async ({ state, effects, actions }, movieId) => {
 
   // We will build updateObj and then update if not undefined
   let updateObj = undefined;
+  let returnMessage = "Movie Up To Date\n";
 
   //These are the field we are checking.
   const fieldsToCheck = {
-    titleCheck: latestMovieDetails.title === currentMovieDetails.title,
-    releaseDateCheck:
+    titleMatch: latestMovieDetails.title === currentMovieDetails.title,
+    releaseDateMatch:
       latestMovieDetails.releaseDate.epoch === currentMovieDetails.releaseDate.epoch,
-    imdbIdCheck: latestMovieDetails.imdbId === currentMovieDetails.imdbId,
-    statusCheck: latestMovieDetails.status === currentMovieDetails.status,
-    posterCheck:
+    imdbIdMatch: latestMovieDetails.imdbId === currentMovieDetails.imdbId,
+    statusMatch: latestMovieDetails.status === currentMovieDetails.status,
+    posterMatch:
       latestMovieDetails?.posterURL?.length > 0 &&
       !(currentMovieDetails?.posterURL?.length > 0),
   };
   const {
-    titleCheck,
-    releaseDateCheck,
-    imdbIdCheck,
-    statusCheck,
-    posterCheck,
+    titleMatch,
+    releaseDateMatch,
+    imdbIdMatch,
+    statusMatch,
+    posterMatch,
   } = fieldsToCheck;
   // if any of our fields we are checking don't Check, refresh
   // only update poster or backdrop URLs if they are empty on currentMovieDetails
-  console.log("posterCheck", posterCheck);
-  console.log(latestMovieDetails?.posterURL?.length);
-  console.log(currentMovieDetails?.posterURL?.length);
-  if (!titleCheck || !releaseDateCheck || !imdbIdCheck || !statusCheck || posterCheck) {
+  if (!titleMatch || !releaseDateMatch || !imdbIdMatch || !statusMatch || posterMatch) {
+    returnMessage += `${!titleMatch && "- Title Updated - "}`;
+    returnMessage += `${!releaseDateMatch && "- Release Date Updated - "}`;
+    returnMessage += `${!imdbIdMatch && "- imdb ID Updated - "}`;
+    returnMessage += `${!statusMatch && "- Status Updated - "}`;
+    returnMessage += `${!posterMatch && "- Poster Updated - "}`;
     updateObj = {
       ...updateObj,
       ...latestMovieDetails,
@@ -181,7 +184,8 @@ export const refreshMovie = async ({ state, effects, actions }, movieId) => {
     //Save to firestore
     await effects.oSaved.updateMovie(movieId, updateStmt);
   }
-  return;
+  console.log(returnMessage);
+  return returnMessage;
 };
 
 /**

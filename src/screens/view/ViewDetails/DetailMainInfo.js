@@ -18,6 +18,9 @@ import { Button } from "../../../components/common/Buttons";
 import PosterImage from "../../../components/common/PosterImage";
 import { colors } from "../../../globalStyles";
 
+const showRefreshAlert = (msg) => {
+  Alert.alert("Movie Refresh", msg);
+};
 const DetailMainInfo = ({ movie, isInSavedMovies, viewTags, setViewTags, transitionRef }) => {
   const [overviewHeight, setOverviewHeight] = React.useState(205);
   const actions = useOActions();
@@ -83,7 +86,8 @@ const DetailMainInfo = ({ movie, isInSavedMovies, viewTags, setViewTags, transit
           <TouchableOpacity
             disabled={!isInSavedMovies}
             onPress={async () => {
-              await refreshMovie(movie.id);
+              let msg = await refreshMovie(movie.id);
+              createAlert(msg);
               navigation.navigate(route.name, {
                 movieId: movie.id,
                 movie: undefined,
