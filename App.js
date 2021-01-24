@@ -5,6 +5,7 @@ import { createOvermind } from "overmind";
 import { config } from "./src/store/overmind";
 import { initTMDB } from "@markmccoid/tmdb_api";
 import { LogBox } from "react-native";
+const envData = require("./env.json");
 
 import RootNav from "./src/navigation/RootNav";
 
@@ -13,8 +14,8 @@ import RootNav from "./src/navigation/RootNav";
 const App = () => {
   LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
   // console.log("InApp");
-  initTMDB("0e4935aa81b04539beb687d04ff414e3");
-  const overmind = createOvermind(config, { devtools: "192.168.1.7:3031" });
+  initTMDB(envData.tmdbId);
+  const overmind = createOvermind(config, { devtools: "192.168.1.20:3031" });
   // const overmind = createOvermind(config);
   return (
     <Provider value={overmind}>
