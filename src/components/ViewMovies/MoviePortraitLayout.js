@@ -6,7 +6,7 @@ import { useDimensions } from "@react-native-community/hooks";
 import PosterImage from "../common/PosterImage";
 import { colors } from "../../globalStyles";
 
-const MoviePortraitLayout = ({ movie, setMovieEditingId, navigateToDetails, inEditState }) => {
+const MoviePortraitLayout = ({ movie, setMovieEditingId, navigateToDetails }) => {
   const { width, height } = useDimensions().window;
   const movieReleaseDate = movie.releaseDate?.formatted || " - ";
 
@@ -14,22 +14,26 @@ const MoviePortraitLayout = ({ movie, setMovieEditingId, navigateToDetails, inEd
   // Height is 1.5 times the width
   let posterWidth = width / 2.2;
   let posterHeight = posterWidth * 1.5;
+  const MARGIN = 5;
+  const BORDER_RADIUS = 10;
 
   const styles = StyleSheet.create({
     movieCard: {
       backgroundColor: colors.background,
       width: "100%",
-      marginVertical: 5,
-      margin: 5,
+      margin: MARGIN,
       width: posterWidth,
       borderWidth: 1,
-      borderRadius: 2,
+      borderRadius: BORDER_RADIUS,
       borderColor: "#ddd",
       borderBottomWidth: 0,
       shadowColor: "#000",
-      shadowOffset: { width: 1, height: 2 },
+      shadowOffset: { width: 5, height: 5 },
       shadowOpacity: 0.5,
-      shadowRadius: 3,
+      shadowRadius: 5,
+      // shadowOffset: { width: 1, height: 2 },
+      // shadowOpacity: 0.5,
+      // shadowRadius: 3,
       elevation: 1,
     },
     imageBackupText: {
@@ -43,7 +47,8 @@ const MoviePortraitLayout = ({ movie, setMovieEditingId, navigateToDetails, inEd
     <View style={styles.movieCard}>
       <TouchableOpacity
         onPress={navigateToDetails}
-        onLongPress={() => (inEditState ? setMovieEditingId() : setMovieEditingId(movie.id))}
+        onLongPress={() => setMovieEditingId(movie.id)}
+        // onLongPress={() => (inEditState ? setMovieEditingId() : setMovieEditingId(movie.id))}
       >
         <View>
           <PosterImage
@@ -51,6 +56,7 @@ const MoviePortraitLayout = ({ movie, setMovieEditingId, navigateToDetails, inEd
             posterWidth={posterWidth}
             posterHeight={posterHeight}
             placeholderText={movie.title}
+            style={{ borderRadius: BORDER_RADIUS }}
           />
         </View>
       </TouchableOpacity>

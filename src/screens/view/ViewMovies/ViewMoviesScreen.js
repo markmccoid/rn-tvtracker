@@ -15,6 +15,12 @@ import { AddIcon, FilterIcon } from "../../../components/common/Icons";
 import ViewMoviesListItem from "../../../components/ViewMovies/ViewMoviesListItem";
 import ViewMovieOverlay from "./ViewMovieOverlay";
 import { colors } from "../../../globalStyles";
+import {
+  getViewMoviesRotates,
+  getViewMoviesTranslates,
+  getViewMoviesScale,
+  getViewMoviesOpacity,
+} from "./animationHelpers";
 
 const { width, height } = Dimensions.get("window");
 //----------------------------
@@ -58,14 +64,20 @@ const ViewMoviesScreen = ({ navigation, route }) => {
   const [filterState, dispatch] = React.useReducer(filterMachine, filterMachineConfig.initial);
   const [movieDetails, setMovieDetails] = React.useState(undefined);
   const [showSearch, setShowSearch] = useState(false);
+  // Used to be in oAdmin.appState, but don't think we need it there, just making local state.
+  const [movieEditingId, setMovieEditingId] = useState(undefined);
   const flatListRef = React.useRef();
   const state = useOState();
-  const actions = useOActions();
-  const { setMovieEditingId } = actions.oAdmin;
-  const { movieEditingId, hydrating } = state.oAdmin.appState;
-  const { getFilteredMovies, getAllMovieTags, getMovieDetails } = state.oSaved;
+  const { hydrating } = state.oAdmin.appState;
+
+  const { getFilteredMovies, getMovieDetails } = state.oSaved;
   // For use in showing the search input component
   const offsetY = React.useRef(new Animated.Value(0)).current;
+
+  const POSTER_WIDTH = width / 2.2;
+  const POSTER_HEIGHT = POSTER_WIDTH * 1.5; // Height is 1.5 times the width
+  const MARGIN = 5;
+  const ITEM_SIZE = POSTER_HEIGHT + MARGIN * 2;
 
   const getItemLayout = (data, index) => {
     let height = index === 1 ? 70 : 150;
@@ -77,9 +89,6 @@ const ViewMoviesScreen = ({ navigation, route }) => {
   };
 
   //NOTE-- posterURL images are 300 x 450
-  // Height is 1.5 times the width
-  let posterWidth = width / 2;
-  let posterHeight = posterWidth * 1.5;
 
   //Next two useEffects are for determining if a filter was modified and if so, then scroll to top
   //Looking at the filterModified param (true or undefined) coming from the Movies route
@@ -108,21 +117,27 @@ const ViewMoviesScreen = ({ navigation, route }) => {
   //Have to set the "returning" param on both the DONE button in the filter screen component
   //and the header "X"(Close).
   //Not sure if setting the param that we are checking in dependancies is good or bad.
-  useEffect(() => {
-    if (route.params?.returning) {
-      setMovieEditingId();
-      navigation.setParams({ returning: false });
-    }
-  }, [route.params?.returning]);
-
-  //! Should be able to delete the useEffect below since we don't show
-  //! the search with a button, but only when list is at top
-  // When we show the search bar scroll to the top of the flatlist
   // useEffect(() => {
-  //   if (showSearch) {
-  //     flatListRef.current.scrollToIndex({ animated: true, index: 0 });
+  //   if (route.params?.returning) {
+  //     setMovieEditingId();
+  //     navigation.setParams({ returning: false });
   //   }
-  // }, [showSearch]);
+  // }, [route.params?.returning]);
+
+  // effect runs whenever getFilteredMovies is dirty
+  // this causes the flatlist to scroll to top
+  //! this will trigger whenever a movie is updated.  If you are in overlay and add a tag
+  //! it will scroll to top.  OPTIONS:
+  //! 1. remove tags from oSaved.savedMovies
+  //! 2. add dirtyMovieList indicator in overmind that we will use to determine when to scroll to top.
+  //!    won't set dirty indicator to true if just a tag change.
+  //!    need dirty indicator because we will still pass new data to flatlist, but DON'T WANT to scroll to top
+  useEffect(() => {
+    // console.log("getFilteredMovie RERENDER");
+    if (flatListRef) {
+      flatListRef.current.scrollToOffset({ offset: 0 });
+    }
+  }, [getFilteredMovies]);
 
   // Get movie details when movie is selected/edit mode
   // probably should move whole overlay section to a separate file
@@ -133,8 +148,8 @@ const ViewMoviesScreen = ({ navigation, route }) => {
   return (
     <View style={styles.containerForPortrait}>
       {showSearch ? <ListSearchBar onCancel={() => setShowSearch(false)} /> : null}
-      <FlatList
-        data={getFilteredMovies()}
+      <Animated.FlatList
+        data={getFilteredMovies}
         ref={flatListRef}
         onScroll={(e) => {
           offsetY.setValue(e.nativeEvent.contentOffset.y);
@@ -152,13 +167,43 @@ const ViewMoviesScreen = ({ navigation, route }) => {
         numColumns={2}
         renderItem={({ item, index }) => {
           const pURL = item.posterURL;
+          // Since we have two rows, this is the correct index
+          // index 0,1 -> 0,0  index 2,3 => 1,1  etc...
+          const ITEM_INDEX = Math.floor(index / 2);
+
+          const animConstants = {
+            itemSize: ITEM_SIZE,
+            itemIndex: ITEM_INDEX,
+            absIndex: index,
+            posterHeight: POSTER_HEIGHT,
+            posterWidth: POSTER_WIDTH,
+            margin: MARGIN,
+          };
+
+          const scale = getViewMoviesScale(offsetY, animConstants);
+          const opacity = getViewMoviesOpacity(offsetY, animConstants);
+          const [translateX, translateY] = getViewMoviesTranslates(offsetY, animConstants);
+          const [rotateX, rotateY, rotateZ] = getViewMoviesRotates(offsetY, animConstants);
           return (
-            <ViewMoviesListItem
-              posterURL={pURL}
-              movie={item}
-              setMovieEditingId={setMovieEditingId}
-              movieEditingId={movieEditingId}
-            />
+            <Animated.View
+              style={{
+                opacity,
+                transform: [
+                  { scale },
+                  { translateX },
+                  { translateY },
+                  { rotateY },
+                  { rotateX },
+                  { rotateZ },
+                ],
+              }}
+            >
+              <ViewMoviesListItem
+                posterURL={pURL}
+                movie={item}
+                setMovieEditingId={setMovieEditingId}
+              />
+            </Animated.View>
           );
         }}
       />
@@ -171,7 +216,7 @@ const ViewMoviesScreen = ({ navigation, route }) => {
         movieDetails={movieDetails}
       />
       {/* If there are NO movies after the filters are applied then show a message and Filter button  */}
-      {getFilteredMovies().length === 0 && state.oSaved.savedMovies.length !== 0 && (
+      {getFilteredMovies.length === 0 && state.oSaved.savedMovies.length !== 0 && (
         <View style={[styles.noMoviesShownPosition, { alignItems: "center" }]}>
           <Text style={{ fontSize: 20, fontWeight: "600", marginBottom: 10 }}>
             No Movies match current filter.

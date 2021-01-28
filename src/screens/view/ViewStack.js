@@ -1,5 +1,5 @@
 import React from "react";
-import { View, TouchableOpacity, Text, ActivityIndicator } from "react-native";
+import { View, TouchableOpacity, Text } from "react-native";
 
 import { createStackNavigator } from "@react-navigation/stack";
 import { enableScreens } from "react-native-screens";
@@ -22,7 +22,7 @@ import DetailPerson from "./ViewDetails/DetailPerson";
 
 const ViewStack = createNativeStackNavigator();
 const ViewMoviesStackNav = createNativeStackNavigator();
-const ViewMovieDetailsStackNav = createNativeStackNavigator();
+// const ViewMovieDetailsStackNav = createNativeStackNavigator();
 
 enableScreens();
 
@@ -61,7 +61,7 @@ const ViewStackScreen = () => {
   const state = useOState();
   const actions = useOActions();
   let numGenreFilters = state.oSaved.filterData.genres.length;
-  let numMovies = state.oSaved.getFilteredMovies().length;
+  let numMovies = state.oSaved.getFilteredMovies.length;
   let numIncludeFilters = state.oSaved.filterData.tags.length;
   let numExcludeFilters = state.oSaved.filterData.excludeTags.length;
   const isGenreFiltered = numGenreFilters > 0;
@@ -121,9 +121,9 @@ const ViewStackScreen = () => {
                       onPress={() => navigation.navigate("Filter")}
                       onLongPress={() => {
                         clearFilterScreen();
-                        navigation.navigate("Movies", {
-                          filterModified: true,
-                        });
+                        // navigation.navigate("Movies", {
+                        //   filterModified: true,
+                        // });
                       }}
                     >
                       <FilterIcon color="black" size={30} style={{ marginRight: 15 }} />
