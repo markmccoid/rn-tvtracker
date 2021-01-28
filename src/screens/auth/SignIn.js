@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import { useOState, useOActions } from "../../store/overmind";
 import Firebase, { firestore } from "../../storage/firebase";
+import { colors } from "../../globalStyles";
 
 import { Header, ButtonText } from "./authStyles";
 
@@ -170,7 +171,7 @@ const SignIn = ({ navigation, route }) => {
           <TouchableOpacity
             style={{
               width: "85%",
-              backgroundColor: "#52aac9",
+              backgroundColor: colors.primary,
               padding: 15,
               marginVertical: 20,
               borderRadius: 5,
@@ -188,7 +189,7 @@ const SignIn = ({ navigation, route }) => {
 const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
-    backgroundColor: "#f8faf9",
+    backgroundColor: colors.backgroundColor, //"#f8faf9",
     alignItems: "center",
     justifyContent: "center",
     width: "100%",
