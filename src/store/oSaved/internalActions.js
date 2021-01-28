@@ -7,7 +7,7 @@ import _ from "lodash";
 /**
  * createTaggedMovie - the taggedWith property is stored on each movies document
  * it contains all the tags the movies is tagged with this function
- * replaces the oSaved.taggedMovies with data from teh cloud
+ * replaces the oSaved.taggedMovies object with data from the cloud
  * Called from the hydrateStore action
  * @param {array} savedMovies
  */
@@ -24,15 +24,21 @@ export const updateTaggedWithOnMovie = ({ state, action, effects }, movieId) => 
   // For some reason movieId came over as string, but is stored as number in overmind.
   movieId = +movieId;
 
-  for (let i = 0; i < state.oSaved.savedMovies.length; i++) {
-    if (state.oSaved.savedMovies[i].id === movieId) {
-      state.oSaved.savedMovies[i] = {
-        ...state.oSaved.savedMovies[i],
-        taggedWith: state.oSaved.taggedMovies[movieId],
-      };
-      break;
+  state.oSaved.savedMovies.forEach((movie) => {
+    if (movie.id === movieId) {
+      movie.taggedWith = [...state.oSaved.taggedMovies[movieId]];
     }
-  }
+  });
+
+  // for (let i = 0; i < state.oSaved.savedMovies.length; i++) {
+  //   if (state.oSaved.savedMovies[i].id === movieId) {
+  //     state.oSaved.savedMovies[i] = {
+  //       ...state.oSaved.savedMovies[i],
+  //       taggedWith: state.oSaved.taggedMovies[movieId],
+  //     };
+  //     break;
+  //   }
+  // }
 };
 
 export const maintainTaggedMoviesObj = async ({ state, actions }, payload) => {

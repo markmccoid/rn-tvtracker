@@ -87,7 +87,7 @@ const DetailMainInfo = ({ movie, isInSavedMovies, viewTags, setViewTags, transit
             disabled={!isInSavedMovies}
             onPress={async () => {
               let msg = await refreshMovie(movie.id);
-              createAlert(msg);
+              showRefreshAlert(msg);
               navigation.navigate(route.name, {
                 movieId: movie.id,
                 movie: undefined,

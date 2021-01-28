@@ -404,21 +404,12 @@ export const deleteTag = async ({ state, effects, actions }, tagId) => {
   await effects.oSaved.saveTags(state.oSaved.tagData);
 
   // Loop through all taggedMovie records and remove the tag being deleted from
-  // any taggedMovies arrays.
-
+  // any oSaved.taggedMovies and oSaved.savedMovies[n].taggedWith
   Object.keys(taggedMovies).forEach((movieId) => {
-    const tags = taggedMovies[movieId].length;
-
-    //!  taggedMovies[movieId] = taggedMovies[movieId].filter((id) => id !== tagId);
-
-    // if the number of tags changed (i.e. we found a movie tagged with the tag being deleted)
-    // then run the removeTagFromMovie function to update the store and firestore
-    // if (tags !== taggedMovies[movieId].length) {
+    // Check each oSaved.taggedMovies object property to see if it's array includes the tag being deleted.
     if (taggedMovies[movieId].includes(tagId)) {
-      //* Calling an action from an action, so I must pass the
-      //* state & effects as a parameter.
+      // This action will delete the tag from both the oSaved.taggedMovies and oSaved.savedMovies[n].taggedWith
       actions.oSaved.removeTagFromMovie({ movieId, tagId });
-      // removeTagFromMovie({ state, effects }, { movieId, tagId });
     }
   });
 };
@@ -470,7 +461,7 @@ export const addTagToMovie = async ({ state, effects, actions }, payload) => {
   let taggedMovies = state.oSaved.taggedMovies || {};
   const { movieId, tagId } = payload;
 
-  // check if we are updating a different movie.  If so flush
+  // check if we are updating a different movie.  If so flush any debounced calls
   state.oSaved.currentMovieId = await checkCurrentMovieId(
     state.oSaved.currentMovieId,
     movieId,

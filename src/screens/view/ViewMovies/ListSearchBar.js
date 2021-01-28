@@ -1,6 +1,6 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { View, TextInput, TouchableOpacity, Text, StyleSheet } from "react-native";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { useOActions, useOState } from "../../../store/overmind";
 
 const ListSearchBar = ({ onCancel = () => null }) => {

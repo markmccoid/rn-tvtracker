@@ -17,7 +17,3 @@ export const logUserOut = async ({ state, effects, actions }) => {
   // Found that could set directly from here, but needed to call action to do it.
   actions.oSaved.resetOSaved();
 };
-
-export const setMovieEditingId = ({ state }, movieId = undefined) => {
-  state.oAdmin.appState.movieEditingId = movieId;
-};

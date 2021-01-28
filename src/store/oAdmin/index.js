@@ -7,7 +7,6 @@ export const config = {
     uid: undefined,
     isLoggedIn: undefined,
     appState: {
-      movieEditingId: undefined,
       dataSource: undefined,
     },
   },
