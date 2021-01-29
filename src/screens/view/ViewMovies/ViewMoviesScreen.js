@@ -23,6 +23,11 @@ import {
 } from "./animationHelpers";
 
 const { width, height } = Dimensions.get("window");
+const POSTER_WIDTH = width / 2.2;
+const POSTER_HEIGHT = POSTER_WIDTH * 1.5; // Height is 1.5 times the width
+const MARGIN = 5;
+const ITEM_SIZE = POSTER_HEIGHT + MARGIN * 2;
+
 //----------------------------
 // Based on Finite States Machines, this was a test to
 // make things easier to deal with when the filter status
@@ -74,19 +79,68 @@ const ViewMoviesScreen = ({ navigation, route }) => {
   // For use in showing the search input component
   const offsetY = React.useRef(new Animated.Value(0)).current;
 
-  const POSTER_WIDTH = width / 2.2;
-  const POSTER_HEIGHT = POSTER_WIDTH * 1.5; // Height is 1.5 times the width
-  const MARGIN = 5;
-  const ITEM_SIZE = POSTER_HEIGHT + MARGIN * 2;
+  // const POSTER_WIDTH = width / 2.2;
+  // const POSTER_HEIGHT = POSTER_WIDTH * 1.5; // Height is 1.5 times the width
+  // const MARGIN = 5;
+  // const ITEM_SIZE = POSTER_HEIGHT + MARGIN * 2;
 
-  const getItemLayout = (data, index) => {
-    let height = index === 1 ? 70 : 150;
+  //#-------------------
+  //# Flatlist functions
+  //#-------------------
+  const getLayoutItem = React.useCallback((data, index) => {
     return {
-      length: height,
-      offset: height * index - 70,
+      length: ITEM_SIZE,
+      offset: ITEM_SIZE * index,
       index,
     };
-  };
+  }, []);
+
+  const keyExtractor = React.useCallback((movie, idx) => movie.id.toString() + idx, []);
+
+  const flatListRenderItem = React.useCallback(({ item, index }) => {
+    const pURL = item.posterURL;
+    // Since we have two rows, this is the correct index
+    // index 0,1 -> 0,0  index 2,3 => 1,1  etc...
+    const ITEM_INDEX = Math.floor(index / 2);
+
+    const animConstants = {
+      itemSize: ITEM_SIZE,
+      itemIndex: ITEM_INDEX,
+      absIndex: index,
+      posterHeight: POSTER_HEIGHT,
+      posterWidth: POSTER_WIDTH,
+      margin: MARGIN,
+    };
+
+    const scale = getViewMoviesScale(offsetY, animConstants);
+    const opacity = getViewMoviesOpacity(offsetY, animConstants);
+    const [translateX, translateY] = getViewMoviesTranslates(offsetY, animConstants);
+    const [rotateX, rotateY, rotateZ] = getViewMoviesRotates(offsetY, animConstants);
+    const animStyle = {
+      transform: [
+        { scale },
+        { translateX },
+        { translateY },
+        { rotateX },
+        // { rotateY },
+        // { rotateZ },
+      ],
+    };
+    return (
+      <Animated.View
+        style={{
+          opacity,
+          ...animStyle,
+        }}
+      >
+        <ViewMoviesListItem
+          posterURL={pURL}
+          movie={item}
+          setMovieEditingId={setMovieEditingId}
+        />
+      </Animated.View>
+    );
+  }, []);
 
   //NOTE-- posterURL images are 300 x 450
 
@@ -153,59 +207,16 @@ const ViewMoviesScreen = ({ navigation, route }) => {
         ref={flatListRef}
         onScroll={(e) => {
           offsetY.setValue(e.nativeEvent.contentOffset.y);
-          // console.log("Y", e.nativeEvent.contentOffset.y);
           if (e.nativeEvent.contentOffset.y < -50) {
-            // setY(e.nativeEvent.contentOffset.y);
             setShowSearch(true);
           }
         }}
         scrollEventThrottle={16}
-        // getItemLayout={getItemLayout}
         keyboardDismissMode
-        keyExtractor={(movie, idx) => movie.id.toString() + idx}
-        // columnWrapperStyle={{ justifyContent: "space-around" }}
+        keyExtractor={keyExtractor}
         numColumns={2}
-        renderItem={({ item, index }) => {
-          const pURL = item.posterURL;
-          // Since we have two rows, this is the correct index
-          // index 0,1 -> 0,0  index 2,3 => 1,1  etc...
-          const ITEM_INDEX = Math.floor(index / 2);
-
-          const animConstants = {
-            itemSize: ITEM_SIZE,
-            itemIndex: ITEM_INDEX,
-            absIndex: index,
-            posterHeight: POSTER_HEIGHT,
-            posterWidth: POSTER_WIDTH,
-            margin: MARGIN,
-          };
-
-          const scale = getViewMoviesScale(offsetY, animConstants);
-          const opacity = getViewMoviesOpacity(offsetY, animConstants);
-          const [translateX, translateY] = getViewMoviesTranslates(offsetY, animConstants);
-          const [rotateX, rotateY, rotateZ] = getViewMoviesRotates(offsetY, animConstants);
-          return (
-            <Animated.View
-              style={{
-                opacity,
-                transform: [
-                  { scale },
-                  { translateX },
-                  { translateY },
-                  { rotateY },
-                  { rotateX },
-                  { rotateZ },
-                ],
-              }}
-            >
-              <ViewMoviesListItem
-                posterURL={pURL}
-                movie={item}
-                setMovieEditingId={setMovieEditingId}
-              />
-            </Animated.View>
-          );
-        }}
+        getItemLayout={getLayoutItem}
+        renderItem={flatListRenderItem}
       />
 
       {/* Only show when editing a movie - this happens on a long press on movie */}
