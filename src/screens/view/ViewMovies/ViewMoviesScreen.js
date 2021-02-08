@@ -180,7 +180,7 @@ const ViewMoviesScreen = ({ navigation, route }) => {
 
   // effect runs whenever getFilteredMovies is dirty
   // this causes the flatlist to scroll to top
-  //! this will trigger whenever a movie is updated.  If you are in overlay and add a tag
+  //! this will trigger whenever a movie is updated.
   //! it will scroll to top.  OPTIONS:
   //! 1. remove tags from oSaved.savedMovies
   //! 2. add dirtyMovieList indicator in overmind that we will use to determine when to scroll to top.
