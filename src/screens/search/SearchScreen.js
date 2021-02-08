@@ -7,8 +7,9 @@ import {
   TouchableWithoutFeedback,
   ActivityIndicator,
 } from "react-native";
+
 import { useOState, useOActions } from "../../store/overmind";
-import SearchForMovie from "../../components/search/SearchForMovie";
+import DiscoverBottomSheet from "../../components/search/DiscoverBottomSheet";
 import SearchResultItem from "../../components/search/SearchResultItem";
 import { useFocusEffect, useIsFocused } from "@react-navigation/native";
 import { colors } from "../../globalStyles";
@@ -24,7 +25,7 @@ const SearchScreen = ({ navigation }) => {
   const { saveMovie, deleteMovie } = actions.oSaved;
   const {
     searchByTitle,
-    loadNextPageMovies,
+    queryMovieAPI,
     setIsNewQuery,
     clearSearchStringAndData,
   } = actions.oSearch;
@@ -91,7 +92,7 @@ const SearchScreen = ({ navigation }) => {
   const fetchMoreData = async () => {
     if (isMoreData) {
       setIsNewQuery(false);
-      await loadNextPageMovies(currentPage + 1);
+      await queryMovieAPI(currentPage + 1);
     }
   };
 
@@ -124,12 +125,13 @@ const SearchScreen = ({ navigation }) => {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.searchContainer}>
-        <SearchForMovie />
+        {/* <SearchForMovie /> */}
 
         {isLoading && !isMoreData ? (
           <ActivityIndicator size="large" style={{ flex: 1 }} />
         ) : null}
         <View style={{ alignItems: "center" }}>{movieJSX}</View>
+        <DiscoverBottomSheet />
       </View>
     </TouchableWithoutFeedback>
   );
@@ -139,6 +141,10 @@ const styles = StyleSheet.create({
   searchContainer: {
     flex: 1,
     backgroundColor: colors.background,
+  },
+  bottomContainer: {
+    backgroundColor: colors.background,
+    flex: 1,
   },
 });
 export default SearchScreen;

@@ -223,7 +223,7 @@ export const saveMovie = async ({ state, effects, actions }, movieObj) => {
 
   // When saving movie user is left on search screen, this will update
   // the screen to show that the selected movige has been saved
-  state.oSearch.isNewQuery = false;
+  // state.oSearch.isNewQuery = false;
   state.oSearch.resultData = tagResults(searchData);
   //----------------------------
 
@@ -267,7 +267,7 @@ export const deleteMovie = async ({ state, effects, actions }, movieId) => {
   // the screen to show that the selected movie has been saved
   const { tagResults } = actions.oSearch.internal;
   const searchData = state.oSearch.resultData;
-  state.oSearch.isNewQuery = false;
+  // state.oSearch.isNewQuery = false;
   state.oSearch.resultData = tagResults(searchData);
   //----------------------------
 
@@ -670,6 +670,7 @@ export const updateDefaultSortOrder = ({ state, effects }, newlyIndexedArray) =>
   // Save to firestore
   effects.oSaved.saveSettings(state.oSaved.settings);
 };
+
 //*==============================================
 //*- ACTION HELPERS
 //*==============================================

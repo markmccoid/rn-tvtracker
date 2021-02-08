@@ -10,6 +10,7 @@ export const config = {
     resultTotalPages: undefined,
     isLoading: false,
     queryType: "popular",
+    allGenres: [], // [ { id, name }, ...]
   },
   actions,
   effects,

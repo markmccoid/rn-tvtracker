@@ -10,6 +10,8 @@ export const onInitialize = async ({ state, effects, actions }) => {
     if (user) {
       actions.oAdmin.logUserIn(user);
       actions.oSaved.hyrdateStore({ uid: user.uid });
+      // Set the allGenres state item
+      actions.oSearch.searchSetup();
       // NOT USED - But example of setting up snapshot that would be called
       // whenever data changed in the users collection and uid doc for logged in user.
       // undo = firestore
