@@ -9,6 +9,7 @@ import DiscoverPredefined from "./DiscoverPredefined";
 import { colors } from "../../globalStyles";
 import Animated from "react-native-reanimated";
 import DiscoverAdvanced from "./DiscoverAdvanced";
+import DiscoverADVTest from "./DiscoverADVTest";
 
 import {
   discoverMoviesMachine,
@@ -41,27 +42,17 @@ const DiscoverBottomSheet = ({ navigation }) => {
   //*------------------------
   //Whenever searchConfig updates, perform search
   React.useEffect(() => {
-    const { queryType, predefinedType, searchString, genres } = discoverState.context;
-    console.log("useeffect", queryType, predefinedType);
-    queryMovieAPIWithConfig({ queryType, predefinedType, searchString, genres });
+    const { predefinedType, searchString, genres } = discoverState.context;
+    console.log("USEEFFECT Context Change qt", discoverState.value, discoverState.context);
+    // discoverState.value is the "queryType"  this is the "state" that the machine is currently in
+    queryMovieAPIWithConfig({
+      queryType: discoverState.value,
+      predefinedType,
+      searchString,
+      genres,
+    });
   }, [discoverState.context]);
 
-  // console.log("every rerender", discoverState.context);
-
-  // Whenever searchString updates, prepare config, if empty send queryType popular
-  // React.useEffect(() => {
-  //   const queryConfig = { queryType: "title", config: { searchString } };
-  //   if (searchString.trim().length === 0 || !searchString) {
-  //     queryConfig.queryType = predefined;
-  //   }
-  //   setSearchConfig(queryConfig);
-  // }, [searchString]);
-
-  React.useEffect(() => {
-    const queryConfig = { queryType: predefined, config: { searchString } };
-    setSearchString("");
-    setSearchConfig(queryConfig);
-  }, [predefined]);
   //*------------------------
   //* Bottomsheet Background
   const CustomBackground = ({ animatedIndex, style }) => {
@@ -83,7 +74,7 @@ const DiscoverBottomSheet = ({ navigation }) => {
   const bottomSheetRef = React.useRef(null);
 
   // variables
-  const snapPoints = React.useMemo(() => ["12%", "50%", "75%"], []);
+  const snapPoints = React.useMemo(() => ["15%", "50%", "75%"], []);
 
   // callbacks
   const handleSheetChanges = React.useCallback((index) => {
@@ -98,42 +89,36 @@ const DiscoverBottomSheet = ({ navigation }) => {
   const collapseSheet = () => bottomSheetRef.current.collapse();
   const snapTo = (index) => bottomSheetRef.current.snapTo(index);
   //*------------------------
+
+  //*-------------------------
+  //* Handler Functions
+  //*-------------------------
   const handleSearchString = (value) => {
     sendDiscoverEvent("TITLE_SEARCH");
     sendDiscoverEvent({ type: "UPDATE_TITLE", value });
-
-    // const queryConfig = { queryType: "title", config: { searchString } };
-    // if (searchString.trim().length === 0 || !searchString) {
-    //   queryConfig.queryType = predefined;
-    // }
-    // setSearchString(searchString);
-    // setSearchConfig(queryConfig);
   };
 
   const handlePredefined = (predefinedType) => {
-    console.log("send predefined", predefinedType);
     sendDiscoverEvent({ type: "PREDEFINED_SEARCH" });
     sendDiscoverEvent({ type: "UPDATE_PREDEFINED", predefinedType });
-
-    // const queryConfig = { queryType, config: { searchString: "" } };
-    // setSearchString("");
-    // setSearchConfig(queryConfig);
   };
 
   // { genres: [], yearReleasedStart: number, yearReleasedEnd: number  }
-  const handleAdvancedConfig = (advancedQueryData) => {
+  const handleAdvancedConfig = React.useCallback((advancedQueryData) => {
     const { genres } = advancedQueryData;
-    const discoverCriteria = { genres };
-    let queryConfig = { queryType: "advanced", config: { discoverCriteria } };
-    if (genres.length === 0 || !genres) {
-      if (queryType === "title") return;
-      queryConfig = { queryType: predefined, config: { searchString: "" } };
-      setSearchConfig(queryConfig);
-      return;
-    }
-    // setSearchString("");
-    setSearchConfig(queryConfig);
-  };
+
+    sendDiscoverEvent("ADVANCED_SEARCH");
+    sendDiscoverEvent("UPDATE_ADV", { values: { genres } });
+    // let queryConfig = { queryType: "advanced", config: { discoverCriteria } };
+    // if (genres.length === 0 || !genres) {
+    //   if (queryType === "title") return;
+    //   queryConfig = { queryType: predefined, config: { searchString: "" } };
+    //   setSearchConfig(queryConfig);
+    //   return;
+    // }
+    // // setSearchString("");
+    // setSearchConfig(queryConfig);
+  }, []);
   return (
     <BottomSheet
       backgroundComponent={CustomBackground}
@@ -150,11 +135,12 @@ const DiscoverBottomSheet = ({ navigation }) => {
           sheetFunctions={sheetFunctions}
         />
         <DiscoverPredefined
-          queryType={queryType}
+          queryType={discoverState.value}
           predefinedType={discoverState.context.predefinedType}
           setPredefined={handlePredefined}
         />
         <DiscoverAdvanced handleAdvancedConfig={handleAdvancedConfig} />
+        <DiscoverADVTest handleAdvancedConfig={handleAdvancedConfig} />
       </View>
     </BottomSheet>
   );

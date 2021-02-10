@@ -37,7 +37,6 @@ export const queryMovieAPI = async ({ state, effects, actions }, page = 1) => {
 
   if (queryType === "predefined") {
     //Get popular movies if no search string
-    console.log("predefinetype ", predefinedType);
     switch (predefinedType) {
       case discoverTypesEnum.POPULAR:
         results = await effects.oSearch.getPopularMovies(page);
@@ -52,12 +51,9 @@ export const queryMovieAPI = async ({ state, effects, actions }, page = 1) => {
         break;
     }
   } else if (queryType === "title") {
-    results = await effects.oSearch.searchMovieByTitle(oSearch.searchString, page);
+    results = await effects.oSearch.searchMovieByTitle(searchString, page);
   } else if (queryType === "advanced") {
-    results = await effects.oSearch.getMoviesDiscover(
-      oSearch.advancedConfig.discoverCriteria,
-      page
-    );
+    results = await effects.oSearch.getMoviesDiscover({ genres }, page);
   } else {
     // Invalid queryType do nothing
     // Here as placeholder for maybe throwing an error???s
@@ -80,10 +76,8 @@ export const queryMovieAPI = async ({ state, effects, actions }, page = 1) => {
 export const queryMovieAPIWithConfig = pipe(
   mutate(({ state }, searchConfig) => {
     const { queryType, predefinedType, searchString, genres } = searchConfig;
-    console.log("QT", queryType);
-    state.oSearch.searchString = searchString;
-    // state.oSearch.searchString = config.searchString;
     state.oSearch.queryType = queryType;
+    state.oSearch.searchString = searchString;
     state.oSearch.predefinedType = predefinedType;
     state.oSearch.genres = genres;
   }),

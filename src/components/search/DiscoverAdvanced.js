@@ -6,41 +6,62 @@ import { useOState, useOActions } from "../../store/overmind";
 
 import DiscoverByGenre from "./DiscoverByGenre";
 import { colors } from "../../globalStyles";
+import { first } from "lodash";
+
+const genreInit = (allGenres) => ({
+  genres: allGenres.map((genre) => ({ ...genre, isSelected: false })),
+});
+const reducer = (state, action) => {
+  let updatedGenres = {};
+  switch (action.type) {
+    case "ADD":
+      updatedGenres = state.genres.map((el) =>
+        el.id === action.genre.id ? { ...action.genre, isSelected: true } : el
+      );
+      return { ...state, genres: updatedGenres };
+    case "REMOVE":
+      updatedGenres = state.genres.map((el) =>
+        el.id === action.genre.id ? { ...action.genre, isSelected: false } : el
+      );
+      return { ...state, genres: updatedGenres };
+    case "CLEAR":
+      updatedGenres = state.genres.map((el) => ({ ...el, isSelected: false }));
+      return { ...state, genres: updatedGenres };
+    default:
+      return state;
+  }
+};
 
 const DiscoverAdvanced = ({ handleAdvancedConfig }) => {
   const state = useOState();
   const { allGenres, queryType } = state.oSearch; // [{ id, name }]
   //# Genre state objects
-  // populated intially with no selected genres. [ { genre, isSelected }]
-  const [genresObj, setGenresObj] = React.useState(() =>
-    allGenres.map((genre) => ({ ...genre, isSelected: false }))
-  );
-
-  //-Whenever a genre's isSelected property is updated, send selected to handleAdvancedConfig
-  React.useEffect(() => {
-    const selectedGenres = genresObj.filter((g) => g.isSelected).map((g) => g.id);
-    handleAdvancedConfig({ genres: selectedGenres });
-  }, [genresObj]);
+  const [genresState, dispatch] = React.useReducer(reducer, allGenres, genreInit);
 
   React.useEffect(() => {
-    if (queryType !== "advanced") {
-      genreFilterFunctions.clearFilterGenres();
-    }
-  }, [queryType]);
+    console.log(
+      "Mounting ADV GENRESState Test",
+      genresState.genres.filter((el) => el.isSelected)
+    );
+    // if (genresState.genres.length > 0) {
+    handleAdvancedConfig({
+      genres: genresState.genres.filter((el) => el.isSelected).map((el) => el.id),
+    });
+    // }
+    return () => console.log("******REMOVE GENRESState ADV Test");
+  }, [genresState.genres]);
+
+  // React.useEffect(() => {
+  //   if (queryType !== "advanced") {
+  //     genreFilterFunctions.clearFilterGenres();
+  //   }
+  // }, [queryType]);
+
   //-- Controls marking genres as selected or not
   const genreFilterFunctions = {
-    addGenreToFilter: (genre) =>
-      setGenresObj((prevGenreObj) =>
-        prevGenreObj.map((el) => (el.id === genre.id ? { ...genre, isSelected: true } : el))
-      ),
-    removeGenreFromFilter: (genre) =>
-      setGenresObj((prevGenreObj) =>
-        prevGenreObj.map((el) => (el.id === genre.id ? { ...genre, isSelected: false } : el))
-      ),
-    clearFilterGenres: () =>
-      setGenresObj((prevGenres) =>
-        prevGenres.map((genreObj) => ({ ...genreObj, isSelected: false }))
-      ),
+    addGenreToFilter: (genre) => dispatch({ type: "ADD", genre }),
+    removeGenreFromFilter: (genre) => dispatch({ type: "REMOVE", genre }),
+    clearFilterGenres: () => dispatch({ type: "CLEAR" }),
   };
 
   const titleSize = "m";
@@ -53,7 +74,7 @@ const DiscoverAdvanced = ({ handleAdvancedConfig }) => {
           <DiscoverByGenre
             titleSize={titleSize}
             title="Search By Genres"
-            allGenreFilters={genresObj}
+            allGenreFilters={genresState.genres}
             filterFunctions={genreFilterFunctions}
           />
         </View>
@@ -90,4 +111,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default DiscoverAdvanced;
+export default React.memo(DiscoverAdvanced);

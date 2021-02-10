@@ -18,34 +18,11 @@ import { searchByTitle } from "../../store/oSearch/actions";
 
 const DiscoverInputTitle = ({ setSearchString, searchString, sheetFunctions }) => {
   let inputRef = React.useRef(); // Not using right now
-  const [height, setHeight] = React.useState(20);
-  const state = useOState();
-  const actions = useOActions();
-
-  // Set up the Popular Movies Header
-  // Set up the Popular Movies Header
-
-  //oSearch.queryType, can we use this to set which pre-defined
-  //search we do -> popular, now playing, upcoming
-  //Also, maybe have another called discover, which also searches for
-  //genre, title, actors????
-  //--The "Header/popular row" needs to be moved into it's own component
-  //--The MovieSearch TextInput needs to be a controlled component
-  //--controlled from the bottomsheet component.
-  //--Each component will set the searchCriteria State field and the
-  //--bottomsheet component will control the calling of the "queryMovieAPIWithConfig()" function.
-  //--The queryMovieAPIWithConfig function should be renamed and will also need to accept
-  //--new arguments.  Maybe an object
-  //-- typeOfSearch: "title", "predefined", "advanced"
-  //-- data: {
-  //     searchString: used as movie title in both "title" and "advanced",
-  //        in predefined it will be either "popular" or "nowplaying" or "upcoming"
-  //     genres: [] // only in "advanced"
-  //   }
 
   const handleSearchString = (searchString) => {
     setSearchString(searchString);
   };
+
   return (
     <View>
       <View style={styles.searchBar}>

@@ -14,42 +14,20 @@ export const discoverTypesEnum = {
 
 // State Functions
 const updatePredefined = assign({
-  queryType: "predefined",
   predefinedType: (context, event) => event.predefinedType || predefinedTypesEnum.POPULAR,
 });
 const updateTitle = assign({
   searchString: (context, event) => event.value,
 });
+const updateAdvanced = assign({
+  genres: (context, event) => event.values.genres,
+});
 const resetContext = assign({
   searchString: "",
   genres: [],
 });
+
 const logFunction = (context, event) => console.log("EVENT", event);
-const updateDiscoverQuery = assign((context, event) => {
-  console.log("update dq", context, event);
-
-  return {
-    ...context,
-    discoverQuery: {
-      queryType: "title",
-      config: {
-        searchString: context.title,
-      },
-    },
-  };
-});
-
-const predefinedStates = {
-  POPULAR_SEARCH: {
-    target: discoverTypesEnum.POPULAR,
-  },
-  UPCOMING_SEARCH: {
-    target: discoverTypesEnum.UPCOMING,
-  },
-  NOWPLAYING_SEARCH: {
-    target: discoverTypesEnum.NOWPLAYING,
-  },
-};
 
 // Discover movie search state machine
 // States for Title search, Predefined Search and Advanced Search
@@ -60,12 +38,11 @@ export const discoverMoviesMachine = Machine(
     context: {
       searchString: "",
       genres: [],
-      queryType: "predefined",
       predefinedType: discoverTypesEnum.POPULAR,
     },
     states: {
       predefined: {
-        entry: [logFunction, resetContext, updatePredefined],
+        entry: [resetContext],
         on: {
           UPDATE_PREDEFINED: {
             actions: [updatePredefined],
@@ -77,11 +54,17 @@ export const discoverMoviesMachine = Machine(
         },
       },
       title: {
-        entry: [resetContext, logFunction],
+        entry: resetContext,
         on: {
-          UPDATE_TITLE: {
-            actions: [updateTitle],
-          },
+          UPDATE_TITLE: [
+            {
+              target: "predefined",
+              cond: (_, event) => event.value === "",
+            },
+            {
+              actions: updateTitle,
+            },
+          ],
           ADVANCED_SEARCH: {
             target: "advanced",
           },
@@ -93,12 +76,19 @@ export const discoverMoviesMachine = Machine(
       advanced: {
         entry: resetContext,
         on: {
-          UPDATE_ADV: {
-            actions: ["updateadvanced"],
-          },
+          UPDATE_ADV: [
+            // {
+            //   target: "predefined",
+            //   cond: (_, event) => {
+            //     return event.values.genres.length === 0;
+            //   },
+            // },
+            {
+              actions: ["updateAdvanced"],
+            },
+          ],
           TITLE_SEARCH: {
             target: "title",
-            actions: ["changesearchtype"],
           },
           PREDEFINED_SEARCH: {
             target: "predefined",
@@ -109,7 +99,7 @@ export const discoverMoviesMachine = Machine(
   },
   {
     actions: {
-      updateadvanced: (context, event) => console.log("updating predefined", event.name),
+      updateAdvanced,
       changesearchtype: (context, event) => console.log("changing search type", event),
     },
   }

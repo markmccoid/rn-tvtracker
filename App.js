@@ -15,7 +15,7 @@ const App = () => {
   LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
   // console.log("InApp");
   initTMDB(envData.tmdbId);
-  const overmind = createOvermind(config, { devtools: "192.168.1.20:3031" });
+  const overmind = createOvermind(config, { devtools: "192.168.1.7:3031" });
   // const overmind = createOvermind(config);
   return (
     <Provider value={overmind}>
