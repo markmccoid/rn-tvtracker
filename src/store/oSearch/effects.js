@@ -51,9 +51,18 @@ export const getUpcomingMovies = async (page = 1) => {
 export const getMoviesDiscover = async (criteriaObj, page = 1) => {
   // If doing > < release dates, then make sure date is in right format
   // Make sure we have genre Ids
+  const genres = criteriaObj.genres.map((el) => el.toString());
+  const { releaseYear, watchProviders, sortBy } = criteriaObj;
+
   // criteriaObj = { genres: [], releaseYear: number, releaseDateGTE: date | "YYYY-MM-DD", releaseDateLTE, cast, crew, sortBy}
-  const finalCriteria = { genres: criteriaObj.genres.map((el) => el.toString()) };
+  let finalCriteria = { sortBy };
+  finalCriteria = genres.length > 0 ? { genres, ...finalCriteria } : finalCriteria;
+  finalCriteria = releaseYear ? { releaseYear, ...finalCriteria } : finalCriteria;
+  finalCriteria =
+    watchProviders.length > 0 ? { watchProviders, ...finalCriteria } : finalCriteria;
+
   let results = await movieDiscover(finalCriteria, page);
+  // console.log("Results API", results.apiCall);
   return {
     data: results.data.results,
     totalPages: results.data.totalPages,

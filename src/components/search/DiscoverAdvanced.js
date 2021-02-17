@@ -1,27 +1,28 @@
 import React from "react";
-import { View, Text, ScrollView, StyleSheet } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import { Button } from "../../components/common/Buttons";
 import { Divider } from "react-native-elements";
 import { useOState, useOActions } from "../../store/overmind";
-
-import DiscoverByGenre from "./DiscoverByGenre";
+import DiscoverAdvByGenre from "./DiscoverAdvByGenre";
+import DiscoverAdvYears from "./DiscoverAdvYears";
+import DiscoverAdvProviders from "./DiscoverAdvProviders";
 import { colors } from "../../globalStyles";
-import { first } from "lodash";
 
 const genreInit = (allGenres) => ({
   genres: allGenres.map((genre) => ({ ...genre, isSelected: false })),
 });
+
 const reducer = (state, action) => {
   let updatedGenres = {};
   switch (action.type) {
     case "ADD":
       updatedGenres = state.genres.map((el) =>
-        el.id === action.genre.id ? { ...action.genre, isSelected: true } : el
+        el.id === action.genre.id ? { ...el, isSelected: true } : el
       );
       return { ...state, genres: updatedGenres };
     case "REMOVE":
       updatedGenres = state.genres.map((el) =>
-        el.id === action.genre.id ? { ...action.genre, isSelected: false } : el
+        el.id === action.genre.id ? { ...el, isSelected: false } : el
       );
       return { ...state, genres: updatedGenres };
     case "CLEAR":
@@ -32,60 +33,55 @@ const reducer = (state, action) => {
   }
 };
 
-const DiscoverAdvanced = ({ handleAdvancedConfig }) => {
+const DiscoverAdvanced = ({
+  handleAdvReleaseYear,
+  selectedGenres,
+  handleAdvGenres,
+  handleAdvWatchProviders,
+}) => {
   const state = useOState();
-  const { allGenres, queryType } = state.oSearch; // [{ id, name }]
+  const { allGenres } = state.oSearch; // [{ id, name }]
   //# Genre state objects
-  const [genresState, dispatch] = React.useReducer(reducer, allGenres, genreInit);
-
-  React.useEffect(() => {
-    console.log(
-      "Mounting ADV GENRESState Test",
-      genresState.genres.filter((el) => el.isSelected)
-    );
-    // if (genresState.genres.length > 0) {
-    handleAdvancedConfig({
-      genres: genresState.genres.filter((el) => el.isSelected).map((el) => el.id),
-    });
-    // }
-    return () => console.log("******REMOVE GENRESState ADV Test");
-  }, [genresState.genres]);
-
-  // React.useEffect(() => {
-  //   if (queryType !== "advanced") {
-  //     genreFilterFunctions.clearFilterGenres();
-  //   }
-  // }, [queryType]);
+  // const [genresState, dispatch] = React.useReducer(reducer, allGenres, genreInit);
 
   //-- Controls marking genres as selected or not
   const genreFilterFunctions = {
-    addGenreToFilter: (genre) => dispatch({ type: "ADD", genre }),
-    removeGenreFromFilter: (genre) => dispatch({ type: "REMOVE", genre }),
-    clearFilterGenres: () => dispatch({ type: "CLEAR" }),
+    addGenreToFilter: (genreId) => handleAdvGenres.addGenre(genreId),
+    removeGenreFromFilter: (genreId) => handleAdvGenres.removeGenre(genreId),
+    clearFilterGenres: () => handleAdvGenres.clearGenres(),
   };
+  // const genreFilterFunctions = {
+  //   addGenreToFilter: (genre) => dispatch({ type: "ADD", genre }),
+  //   removeGenreFromFilter: (genre) => dispatch({ type: "REMOVE", genre }),
+  //   clearFilterGenres: () => dispatch({ type: "CLEAR" }),
+  // };
 
   const titleSize = "m";
   return (
-    <ScrollView style={styles.scrollViewContainer}>
-      <View style={styles.container}>
-        <Divider style={{ backgroundColor: "black", marginTop: 10 }} />
+    <View style={styles.container}>
+      <Divider style={{ backgroundColor: "black", marginTop: 10 }} />
 
-        <View style={{ flex: 1, flexDirection: "column", marginVertical: 10 }}>
-          <DiscoverByGenre
-            titleSize={titleSize}
-            title="Search By Genres"
-            allGenreFilters={genresState.genres}
-            filterFunctions={genreFilterFunctions}
-          />
-        </View>
+      <View style={{ flexDirection: "column", marginVertical: 10 }}>
+        <DiscoverAdvByGenre
+          titleSize={titleSize}
+          title="Search By Genres"
+          selectedGenres={selectedGenres}
+          allGenreFilters={allGenres}
+          filterFunctions={genreFilterFunctions}
+        />
       </View>
-    </ScrollView>
+      <View style={{ flexDirection: "row" }}>
+        <DiscoverAdvYears handleAdvReleaseYear={handleAdvReleaseYear} />
+        <DiscoverAdvProviders handleAdvWatchProviders={handleAdvWatchProviders} />
+      </View>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   scrollViewContainer: {
     // backgroundColor: colors.background,
+    marginBottom: 40,
   },
   container: {
     marginVertical: 10,

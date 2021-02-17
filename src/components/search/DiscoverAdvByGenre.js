@@ -22,6 +22,7 @@ import TagCloud, { TagItem } from "../TagCloud/TagCloud";
 const DiscoverByGenre = ({
   titleSize = "m",
   title = "Search by Genre",
+  selectedGenres,
   allGenreFilters,
   filterFunctions,
 }) => {
@@ -32,7 +33,13 @@ const DiscoverByGenre = ({
   } = filterFunctions;
 
   const titleIconSize = { s: 15, m: 18, l: 22 };
-
+  const genresObj = allGenreFilters.map((genreObj) => {
+    if (selectedGenres.includes(genreObj.id)) {
+      return { ...genreObj, isSelected: true };
+    } else {
+      return { ...genreObj, isSelected: false };
+    }
+  });
   return (
     <View>
       <View
@@ -51,7 +58,7 @@ const DiscoverByGenre = ({
         )}
       </View>
       <TagCloud>
-        {allGenreFilters.map((genreObj) => {
+        {genresObj.map((genreObj) => {
           const { id, name, isSelected } = genreObj;
           return (
             <TagItem
@@ -59,8 +66,10 @@ const DiscoverByGenre = ({
               tagId={name}
               tagName={name}
               isSelected={isSelected}
-              onSelectTag={() => addGenreToFilter({ id, name })}
-              onDeSelectTag={() => removeGenreFromFilter({ id, name })}
+              onSelectTag={() => addGenreToFilter(id)}
+              onDeSelectTag={() => removeGenreFromFilter(id)}
+              // onSelectTag={() => addGenreToFilter({ id, name })}
+              // onDeSelectTag={() => removeGenreFromFilter({ id, name })}
             />
           );
         })}

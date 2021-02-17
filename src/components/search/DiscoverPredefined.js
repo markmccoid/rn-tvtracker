@@ -1,19 +1,20 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { predefinedTypesEnum } from "../../statemachines/discoverMoviesMachine";
+import { colors } from "../../globalStyles";
+
+// Style what a selected vs not selected item looks like
+const selectedStyle = { backgroundColor: colors.primary, color: "#fff" };
+const notSelectedStyle = { backgroundColor: "white", color: "black" };
+const predefinedItemStyle = (queryType, predefinedType, predefinedItem) =>
+  predefinedType === predefinedItem && queryType === "predefined"
+    ? selectedStyle
+    : notSelectedStyle;
 
 const DiscoverPredefined = ({ queryType, predefinedType, setPredefined }) => {
   const predefinedTypesArray = Object.keys(predefinedTypesEnum).map(
     (key) => predefinedTypesEnum[key]
   );
-
-  // Style what a selected vs not selected item looks like
-  const selectedStyle = { backgroundColor: "#ccc" };
-  const notSelectedStyle = { backgroundColor: "white" };
-  const predefinedItemStyle = (predefinedItem) =>
-    predefinedType === predefinedItem && queryType === "predefined"
-      ? selectedStyle
-      : notSelectedStyle;
 
   return (
     <View
@@ -22,10 +23,15 @@ const DiscoverPredefined = ({ queryType, predefinedType, setPredefined }) => {
       {predefinedTypesArray.map((predefinedItem) => (
         <View
           key={predefinedItem}
-          style={[styles.itemStyle, predefinedItemStyle(predefinedItem)]}
+          style={[
+            styles.itemStyle,
+            predefinedItemStyle(queryType, predefinedType, predefinedItem),
+          ]}
         >
           <TouchableOpacity onPress={() => setPredefined(predefinedItem)}>
-            <Text>{predefinedItem}</Text>
+            <Text style={predefinedItemStyle(queryType, predefinedType, predefinedItem)}>
+              {predefinedItem}
+            </Text>
           </TouchableOpacity>
         </View>
       ))}

@@ -40,6 +40,7 @@ export const state = {
   // all stuff under generated is not saved to firestore
   generated: {
     genres: [],
+    watchProviders: [],
   },
   //------- Getters -----------//
   getFilteredMovies: derived((state) => {

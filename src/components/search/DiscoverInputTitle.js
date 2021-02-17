@@ -1,20 +1,6 @@
 import React from "react";
-import {
-  Animated,
-  Easing,
-  View,
-  Text,
-  TextInput,
-  StyleSheet,
-  ActivityIndicator,
-  TouchableOpacity,
-  Keyboard,
-} from "react-native";
+import { View, TextInput, StyleSheet, TouchableOpacity, Keyboard } from "react-native";
 import { CloseIcon } from "../common/Icons";
-// import { SearchBar, Button } from "react-native-elements";
-import { useOActions, useOState } from "../../store/overmind";
-import { useNavigation } from "@react-navigation/native";
-import { searchByTitle } from "../../store/oSearch/actions";
 
 const DiscoverInputTitle = ({ setSearchString, searchString, sheetFunctions }) => {
   let inputRef = React.useRef(); // Not using right now
@@ -35,12 +21,12 @@ const DiscoverInputTitle = ({ setSearchString, searchString, sheetFunctions }) =
           autoCapitalize="none"
           onFocus={() => {
             // expand sheet to max height to avoid the keyboard
-            sheetFunctions.snapTo(1);
+            sheetFunctions.snapTo(2);
           }}
           onBlur={() => {
             // dismiss keyboard and collapse sheet.
             Keyboard.dismiss();
-            sheetFunctions.collapseSheet();
+            // sheetFunctions.collapseSheet();
           }}
         />
         <TouchableOpacity

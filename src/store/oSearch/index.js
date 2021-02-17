@@ -11,6 +11,7 @@ export const config = {
     isLoading: false,
     queryType: "popular",
     allGenres: [], // [ { id, name }, ...]
+    discoverSortBy: "popularity.desc",
   },
   actions,
   effects,

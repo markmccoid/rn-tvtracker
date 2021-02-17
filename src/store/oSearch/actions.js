@@ -29,8 +29,17 @@ export const searchSetup = async ({ state, effects }) => {
  * If not, it will return ? (nothing?)
  */
 export const queryMovieAPI = async ({ state, effects, actions }, page = 1) => {
+  console.log("queryMovieAPI", page);
   let { oSearch } = state;
-  const { queryType, predefinedType, searchString, genres } = oSearch;
+  const {
+    queryType,
+    predefinedType,
+    searchString,
+    genres,
+    releaseYear,
+    watchProviders,
+    discoverSortBy,
+  } = oSearch;
 
   let results = [];
   oSearch.isLoading = true;
@@ -53,7 +62,10 @@ export const queryMovieAPI = async ({ state, effects, actions }, page = 1) => {
   } else if (queryType === "title") {
     results = await effects.oSearch.searchMovieByTitle(searchString, page);
   } else if (queryType === "advanced") {
-    results = await effects.oSearch.getMoviesDiscover({ genres }, page);
+    results = await effects.oSearch.getMoviesDiscover(
+      { genres, releaseYear, watchProviders, sortBy: discoverSortBy },
+      page
+    );
   } else {
     // Invalid queryType do nothing
     // Here as placeholder for maybe throwing an error???s
@@ -74,50 +86,32 @@ export const queryMovieAPI = async ({ state, effects, actions }, page = 1) => {
  *
  */
 export const queryMovieAPIWithConfig = pipe(
-  mutate(({ state }, searchConfig) => {
-    const { queryType, predefinedType, searchString, genres } = searchConfig;
+  mutate(({ state, effects, actions }, searchConfig) => {
+    const {
+      queryType,
+      predefinedType,
+      searchString,
+      genres,
+      releaseYear,
+      watchProviders,
+    } = searchConfig;
     state.oSearch.queryType = queryType;
     state.oSearch.searchString = searchString;
     state.oSearch.predefinedType = predefinedType;
     state.oSearch.genres = genres;
+    state.oSearch.releaseYear = releaseYear;
+    state.oSearch.watchProviders = watchProviders;
   }),
   debounce(500),
-  mutate(({ state }) => {
+  mutate(({ state, effects, actions }) => {
     state.oSearch.resultData = [];
     state.oSearch.resultTotalPages = undefined;
     state.oSearch.resultCurrentPage = undefined;
   }),
-  mutate(queryMovieAPI)
-  // mutate(async ({ state, effects, actions }) => {
-  //   let { oSearch } = state;
-  //   let results = [];
-  //   oSearch.isLoading = true;
-  //   oSearch.resultData = [];
-  //   oSearch.resultTotalPages = undefined;
-  //   oSearch.resultCurrentPage = undefined;
-  //   if (oSearch.queryType === "popular") {
-  //     //Get popular movies if no search string
-  //     results = await effects.oSearch.getPopularMovies();
-  //   } else if (oSearch.queryType === "nowplaying") {
-  //     results = await effects.oSearch.getNowPlayingMovies();
-  //   } else if (oSearch.queryType === "upcoming") {
-  //     results = await effects.oSearch.getUpcomingMovies();
-  //   } else if (oSearch.queryType === "title") {
-  //     results = await effects.oSearch.searchMovieByTitle(oSearch.searchString);
-  //   } else if (oSearch.queryType === "advanced") {
-  //     results = await effects.oSearch.getMoviesDiscover(
-  //       oSearch.advancedConfig.discoverCriteria
-  //     );
-  //   }
-
-  //   let taggedMovies = actions.oSearch.internal.tagResults(results.data);
-  //   oSearch.resultData = taggedMovies;
-  //   oSearch.resultTotalPages = results.totalPages;
-  //   oSearch.resultCurrentPage = results.currentPage;
-  //   oSearch.isLoading = false;
-  // })
+  mutate(({ state, effects, actions }) => queryMovieAPI({ state, effects, actions }, 1))
 );
 
+//--------------------------------
 export const getPopularMovies = async ({ state, actions, effects }) => {
   let { oSearch } = state;
   oSearch.isLoading = true;
