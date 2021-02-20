@@ -9,9 +9,6 @@ import SectionSort from "./SectionSort";
 import { colors } from "../../globalStyles";
 
 const Settings = ({ navigation }) => {
-  const state = useOState();
-  const { savedFilters } = state.oSaved;
-
   //# When savedFilters gets updated in the drag component, it isn't updated here
   //# TEST - maybe use this as the driver and send the data down OR figure out why not updating
   // React.useEffect(() => {

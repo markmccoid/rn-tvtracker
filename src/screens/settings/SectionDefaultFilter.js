@@ -6,6 +6,7 @@ import DropDownPicker from "react-native-dropdown-picker";
 import { colors, commonStyles } from "../../globalStyles";
 
 const SectionDefaultFilter = () => {
+  const [selectedItem, setSelectedItem] = React.useState("");
   const state = useOState();
   const actions = useOActions();
   const { savedFilters, settings } = state.oSaved;
@@ -16,8 +17,20 @@ const SectionDefaultFilter = () => {
     label: filter.name,
     value: filter.id,
   }));
-  //Add an option to have No filter on startup
-  filterItems.unshift({ label: "None", value: undefined });
+  filterItems.unshift({ label: "Clear Default Filter", value: "none" });
+
+  let controller;
+
+  // When "Clear Default Filter" selected, sent null and reset list, else set selected filter
+  React.useEffect(() => {
+    if (selectedItem === "none") {
+      setDefaultFilter();
+      controller.reset();
+    } else if (selectedItem) {
+      setDefaultFilter(selectedItem);
+    }
+  }, [selectedItem]);
+
   return (
     <View>
       <View style={{ marginBottom: 5 }}>
@@ -27,7 +40,9 @@ const SectionDefaultFilter = () => {
       <DropDownPicker
         items={filterItems}
         defaultValue={defaultFilter}
+        controller={(ins) => (controller = ins)}
         placeholder="Select a Default Filter"
+        itemStyle={{ justifyContent: "flex-start" }}
         containerStyle={{
           height: 40,
           borderWidth: 1,
@@ -39,7 +54,7 @@ const SectionDefaultFilter = () => {
           borderColor: colors.listBorder,
         }}
         activeLabelStyle={{ color: colors.includeGreen, fontWeight: "bold" }}
-        onChangeItem={(item) => setDefaultFilter(item.value)}
+        onChangeItem={(item) => setSelectedItem(item.value)}
       />
     </View>
   );
