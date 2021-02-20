@@ -1,4 +1,6 @@
-import { Machine, assign } from "xstate";
+import { Machine, assign, send } from "xstate";
+import { watchProviders } from "../storage/externalData";
+import { overmind } from "../store/overmind";
 
 //Predefined enum
 export const predefinedTypesEnum = {
@@ -16,16 +18,50 @@ export const discoverTypesEnum = {
 const updatePredefined = assign({
   predefinedType: (context, event) => event.predefinedType || predefinedTypesEnum.POPULAR,
 });
-const updateTitle = assign({
-  searchString: (context, event) => event.value,
+const updateSearchString = assign({ searchString: (_, event) => event.value });
+
+//---------------
+// RESET Functions
+//---------------
+const resetContext = (queryType) =>
+  assign({
+    queryType,
+    searchString: "",
+    genres: [],
+    releaseYear: undefined,
+    watchProviders: [],
+  });
+
+const resetPredefined = assign({
+  predefinedType: (_, event) => event.predefinedType || discoverTypesEnum.POPULAR,
 });
 
-const resetContext = assign({
-  searchString: "",
-  genres: [],
-  releaseYear: undefined,
-  watchProviders: [],
-});
+//---------------
+//  PERFORM Search
+//---------------
+const performAdvancedSearch = (context, event) => {
+  const { genres, releaseYear, watchProviders, queryType } = context;
+  if (genres.length > 0 || releaseYear || watchProviders.length > 0) {
+    console.log("perform query", context, event);
+    overmind.actions.oSearch.queryMovieAPIWithConfig({
+      queryType,
+      genres,
+      releaseYear,
+      watchProviders,
+    });
+  }
+};
+const performSimpleSearch = (context, event) => {
+  const { searchString, queryType, predefinedType } = context;
+  console.log("PPS, qt ", queryType);
+  if (searchString.length > 0 || queryType === "predefined") {
+    overmind.actions.oSearch.queryMovieAPIWithConfig({
+      queryType,
+      searchString,
+      predefinedType,
+    });
+  }
+};
 
 const logFunction = (context, event) => console.log("EVENT", event);
 
@@ -33,7 +69,7 @@ const logFunction = (context, event) => console.log("EVENT", event);
 // States for Title search, Predefined Search and Advanced Search
 export const discoverMoviesMachine = Machine({
   id: "discoverMachine",
-  initial: "predefined",
+  initial: "simple",
   context: {
     searchString: "",
     genres: [],
@@ -42,66 +78,77 @@ export const discoverMoviesMachine = Machine({
     predefinedType: discoverTypesEnum.POPULAR,
   },
   states: {
-    predefined: {
-      entry: [resetContext],
+    simple: {
+      initial: "predefined",
       on: {
-        UPDATE_PREDEFINED: {
-          actions: [updatePredefined],
-        },
-        TITLE_SEARCH: {
-          target: "title",
-        },
         ADVANCED_SEARCH: "advanced",
+        PERFORM_SEARCH: { actions: performSimpleSearch },
       },
-    },
-    title: {
-      entry: resetContext,
-      on: {
-        UPDATE_TITLE: [
-          {
-            target: "predefined",
-            cond: (_, event) => event.value === "",
+      states: {
+        predefined: {
+          entry: [resetContext("predefined"), resetPredefined, send("PERFORM_SEARCH")],
+          on: {
+            UPDATE_TITLE: {
+              target: "title",
+            },
+            UPDATE_PREDEFINED: {
+              actions: [
+                assign({
+                  predefinedType: (_, event) => event.predefinedType,
+                }),
+                send("PERFORM_SEARCH"),
+              ],
+            },
           },
-          {
-            actions: updateTitle,
-          },
-        ],
-        ADVANCED_SEARCH: {
-          target: "advanced",
         },
-        PREDEFINED_SEARCH: {
-          target: "predefined",
+        title: {
+          // resetContextType and set initial searchString value
+          // if we move perform search here, then if want to search with only one char, call perform search
+          entry: [resetContext("title"), updateSearchString, send("PERFORM_SEARCH")],
+          on: {
+            UPDATE_TITLE: [
+              {
+                // got to predefined if user has cleared input box
+                target: "predefined",
+                cond: (context, event) => event.value === "",
+              },
+              {
+                actions: [updateSearchString, send("PERFORM_SEARCH")],
+              },
+            ],
+            UPDATE_PREDEFINED: {
+              target: "predefined",
+            },
+          },
         },
       },
     },
     advanced: {
-      entry: resetContext,
+      entry: [resetContext("advanced")],
       on: {
-        ADD_GENRE: {
-          actions: assign({
-            genres: (context, event) => [...context.genres, event.genreId],
-          }),
-        },
-        REMOVE_GENRE: {
-          actions: assign({
-            genres: (context, event) =>
-              context.genres.filter((genreId) => event.genreId !== genreId),
-          }),
-        },
-        CLEAR_GENRES: {
-          actions: assign({ genres: [] }),
+        SIMPLE_SEARCH: { target: "simple" },
+        UPDATE_GENRES: {
+          actions: [
+            assign({
+              genres: (context, event) => event.genres,
+            }),
+            send("PERFORM_SEARCH"),
+          ],
         },
         UPDATE_RELEASEYEAR: {
-          actions: assign({ releaseYear: (context, event) => event.releaseYear }),
+          actions: [
+            assign({ releaseYear: (context, event) => event.releaseYear }),
+            send("PERFORM_SEARCH"),
+          ],
         },
         UPDATE_WATCHPROVIDERS: {
-          actions: assign({ watchProviders: (context, event) => event.watchProviders }),
+          actions: [
+            assign({ watchProviders: (context, event) => event.watchProviders }),
+            send("PERFORM_SEARCH"),
+          ],
         },
-        TITLE_SEARCH: {
-          target: "title",
-        },
-        PREDEFINED_SEARCH: {
-          target: "predefined",
+        PERFORM_SEARCH: {
+          actions: performAdvancedSearch,
         },
       },
     },
