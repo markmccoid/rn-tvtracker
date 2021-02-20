@@ -2,13 +2,13 @@ import React from "react";
 import { View, Text, TextInput, Pressable, StyleSheet, Picker } from "react-native";
 import { View as MotiView, AnimatePresence } from "moti";
 import DropDownPicker from "react-native-dropdown-picker";
-
+import { useDimensions } from "@react-native-community/hooks";
+import { useAdvancedSearchState } from "../../context/AdvancedSearchContext";
 import { colors } from "../../globalStyles";
 
 const createYearsArray = () => {
   const startYear = new Date().getFullYear() + 1;
   const endYear = 1900;
-
   let yearsArray = [];
   yearsArray.push("All Years");
   for (let i = startYear; i >= endYear; i--) {
@@ -18,7 +18,7 @@ const createYearsArray = () => {
   return yearsArray;
 };
 
-const DiscoverAdvYears = ({ handleAdvReleaseYear }) => {
+const DiscoverAdvYears = ({ pickerStateInfo }) => {
   const yearsArray = React.useMemo(() => createYearsArray(), []);
   const yearsObject = React.useMemo(() => {
     return yearsArray.reduce((obj, year) => {
@@ -41,19 +41,33 @@ const DiscoverAdvYears = ({ handleAdvReleaseYear }) => {
   const [showPicker, setShowPicker] = React.useState(false);
   const toggleShowPicker = () => setShowPicker((prev) => !prev);
 
+  const {
+    currentSnapPointInfo: { currSnapIndex },
+    advancedSearchHandlers: { handleAdvReleaseYear },
+  } = useAdvancedSearchState();
+
+  const { width } = useDimensions().window;
+  // Pull out picker states info
+  const { pickerStates, updatePickerStates, pickerKey } = pickerStateInfo;
+
   React.useEffect(() => {
     if (yearsObject) {
+      // if selectedItem = 0, then the query won't rerun IF other advancedSearch options have not been selected.
       handleAdvReleaseYear(selectedItem);
     }
   }, [selectedItem]);
 
+  const dropDownHeight = currSnapIndex === 3 ? 300 : 150;
   return (
-    <View style={styles.container}>
-      <Text>Release Date</Text>
+    <View style={{ width: width / 4 }}>
       <DropDownPicker
+        isVisible={pickerStates.isReleaseDateOpen}
+        onOpen={() => updatePickerStates(pickerKey, true)}
+        onClose={() => updatePickerStates(pickerKey, false)}
         items={yearsDDPicker}
         defaultValue={selectedItem}
         placeholder="All Years"
+        dropDownMaxHeight={dropDownHeight}
         containerStyle={{
           height: 40,
           borderWidth: 1,

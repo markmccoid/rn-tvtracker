@@ -1,109 +1,82 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Pressable } from "react-native";
 import { Button } from "../../components/common/Buttons";
 import { Divider } from "react-native-elements";
 import { useOState, useOActions } from "../../store/overmind";
 import DiscoverAdvByGenre from "./DiscoverAdvByGenre";
 import DiscoverAdvYears from "./DiscoverAdvYears";
 import DiscoverAdvProviders from "./DiscoverAdvProviders";
-import { colors } from "../../globalStyles";
 
-const genreInit = (allGenres) => ({
-  genres: allGenres.map((genre) => ({ ...genre, isSelected: false })),
-});
-
-const reducer = (state, action) => {
-  let updatedGenres = {};
-  switch (action.type) {
-    case "ADD":
-      updatedGenres = state.genres.map((el) =>
-        el.id === action.genre.id ? { ...el, isSelected: true } : el
-      );
-      return { ...state, genres: updatedGenres };
-    case "REMOVE":
-      updatedGenres = state.genres.map((el) =>
-        el.id === action.genre.id ? { ...el, isSelected: false } : el
-      );
-      return { ...state, genres: updatedGenres };
-    case "CLEAR":
-      updatedGenres = state.genres.map((el) => ({ ...el, isSelected: false }));
-      return { ...state, genres: updatedGenres };
-    default:
-      return state;
-  }
+const defaultPickerStates = {
+  isGenreOpen: false,
+  isReleaseDateOpen: false,
+  isProvidersOpen: false,
 };
 
-const DiscoverAdvanced = ({
-  handleAdvReleaseYear,
-  selectedGenres,
-  handleAdvGenres,
-  handleAdvWatchProviders,
-}) => {
+const DiscoverAdvanced = () => {
+  const [pickerStates, setPickerStates] = React.useState(defaultPickerStates);
   const state = useOState();
   const { allGenres } = state.oSearch; // [{ id, name }]
-  //# Genre state objects
-  // const [genresState, dispatch] = React.useReducer(reducer, allGenres, genreInit);
 
-  //-- Controls marking genres as selected or not
-  const genreFilterFunctions = {
-    addGenreToFilter: (genreId) => handleAdvGenres.addGenre(genreId),
-    removeGenreFromFilter: (genreId) => handleAdvGenres.removeGenre(genreId),
-    clearFilterGenres: () => handleAdvGenres.clearGenres(),
+  const updatePickerStates = (pickerKey, isOpen) => {
+    // update whatever picker is calling this to passed state,
+    // ALL other pickers set to false (closed)
+    // NOTE: this also causes all pickers to close when I manually (controller.close())
+    // the genre picker in response to being at a snapPointIndex <=1
+    setPickerStates({ ...defaultPickerStates, [pickerKey]: isOpen });
   };
-  // const genreFilterFunctions = {
-  //   addGenreToFilter: (genre) => dispatch({ type: "ADD", genre }),
-  //   removeGenreFromFilter: (genre) => dispatch({ type: "REMOVE", genre }),
-  //   clearFilterGenres: () => dispatch({ type: "CLEAR" }),
-  // };
 
-  const titleSize = "m";
   return (
-    <View style={styles.container}>
+    <Pressable onPress={() => setPickerStates(defaultPickerStates)} style={styles.container}>
       <Divider style={{ backgroundColor: "black", marginTop: 10 }} />
-
-      <View style={{ flexDirection: "column", marginVertical: 10 }}>
+      <View style={styles.sectionContainer}>
+        <Text>Genres</Text>
         <DiscoverAdvByGenre
-          titleSize={titleSize}
-          title="Search By Genres"
-          selectedGenres={selectedGenres}
           allGenreFilters={allGenres}
-          filterFunctions={genreFilterFunctions}
+          pickerStateInfo={{ pickerStates, updatePickerStates, pickerKey: "isGenreOpen" }}
         />
       </View>
       <View style={{ flexDirection: "row" }}>
-        <DiscoverAdvYears handleAdvReleaseYear={handleAdvReleaseYear} />
-        <DiscoverAdvProviders handleAdvWatchProviders={handleAdvWatchProviders} />
+        <View style={styles.sectionContainer}>
+          <Text>Release Date</Text>
+          <DiscoverAdvYears
+            pickerStateInfo={{
+              pickerStates,
+              updatePickerStates,
+              pickerKey: "isReleaseDateOpen",
+            }}
+          />
+        </View>
+        <View style={[styles.sectionContainer]}>
+          <Text>Providers</Text>
+          <DiscoverAdvProviders
+            pickerStateInfo={{
+              pickerStates,
+              updatePickerStates,
+              pickerKey: "isProvidersOpen",
+            }}
+          />
+        </View>
       </View>
-    </View>
+    </Pressable>
   );
 };
 
 const styles = StyleSheet.create({
-  scrollViewContainer: {
-    // backgroundColor: colors.background,
-    marginBottom: 40,
-  },
   container: {
     marginVertical: 10,
-    marginHorizontal: 15,
+    marginHorizontal: 10,
+    flex: 1,
+  },
+  sectionContainer: {
+    flexDirection: "column",
+    margin: 10,
+    zIndex: 1000,
   },
   title: {
     marginVertical: 10,
     fontSize: 18,
     fontWeight: "bold",
-  },
-  filterName: {
-    padding: 10,
-    borderRadius: 5,
-    borderWidth: 1,
-    borderColor: "black",
-    backgroundColor: "white",
-  },
-  tagContainer: {
-    marginVertical: 10,
-  },
-  saveButton: {
-    marginBottom: 50,
   },
 });
 

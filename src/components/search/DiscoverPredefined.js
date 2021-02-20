@@ -1,21 +1,19 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { predefinedTypesEnum } from "../../statemachines/discoverMoviesMachine";
+import { predefinedTypesEnum } from "../../statemachines/discoverMoviesMachineBAK";
 import { colors } from "../../globalStyles";
 
 // Style what a selected vs not selected item looks like
 const selectedStyle = { backgroundColor: colors.primary, color: "#fff" };
 const notSelectedStyle = { backgroundColor: "white", color: "black" };
-const predefinedItemStyle = (queryType, predefinedType, predefinedItem) =>
-  predefinedType === predefinedItem && queryType === "predefined"
-    ? selectedStyle
-    : notSelectedStyle;
+const predefinedItemStyle = (isPredefinedState, predefinedType, predefinedItem) =>
+  predefinedType === predefinedItem && isPredefinedState ? selectedStyle : notSelectedStyle;
 
-const DiscoverPredefined = ({ queryType, predefinedType, setPredefined }) => {
+const DiscoverPredefined = ({ isPredefinedState, predefinedType, setPredefined }) => {
   const predefinedTypesArray = Object.keys(predefinedTypesEnum).map(
     (key) => predefinedTypesEnum[key]
   );
-
+  console.log("isPredfined", isPredefinedState);
   return (
     <View
       style={{ flexDirection: "row", marginHorizontal: 10, justifyContent: "space-around" }}
@@ -25,11 +23,13 @@ const DiscoverPredefined = ({ queryType, predefinedType, setPredefined }) => {
           key={predefinedItem}
           style={[
             styles.itemStyle,
-            predefinedItemStyle(queryType, predefinedType, predefinedItem),
+            predefinedItemStyle(isPredefinedState, predefinedType, predefinedItem),
           ]}
         >
           <TouchableOpacity onPress={() => setPredefined(predefinedItem)}>
-            <Text style={predefinedItemStyle(queryType, predefinedType, predefinedItem)}>
+            <Text
+              style={predefinedItemStyle(isPredefinedState, predefinedType, predefinedItem)}
+            >
               {predefinedItem}
             </Text>
           </TouchableOpacity>

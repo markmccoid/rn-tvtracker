@@ -1,72 +1,38 @@
 import React from "react";
-import { View, Text, StyleSheet, ScrollView, useWindowDimensions } from "react-native";
+import { View, Text, StyleSheet, useWindowDimensions } from "react-native";
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
-import { View as MotiView, AnimatePresence } from "moti";
 import { useMachine } from "@xstate/react";
+import { View as MotiView, AnimatePresence } from "moti";
+import { useHeaderHeight } from "@react-navigation/stack";
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
+import Animated from "react-native-reanimated";
 
-import { useOState, useOActions } from "../../store/overmind";
 import { Button } from "../../components/common/Buttons";
 import DiscoverInputTitle from "./DiscoverInputTitle";
 import DiscoverPredefined from "./DiscoverPredefined";
 import { colors } from "../../globalStyles";
-import Animated from "react-native-reanimated";
 import DiscoverAdvanced from "./DiscoverAdvanced";
+import SnapPointProvider from "../../context/AdvancedSearchContext";
 
 import { discoverMoviesMachine } from "../../statemachines/discoverMoviesMachine";
 
-const predefinedQueries = [
-  { name: "popular", label: "Popular Movies", isActive: false },
-  { name: "nowplaying", label: "Now Playing", isActive: false },
-  { name: "upcoming", label: "Upcoming", isActive: false },
-];
-
 const DiscoverBottomSheet = ({ navigation }) => {
   const [discoverState, sendDiscoverEvent] = useMachine(discoverMoviesMachine);
-  const state = useOState();
-  const actions = useOActions();
-  const { queryMovieAPIWithConfig } = actions.oSearch;
+  const [currentSnapPointInfo, setCurrentSnapPointInfo] = React.useState(1);
 
   const height = useWindowDimensions().height;
-  // const [predefined, setPredefined] = React.useState(discoverTypesEnum.POPULAR);
-  // const [searchString, setSearchString] = React.useState("");
-  // const [searchConfig, setSearchConfig] = React.useState({
-  //   queryType: "popular",
-  //   config: { searchString: "" },
-  // });
-  // let { searchString } = state.oSearch;
-  // const { isLoading, queryType } = state.oSearch;
+  const tabHeight = useBottomTabBarHeight();
+  const headerHeight = useHeaderHeight();
+  // Don't think I need working height.
+  // Seems like bottomSheet is relative to the bottom tab and header
+  const workingHeight = height - tabHeight - headerHeight;
 
   //*------------------------
   //*- Search Query
   //*------------------------
   //Whenever searchConfig updates, perform search
-  React.useEffect(() => {
-    const {
-      predefinedType,
-      searchString,
-      genres,
-      releaseYear,
-      watchProviders,
-    } = discoverState.context;
-    // console.log(
-    //   "USEEFFECT Context Change qt",
-    //   discoverState.value,
-    //   predefinedType,
-    //   searchString,
-    //   genres,
-    //   releaseYear,
-    //   watchProviders
-    // );
-    // discoverState.value is the "queryType"  this is the "state" that the machine is currently in
-    queryMovieAPIWithConfig({
-      queryType: discoverState.value,
-      predefinedType,
-      searchString,
-      genres,
-      releaseYear,
-      watchProviders,
-    });
-  }, [discoverState.context]);
+  console.log("state.value", discoverState.value);
+  console.log("state.matches", discoverState.toStrings());
 
   //*------------------------
   //* Bottomsheet Background
@@ -85,15 +51,15 @@ const DiscoverBottomSheet = ({ navigation }) => {
       />
     );
   };
-  // ref
+  //*--- SHEET FUNCS And VARS ---------------------
   const bottomSheetRef = React.useRef(null);
 
   // variables
   const snapObj = {
-    hidden: "1%",
-    simpleSearch: height * 0.16,
-    keyboard: height * 0.5,
-    max: "80%",
+    hidden: 15,
+    simpleSearch: 150,
+    keyboard: 380,
+    max: "90%",
   };
 
   // return an object we can use to call the snapTo function with
@@ -110,7 +76,8 @@ const DiscoverBottomSheet = ({ navigation }) => {
 
   // callbacks
   const handleSheetChanges = React.useCallback((index) => {
-    // console.log("handleSheetChanges", index);
+    // making currentSnapPointInfo an object, so we can pass other information if needed
+    setCurrentSnapPointInfo({ currSnapIndex: index });
   }, []);
 
   const expandSheet = () => bottomSheetRef.current.expand();
@@ -123,39 +90,31 @@ const DiscoverBottomSheet = ({ navigation }) => {
     snapTo,
     snapEnum,
   };
-
-  //*------------------------
+  //*---END SHEET FUNCS And VARS ---------------------
 
   //*-------------------------
   //* Handler Functions
   //*-------------------------
   const handleSearchString = (value) => {
-    sendDiscoverEvent("TITLE_SEARCH");
+    // sendDiscoverEvent("TITLE_SEARCH");
     sendDiscoverEvent({ type: "UPDATE_TITLE", value });
   };
 
   const handlePredefined = (predefinedType) => {
-    sendDiscoverEvent({ type: "PREDEFINED_SEARCH" });
+    // sendDiscoverEvent({ type: "PREDEFINED_SEARCH" });
     sendDiscoverEvent({ type: "UPDATE_PREDEFINED", predefinedType });
   };
 
-  // { genres: [], yearReleasedStart: number, yearReleasedEnd: number  }
-  const handleAdvGenres = {
-    addGenre: (genreId) => {
-      sendDiscoverEvent({ type: "ADD_GENRE", genreId });
+  const advancedSearchHandlers = {
+    handleAdvGenres: (genres) => {
+      sendDiscoverEvent({ type: "UPDATE_GENRES", genres });
     },
-    removeGenre: (genreId) => {
-      sendDiscoverEvent({ type: "REMOVE_GENRE", genreId });
+    handleAdvReleaseYear: (releaseYear) => {
+      sendDiscoverEvent({ type: "UPDATE_RELEASEYEAR", releaseYear });
     },
-    clearGenres: (genreId) => {
-      sendDiscoverEvent({ type: "CLEAR_GENRES", genreId });
+    handleAdvWatchProviders: (watchProviders) => {
+      sendDiscoverEvent({ type: "UPDATE_WATCHPROVIDERS", watchProviders });
     },
-  };
-  const handleAdvReleaseYear = (releaseYear) => {
-    sendDiscoverEvent({ type: "UPDATE_RELEASEYEAR", releaseYear });
-  };
-  const handleAdvWatchProviders = (watchProviders) => {
-    sendDiscoverEvent({ type: "UPDATE_WATCHPROVIDERS", watchProviders });
   };
 
   return (
@@ -165,11 +124,11 @@ const DiscoverBottomSheet = ({ navigation }) => {
       index={snapEnum.simpleSearch}
       snapPoints={snapPoints}
       onChange={handleSheetChanges}
-      topInset={25}
+      topInset={25} // Keeps it from covering all of back screen
       animateOnMount
     >
       <AnimatePresence>
-        {discoverState.value !== "advanced" && (
+        {discoverState.matches("simple") && (
           <MotiView
             from={{ height: 0, opacity: 0 }}
             animate={{ height: 100, opacity: 1 }}
@@ -195,7 +154,7 @@ const DiscoverBottomSheet = ({ navigation }) => {
               sheetFunctions={sheetFunctions}
             />
             <DiscoverPredefined
-              queryType={discoverState.value}
+              isPredefinedState={discoverState.toStrings().includes("simple.predefined")}
               predefinedType={discoverState.context.predefinedType}
               setPredefined={handlePredefined}
             />
@@ -204,15 +163,14 @@ const DiscoverBottomSheet = ({ navigation }) => {
       </AnimatePresence>
 
       <Button
-        title={`Activate ${discoverState.value === "advanced" ? "Simple" : "Advanced"}`}
+        title={`Activate ${discoverState.matches("advanced") ? "Simple" : "Advanced"}`}
         onPress={() => {
-          if (discoverState.value === "advanced") {
-            sendDiscoverEvent("PREDEFINED_SEARCH");
-            console.log("BEFORE", snapEnum.simpleSearch);
+          if (discoverState.matches("advanced")) {
+            sendDiscoverEvent("SIMPLE_SEARCH");
             snapTo(snapEnum.simpleSearch);
           } else {
             sendDiscoverEvent("ADVANCED_SEARCH");
-            snapTo(snapEnum.max);
+            snapTo(snapEnum.keyboard);
           }
         }}
       />
@@ -239,12 +197,11 @@ const DiscoverBottomSheet = ({ navigation }) => {
                   height: 0,
                 }}
               >
-                <DiscoverAdvanced
-                  selectedGenres={discoverState.context.genres}
-                  handleAdvGenres={handleAdvGenres}
-                  handleAdvReleaseYear={handleAdvReleaseYear}
-                  handleAdvWatchProviders={handleAdvWatchProviders}
-                />
+                <SnapPointProvider
+                  advancedSearchObject={{ currentSnapPointInfo, advancedSearchHandlers }}
+                >
+                  <DiscoverAdvanced />
+                </SnapPointProvider>
               </MotiView>
             )}
           </AnimatePresence>

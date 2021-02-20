@@ -56,7 +56,8 @@ export const getMoviesDiscover = async (criteriaObj, page = 1) => {
 
   // criteriaObj = { genres: [], releaseYear: number, releaseDateGTE: date | "YYYY-MM-DD", releaseDateLTE, cast, crew, sortBy}
   let finalCriteria = { sortBy };
-  finalCriteria = genres.length > 0 ? { genres, ...finalCriteria } : finalCriteria;
+  finalCriteria =
+    genres.length > 0 ? { genres, genreCompareType: "AND", ...finalCriteria } : finalCriteria;
   finalCriteria = releaseYear ? { releaseYear, ...finalCriteria } : finalCriteria;
   finalCriteria =
     watchProviders.length > 0 ? { watchProviders, ...finalCriteria } : finalCriteria;

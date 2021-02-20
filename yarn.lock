@@ -1719,9 +1719,9 @@
     regenerator-runtime "^0.13.4"
 
 "@babel/runtime@^7.7.7":
-  version "7.12.13"
-  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.12.13.tgz#0a21452352b02542db0ffb928ac2d3ca7cb6d66d"
-  integrity sha512-8+3UMPBrjFa/6TtKi/7sehPKqfAm4g6K+YQjyyFOLUTxzOngcRZTlAVY8sc2CORJYqdHQY8gRPHmn+qo15rCBw==
+  version "7.12.18"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.12.18.tgz#af137bd7e7d9705a412b3caaf991fe6aaa97831b"
+  integrity sha512-BogPQ7ciE6SYAUPtlm9tWbgI9+2AgqSam6QivMgXgAT+fKbgppaj4ZX15MHeLC1PVF5sNk70huBu20XxWOs8Cg==
   dependencies:
     regenerator-runtime "^0.13.4"
 
@@ -2289,9 +2289,9 @@
     chalk "^4.0.0"
 
 "@markmccoid/tmdb_api@^0.2.0":
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/@markmccoid/tmdb_api/-/tmdb_api-0.2.1.tgz#820b942526679913fbd769e93077924892e21dc7"
-  integrity sha512-WdZdyancceAXMbzGdl9uEvHGa0so3OCyk0Chr2CF0gN0vq2F2PRB8M+op9tGSKcnqriE6ozX0+EYsYn/xpbMEA==
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/@markmccoid/tmdb_api/-/tmdb_api-0.2.2.tgz#f7e0b55c700830d260f6393bc589d8bbb78e2c92"
+  integrity sha512-XaF597w8jBwlmXG6kno+IwT4bDoSPWuNitDTyhMVZSrRfX5RxlKCGAvDP0UcTvq9275RxS5VGy8rsCz3X0+H0w==
   dependencies:
     "@babel/runtime" "^7.7.7"
     axios "^0.21.1"

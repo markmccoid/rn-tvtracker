@@ -1,125 +1,107 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
-import { fonts } from "../../globalStyles";
-import { EraserIcon, InfoIcon } from "../common/Icons";
+import { StyleSheet, Text, View, Pressable } from "react-native";
+import { colors } from "../../globalStyles";
+import { EraserIcon } from "../../components/common/Icons";
+import DropDownPicker from "react-native-dropdown-picker";
+import { useDimensions } from "@react-native-community/hooks";
+import { useAdvancedSearchState } from "../../context/AdvancedSearchContext";
 
-import TagCloud, { TagItem } from "../TagCloud/TagCloud";
-
-/** props
- *   allGenreFilterTags - array of filter tags in format of { genre, isSelected }
- *   filterFunctions - functions needed by TagCloud -
- *   { onAddIncludeTag:
- *     onRemoveIncludeTag: removeTagFromFilter,
- *     onAddExcludeTag: addExcludeTagToFilter,
- *     onRemoveExcludeTag: removeExcludeTagFromFilter,
- *     setTagOperator,
- *     setExcludeTagOperator,
- *    }
- *
- */
-
-const DiscoverByGenre = ({
-  titleSize = "m",
-  title = "Search by Genre",
-  selectedGenres,
-  allGenreFilters,
-  filterFunctions,
-}) => {
+const DiscoverByGenre = ({ allGenreFilters, pickerStateInfo }) => {
+  const [selectedItem, setSelectedItem] = React.useState([]);
+  const genres = [
+    { label: "Any Genre", value: "any" },
+    ...allGenreFilters.map((genreObj) => ({ label: genreObj.name, value: genreObj.id })),
+  ];
+  // Pull out picker states info
+  const { pickerStates, updatePickerStates, pickerKey } = pickerStateInfo;
+  const { height } = useDimensions().window;
   const {
-    addGenreToFilter,
-    removeGenreFromFilter,
-    clearFilterGenres, //Optional
-  } = filterFunctions;
+    currentSnapPointInfo: { currSnapIndex },
+    advancedSearchHandlers: { handleAdvGenres },
+  } = useAdvancedSearchState();
 
-  const titleIconSize = { s: 15, m: 18, l: 22 };
-  const genresObj = allGenreFilters.map((genreObj) => {
-    if (selectedGenres.includes(genreObj.id)) {
-      return { ...genreObj, isSelected: true };
-    } else {
-      return { ...genreObj, isSelected: false };
+  let controller;
+  const resetAndClose = () => {
+    controller.reset();
+    controller.close();
+  };
+  React.useEffect(() => {
+    if (selectedItem.includes("any")) {
+      resetAndClose();
     }
-  });
+    if (selectedItem) {
+      handleAdvGenres(selectedItem);
+    }
+  }, [selectedItem]);
+
+  React.useEffect(() => {
+    if (currSnapIndex <= 1) {
+      controller.close();
+    }
+  }, [currSnapIndex]);
+
+  const dropDownHeight = currSnapIndex === 3 ? 400 : 230;
   return (
-    <View>
+    <View style={styles.container}>
       <View
         style={{
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "space-between",
-          marginRight: 15,
+          width: 225,
         }}
       >
-        <Text style={[styles.title, { fontSize: titleIconSize[titleSize] }]}>{title} </Text>
-        {clearFilterGenres && (
-          <TouchableOpacity onPress={clearFilterGenres}>
-            <EraserIcon size={titleIconSize[titleSize]} />
-          </TouchableOpacity>
-        )}
+        <DropDownPicker
+          items={genres}
+          isVisible={pickerStates.isGenreOpen}
+          onOpen={() => updatePickerStates(pickerKey, true)}
+          onClose={() => updatePickerStates(pickerKey, false)}
+          controller={(instance) => (controller = instance)}
+          placeholder="Any Genre"
+          dropDownMaxHeight={dropDownHeight}
+          containerStyle={{
+            height: 40,
+            borderWidth: 1,
+            borderColor: colors.listBorder,
+          }}
+          defaultValue={selectedItem}
+          dropDownStyle={{
+            backgroundColor: colors.listItemBackground,
+            borderWidth: 1,
+            borderColor: colors.listBorder,
+          }}
+          multiple={true}
+          multipleText="%d items have been selected."
+          min={0}
+          max={10}
+          activeLabelStyle={{ color: colors.includeGreen, fontWeight: "bold" }}
+          onChangeItem={(items) => {
+            setSelectedItem(items);
+          }}
+        />
       </View>
-      <TagCloud>
-        {genresObj.map((genreObj) => {
-          const { id, name, isSelected } = genreObj;
-          return (
-            <TagItem
-              key={id}
-              tagId={name}
-              tagName={name}
-              isSelected={isSelected}
-              onSelectTag={() => addGenreToFilter(id)}
-              onDeSelectTag={() => removeGenreFromFilter(id)}
-              // onSelectTag={() => addGenreToFilter({ id, name })}
-              // onDeSelectTag={() => removeGenreFromFilter({ id, name })}
-            />
-          );
-        })}
-      </TagCloud>
+
+      <Pressable
+        onPress={resetAndClose}
+        style={({ pressed }) => [
+          {
+            backgroundColor: pressed ? "#ccc" : colors.backgroundColor,
+            padding: 5,
+            borderRadius: 10,
+            marginLeft: 10,
+            transform: [{ translateY: pressed ? 2 : 0 }, { translateX: pressed ? 2 : 0 }],
+          },
+        ]}
+      >
+        <EraserIcon size={25} style={{}} />
+      </Pressable>
     </View>
   );
 };
 
-export default DiscoverByGenre;
-
 const styles = StyleSheet.create({
-  title: {
-    fontWeight: "bold",
-  },
-  buttonStyle: {
-    width: 150,
-  },
-  booleanContainer: {
-    marginVertical: 10,
+  container: {
     flexDirection: "row",
     alignItems: "center",
-  },
-  switchContainer: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "white",
-    borderRadius: 5,
-    borderColor: "black",
-    borderWidth: 1,
-    padding: 5,
-  },
-  switchText: {
-    fontWeight: "bold",
-    marginLeft: 10,
   },
 });
 
-DiscoverByGenre.propTypes = {
-  titleSize: PropTypes.string,
-  title: PropTypes.string,
-  allGenreFilters: PropTypes.arrayOf(
-    PropTypes.shape({
-      genre: PropTypes.string,
-      isSelected: PropTypes.bool,
-    })
-  ),
-  filterFunctions: PropTypes.shape({
-    addGenreToFilter: PropTypes.func.isRequired,
-    removeGenreFromFilter: PropTypes.func.isRequired,
-    clearFilterGenres: PropTypes.func,
-  }),
-};
+export default DiscoverByGenre;

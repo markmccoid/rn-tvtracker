@@ -1,7 +1,7 @@
 import _ from "lodash";
 import { pipe, debounce, mutate, filter } from "overmind";
 import { getAllMovieGenres } from "./effects";
-import { discoverTypesEnum } from "../../statemachines/discoverMoviesMachine";
+import { discoverTypesEnum } from "../../statemachines/discoverMoviesMachineBAK";
 
 import * as internalActions from "./internalActions";
 // export internalActions as standard actions but in an object
