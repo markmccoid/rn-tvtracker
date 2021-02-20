@@ -1,8 +1,8 @@
 import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { Provider } from "overmind-react";
-import { createOvermind } from "overmind";
-import { config } from "./src/store/overmind";
+// import { createOvermind } from "overmind";
+import { overmind } from "./src/store/overmind";
 import { initTMDB } from "@markmccoid/tmdb_api";
 import { LogBox } from "react-native";
 const envData = require("./env.json");
@@ -16,7 +16,7 @@ const App = () => {
 
   // console.log("InApp");
   initTMDB(envData.tmdbId);
-  const overmind = createOvermind(config, { devtools: "192.168.1.7:3031" });
+  // const overmind = createOvermind(config, { devtools: "192.168.1.7:3031" });
   // const overmind = createOvermind(config);
   return (
     <Provider value={overmind}>

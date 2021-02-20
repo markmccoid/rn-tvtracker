@@ -1,4 +1,5 @@
 import { createHook } from "overmind-react";
+import { createOvermind } from "overmind";
 import {
   createStateHook,
   createActionsHook,
@@ -24,3 +25,4 @@ export const useOState = createStateHook();
 export const useOActions = createActionsHook();
 export const useOEffects = createEffectsHook();
 export const useOReaction = createReactionHook();
+export const overmind = createOvermind(config, { devtools: "192.168.1.7:3031" });
