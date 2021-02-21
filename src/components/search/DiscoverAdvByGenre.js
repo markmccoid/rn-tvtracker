@@ -1,5 +1,4 @@
 import React from "react";
-import PropTypes from "prop-types";
 import { StyleSheet, Text, View, Pressable } from "react-native";
 import { colors } from "../../globalStyles";
 import { EraserIcon } from "../../components/common/Icons";
@@ -15,7 +14,7 @@ const DiscoverByGenre = ({ allGenreFilters, pickerStateInfo }) => {
   ];
   // Pull out picker states info
   const { pickerStates, updatePickerStates, pickerKey } = pickerStateInfo;
-  const { height } = useDimensions().window;
+  // const { height } = useDimensions().window;
   const {
     currentSnapPointInfo: { currSnapIndex },
     advancedSearchHandlers: { handleAdvGenres },

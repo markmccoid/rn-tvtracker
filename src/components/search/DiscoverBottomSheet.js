@@ -20,19 +20,12 @@ const DiscoverBottomSheet = ({ navigation }) => {
   const [discoverState, sendDiscoverEvent] = useMachine(discoverMoviesMachine);
   const [currentSnapPointInfo, setCurrentSnapPointInfo] = React.useState(1);
 
-  const height = useWindowDimensions().height;
-  const tabHeight = useBottomTabBarHeight();
-  const headerHeight = useHeaderHeight();
-  // Don't think I need working height.
-  // Seems like bottomSheet is relative to the bottom tab and header
-  const workingHeight = height - tabHeight - headerHeight;
-
-  //*------------------------
-  //*- Search Query
-  //*------------------------
-  //Whenever searchConfig updates, perform search
-  console.log("state.value", discoverState.value);
-  console.log("state.matches", discoverState.toStrings());
+  // const height = useWindowDimensions().height;
+  // const tabHeight = useBottomTabBarHeight();
+  // const headerHeight = useHeaderHeight();
+  // // Don't think I need working height.
+  // // Seems like bottomSheet is relative to the bottom tab and header
+  // const workingHeight = height - tabHeight - headerHeight;
 
   //*------------------------
   //* Bottomsheet Background
@@ -96,12 +89,10 @@ const DiscoverBottomSheet = ({ navigation }) => {
   //* Handler Functions
   //*-------------------------
   const handleSearchString = (value) => {
-    // sendDiscoverEvent("TITLE_SEARCH");
     sendDiscoverEvent({ type: "UPDATE_TITLE", value });
   };
 
   const handlePredefined = (predefinedType) => {
-    // sendDiscoverEvent({ type: "PREDEFINED_SEARCH" });
     sendDiscoverEvent({ type: "UPDATE_PREDEFINED", predefinedType });
   };
 

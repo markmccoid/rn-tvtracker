@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, TextInput, Pressable, StyleSheet } from "react-native";
+import { View, Pressable, StyleSheet } from "react-native";
 import { useDimensions } from "@react-native-community/hooks";
 import { watchProviders } from "../../storage/externalData";
 import DropDownPicker from "react-native-dropdown-picker";

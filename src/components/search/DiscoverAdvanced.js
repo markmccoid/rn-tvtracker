@@ -1,8 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, Pressable } from "react-native";
-import { Button } from "../../components/common/Buttons";
 import { Divider } from "react-native-elements";
-import { useOState, useOActions } from "../../store/overmind";
+import { useOState } from "../../store/overmind";
 import DiscoverAdvByGenre from "./DiscoverAdvByGenre";
 import DiscoverAdvYears from "./DiscoverAdvYears";
 import DiscoverAdvProviders from "./DiscoverAdvProviders";
