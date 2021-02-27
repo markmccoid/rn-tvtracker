@@ -12,6 +12,7 @@ export const colors = {
   listItemBorder: "#ccc",
   listBackground: "white",
   listItemBackground: "white",
+  commonBorder: "#777",
 };
 
 export const fonts = {

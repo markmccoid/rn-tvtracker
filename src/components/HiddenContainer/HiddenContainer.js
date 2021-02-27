@@ -10,7 +10,7 @@ import { ExpandDownIcon, CollapseUpIcon } from "../common/Icons";
  * open state when initially displayed.
  *
  */
-const HiddenContainer = ({ children, title, startOpen = false }) => {
+const HiddenContainer = ({ children, style, title, startOpen = false }) => {
   const [viewContents, setViewContents] = useState(startOpen);
 
   return (
@@ -63,7 +63,7 @@ const HiddenContainer = ({ children, title, startOpen = false }) => {
           )}
         </View>
       </Pressable>
-      {viewContents && <View style={{ marginVertical: 5 }}>{children}</View>}
+      {viewContents && <View style={{ ...style }}>{children}</View>}
     </View>
   );
 };
