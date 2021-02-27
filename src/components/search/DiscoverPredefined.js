@@ -13,7 +13,6 @@ const DiscoverPredefined = ({ isPredefinedState, predefinedType, setPredefined }
   const predefinedTypesArray = Object.keys(predefinedTypesEnum).map(
     (key) => predefinedTypesEnum[key]
   );
-  console.log("isPredfined", isPredefinedState);
   return (
     <View
       style={{ flexDirection: "row", marginHorizontal: 10, justifyContent: "space-around" }}
