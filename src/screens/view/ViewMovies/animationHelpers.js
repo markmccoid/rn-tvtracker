@@ -21,7 +21,7 @@ export const getViewMoviesRotates = (offsetY, animConstants) => {
 
 export const getViewMoviesTranslates = (offsetY, animConstants) => {
   const { itemSize, itemIndex, absIndex, posterHeight, posterWidth, margin } = animConstants;
-  const inputRange = [-1, 0, itemSize * (itemIndex + 0.2), itemSize * (itemIndex + 4)];
+  const inputRange = [-1, 0, itemSize * (itemIndex + 0.5), itemSize * (itemIndex + 4)];
   const xOut =
     absIndex % 2 === 0 ? (posterWidth - margin) / 2 : ((posterWidth - margin) / 2) * -1;
   const translateX = offsetY.interpolate({
@@ -40,7 +40,7 @@ export const getViewMoviesTranslates = (offsetY, animConstants) => {
 
 export const getViewMoviesScale = (offsetY, animConstants) => {
   const { itemSize, itemIndex } = animConstants;
-  const inputRange = [-1, 0, itemSize * (itemIndex + 0.2), itemSize * (itemIndex + 4)];
+  const inputRange = [-1, 0, itemSize * (itemIndex + 0.5), itemSize * (itemIndex + 4)];
   const scale = offsetY.interpolate({
     inputRange,
     outputRange: [1, 1, 1, 0],
@@ -53,7 +53,7 @@ export const getViewMoviesOpacity = (offsetY, animConstants) => {
   return offsetY.interpolate({
     inputRange: [
       itemSize * itemIndex,
-      itemSize * (itemIndex + 0.5),
+      itemSize * (itemIndex + 0.6),
       itemSize * (itemIndex + 1),
     ],
     outputRange: [1, 0.8, 0.2],
