@@ -184,7 +184,6 @@ export const refreshMovie = async ({ state, effects, actions }, movieId) => {
     //Save to firestore
     await effects.oSaved.updateMovie(movieId, updateStmt);
   }
-  console.log(returnMessage);
   return returnMessage;
 };
 

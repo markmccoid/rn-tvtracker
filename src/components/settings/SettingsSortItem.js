@@ -83,9 +83,6 @@ const SettingsSortItem = ({
             buttonStyle={{ backgroundColor: "#e3e6e8" }}
             selectedButtonStyle={{ backgroundColor: "#34c759" }}
           />
-          {/* <TouchableOpacity style={styles.dragHandle} onPress={() => console.log("TOUCHED")}>
-            <DragHandleIcon size={30} />
-          </TouchableOpacity> */}
         </View>
       </View>
 

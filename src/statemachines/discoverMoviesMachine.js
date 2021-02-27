@@ -42,7 +42,6 @@ const resetPredefined = assign({
 const performAdvancedSearch = (context, event) => {
   const { genres, releaseYear, watchProviders, queryType } = context;
   if (genres.length > 0 || releaseYear || watchProviders.length > 0) {
-    console.log("perform query", context, event);
     overmind.actions.oSearch.queryMovieAPIWithConfig({
       queryType,
       genres,
@@ -53,7 +52,6 @@ const performAdvancedSearch = (context, event) => {
 };
 const performSimpleSearch = (context, event) => {
   const { searchString, queryType, predefinedType } = context;
-  console.log("PPS, qt ", queryType);
   if (searchString.length > 0 || queryType === "predefined") {
     overmind.actions.oSearch.queryMovieAPIWithConfig({
       queryType,

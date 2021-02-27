@@ -205,6 +205,7 @@ const DetailWatchProviders = ({ movieId }) => {
                   <Text
                     style={{
                       fontSize: 18,
+                      fontWeight: "600",
                     }}
                   >
                     {typeTitle.type}

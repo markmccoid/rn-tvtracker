@@ -29,7 +29,6 @@ export const searchSetup = async ({ state, effects }) => {
  * If not, it will return ? (nothing?)
  */
 export const queryMovieAPI = async ({ state, effects, actions }, page = 1) => {
-  console.log("queryMovieAPI", page);
   let { oSearch } = state;
   const {
     queryType,
