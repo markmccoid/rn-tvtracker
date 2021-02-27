@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import { View, Animated, StyleSheet, TouchableOpacity, Dimensions } from "react-native";
-
 import { useNavigation, useRoute } from "@react-navigation/native";
 
 import { useOState, useOActions } from "../../../store/overmind";
@@ -14,6 +13,7 @@ import { CaretRightIcon, ImagesIcon } from "../../../components/common/Icons";
 
 import DetailMainInfo from "./DetailMainInfo";
 import DetailCastInfo from "./DetailCastInfo";
+import DetailWatchProviders from "./DetailWatchProviders";
 import DetailRecommendations from "./DetailRecommendations";
 import DetailVideos from "./DetailVideos";
 import PickImage from "./PickImage";
@@ -46,7 +46,6 @@ const ViewSavedMovieDetails = ({ movie, isInSavedMovies }) => {
   const movieId = movie?.id;
   const ref = React.useRef(null);
   const [viewTags, setViewTags] = React.useState(false);
-
   // Also used for toValue in animations
   // 0 = opened
   // 1 = closed -- The one is the value it is going TO, and 1 will be open.
@@ -175,15 +174,19 @@ const ViewSavedMovieDetails = ({ movie, isInSavedMovies }) => {
         {/* ------------------------------------------- 
          END Saved Details button Bar and components 
          ------------------------------------------- */}
-        <HiddenContainer title="Recommendations">
+        <HiddenContainer style={{ marginBottom: 10 }} title="Where To Watch">
+          <DetailWatchProviders movieId={movie.id} />
+        </HiddenContainer>
+
+        <HiddenContainer style={{ marginVertical: 5 }} title="Recommendations">
           <DetailRecommendations movieId={movie.id} />
         </HiddenContainer>
 
-        <HiddenContainer title="Videos">
+        <HiddenContainer style={{ marginVertical: 5 }} title="Videos">
           <DetailVideos movieId={movie.id} />
         </HiddenContainer>
 
-        <HiddenContainer title="Cast" startOpen>
+        <HiddenContainer style={{ marginVertical: 10 }} title="Cast" startOpen>
           <View>
             <View style={styles.castInfo}>
               {castData.map((person, idx) => (
