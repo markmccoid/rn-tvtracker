@@ -25,7 +25,7 @@ const DiscoverAdvanced = ({}) => {
   React.useEffect(() => {
     // Confirm an Advanced search has been initiated (at least one item selected)
     // handleAdvancedConfig({ genres: selectedGenres });
-    return () => console.log("LEAVING ADVANCED JS", selectedGenres);
+    // return () => console.log("LEAVING ADVANCED JS", selectedGenres);
   }, [selectedGenres]);
 
   React.useEffect(() => {
