@@ -25,6 +25,13 @@ export const styleHelpers = {
     borderWidth: 1,
     borderColor: "red",
   },
+  posterImageShadow: {
+    shadowColor: "#000",
+    shadowOffset: { width: 5, height: 5 },
+    shadowOpacity: 0.5,
+    shadowRadius: 5,
+    elevation: 1,
+  },
 };
 
 export const commonStyles = {
