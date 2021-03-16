@@ -1,6 +1,7 @@
 import React from "react";
-import { View, Text, StyleSheet, LayoutAnimation } from "react-native";
-import { Image } from "react-native-elements";
+import { View, Text, StyleSheet } from "react-native";
+import * as Haptics from "expo-haptics";
+
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { useDimensions } from "@react-native-community/hooks";
 import PosterImage from "../common/PosterImage";
@@ -10,6 +11,7 @@ const MoviePortraitLayout = ({ movie, setMovieEditingId, navigateToDetails }) =>
   const { width, height } = useDimensions().window;
   const movieReleaseDate = movie.releaseDate?.formatted || " - ";
 
+  // const menuItems = createMenuItems({ navigateToDetails, movieId: movie.id });
   //NOTE-- posterURL images are 300 x 450
   // Height is 1.5 times the width
   let posterWidth = width / 2.2;
@@ -47,8 +49,11 @@ const MoviePortraitLayout = ({ movie, setMovieEditingId, navigateToDetails }) =>
     <View style={styles.movieCard}>
       <TouchableOpacity
         onPress={navigateToDetails}
-        onLongPress={() => setMovieEditingId(movie.id)}
-        // onLongPress={() => (inEditState ? setMovieEditingId() : setMovieEditingId(movie.id))}
+        activeOpacity={0.9}
+        onLongPress={() => {
+          setMovieEditingId(movie.id);
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        }}
       >
         <View>
           <PosterImage
@@ -60,7 +65,6 @@ const MoviePortraitLayout = ({ movie, setMovieEditingId, navigateToDetails }) =>
           />
         </View>
       </TouchableOpacity>
-      {/* Icon row */}
     </View>
   );
 };

@@ -1,94 +1,124 @@
 import React from "react";
-import { View, Text, StyleSheet, Animated } from "react-native";
-import { Overlay, Image } from "react-native-elements";
+import { View, Text, StyleSheet, Pressable, ScrollView } from "react-native";
+import { Overlay } from "react-native-elements";
 import { useDimensions } from "@react-native-community/hooks";
 import { useOState, useOActions } from "../../../store/overmind";
 import { Button } from "../../../components/common/Buttons";
+import { MoreIcon } from "../../../components/common/Icons";
 
 import TagCloud, { TagItem } from "../../../components/TagCloud/TagCloud";
 import PosterImage from "../../../components/common/PosterImage";
+import { colors, styleHelpers } from "../../../globalStyles";
 
 const ViewMovieOverlay = ({ movieId, isVisible, movieDetails, setMovieEditingId }) => {
-  const { width, height } = useDimensions().window;
+  const { width } = useDimensions().window;
   const state = useOState();
   const actions = useOActions();
   const { getAllMovieTags } = state.oSaved;
   const { deleteMovie, addTagToMovie, removeTagFromMovie } = actions.oSaved;
 
-  let posterWidth = width / 2;
+  const allMovieTags = getAllMovieTags(movieId);
+  let posterWidth = width / 3.2;
   let posterHeight = posterWidth * 1.5;
-
+  let buttonContainerWidth = posterWidth + 10;
   return (
     <Overlay
       isVisible={isVisible}
       onBackdropPress={() => setMovieEditingId(undefined)}
       overlayStyle={{
-        backgroundColor: "#e9e4f0",
-        margin: 10,
+        backgroundColor: colors.tagListbg, //"#e9e4f0",
+        marginHorizontal: 10,
         borderColor: "black",
         borderWidth: 1,
+        borderRadius: 15,
+        width: width - 20,
+      }}
+      backdropStyle={{
+        backgroundColor: "#ffffffcc",
       }}
       animationType="fade"
     >
       <>
         <View style={styles.titleWrapper}>
-          <Text style={styles.title}>{movieDetails?.title}</Text>
+          <View
+            style={{
+              paddingTop: 10,
+              justifyContent: "center",
+              flex: 1,
+            }}
+          >
+            <Text style={styles.title}>{movieDetails?.title}</Text>
+          </View>
+          <Pressable
+            style={({ pressed }) => [
+              {
+                paddingVertical: 10,
+                marginHorizontal: 10,
+                justifyContent: "center",
+                backgroundColor: colors.tagListbg,
+                opacity: pressed ? 0.6 : 1,
+              },
+            ]}
+            onPress={() => {
+              setMovieEditingId(undefined);
+            }}
+          >
+            <MoreIcon size={25} />
+          </Pressable>
         </View>
-        <View style={styles.imageAndButtons}>
-          <PosterImage
-            uri={movieDetails?.posterURL}
-            posterWidth={posterWidth}
-            posterHeight={posterHeight}
-            placeholderText={movieDetails?.title}
-          />
-          <View style={styles.buttonsWrapper}>
-            <Button
-              onPress={() => setMovieEditingId(undefined)}
-              title="Close"
-              bgColor="#96c93d"
-              bgOpacity="cc"
-              medium
-              wrapperStyle={{ marginBottom: 15 }}
-              width={posterWidth * 0.7}
-            />
-            <Button
-              onPress={() => {
-                deleteMovie(movieId);
-                setMovieEditingId(undefined);
+        <View style={[styles.imageAndTagRow, { height: posterHeight * 1.2 }]}>
+          <View style={styleHelpers.posterImageShadow}>
+            <PosterImage
+              uri={movieDetails?.posterURL}
+              posterWidth={posterWidth}
+              posterHeight={posterHeight}
+              placeholderText={movieDetails?.title}
+              style={{
+                borderRadius: 10,
               }}
-              title="Delete"
-              bgColor="#b20a2c"
-              bgOpacity="cc"
-              medium
-              width={posterWidth * 0.7}
             />
           </View>
+          <ScrollView style={styles.tagCloudWrapper}>
+            <TagCloud>
+              {allMovieTags.map((tagObj) => {
+                return (
+                  <TagItem
+                    key={tagObj.tagId}
+                    tagId={tagObj.tagId}
+                    tagName={tagObj.tagName}
+                    isSelected={tagObj.isSelected}
+                    size="s"
+                    onSelectTag={() =>
+                      addTagToMovie({
+                        movieId: movieId,
+                        tagId: tagObj.tagId,
+                      })
+                    }
+                    onDeSelectTag={() =>
+                      removeTagFromMovie({
+                        movieId: movieId,
+                        tagId: tagObj.tagId,
+                      })
+                    }
+                  />
+                );
+              })}
+            </TagCloud>
+          </ScrollView>
         </View>
-        <View style={styles.tagCloudWrapper}>
-          <TagCloud>
-            {getAllMovieTags(movieId).map((tagObj) => {
-              return (
-                <TagItem
-                  key={tagObj.tagId}
-                  tagId={tagObj.tagId}
-                  tagName={tagObj.tagName}
-                  isSelected={tagObj.isSelected}
-                  onSelectTag={() =>
-                    addTagToMovie({
-                      movieId: movieId,
-                      tagId: tagObj.tagId,
-                    })
-                  }
-                  onDeSelectTag={() =>
-                    removeTagFromMovie({
-                      movieId: movieId,
-                      tagId: tagObj.tagId,
-                    })
-                  }
-                />
-              );
-            })}
-          </TagCloud>
+        <View style={{ width: buttonContainerWidth, alignItems: "center" }}>
+          <Button
+            onPress={() => {
+              deleteMovie(movieId);
+              setMovieEditingId(undefined);
+            }}
+            title="Delete"
+            color="white"
+            bgColor={colors.excludeRed}
+            medium
+            wrapperStyle={{ marginBottom: 5 }}
+            width={posterWidth * 0.7}
+          />
         </View>
       </>
     </Overlay>
@@ -97,9 +127,11 @@ const ViewMovieOverlay = ({ movieId, isVisible, movieDetails, setMovieEditingId 
 
 const styles = StyleSheet.create({
   titleWrapper: {
+    flexDirection: "row",
     borderBottomColor: "black",
     borderBottomWidth: 2,
     marginHorizontal: -10,
+    marginTop: -10,
     marginBottom: 10,
   },
   title: {
@@ -108,14 +140,10 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 10,
   },
-  imageAndButtons: {
+  imageAndTagRow: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 10,
-  },
-  buttonsWrapper: {
-    flexDirection: "column",
     justifyContent: "flex-start",
+    marginBottom: 10,
   },
   tagCloudWrapper: {
     marginBottom: 20,
