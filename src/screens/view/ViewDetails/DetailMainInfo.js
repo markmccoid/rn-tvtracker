@@ -1,14 +1,7 @@
 import * as React from "react";
-import {
-  View,
-  Text,
-  Image,
-  StyleSheet,
-  ScrollView,
-  Alert,
-  TouchableOpacity,
-} from "react-native";
+import { View, Text, StyleSheet, ScrollView, Alert, TouchableOpacity } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
+import { HoldItem } from "react-native-hold-menu";
 
 import { useDimensions } from "@react-native-community/hooks";
 import { LessIcon, MoreIcon } from "../../../components/common/Icons";
@@ -16,11 +9,12 @@ import { useOActions, useOState } from "../../../store/overmind";
 import LongTouchUserRating from "./LongTouchUserRating";
 import { Button } from "../../../components/common/Buttons";
 import PosterImage from "../../../components/common/PosterImage";
-import { colors } from "../../../globalStyles";
+import { colors, styleHelpers } from "../../../globalStyles";
 
 const showRefreshAlert = (msg) => {
   Alert.alert("Movie Refresh", msg);
 };
+
 const DetailMainInfo = ({ movie, isInSavedMovies, viewTags, setViewTags, transitionRef }) => {
   const [overviewHeight, setOverviewHeight] = React.useState(205);
   const actions = useOActions();
@@ -31,6 +25,26 @@ const DetailMainInfo = ({ movie, isInSavedMovies, viewTags, setViewTags, transit
   const route = useRoute();
   // maybe needs to be in useEffect??? or memoized
   const movieUserRating = getMovieUserRating(movie.id);
+
+  const MenuItems = React.useMemo(
+    () => [
+      { text: "Actions", isTitle: true, onPress: () => {} },
+      {
+        text: `Update Movie Id - ${movie.id}`,
+        onPress: async () => {
+          let msg = await refreshMovie(movie.id);
+          showRefreshAlert(msg);
+          navigation.navigate(route.name, {
+            movieId: movie.id,
+            movie: undefined,
+            notSaved: false,
+          });
+        },
+      },
+      // { text: "Action 2", withSeperator: false, onPress: () => {} },
+    ],
+    [movie.id]
+  );
 
   const { width, height } = useDimensions().window;
 
@@ -83,7 +97,7 @@ const DetailMainInfo = ({ movie, isInSavedMovies, viewTags, setViewTags, transit
               />
             )}
           </View>
-          <TouchableOpacity
+          {/* <TouchableOpacity
             disabled={!isInSavedMovies}
             onPress={async () => {
               let msg = await refreshMovie(movie.id);
@@ -94,14 +108,22 @@ const DetailMainInfo = ({ movie, isInSavedMovies, viewTags, setViewTags, transit
                 notSaved: false,
               });
             }}
-          >
-            <PosterImage
-              uri={movie.posterURL}
-              posterWidth={posterWidth}
-              posterHeight={posterHeight}
-              placeholderText={movie?.title}
-            />
-          </TouchableOpacity>
+            style={styleHelpers.posterImageShadow}
+          > */}
+          <HoldItem items={MenuItems}>
+            <View style={styleHelpers.posterImageShadow}>
+              <PosterImage
+                uri={movie.posterURL}
+                posterWidth={posterWidth}
+                posterHeight={posterHeight}
+                placeholderText={movie?.title}
+                style={{
+                  borderRadius: 10,
+                }}
+              />
+            </View>
+          </HoldItem>
+          {/* </TouchableOpacity> */}
         </View>
         {/*---------------------
           ------------------------*/}
@@ -198,17 +220,9 @@ const styles = StyleSheet.create({
   posterWrapper: {
     borderWidth: 1,
     backgroundColor: "white",
-    borderRadius: 2,
     borderColor: "#ddd",
     borderBottomWidth: 0,
-    shadowColor: "#000",
-    shadowOffset: { width: 2.5, height: 3 },
-    shadowOpacity: 0.6,
-    shadowRadius: 2,
-    elevation: 1,
-    // marginLeft: 5,
     marginRight: 5,
-    // marginTop: 10,
   },
   posterImage: (width, height) => ({
     width,
