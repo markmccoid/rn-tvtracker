@@ -33,6 +33,9 @@ export const UnTagIcon = ({ size, color, style }) => {
   return <Entypo name="untag" color={color} size={size} style={style} />;
 };
 
+export const ShareIcon = ({ size, color, style }) => {
+  return <Entypo name="share-alternative" size={size} color={color} style={style} />;
+};
 export const FilterIcon = ({ size, color, style }) => {
   return (
     <Feather
