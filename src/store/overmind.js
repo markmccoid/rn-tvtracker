@@ -18,5 +18,5 @@ export const useOActions = createActionsHook();
 export const useOEffects = createEffectsHook();
 export const useOReaction = createReactionHook();
 
-export const overmind = createOvermind(config);
-// export const overmind = createOvermind(config, { devtools: "192.168.1.7:3031" });
+// export const overmind = createOvermind(config);
+export const overmind = createOvermind(config, { devtools: "192.168.1.9:3031" });
