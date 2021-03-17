@@ -4,12 +4,14 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { HoldItem } from "react-native-hold-menu";
 
 import { useDimensions } from "@react-native-community/hooks";
-import { LessIcon, MoreIcon } from "../../../components/common/Icons";
+import { LessIcon, MoreIcon, ShareIcon } from "../../../components/common/Icons";
 import { useOActions, useOState } from "../../../store/overmind";
 import LongTouchUserRating from "./LongTouchUserRating";
 import { Button } from "../../../components/common/Buttons";
 import PosterImage from "../../../components/common/PosterImage";
 import { colors, styleHelpers } from "../../../globalStyles";
+import { useHaptics } from "../../../hooks/useHaptics";
+import { nativeShareItem } from "../../../utils/nativeShareItem";
 
 const showRefreshAlert = (msg) => {
   Alert.alert("Movie Refresh", msg);
@@ -23,6 +25,7 @@ const DetailMainInfo = ({ movie, isInSavedMovies, viewTags, setViewTags, transit
   const { getMovieUserRating } = state.oSaved;
   const navigation = useNavigation();
   const route = useRoute();
+  const { hapticSuccess } = useHaptics();
   // maybe needs to be in useEffect??? or memoized
   const movieUserRating = getMovieUserRating(movie.id);
 
@@ -41,7 +44,16 @@ const DetailMainInfo = ({ movie, isInSavedMovies, viewTags, setViewTags, transit
           });
         },
       },
-      // { text: "Action 2", withSeperator: false, onPress: () => {} },
+      {
+        text: "Share Movie",
+        withSeperator: false,
+        icon: () => <ShareIcon size={20} />,
+        onPress: () =>
+          nativeShareItem({
+            message: `Check out the movie ${movie.title}\n`,
+            url: movie.imdbURL ? movie.imdbURL : movie.posterURL,
+          }),
+      },
     ],
     [movie.id]
   );
