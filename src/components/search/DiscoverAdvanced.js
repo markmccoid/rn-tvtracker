@@ -13,6 +13,8 @@ const defaultPickerStates = {
 };
 
 const DiscoverAdvanced = () => {
+  // pickerStates lets us only keep one picker open at a time by letting us know
+  // the state of each picker.
   const [pickerStates, setPickerStates] = React.useState(defaultPickerStates);
   const state = useOState();
   const { allGenres } = state.oSearch; // [{ id, name }]

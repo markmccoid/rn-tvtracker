@@ -131,7 +131,7 @@ export const refreshMovie = async ({ state, effects, actions }, movieId) => {
   const fieldsToCheck = {
     titleMatch: latestMovieDetails.title === currentMovieDetails.title,
     releaseDateMatch:
-      latestMovieDetails.releaseDate.epoch === currentMovieDetails.releaseDate.epoch,
+      latestMovieDetails.releaseDate.epoch === currentMovieDetails?.releaseDate?.epoch,
     imdbIdMatch: latestMovieDetails.imdbId === currentMovieDetails.imdbId,
     statusMatch: latestMovieDetails.status === currentMovieDetails.status,
     posterMatch:

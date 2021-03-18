@@ -7,6 +7,8 @@ import { useHeaderHeight } from "@react-navigation/stack";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import Animated from "react-native-reanimated";
 
+import { snapPoints, snapEnum, CustomBackground } from "./BottomSheetUtils";
+
 import { Button } from "../../components/common/Buttons";
 import DiscoverInputTitle from "./DiscoverInputTitle";
 import DiscoverPredefined from "./DiscoverPredefined";
@@ -19,72 +21,25 @@ import { discoverMoviesMachine } from "../../statemachines/discoverMoviesMachine
 const DiscoverBottomSheet = ({ navigation }) => {
   const [discoverState, sendDiscoverEvent] = useMachine(discoverMoviesMachine);
   const [currentSnapPointInfo, setCurrentSnapPointInfo] = React.useState(1);
-
-  // const height = useWindowDimensions().height;
-  // const tabHeight = useBottomTabBarHeight();
-  // const headerHeight = useHeaderHeight();
-  // // Don't think I need working height.
-  // // Seems like bottomSheet is relative to the bottom tab and header
-  // const workingHeight = height - tabHeight - headerHeight;
-
-  //*------------------------
-  //* Bottomsheet Background
-  const CustomBackground = ({ animatedIndex, style }) => {
-    return (
-      <Animated.View
-        style={[
-          style,
-          {
-            backgroundColor: "#eee",
-            borderRadius: 10,
-            borderWidth: 1,
-            borderColor: "#777",
-          },
-        ]}
-      />
-    );
-  };
-  //*--- SHEET FUNCS And VARS ---------------------
   const bottomSheetRef = React.useRef(null);
 
-  // variables
-  const snapObj = {
-    hidden: 15,
-    simpleSearch: 150,
-    keyboard: 380,
-    max: "90%",
-  };
+  // Functions
+  // const expandSheet = () => bottomSheetRef.current.expand();
+  // const collapseSheet = () => bottomSheetRef.current.collapse();
+  // const snapTo = (index) => bottomSheetRef.current.snapTo(index);
 
-  // return an object we can use to call the snapTo function with
-  // snapTo(snapEnum.keyboard)
-  const snapEnum = Object.keys(snapObj).reduce(
-    (final, key, idx) => ({ ...final, [key]: idx }),
-    {}
-  );
-  // const snapPoints = React.useMemo(() => ["12%", "20%", "60%", "75%", "100%"], []);
-  const snapPoints = React.useMemo(
-    () => [snapObj.hidden, snapObj.simpleSearch, snapObj.keyboard, snapObj.max],
-    []
-  );
+  const sheetFunctions = {
+    expandSheet: () => bottomSheetRef.current.expand(),
+    collapseSheet: () => bottomSheetRef.current.collapse(),
+    snapTo: (index) => bottomSheetRef.current.snapTo(index),
+    snapEnum,
+  };
 
   // callbacks
   const handleSheetChanges = React.useCallback((index) => {
     // making currentSnapPointInfo an object, so we can pass other information if needed
     setCurrentSnapPointInfo({ currSnapIndex: index });
   }, []);
-
-  const expandSheet = () => bottomSheetRef.current.expand();
-  const collapseSheet = () => bottomSheetRef.current.collapse();
-  const snapTo = (index) => bottomSheetRef.current.snapTo(index);
-
-  const sheetFunctions = {
-    expandSheet,
-    collapseSheet,
-    snapTo,
-    snapEnum,
-  };
-  //*---END SHEET FUNCS And VARS ---------------------
-
   //*-------------------------
   //* Handler Functions
   //*-------------------------
@@ -153,18 +108,22 @@ const DiscoverBottomSheet = ({ navigation }) => {
         )}
       </AnimatePresence>
 
-      <Button
-        title={`Activate ${discoverState.matches("advanced") ? "Simple" : "Advanced"}`}
-        onPress={() => {
-          if (discoverState.matches("advanced")) {
-            sendDiscoverEvent("SIMPLE_SEARCH");
-            snapTo(snapEnum.simpleSearch);
-          } else {
-            sendDiscoverEvent("ADVANCED_SEARCH");
-            snapTo(snapEnum.keyboard);
-          }
-        }}
-      />
+      <View style={{ marginHorizontal: 25 }}>
+        <Button
+          title={`Activate ${
+            discoverState.matches("advanced") ? "Simple" : "Advanced"
+          } Search`}
+          onPress={() => {
+            if (discoverState.matches("advanced")) {
+              sendDiscoverEvent("SIMPLE_SEARCH");
+              sheetFunctions.snapTo(snapEnum.simpleSearch);
+            } else {
+              sendDiscoverEvent("ADVANCED_SEARCH");
+              sheetFunctions.snapTo(snapEnum.keyboard);
+            }
+          }}
+        />
+      </View>
       <BottomSheetScrollView style={styles.searchContainer}>
         <View>
           <AnimatePresence>

@@ -23,17 +23,11 @@ const SearchScreen = ({ navigation }) => {
   const state = useOState();
   const actions = useOActions();
   const { saveMovie, deleteMovie } = actions.oSaved;
-  const {
-    searchByTitle,
-    queryMovieAPI,
-    setIsNewQuery,
-    clearSearchStringAndData,
-  } = actions.oSearch;
+  const { queryMovieAPI, setIsNewQuery } = actions.oSearch;
 
-  const { isLoading, searchString, queryType } = state.oSearch;
+  const { isLoading } = state.oSearch;
   const currentPage = state.oSearch.resultCurrentPage;
   const isMoreData = state.oSearch.resultTotalPages - currentPage > 0;
-  const { getPopularMovies } = actions.oSearch;
 
   const isFocused = useIsFocused();
   const scrollToTop = () => {
@@ -47,15 +41,6 @@ const SearchScreen = ({ navigation }) => {
       scrollToTop();
     }
   }, [state.oSearch.resultData, state.oSearch.isNewQuery]);
-
-  //! NO LONGER USING.  Was difficult with showing popular movies
-  //! decided to simply not clear
-  //Only clear data when we lose focus and did NOT go to the details page.
-  // React.useEffect(() => {
-  //   if (!isFocused && !onDetailsPage) {
-  //     clearSearchStringAndData();
-  //   }
-  // }, [isFocused, onDetailsPage]);
 
   // React Navigation hook that runs when this screen gets focus
   // Use this to reset the onDetailsPage flag

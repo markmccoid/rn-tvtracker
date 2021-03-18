@@ -33,11 +33,13 @@ const DiscoverAdvProviders = ({ pickerStateInfo }) => {
     controller.close();
   };
   //-- Resets dropdown when "all" is selected
+  // AND then
   React.useEffect(() => {
     if (selectedItem.includes("all")) {
+      setSelectedItem([]);
       resetAndClose();
-    }
-    if (selectedItem) {
+    } else if (selectedItem) {
+      console.log("selectd", selectedItem);
       handleAdvWatchProviders(selectedItem);
     }
   }, [selectedItem]);
