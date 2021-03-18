@@ -29,34 +29,31 @@ const DetailMainInfo = ({ movie, isInSavedMovies, viewTags, setViewTags, transit
   // maybe needs to be in useEffect??? or memoized
   const movieUserRating = getMovieUserRating(movie.id);
 
-  const MenuItems = React.useMemo(
-    () => [
-      { text: "Actions", isTitle: true, onPress: () => {} },
-      {
-        text: `Update Movie Id - ${movie.id}`,
-        onPress: async () => {
-          let msg = await refreshMovie(movie.id);
-          showRefreshAlert(msg);
-          navigation.navigate(route.name, {
-            movieId: movie.id,
-            movie: undefined,
-            notSaved: false,
-          });
-        },
-      },
-      {
-        text: "Share Movie",
-        withSeperator: false,
-        icon: () => <ShareIcon size={20} />,
-        onPress: () =>
-          nativeShareItem({
-            message: `Check out the movie ${movie.title}\n`,
-            url: movie.imdbURL ? movie.imdbURL : movie.posterURL,
-          }),
-      },
-    ],
-    [movie.id]
-  );
+  // Setup hold-menu items for use in the hold menu
+  const menuItemTitle = { text: "Actions", isTitle: true, onPress: () => {} };
+  const menuItemUpdateMovie = {
+    text: `Update Movie Id - ${movie.id}`,
+    onPress: async () => {
+      let msg = await refreshMovie(movie.id);
+      showRefreshAlert(msg);
+      navigation.navigate(route.name, {
+        movieId: movie.id,
+        movie: undefined,
+        notSaved: false,
+      });
+    },
+  };
+  const menuItemShareMovie = {
+    text: "Share Movie",
+    withSeperator: false,
+    icon: () => <ShareIcon size={20} />,
+    onPress: () =>
+      nativeShareItem({
+        message: `Check out the movie ${movie.title}\n`,
+        url: movie.imdbURL ? movie.imdbURL : movie.posterURL,
+      }),
+  };
+  //-----------------------------------
 
   const { width, height } = useDimensions().window;
 
@@ -109,20 +106,15 @@ const DetailMainInfo = ({ movie, isInSavedMovies, viewTags, setViewTags, transit
               />
             )}
           </View>
-          {/* <TouchableOpacity
-            disabled={!isInSavedMovies}
-            onPress={async () => {
-              let msg = await refreshMovie(movie.id);
-              showRefreshAlert(msg);
-              navigation.navigate(route.name, {
-                movieId: movie.id,
-                movie: undefined,
-                notSaved: false,
-              });
-            }}
-            style={styleHelpers.posterImageShadow}
-          > */}
-          <HoldItem items={MenuItems}>
+
+          {/* Need to build the items array so that we don't show the updateMovie option movies NOT added yet */}
+          <HoldItem
+            items={[
+              menuItemTitle,
+              isInSavedMovies ? menuItemUpdateMovie : undefined,
+              menuItemShareMovie,
+            ].filter((el) => el)}
+          >
             <View style={styleHelpers.posterImageShadow}>
               <PosterImage
                 uri={movie.posterURL}
@@ -135,7 +127,6 @@ const DetailMainInfo = ({ movie, isInSavedMovies, viewTags, setViewTags, transit
               />
             </View>
           </HoldItem>
-          {/* </TouchableOpacity> */}
         </View>
         {/*---------------------
           ------------------------*/}
