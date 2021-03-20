@@ -39,7 +39,6 @@ const DiscoverAdvProviders = ({ pickerStateInfo }) => {
       setSelectedItem([]);
       resetAndClose();
     } else if (selectedItem) {
-      console.log("selectd", selectedItem);
       handleAdvWatchProviders(selectedItem);
     }
   }, [selectedItem]);
