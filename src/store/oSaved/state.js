@@ -103,6 +103,21 @@ export const state = {
   // Return tag object with all tags { tagId, tagName }
   getTags: derived((state) => state.tagData),
 
+  //*---------------------
+  //* Return an object with tagId as keys and a count
+  //* of how many movies each tag is used on
+  //* { tagid1: 5, tagid2: 1, ... }
+  getTaggedCount: derived((state) => {
+    const reducer = (result, value, key) => {
+      value.forEach((el) => {
+        result[el] = result[el] ? result[el] + 1 : 1;
+      });
+      return result;
+    };
+    // NOTE: if a tag has not yet been used, it will NOT be returned in the below object.
+    //  Need to give a default value (probably 0)
+    return _.reduce(state.taggedMovies, reducer, {});
+  }),
   //*--------------
   getMovieTags: derived((state) => (movieId) => {
     let movieTags = helpers.retrieveMovieTagIds(state, movieId);

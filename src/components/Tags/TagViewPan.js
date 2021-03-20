@@ -40,7 +40,7 @@ function reOrder(arr, from, to) {
   }, []);
 }
 
-const TagViewPan = () => {
+const TagViewPan = ({ taggedCount }) => {
   const [isEditing, setIsEditing] = React.useState(undefined);
   const [dragging, setDragging] = React.useState(false);
   const [draggingIdx, setDraggingIdx] = React.useState(-1);
@@ -230,6 +230,16 @@ const TagViewPan = () => {
               }}
             >
               {item.tagName}
+            </Text>
+            <Text
+              style={{
+                fontSize: 18,
+                color: colors.tagListfg,
+                // padding: 10,
+                flex: 1,
+              }}
+            >
+              {`${taggedCount[item.tagId] || 0} Movies tagged`}
             </Text>
             <View
               style={{
