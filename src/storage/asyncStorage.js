@@ -106,6 +106,6 @@ export const getAllKeys = async () => {
     keys = await AsyncStorage.getAllKeys();
     return keys;
   } catch (e) {
-    console.log("getAllKeys Error", e);
+    console.log("Error in asyncStorage.js getAllKeys", e);
   }
 };
