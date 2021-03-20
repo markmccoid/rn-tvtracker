@@ -49,7 +49,7 @@ const DetailMainInfo = ({ movie, isInSavedMovies, viewTags, setViewTags, transit
     icon: () => <ShareIcon size={20} />,
     onPress: () =>
       nativeShareItem({
-        message: `Check out the movie ${movie.title}\n`,
+        message: `${movie.title}\n`,
         url: movie.imdbURL ? movie.imdbURL : movie.posterURL,
       }),
   };
