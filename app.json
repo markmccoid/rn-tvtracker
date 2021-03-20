@@ -6,7 +6,7 @@
     "platforms": [
       "ios"
     ],
-    "version": "1.0.93",
+    "version": "1.0.94",
     "orientation": "portrait",
     "icon": "./assets/MovieTrackerIcon.png",
     "splash": {
@@ -23,7 +23,7 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.mccoidco.movietracker",
-      "buildNumber": "1.0.93"
+      "buildNumber": "1.0.94"
     }
   }
 }
