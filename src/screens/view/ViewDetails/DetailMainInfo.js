@@ -2,6 +2,7 @@ import * as React from "react";
 import { View, Text, StyleSheet, ScrollView, Alert, TouchableOpacity } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { HoldItem } from "react-native-hold-menu";
+import * as Linking from "expo-linking";
 
 import { useDimensions } from "@react-native-community/hooks";
 import { LessIcon, MoreIcon, ShareIcon } from "../../../components/common/Icons";
@@ -47,11 +48,14 @@ const DetailMainInfo = ({ movie, isInSavedMovies, viewTags, setViewTags, transit
     text: "Share Movie",
     withSeperator: false,
     icon: () => <ShareIcon size={20} />,
-    onPress: () =>
+    onPress: () => {
       nativeShareItem({
-        message: `${movie.title}\n`,
+        message: `Open & Search in Movie Tracker -> \n${Linking.createURL(
+          `/search/${movie.title}`
+        )}\n Or view in IMDB\n`, //`${movie.title}\n`,
         url: movie.imdbURL ? movie.imdbURL : movie.posterURL,
-      }),
+      });
+    },
   };
   //-----------------------------------
 
@@ -107,7 +111,9 @@ const DetailMainInfo = ({ movie, isInSavedMovies, viewTags, setViewTags, transit
             )}
           </View>
 
-          {/* Need to build the items array so that we don't show the updateMovie option movies NOT added yet */}
+          {/* Need to build the items array so that we don't show the updateMovie option for movies NOT added yet 
+                NOTE: the .filter is just to get rid of the undefined for movies NOT added yet.
+          */}
           <HoldItem
             items={[
               menuItemTitle,
