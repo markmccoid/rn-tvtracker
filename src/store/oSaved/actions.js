@@ -108,7 +108,7 @@ export const resetOSaved = async ({ state, effects, actions }) => {
  * Refresh Movie
  *  Will update movies data IF title, releaseDate, imdbId or status has changed.
  *  Also checks to see if the savedDate property is on the movie in question (internal field)
- *  If not it will add a savedDate: null to the movie.
+ *  If not it will add a savedDate: date.now() to the movie.
  *
  */
 export const refreshMovie = async ({ state, effects, actions }, movieId) => {
@@ -163,7 +163,7 @@ export const refreshMovie = async ({ state, effects, actions }, movieId) => {
 
   // Check if savedDate is present, if not, add undefined savedDate
   if (!currentMovieDetails?.savedDate) {
-    updateObj = { ...updateObj, savedDate: null };
+    updateObj = { ...updateObj, savedDate: Date.now() };
   }
 
   if (updateObj) {
