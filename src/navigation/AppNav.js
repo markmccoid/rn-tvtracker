@@ -2,20 +2,14 @@ import React from "react";
 import { View, Text, ActivityIndicator, ImageBackground } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createDrawerNavigator } from "@react-navigation/drawer";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect, useRoute } from "@react-navigation/native";
 
 import Firebase from "../storage/firebase";
 import ViewStack from "../screens/view/ViewStack";
 import SearchStack from "../screens/search/SearchStack";
 import TagStack from "../screens/tags/TagStack";
-import { useOState } from "../store/overmind";
 
-import {
-  ViewMovieIcon,
-  SearchIcon,
-  TagIcon,
-  AddIcon,
-} from "../components/common/Icons";
+import { ViewMovieIcon, TagIcon, AddIcon } from "../components/common/Icons";
 
 import SettingsStackScreen from "../screens/settings/SettingsStack";
 import TestCarouselAnim from "../screens/view/ViewMovies/TestCarouselAnim";
@@ -30,11 +24,9 @@ const tabsScreenOptions = ({ route }) => ({
     let tagStyle = { marginTop: 5 };
     switch (route.name) {
       case "ViewMoviesTab":
-        iconComponent = (
-          <ViewMovieIcon size={size} color={color} style={tagStyle} />
-        );
+        iconComponent = <ViewMovieIcon size={size} color={color} style={tagStyle} />;
         break;
-      case "Search":
+      case "SearchStack":
         iconComponent = <AddIcon size={size} color={color} style={tagStyle} />;
         break;
       case "Tags":
@@ -81,6 +73,7 @@ const AppTabs = createBottomTabNavigator();
 const AppTabsScreen = () => {
   return (
     <AppTabs.Navigator
+      // lazy={false}
       initialRouteName="ViewMoviesTab"
       screenOptions={tabsScreenOptions}
     >
@@ -90,7 +83,7 @@ const AppTabsScreen = () => {
         options={{ title: "My Movies" }}
       />
       <AppTabs.Screen
-        name="Search"
+        name="SearchStack"
         component={SearchStack}
         options={{ title: "Add Movie" }}
       />

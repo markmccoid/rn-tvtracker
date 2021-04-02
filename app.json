@@ -2,11 +2,12 @@
   "expo": {
     "name": "Movie Tracker",
     "slug": "movie-tracker",
+    "scheme": "movietracker",
     "privacy": "unlisted",
     "platforms": [
       "ios"
     ],
-    "version": "1.0.94",
+    "version": "1.0.95",
     "orientation": "portrait",
     "icon": "./assets/MovieTrackerIcon.png",
     "splash": {
@@ -23,7 +24,7 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.mccoidco.movietracker",
-      "buildNumber": "1.0.94"
+      "buildNumber": "1.0.95"
     }
   }
 }
