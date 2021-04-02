@@ -14,11 +14,11 @@ import SearchResultItem from "../../components/search/SearchResultItem";
 import { useFocusEffect, useIsFocused } from "@react-navigation/native";
 import { colors } from "../../globalStyles";
 
-const SearchScreen = ({ navigation }) => {
+const SearchScreen = ({ navigation, route }) => {
   //Lets us know if we are returning from details page
   //if so, don't clear old search results
   const [onDetailsPage, setOnDetailsPage] = React.useState(false);
-
+  const deepLinkTitle = route?.params?.title;
   const flatListRef = React.useRef();
   const state = useOState();
   const actions = useOActions();
@@ -116,7 +116,7 @@ const SearchScreen = ({ navigation }) => {
           <ActivityIndicator size="large" style={{ flex: 1 }} />
         ) : null}
         <View style={{ alignItems: "center" }}>{movieJSX}</View>
-        <DiscoverBottomSheet />
+        <DiscoverBottomSheet deepLinkTitle={deepLinkTitle} />
       </View>
     </TouchableWithoutFeedback>
   );

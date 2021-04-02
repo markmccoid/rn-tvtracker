@@ -16,7 +16,6 @@ const RootStack = createNativeStackNavigator();
 const RootNav = () => {
   let state = useOState();
   let { isLoggedIn } = state.oAdmin;
-
   return (
     // <RootStack.Navigator headerMode="none">
     <RootStack.Navigator>

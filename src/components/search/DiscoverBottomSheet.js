@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View, Text, StyleSheet, useWindowDimensions } from "react-native";
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { useMachine } from "@xstate/react";
@@ -18,15 +18,17 @@ import SnapPointProvider from "../../context/AdvancedSearchContext";
 
 import { discoverMoviesMachine } from "../../statemachines/discoverMoviesMachine";
 
-const DiscoverBottomSheet = ({ navigation }) => {
+const DiscoverBottomSheet = ({ navigation, deepLinkTitle }) => {
   const [discoverState, sendDiscoverEvent] = useMachine(discoverMoviesMachine);
   const [currentSnapPointInfo, setCurrentSnapPointInfo] = React.useState(1);
   const bottomSheetRef = React.useRef(null);
 
-  // Functions
-  // const expandSheet = () => bottomSheetRef.current.expand();
-  // const collapseSheet = () => bottomSheetRef.current.collapse();
-  // const snapTo = (index) => bottomSheetRef.current.snapTo(index);
+  // This useEffect is handle a deep link passing of a title
+  useEffect(() => {
+    if (deepLinkTitle) {
+      handleSearchString(deepLinkTitle);
+    }
+  }, [deepLinkTitle]);
 
   const sheetFunctions = {
     expandSheet: () => bottomSheetRef.current.expand(),
