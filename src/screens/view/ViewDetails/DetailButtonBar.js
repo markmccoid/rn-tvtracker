@@ -4,9 +4,11 @@ import {
   Animated,
   TouchableWithoutFeedback,
   View,
-  Linking,
   Dimensions,
 } from "react-native";
+import * as WebBrowser from "expo-web-browser";
+import * as Linking from "expo-linking";
+
 import { Button } from "../../../components/common/Buttons";
 import { colors } from "../../../globalStyles";
 import { CaretRightIcon, ImagesIcon } from "../../../components/common/Icons";
@@ -34,55 +36,6 @@ const DetailButtonBar = ({
       useNativeDriver: true,
     }).start();
   };
-  if (!isInSavedMovies) {
-    return (
-      <View
-        style={{
-          flex: 1,
-          flexDirection: "row",
-          justifyContent: "center",
-          alignItems: "center",
-          marginBottom: 10,
-        }}
-      >
-        <Button
-          onPress={() =>
-            Linking.openURL(`imdb:///title/${imdbId}`).catch((err) => {
-              Linking.openURL(
-                "https://apps.apple.com/us/app/imdb-movies-tv-shows/id342792525"
-              );
-            })
-          }
-          title="Open in IMDB"
-          bgOpacity="ff"
-          bgColor={colors.primary}
-          small
-          // width={width / 3}
-          wrapperStyle={{
-            borderRadius: 10,
-            marginRight: 10,
-          }}
-          color="#fff"
-          noBorder
-        />
-        <Button
-          onPress={() =>
-            Linking.openURL(`https://google.com/search?query=${movieTitle} movie`)
-          }
-          title="Google It"
-          bgOpacity="ff"
-          bgColor={colors.primary}
-          small
-          // width={width / 3}
-          wrapperStyle={{
-            borderRadius: 10,
-          }}
-          color="#fff"
-          noBorder
-        />
-      </View>
-    );
-  }
 
   return (
     <View style={styles.buttonBar}>
@@ -102,7 +55,11 @@ const DetailButtonBar = ({
         noBorder
       />
       <Button
-        onPress={() => Linking.openURL(`https://google.com/search?query=${movieTitle} movie`)}
+        onPress={async () => {
+          let webURL = `https://google.com/search?query=${movieTitle} movie`;
+          webURL = webURL.replace(/\s+/g, "%20");
+          await WebBrowser.openBrowserAsync(webURL);
+        }}
         title="Google It"
         bgOpacity="ff"
         bgColor={colors.primary}
@@ -116,53 +73,55 @@ const DetailButtonBar = ({
         color="#fff"
         noBorder
       />
-
-      <TouchableWithoutFeedback
-        onPress={() => {
-          Rotate(viewPickImage); //start icon animation
-          if (transitionRef.current) {
-            transitionRef.current.animateNextTransition();
-          }
-          viewPickImage === 1 ? setvpiAnimation("open") : setvpiAnimation("closing");
-          setPickImage((prevValue) => (prevValue === 0 ? 1 : 0));
-        }}
-      >
-        <View
-          style={{
-            borderRadius: 10,
-            flexDirection: "row",
-            padding: 5,
-            backgroundColor: colors.primary,
-            // width: 100,
-            paddingHorizontal: 15,
-            justifyContent: "center",
+      {/* ONLY Show below if movie has been saved (Image Picker) */}
+      {isInSavedMovies && (
+        <TouchableWithoutFeedback
+          onPress={() => {
+            Rotate(viewPickImage); //start icon animation
+            if (transitionRef.current) {
+              transitionRef.current.animateNextTransition();
+            }
+            viewPickImage === 1 ? setvpiAnimation("open") : setvpiAnimation("closing");
+            setPickImage((prevValue) => (prevValue === 0 ? 1 : 0));
           }}
         >
-          <Animated.View
+          <View
             style={{
-              marginLeft: 5,
-              transform: [
-                {
-                  rotate: iconAnim.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: ["0deg", "90deg"],
-                  }),
-                },
-
-                {
-                  scale: iconAnim.interpolate({
-                    inputRange: [0, 0.5, 1],
-                    outputRange: [1, 1.5, 2],
-                  }),
-                },
-              ],
+              borderRadius: 10,
+              flexDirection: "row",
+              padding: 5,
+              backgroundColor: colors.primary,
+              // width: 100,
+              paddingHorizontal: 15,
+              justifyContent: "center",
             }}
           >
-            <CaretRightIcon size={20} color="white" />
-          </Animated.View>
-          <ImagesIcon size={20} color="white" style={{ marginLeft: 20 }} />
-        </View>
-      </TouchableWithoutFeedback>
+            <Animated.View
+              style={{
+                marginLeft: 5,
+                transform: [
+                  {
+                    rotate: iconAnim.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: ["0deg", "90deg"],
+                    }),
+                  },
+
+                  {
+                    scale: iconAnim.interpolate({
+                      inputRange: [0, 0.5, 1],
+                      outputRange: [1, 1.5, 2],
+                    }),
+                  },
+                ],
+              }}
+            >
+              <CaretRightIcon size={20} color="white" />
+            </Animated.View>
+            <ImagesIcon size={20} color="white" style={{ marginLeft: 20 }} />
+          </View>
+        </TouchableWithoutFeedback>
+      )}
     </View>
   );
 };

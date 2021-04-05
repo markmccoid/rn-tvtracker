@@ -10,12 +10,12 @@ import {
   Linking,
   Image,
 } from "react-native";
+import * as WebBrowser from "expo-web-browser";
 import _ from "lodash";
 import { Button } from "../../../components/common/Buttons";
 import { colors } from "../../../globalStyles";
 import { useWatchProviderData } from "../../../hooks/useWatchProviderData";
 import PosterImage from "../../../components/common/PosterImage";
-import WatchProvidersList from "../../../components/watchProviders/WatchProviderList";
 
 const SMALL_SPACE_BETWEEN = 10;
 const IMAGE_WIDTH = 50;
@@ -251,13 +251,6 @@ const DetailWatchProviders = ({ movieId }) => {
               alignItems: "center",
             }}
           >
-            {/* <Pressable
-              onPress={() => {
-                Linking.openURL(watchProviders.justWatchLink);
-              }}
-            >
-              <Text>Just Watch</Text>
-            </Pressable> */}
             <Button
               title="Just Watch"
               width="50%"
@@ -272,8 +265,8 @@ const DetailWatchProviders = ({ movieId }) => {
                 paddingRight: 15,
               }}
               color="#fff"
-              onPress={() => {
-                Linking.openURL(watchProviders.justWatchLink);
+              onPress={async () => {
+                WebBrowser.openBrowserAsync(watchProviders.justWatchLink);
               }}
             />
           </View>
