@@ -2,21 +2,27 @@ import { useEffect, useState } from "react";
 import { movieGetWatchProviders } from "@markmccoid/tmdb_api";
 import _ from "lodash";
 
-type providerInfo = {
+type ProviderInfo = {
   provider: string;
   logoURL: string;
   providerId: number;
   displayPriority: number;
 };
-type watchProvidersType = {
+export type WatchProvidersType = {
   justWatchLink: string;
-  stream: providerInfo[];
-  rent: providerInfo[];
-  buy: providerInfo[];
+  stream: ProviderInfo[];
+  rent: ProviderInfo[];
+  buy: ProviderInfo[];
 };
-const initWatchProviders = { justWatchLink: null, stream: [], rent: [], buy: [] };
-export function useWatchProviderData(movieId) {
-  let [watchProviders, setWatchProviders] = useState<watchProvidersType>(initWatchProviders);
+const initWatchProviders: WatchProvidersType = {
+  justWatchLink: "",
+  stream: [],
+  rent: [],
+  buy: [],
+};
+
+export function useWatchProviderData(movieId: string): [WatchProvidersType, boolean] {
+  let [watchProviders, setWatchProviders] = useState<WatchProvidersType>(initWatchProviders);
   let [isLoading, setIsLoading] = useState<boolean>(true);
 
   // looks for data first in local storage
@@ -30,7 +36,7 @@ export function useWatchProviderData(movieId) {
     }
     // not passing country codes, which means we will only get back 'US'
     const tempData = await movieGetWatchProviders(movieId);
-    const tempDataUS: watchProvidersType = tempData.data.results.US;
+    const tempDataUS: WatchProvidersType = tempData.data.results.US;
     // Sort each array "rent, buy, stream" by their displayPriority
     const finalData = {
       ...tempDataUS,

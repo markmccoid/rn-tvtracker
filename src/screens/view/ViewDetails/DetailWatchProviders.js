@@ -1,26 +1,16 @@
 import * as React from "react";
-import {
-  View,
-  ActivityIndicator,
-  FlatList,
-  Animated,
-  Pressable,
-  Dimensions,
-  Text,
-  Linking,
-  Image,
-} from "react-native";
+import { View, ActivityIndicator, FlatList, Animated, Text } from "react-native";
 import * as WebBrowser from "expo-web-browser";
 import _ from "lodash";
+
 import { Button } from "../../../components/common/Buttons";
 import { colors } from "../../../globalStyles";
-import { useWatchProviderData } from "../../../hooks/useWatchProviderData";
+import { useWatchProviderData, WatchProvidersType } from "../../../hooks/useWatchProviderData";
 import PosterImage from "../../../components/common/PosterImage";
 
 const SMALL_SPACE_BETWEEN = 10;
 const IMAGE_WIDTH = 50;
 const LARGE_SPACE_BETWEEN = 40;
-const { width } = Dimensions.get("window");
 
 const DetailWatchProviders = ({ movieId }) => {
   const scrollRef = React.useRef();
@@ -31,8 +21,7 @@ const DetailWatchProviders = ({ movieId }) => {
   //------
   const [scrollIndex, setScrollIndex] = React.useState(0);
   const scrollOffset = React.useRef(new Animated.Value(0)).current;
-  const opacityAnim = React.useRef(new Animated.Value(1)).current;
-  // console.log("watch", watchProviders);
+
   // Everytime we load the recommendations,
   React.useEffect(() => {
     if (scrollRef.current && !watchProvidersIsLoading) {
@@ -72,7 +61,7 @@ const DetailWatchProviders = ({ movieId }) => {
       );
 
       // Create an array of objects to tell us where the titles show up on the flatlist
-      let previousTypeCount = 0;
+      // let previousTypeCount = 0;
       const calcStartPos = (typeCount = 0, index) => {
         // typeCount is the number of Providers in the previous Group
         // if it is first group, then typeCount should be 0
