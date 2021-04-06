@@ -25,6 +25,7 @@
     "expo-linear-gradient": "~8.4.0",
     "expo-linking": "~2.0",
     "expo-sharing": "~8.5.0",
+    "expo-web-browser": "^9.0.0",
     "firebase": "7.9.0",
     "lodash": "^4.17.19",
     "moti": "^0.4.1",
