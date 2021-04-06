@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  StyleSheet,
-  Animated,
-  TouchableWithoutFeedback,
-  View,
-  Dimensions,
-} from "react-native";
+import { StyleSheet, Animated, TouchableWithoutFeedback, View } from "react-native";
 import * as WebBrowser from "expo-web-browser";
 import * as Linking from "expo-linking";
 
@@ -13,11 +7,7 @@ import { Button } from "../../../components/common/Buttons";
 import { colors } from "../../../globalStyles";
 import { CaretRightIcon, ImagesIcon } from "../../../components/common/Icons";
 
-const { width } = Dimensions.get("window");
-
 const DetailButtonBar = ({
-  viewTags,
-  setViewTags,
   viewPickImage,
   setPickImage,
   setvpiAnimation,
@@ -91,7 +81,6 @@ const DetailButtonBar = ({
               flexDirection: "row",
               padding: 5,
               backgroundColor: colors.primary,
-              // width: 100,
               paddingHorizontal: 15,
               justifyContent: "center",
             }}

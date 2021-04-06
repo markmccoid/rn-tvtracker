@@ -49,7 +49,7 @@ const SearchResultItem = ({
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={navigateToDetails}>
+      <TouchableOpacity onPress={navigateToDetails} activeOpacity={0.8}>
         {movie.posterURL ? (
           <View
             style={{
