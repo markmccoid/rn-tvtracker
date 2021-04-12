@@ -128,6 +128,14 @@ export const UserIcon = ({ size, color, style }) => {
 export const AddIcon = ({ size, color, style }) => {
   return <Ionicons name="ios-add" color={color} size={size} style={style} />;
 };
+export const EmptyMDHeartIcon = ({ size, color, style }) => {
+  return (
+    <MaterialCommunityIcons name="heart-outline" color={color} size={size} style={style} />
+  );
+};
+export const MDHeartIcon = ({ size, color, style }) => {
+  return <Ionicons name="ios-heart" color={color} size={size} style={style} />;
+};
 
 // Other Icons
 

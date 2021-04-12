@@ -1,13 +1,18 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { EditIcon, DeleteIcon } from "../common/Icons";
-import { useOActions } from "../../store/overmind";
+import { EditIcon, DeleteIcon, EmptyMDHeartIcon, MDHeartIcon } from "../common/Icons";
+import { useOActions, useOState } from "../../store/overmind";
 
 const SavedFiltersItem = ({ savedFilter }) => {
   const navigation = useNavigation();
   const actions = useOActions();
-  const { deleteSavedFilter } = actions.oSaved;
+  const state = useOState();
+  const { deleteSavedFilter, toggleFavSavedFilter } = actions.oSaved;
+
+  const ShowInDrawer = savedFilter.showInDrawer
+    ? () => <MDHeartIcon color="red" size={25} />
+    : () => <EmptyMDHeartIcon size={25} />;
   return (
     <View style={styles.container}>
       <View style={styles.nameContainer}>
@@ -19,10 +24,17 @@ const SavedFiltersItem = ({ savedFilter }) => {
         style={{
           flexDirection: "row",
           alignItems: "center",
-          width: 50,
+          width: 75,
           justifyContent: "space-between",
         }}
       >
+        <TouchableOpacity
+          onPress={() =>
+            toggleFavSavedFilter({ id: savedFilter.id, isShown: savedFilter.showInDrawer })
+          }
+        >
+          <ShowInDrawer />
+        </TouchableOpacity>
         <TouchableOpacity
           onPress={() =>
             navigation.navigate("CreateSavedFilter", {

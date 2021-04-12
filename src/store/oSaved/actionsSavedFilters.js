@@ -15,6 +15,18 @@ export const updateSavedFilterOrder = ({ state, actions, effects }, savedFilterA
 };
 
 /**
+ * Will set whether or not to show the filter
+ */
+export const toggleFavSavedFilter = ({ state, actions, effects }, { id, isShown }) => {
+  // This is an update.  Find the filter to update and update it.
+  state.oSaved.savedFilters = state.oSaved.savedFilters.map((filter) => {
+    if (filter.id === id) {
+      return { ...filter, showInDrawer: !isShown };
+    }
+    return filter;
+  });
+};
+/**
  * addSavedFilter - Adds a new saved filter to the store and then stores it in Firebase.
  * @param {*} param0
  * @param {object} savedFilterObj

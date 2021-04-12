@@ -26,6 +26,7 @@ function AppNavDrawerContent(props) {
   const actions = useOActions();
   const { applySavedFilter, clearFilterTags, hyrdateStore } = actions.oSaved;
   const { logUserOut } = actions.oAdmin;
+  // only return savedFilters that are marked to show up in
   const savedFilters = state.oSaved.getDrawerSavedFilters;
   const { email, uid, appState } = state.oAdmin;
 
