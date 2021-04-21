@@ -217,6 +217,8 @@ const ViewMoviesScreen = ({ navigation, route }) => {
         numColumns={2}
         getItemLayout={getLayoutItem}
         renderItem={flatListRenderItem}
+        initialNumToRender={10}
+        maxToRenderPerBatch={30}
       />
 
       {/* Only show when editing a movie - this happens on a long press on movie */}
