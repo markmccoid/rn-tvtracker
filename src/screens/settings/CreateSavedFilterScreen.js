@@ -47,7 +47,7 @@ const tagReducer = (state, action) => {
 const CreateSavedFilterScreen = ({ navigation, route }) => {
   const state = useOState();
   const actions = useOActions();
-  const { getTags, getInitialTagsSavedFilter, generated } = state.oSaved;
+  const { getInitialTagsSavedFilter, generated } = state.oSaved;
   const { addSavedFilter } = actions.oSaved;
 
   //# Tag state objects
@@ -57,7 +57,6 @@ const CreateSavedFilterScreen = ({ navigation, route }) => {
 
   const [filterIndex, setFilterIndex] = React.useState(-1);
   const [filterName, setFilterName] = React.useState(undefined);
-
   const [tagOperator, setTagOperator] = React.useState("AND");
   const [excludeTagOperator, setExcludeTagOperator] = React.useState("OR");
 

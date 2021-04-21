@@ -10,6 +10,7 @@ const SavedFiltersItem = ({ savedFilter }) => {
   const state = useOState();
   const { deleteSavedFilter, toggleFavSavedFilter } = actions.oSaved;
 
+  // Filled Heart (MDHeartIcon) is shown in drawer
   const ShowInDrawer = savedFilter.showInDrawer
     ? () => <MDHeartIcon color="red" size={25} />
     : () => <EmptyMDHeartIcon size={25} />;
@@ -20,14 +21,7 @@ const SavedFiltersItem = ({ savedFilter }) => {
           {savedFilter.name}
         </Text>
       </View>
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          width: 75,
-          justifyContent: "space-between",
-        }}
-      >
+      <View style={styles.iconButtons}>
         <TouchableOpacity
           onPress={() =>
             toggleFavSavedFilter({ id: savedFilter.id, isShown: savedFilter.showInDrawer })
@@ -67,6 +61,12 @@ const styles = StyleSheet.create({
   },
   filterTitle: {
     fontSize: 16,
+  },
+  iconButtons: {
+    flexDirection: "row",
+    alignItems: "center",
+    width: 75,
+    justifyContent: "space-between",
   },
 });
 
