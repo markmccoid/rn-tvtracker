@@ -8,7 +8,7 @@ import { useOState } from "../store/overmind";
 
 import AuthNav from "./AuthNav";
 import AppNav from "./AppNav";
-enableScreens();
+// enableScreens();
 
 // const RootStack = createStackNavigator();
 const RootStack = createNativeStackNavigator();
