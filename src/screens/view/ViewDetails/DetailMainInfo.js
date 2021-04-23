@@ -1,8 +1,7 @@
 import * as React from "react";
 import { View, Text, StyleSheet, ScrollView, Alert, TouchableOpacity } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { HoldItem } from "react-native-hold-menu";
-import * as Linking from "expo-linking";
+import DetailMainInfoHoldMenu from "./DetailMainInfoHoldMenu";
 
 import { useDimensions } from "@react-native-community/hooks";
 import { LessIcon, MoreIcon, ShareIcon } from "../../../components/common/Icons";
@@ -12,11 +11,6 @@ import { Button } from "../../../components/common/Buttons";
 import PosterImage from "../../../components/common/PosterImage";
 import { colors, styleHelpers } from "../../../globalStyles";
 import { useHaptics } from "../../../hooks/useHaptics";
-import { nativeShareItem } from "../../../utils/nativeShareItem";
-
-const showRefreshAlert = (msg) => {
-  Alert.alert("Movie Refresh", msg);
-};
 
 const DetailMainInfo = ({ movie, isInSavedMovies, viewTags, setViewTags, transitionRef }) => {
   const [overviewHeight, setOverviewHeight] = React.useState(205);
@@ -30,35 +24,6 @@ const DetailMainInfo = ({ movie, isInSavedMovies, viewTags, setViewTags, transit
   // maybe needs to be in useEffect??? or memoized
   const movieUserRating = getMovieUserRating(movie.id);
 
-  // Setup hold-menu items for use in the hold menu
-  const menuItemTitle = { text: "Actions", isTitle: true, onPress: () => {} };
-  const menuItemUpdateMovie = {
-    text: `Update Movie Id - ${movie.id}`,
-    onPress: async () => {
-      let msg = await refreshMovie(movie.id);
-      showRefreshAlert(msg);
-      navigation.navigate(route.name, {
-        movieId: movie.id,
-        movie: undefined,
-        notSaved: false,
-      });
-    },
-  };
-  const menuItemShareMovie = {
-    text: "Share Movie",
-    withSeperator: false,
-    icon: () => <ShareIcon size={20} />,
-    onPress: () => {
-      nativeShareItem({
-        message: `Open & Search in Movie Tracker -> \n${Linking.createURL(
-          `/search/${movie.title}`
-        )}\n Or view in IMDB\n`, //`${movie.title}\n`,
-        url: movie.imdbURL ? movie.imdbURL : movie.posterURL,
-      });
-    },
-  };
-  //-----------------------------------
-
   const { width, height } = useDimensions().window;
 
   const posterWidth = width * 0.35;
@@ -68,7 +33,12 @@ const DetailMainInfo = ({ movie, isInSavedMovies, viewTags, setViewTags, transit
   const { overview = "", releaseDate = "", imdbURL = "", runtime = "" } = movie;
 
   const toggleOverview = () => setOverviewHeight((curr) => (curr ? undefined : 205));
-
+  const navigateToRoute = () =>
+    navigation.navigate(route.name, {
+      movieId: movie.id,
+      movie: undefined,
+      notSaved: false,
+    });
   return (
     <View style={styles.container}>
       {/* {!ForceTouchGestureHandler.forceTouchAvailable && isInSavedMovies && (
@@ -114,12 +84,12 @@ const DetailMainInfo = ({ movie, isInSavedMovies, viewTags, setViewTags, transit
           {/* Need to build the items array so that we don't show the updateMovie option for movies NOT added yet 
                 NOTE: the .filter is just to get rid of the undefined for movies NOT added yet.
           */}
-          <HoldItem
-            items={[
-              menuItemTitle,
-              isInSavedMovies ? menuItemUpdateMovie : undefined,
-              menuItemShareMovie,
-            ].filter((el) => el)}
+
+          <DetailMainInfoHoldMenu
+            movie={movie}
+            navigateToRoute={navigateToRoute}
+            isInSavedMovies={isInSavedMovies}
+            refreshMovie={refreshMovie}
           >
             <View style={styleHelpers.posterImageShadow}>
               <PosterImage
@@ -132,7 +102,7 @@ const DetailMainInfo = ({ movie, isInSavedMovies, viewTags, setViewTags, transit
                 }}
               />
             </View>
-          </HoldItem>
+          </DetailMainInfoHoldMenu>
         </View>
         {/*---------------------
           ------------------------*/}
