@@ -12,6 +12,7 @@ import {
 import { SwipeListView } from "react-native-swipe-list-view";
 import { Feather } from "@expo/vector-icons";
 import { useDimensions } from "@react-native-community/hooks";
+import { Badge } from "react-native-elements";
 import { useOState, useOActions } from "../../store/overmind";
 import { DragHandleIcon } from "../common/Icons";
 import TagRowEditOverlay from "./TagRowEditOverlay";
@@ -231,16 +232,15 @@ const TagViewPan = ({ taggedCount }) => {
             >
               {item.tagName}
             </Text>
-            <Text
-              style={{
-                fontSize: 18,
-                color: colors.tagListfg,
-                // padding: 10,
-                flex: 1,
-              }}
-            >
-              {`${taggedCount[item.tagId] || 0} Movies tagged`}
-            </Text>
+
+            {/* {`${taggedCount[item.tagId] || 0} Movies tagged`} */}
+            <Badge
+              status="success"
+              value={taggedCount[item.tagId] || 0}
+              badgeStyle={{ padding: 5, height: rowHeight.current * 0.7, width: 40 }}
+              textStyle={{ fontSize: 15 }}
+              containerStyle={{ justifyContent: "center", marginRight: 25 }}
+            />
             <View
               style={{
                 padding: 10,
