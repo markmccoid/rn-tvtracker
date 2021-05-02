@@ -4,13 +4,12 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import DetailMainInfoHoldMenu from "./DetailMainInfoHoldMenu";
 
 import { useDimensions } from "@react-native-community/hooks";
-import { LessIcon, MoreIcon, ShareIcon } from "../../../components/common/Icons";
+import { LessIcon, MoreIcon } from "../../../components/common/Icons";
 import { useOActions, useOState } from "../../../store/overmind";
 import LongTouchUserRating from "./LongTouchUserRating";
 import { Button } from "../../../components/common/Buttons";
 import PosterImage from "../../../components/common/PosterImage";
 import { colors, styleHelpers } from "../../../globalStyles";
-import { useHaptics } from "../../../hooks/useHaptics";
 
 const DetailMainInfo = ({ movie, isInSavedMovies, viewTags, setViewTags, transitionRef }) => {
   const [overviewHeight, setOverviewHeight] = React.useState(205);
@@ -20,11 +19,10 @@ const DetailMainInfo = ({ movie, isInSavedMovies, viewTags, setViewTags, transit
   const { getMovieUserRating } = state.oSaved;
   const navigation = useNavigation();
   const route = useRoute();
-  const { hapticSuccess } = useHaptics();
   // maybe needs to be in useEffect??? or memoized
   const movieUserRating = getMovieUserRating(movie.id);
 
-  const { width, height } = useDimensions().window;
+  const { width } = useDimensions().window;
 
   const posterWidth = width * 0.35;
   const posterHeight = posterWidth * 1.5;

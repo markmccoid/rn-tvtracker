@@ -107,8 +107,6 @@ const AppNav = () => {
         name="Carousel View"
         component={TestCarouselAnim}
       />
-      {/* <Drawer.Screen name="Home" component={RedirectToMain} />
-      <Drawer.Screen name="Settings" component={SettingsStackScreen} /> */}
     </Drawer.Navigator>
   );
 };
