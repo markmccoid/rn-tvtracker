@@ -10,6 +10,7 @@ import { LogBox } from "react-native";
 const envData = require("./env.json");
 
 import RootNav from "./src/navigation/RootNav";
+import { colors } from "./src/globalStyles";
 
 // export const AuthContext = React.createContext();
 const prefix = Linking.createURL("/");
@@ -72,11 +73,11 @@ const App = () => {
   // const overmind = createOvermind(config);
   return (
     <Provider value={overmind}>
-      <HoldMenuProvider theme={"light"}>
-        <NavigationContainer linking={linking}>
-          <RootNav />
-        </NavigationContainer>
-      </HoldMenuProvider>
+      {/* <HoldMenuProvider> */}
+      <NavigationContainer linking={linking}>
+        <RootNav />
+      </NavigationContainer>
+      {/* </HoldMenuProvider> */}
     </Provider>
   );
 };

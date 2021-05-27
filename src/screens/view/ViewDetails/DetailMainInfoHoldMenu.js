@@ -21,41 +21,40 @@ const DetailMainInfoHoldMenu = ({
   // //-----------------------------------
   // //-- COMMENTED OUT UNTIL HOLD MENU BUG IS FIXED
   // // Setup hold-menu items for use in the hold menu
-  const menuItemTitle = { text: "Actions", isTitle: true, onPress: () => {} };
-  const menuItemUpdateMovie = {
-    text: `Update Movie-${movie.id}`,
-    onPress: async () => {
-      let msg = await refreshMovie(movie.id);
-      showRefreshAlert(msg);
-      navigateToRoute();
-    },
-  };
-  const menuItemShareMovie = {
-    text: "Share Movie",
-    withSeperator: false,
-    icon: () => <ShareIcon size={20} />,
-    onPress: () => {
-      nativeShareItem({
-        message: `Open & Search in Movie Tracker -> \n${Linking.createURL(
-          `/search/${movie.title}`
-        )}\n Or view in IMDB\n`, //`${movie.title}\n`,
-        url: movie.imdbURL ? movie.imdbURL : movie.posterURL,
-      });
-    },
-  };
-
-  return (
-    <HoldItem
-      items={[
-        menuItemTitle,
-        isInSavedMovies ? menuItemUpdateMovie : undefined,
-        menuItemShareMovie,
-      ].filter((el) => el)}
-    >
-      {children}
-    </HoldItem>
-  );
-  // //--------------------------------------
+  // const menuItemTitle = { text: "Actions", icon: "home", isTitle: true, onPress: () => {} };
+  // const menuItemUpdateMovie = {
+  //   text: `Update Movie-${movie.id}`,
+  //   onPress: async () => {
+  //     let msg = await refreshMovie(movie.id);
+  //     showRefreshAlert(msg);
+  //     navigateToRoute();
+  //   },
+  // };
+  // const menuItemShareMovie = {
+  //   text: "Share Movie",
+  //   withSeperator: false,
+  //   icon: () => <ShareIcon size={20} />,
+  //   onPress: () => {
+  //     nativeShareItem({
+  //       message: `Open & Search in Movie Tracker -> \n${Linking.createURL(
+  //         `/search/${movie.title}`
+  //       )}\n Or view in IMDB\n`, //`${movie.title}\n`,
+  //       url: movie.imdbURL ? movie.imdbURL : movie.posterURL,
+  //     });
+  //   },
+  // };
+  // return (
+  //   <HoldItem
+  //     items={[
+  //       menuItemTitle,
+  //       isInSavedMovies ? menuItemUpdateMovie : undefined,
+  //       menuItemShareMovie,
+  //     ].filter((el) => el)}
+  //   >
+  //     {children}
+  //   </HoldItem>
+  // );
+  //--------------------------------------
 
   return (
     <TouchableOpacity

@@ -101,7 +101,7 @@ const DragItem = ({
         scrollY.value -= diff;
         scrollTo(scrollRef, 0, scrollY.value, false);
         ctx.offsetY -= diff;
-        translateY.value = ctx.offsetY + event.translationX;
+        translateY.value = ctx.offsetY + event.translationY;
       }
 
       if (translateY.value > upperBound) {

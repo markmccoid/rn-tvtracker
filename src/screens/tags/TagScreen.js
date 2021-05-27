@@ -6,10 +6,13 @@ import TagInput from "../../components/Tags/TagInput";
 import TagViewPan from "../../components/Tags/TagViewPan";
 import { colors } from "../../globalStyles";
 
+import { withTheme } from "react-native-elements";
+
 const TagScreen = () => {
   //Get tag data from Overmind
   const state = useOState();
-  const { getTaggedCount } = state.oSaved;
+  const { tagData, getTaggedCount } = state.oSaved;
+
   return (
     <View style={styles.wrapper}>
       <TagInput />
