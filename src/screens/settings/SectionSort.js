@@ -2,7 +2,10 @@ import React from "react";
 import { StyleSheet, Text, View, ScrollView } from "react-native";
 import SettingsSortItem from "../../components/settings/SettingsSortItem";
 import { useOActions, useOState } from "../../store/overmind";
-import DragToSort from "../../components/dragToSort/DragToSort";
+
+import DragDropEntry from "../../components/DragDropScrollView/DragDropEntry";
+import { sortArray } from "../../components/DragDropScrollView/helperFunctions";
+
 import { colors, commonStyles } from "../../globalStyles";
 
 const SectionSort = () => {
@@ -37,13 +40,15 @@ const SectionSort = () => {
         <Text style={commonStyles.headerText}>Set Default Sort</Text>
         <Text>Choose a default sort order for viewing movies.</Text>
       </View>
-
-      <DragToSort
-        itemDetail={{ height: ITEM_HEIGHT }}
-        reSort={(positions) => reSort(positions, defaultSort)}
-        data={defaultSort}
-        itemsToShow={4}
-        renderItem={({ item }) => {
+      <DragDropEntry
+        scrollStyles={{ borderWidth: 1, borderColor: colors.listBorder }}
+        // updatePositions={(positions) => reSort(positions, savedFilters)}
+        updatePositions={(positions) =>
+          updateDefaultSortOrder(sortArray(positions, defaultSort, "index"))
+        }
+        itemHeight={ITEM_HEIGHT}
+      >
+        {defaultSort.map((item) => {
           return (
             <View
               style={{
@@ -65,8 +70,8 @@ const SectionSort = () => {
               />
             </View>
           );
-        }}
-      />
+        })}
+      </DragDropEntry>
     </View>
   );
 };

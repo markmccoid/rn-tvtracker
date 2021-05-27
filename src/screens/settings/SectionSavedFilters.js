@@ -8,9 +8,11 @@ import { colors, commonStyles } from "../../globalStyles";
 
 import SavedFiltersItem from "../../components/settings/SavedFiltersItem";
 
-import DragToSort from "../../components/dragToSort/DragToSort";
+import DragDropEntry from "../../components/DragDropScrollView/DragDropEntry";
+import { sortArray } from "../../components/DragDropScrollView/helperFunctions";
 
 const ITEM_HEIGHT = 40;
+// const VIEW_HEIGHT = 4 * ITEM_HEIGHT + 2;
 
 const SectionSavedFilters = () => {
   const state = useOState();
@@ -36,6 +38,8 @@ const SectionSavedFilters = () => {
     // Update saved filters
     updateSavedFilterOrder(updateArray);
   };
+  const updatedFilters = savedFilters;
+  const VIEW_HEIGHT = Math.min(savedFilters.length, 4) * ITEM_HEIGHT + 2;
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
@@ -46,27 +50,41 @@ const SectionSavedFilters = () => {
           onPress={() => navigation.navigate("CreateSavedFilter")}
         />
       </View>
-      <DragToSort
-        itemDetail={{ height: ITEM_HEIGHT }}
-        reSort={(positions) => reSort(positions, savedFilters)}
-        data={savedFilters}
-        itemsToShow={4}
-        renderItem={({ item }) => {
-          return (
-            <View
-              style={{
-                flexGrow: 1,
-                borderColor: colors.listItemBorder,
-                borderWidth: 1,
-                justifyContent: "center",
-              }}
-              id={item.id}
-            >
-              <SavedFiltersItem savedFilter={item} />
-            </View>
-          );
+
+      <View
+        style={{
+          height: VIEW_HEIGHT,
+          borderWidth: 1,
+          borderColor: colors.listBorder,
+          backgroundColor: "#ddd",
         }}
-      />
+      >
+        <DragDropEntry
+          //scrollStyles={{ width: 300, borderWidth: 1, borderColor: "red" }}
+          // updatePositions={(positions) => reSort(positions, savedFilters)}
+          updatePositions={(positions) =>
+            updateSavedFilterOrder(sortArray(positions, savedFilters, "index"))
+          }
+          itemHeight={ITEM_HEIGHT}
+        >
+          {savedFilters.map((item) => {
+            return (
+              <View
+                style={{
+                  flexGrow: 1,
+                  borderColor: colors.listItemBorder,
+                  borderWidth: 1,
+                  justifyContent: "center",
+                }}
+                id={item.id}
+                key={item.id}
+              >
+                <SavedFiltersItem savedFilter={item} />
+              </View>
+            );
+          })}
+        </DragDropEntry>
+      </View>
     </View>
   );
 };
