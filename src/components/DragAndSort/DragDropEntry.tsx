@@ -10,25 +10,30 @@ import DefaultHandle from "./Handle";
 import MoveableItem from "./MoveableItem";
 import { Positions } from "./helperFunctions";
 
-export type ScrollFunctions = {
+import defaultDragIndicator, { DragIndicatorProps } from "./DefaultDragIndicator";
+
+export type TScrollFunctions = {
   scrollToEnd: () => void;
   scrollToStart: () => void;
+  scrollToY: () => void;
 };
 
 interface Props {
   updatePositions: (positions: Positions) => void;
   itemHeight: number;
-  handle?: React.ReactNode;
+  handle?: React.FC;
   handlePosition?: "left" | "right";
   enableHapticFeedback?: boolean;
+  dragIndicator?: React.FC<DragIndicatorProps>;
+  enableDragIndicator?: boolean;
   scrollStyles?: ViewStyle;
-  getScrollFunctions?: (funtionObj: ScrollFunctions) => void;
+  getScrollFunctions?: (funtionObj: TScrollFunctions) => void;
   children:
     | React.ReactElement<{ id: number | string }>[]
     | React.ReactElement<{ id: number | string }>;
 }
 
-const DragDropEntry = ({
+const DragDropEntryChildren = ({
   updatePositions,
   itemHeight,
   handle = DefaultHandle,
@@ -36,6 +41,8 @@ const DragDropEntry = ({
   scrollStyles,
   getScrollFunctions,
   enableHapticFeedback = true,
+  enableDragIndicator = false,
+  dragIndicator = defaultDragIndicator,
   children,
 }: Props) => {
   //*Scrollview animated ref
@@ -63,25 +70,32 @@ const DragDropEntry = ({
       const scrollFuncs = {
         scrollToEnd: (): void => scrollViewRef.current?.scrollToEnd(),
         scrollToStart: (): void => scrollViewRef.current?.scrollTo({ y: 0, animated: true }),
+        scrollToY: (yPos: number): void =>
+          scrollViewRef.current?.scrollTo({ y: yPos, animated: true }),
       };
       getScrollFunctions(scrollFuncs);
     }
   }, []);
 
-  // When scrollview gets children added or removed got to end or start of list
-  React.useEffect(() => {
-    // Item has been added (more items than before)
-    if (numberOfItems > prevNumberOfItems.current && scrollViewRef.current) {
-      scrollViewRef.current.scrollToEnd();
-    } else if (numberOfItems < prevNumberOfItems.current && scrollViewRef.current) {
-      //Item has been removed
-      const topBound = numberOfItems * itemHeight - containerHeight;
-      if (scrollY.value > topBound) {
-        scrollViewRef.current.scrollToEnd();
-      }
-    }
-    prevNumberOfItems.current = numberOfItems;
-  }, [numberOfItems]);
+  //! When scrollview gets children added or removed got to end or start of list
+  //! Probably best to use this example in the component calling DragDropEntry
+  // React.useEffect(() => {
+  //   // Item has been added (more items than before)
+  //   if (numberOfItems > prevNumberOfItems.current && scrollViewRef.current) {
+  //     console.log("Scrolling To End >");
+  //     scrollViewRef.current.scrollToEnd();
+  //   } else if (numberOfItems < prevNumberOfItems.current && scrollViewRef.current) {
+  //     //Item has been removed
+  //     // If you want to scroll to end on delete must check top bound
+  //     const topBound = numberOfItems * itemHeight - containerHeight;
+  //     console.log("SY", scrollY.value, topBound);
+  //     scrollViewRef.current.scrollTo({ y: 0, animated: true });
+  //     if (scrollY.value > topBound) {
+  //       console.log("Scrolling To End <");
+  //     }
+  //   }
+  //   prevNumberOfItems.current = numberOfItems;
+  // }, [numberOfItems]);
 
   // Wrap each child item in the MoveableItem component.
   const moveableItems = React.Children.map(children, (child) => {
@@ -100,6 +114,8 @@ const DragDropEntry = ({
         handle={handle}
         handlePosition={handlePosition}
         enableHapticFeedback={enableHapticFeedback}
+        enableDragIndicator={enableDragIndicator}
+        dragIndicator={dragIndicator}
       >
         {child}
       </MoveableItem>
@@ -134,4 +150,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default DragDropEntry;
+export default DragDropEntryChildren;

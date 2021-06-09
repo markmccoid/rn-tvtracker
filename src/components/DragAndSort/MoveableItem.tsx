@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { Platform } from "react-native";
-import { clamp, between } from "react-native-redash";
+import { Platform, View } from "react-native";
+import { MotiView, Text, AnimatePresence } from "moti";
+import { clamp } from "react-native-redash";
 import Animated, {
   runOnJS,
   useAnimatedGestureHandler,
@@ -17,7 +18,8 @@ import {
   PanGestureHandlerGestureEvent,
 } from "react-native-gesture-handler";
 import * as Haptics from "expo-haptics";
-import { BlurView } from "expo-blur";
+
+import { DragIndicatorProps } from "./DefaultDragIndicator";
 
 import { Positions } from "./helperFunctions";
 
@@ -29,21 +31,23 @@ interface Props {
   handlePosition: "left" | "right";
   positions: Animated.SharedValue<Positions>;
   containerHeight: number;
-  handle: React.ReactNode;
+  handle: React.FC;
   enableHapticFeedback: boolean;
+  enableDragIndicator: boolean;
+  dragIndicator: React.FC<DragIndicatorProps>;
   updatePositions: (positions: Positions) => void;
-  children: React.ReactElement<{ id: number | string }>;
   itemHeight: number;
+  children: React.ReactElement<{ id: number | string }>;
 }
 //*-----------------
-//*= HELPER FUCTIONS
+//*= HELPER FUCTIONS - Using redash's clamp instead
 // function clamp(value: number, lowerBound: number, upperBound: number) {
 //   "worklet";
 //   return Math.max(lowerBound, Math.min(value, upperBound));
 // }
 
 //*-----------------
-function objectMove(object, from, to) {
+function objectMove(object: Positions, from: number, to: number) {
   "worklet";
   const newObject = { ...object };
 
@@ -72,10 +76,16 @@ const MoveableItem = ({
   children,
   itemHeight,
   handle,
+  enableDragIndicator,
+  dragIndicator,
   enableHapticFeedback,
 }: Props) => {
   const Handle = handle;
+  const DragIndicator = dragIndicator;
   const moving = useSharedValue(false);
+  const [isActive, setIsActive] = useState(false);
+  // Used in the drag indicator to show where the item being dragged is located.
+  const [movingPos, setMovingPos] = useState(positions.value[id] + 1);
   const scale = useSharedValue({ x: 1, y: 1 });
   const translateY = useSharedValue(positions.value[id] * itemHeight);
   const translateX = useSharedValue(0);
@@ -92,22 +102,35 @@ const MoveableItem = ({
   useAnimatedReaction(
     () => positions.value[id],
     (newPosition, previousPosition) => {
+      // If newPosition is undefined, this means that the item was deleted, so just return (do nothing)
+      if (newPosition === undefined) {
+        return;
+      }
       // If the new position is different than the previous state, then set the translateY.value
       if (newPosition !== previousPosition) {
+        // If moving set the movingPos state (for drag indicator) to correct position.
+        if (moving.value) {
+          runOnJS(setMovingPos)(newPosition + 1);
+        }
         // Only move the value if it is not moving (i.e. not the item where the gesture is active)
         if (!moving.value && !initialRender.value) {
-          // translateY.value = withSpring(newPosition * itemHeight);
-          translateY.value = withTiming(newPosition * itemHeight, { duration: 200 });
+          // animate the moving
+          translateY.value = withSpring(newPosition * itemHeight);
+          //*- Another animation option --
+          // translateY.value = withTiming(newPosition * itemHeight, { duration: 200 });
           // translateX.value = withSequence(
           //   withTiming(20, { duration: 150 }),
           //   withTiming(0, { duration: 100 })
           // );
+          //*-----------------------------
+          runOnJS(setMovingPos)(newPosition + 1);
           // translateY.value = withTiming(newPosition * itemHeight, { duration: 200 });
         } else {
           initialRender.value = false;
         }
       }
-    }
+    },
+    []
   );
 
   const gestureHandler = useAnimatedGestureHandler<
@@ -116,11 +139,14 @@ const MoveableItem = ({
   >({
     onStart(event, ctx) {
       moving.value = true;
+      runOnJS(setIsActive)(true);
       scale.value = { x: 0.97, y: 1 };
       ctx.startingY = translateY.value;
       if (Platform.OS === "ios" && enableHapticFeedback) {
         runOnJS(Haptics.impactAsync)(Haptics.ImpactFeedbackStyle.Medium);
       }
+      //OR IF above doesn't work use:
+      // runOnJS(setMoving)(true);
     },
     onActive(event, ctx) {
       //* Caclulate the Initial new top position of this item
@@ -161,9 +187,18 @@ const MoveableItem = ({
         translateY.value = ctx.startingY + event.translationY;
       }
       //*--- END Scroll Logic
+
+      //*----- Scroll Logic Take 2 ------------
+      // set the lower and upper bound dynamically as we update the scroll position
+      // scrollY will always be the lower bound and
+      // the upper bound will be
+      //*----- END Scroll Logic Take 2 ------------
+
+      // translateY.value = positionY;
     },
     onEnd(event, ctx) {
       moving.value = false;
+      runOnJS(setIsActive)(false);
       scale.value = { x: 1, y: 1 };
       translateY.value = withSpring(positions.value[id] * itemHeight);
       runOnJS(updatePositions)(positions.value);
@@ -195,13 +230,41 @@ const MoveableItem = ({
   }, [moving.value]);
   return (
     <Animated.View style={animatedStyle}>
-      {handlePosition === "right" && children}
+      {handlePosition === "right" && (
+        <View style={{ flex: 1 }}>
+          {children}
+          <AnimatePresence>
+            {isActive && enableDragIndicator && (
+              <DragIndicator
+                itemHeight={itemHeight}
+                fromLeftOrRight="left"
+                currentPosition={movingPos}
+                totalItems={numberOfItems}
+              />
+            )}
+          </AnimatePresence>
+        </View>
+      )}
       <PanGestureHandler onGestureEvent={gestureHandler}>
         <Animated.View>
           <Handle />
         </Animated.View>
       </PanGestureHandler>
-      {handlePosition === "left" && children}
+      {handlePosition === "left" && (
+        <View style={{ flex: 1 }}>
+          {children}
+          <AnimatePresence>
+            {isActive && enableDragIndicator && (
+              <DragIndicator
+                itemHeight={itemHeight}
+                fromLeftOrRight="right"
+                currentPosition={movingPos}
+                totalItems={numberOfItems}
+              />
+            )}
+          </AnimatePresence>
+        </View>
+      )}
     </Animated.View>
   );
 };
