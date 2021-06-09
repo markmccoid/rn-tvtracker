@@ -33,8 +33,8 @@ const DetailMainInfoHoldMenu = ({
   // const menuItemShareMovie = {
   //   text: "Share Movie",
   //   withSeperator: false,
-  //   icon: () => <ShareIcon size={20} />,
-  //   onPress: () => {
+  //   icon: "share",
+  //   onPress() {
   //     nativeShareItem({
   //       message: `Open & Search in Movie Tracker -> \n${Linking.createURL(
   //         `/search/${movie.title}`
