@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { Provider } from "overmind-react";
 import { HoldMenuProvider } from "react-native-hold-menu";
+import FeatherIcon from "react-native-vector-icons/Feather";
+
 import * as Linking from "expo-linking";
 
 import { overmind } from "./src/store/overmind";
@@ -73,11 +75,11 @@ const App = () => {
   // const overmind = createOvermind(config);
   return (
     <Provider value={overmind}>
-      {/* <HoldMenuProvider> */}
-      <NavigationContainer linking={linking}>
-        <RootNav />
-      </NavigationContainer>
-      {/* </HoldMenuProvider> */}
+      <HoldMenuProvider iconComponent={FeatherIcon} theme="light">
+        <NavigationContainer linking={linking}>
+          <RootNav />
+        </NavigationContainer>
+      </HoldMenuProvider>
     </Provider>
   );
 };
