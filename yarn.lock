@@ -3649,7 +3649,7 @@ expo-asset@~8.3.1:
     path-browserify "^1.0.0"
     url-parse "^1.4.4"
 
-expo-blur@^9.0.0:
+expo-blur@^9.0.0, expo-blur@~9.0.3:
   version "9.0.3"
   resolved "https://registry.yarnpkg.com/expo-blur/-/expo-blur-9.0.3.tgz#5095b5bd04d000f73b351d0e4736767b86b49bbd"
   integrity sha512-7jMqzo53eg5t9Uc1Tg+yGu9lKL9the4CWAQO0kC6YMhrsDiB13mwOUesC+IScHDTSUKNMGcHI8kN+OmvEWfPig==
@@ -3681,6 +3681,11 @@ expo-font@~9.1.0:
   integrity sha512-owzbbfrQet7mawTGKMXpVCIA9k56MGhtriO41AW4Zo65dd2Ikm4LoymuHKp2ZlHuIFjRnjECKWz7RXgy/C1yAg==
   dependencies:
     fontfaceobserver "^2.1.0"
+
+expo-haptics@^9.0.0:
+  version "9.0.0"
+  resolved "https://registry.yarnpkg.com/expo-haptics/-/expo-haptics-9.0.0.tgz#a01605634ff9b8a4dc8023f5430278be874f525b"
+  integrity sha512-jBYgclyBVuGiqFPxdYSpIE5OEpWodu1B8fsqDLVIOWjdACnKVGsaBpSF6W4Xq0wVRvoak7C4Oz7ISV08rtPMOw==
 
 expo-haptics@~10.0.0:
   version "10.0.0"
@@ -6141,13 +6146,14 @@ react-native-gesture-handler@~1.10.3:
     invariant "^2.2.4"
     prop-types "^15.7.2"
 
-react-native-hold-menu@^0.0.8:
-  version "0.0.8"
-  resolved "https://registry.yarnpkg.com/react-native-hold-menu/-/react-native-hold-menu-0.0.8.tgz#17a94de73de6dfcb0031c8922dbe22e9e4d201bd"
-  integrity sha512-b7C2Ly42KVh3KrBXAntQTNyiF94F79Iydlx65+orBbdQ7BUHudnBrt5U6/wfzTaQ4kp7wQUMDYRDa3z7XEhnCQ==
+react-native-hold-menu@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/react-native-hold-menu/-/react-native-hold-menu-0.1.0.tgz#64eee9579c2a553695c897d96a94f3da7cee1721"
+  integrity sha512-dUuX3Wb5DTs+G3PhUxR2iTE41yrMQQ0RH6ds0ueLNT9RRxt3S1P5jGH3srVHn5K+1yOLO2uiydNRMeSiBqBx3w==
   dependencies:
     "@gorhom/portal" "^1.0.3"
     expo-blur "^9.0.0"
+    expo-haptics "^9.0.0"
     lodash.isequal "^4.5.0"
     nanoid "^3.1.20"
 
