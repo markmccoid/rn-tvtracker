@@ -1,19 +1,30 @@
 import Firebase, { firestore } from "./firebase";
+import { IUserDocument, IUserBaseData, ISavedMovieDoc } from "../../FirestoreStructure";
 
-export const loadUserDocument = async (uid) => {
+export const loadUserDocument = async (uid: string): Promise<IUserDocument> => {
   //Get the movies
   let movieSnapshot = await firestore
     .collection("users")
     .doc(uid)
     .collection("savedMovies")
     .get();
-  const savedMovies = movieSnapshot.docs.map((doc) => doc.data());
+  const savedMovies: ISavedMovieDoc[] = movieSnapshot.docs.map(
+    (doc) => doc.data() as ISavedMovieDoc
+  );
+
   // return the full user document's data
   const userDocSnapshot = await firestore.collection("users").doc(uid).get();
-  const userDoc = userDocSnapshot.data();
+  const userDoc = userDocSnapshot.data() as IUserDocument;
+  const userDocSantized: IUserBaseData = {
+    email: userDoc.email,
+    savedFilters: userDoc.savedFilters || [],
+    settings: userDoc.settings || {},
+    tagData: userDoc.tagData || [],
+    dataSource: "cloud",
+  };
   // Sending destructured object first.  Had issue where savedMovie object was in user collection
   // and it was overwriting the savedMovies collection.  Shouldn't happen, but this will keep error from happening if it does.
-  return { ...userDoc, savedMovies };
+  return { ...userDocSantized, savedMovies };
 };
 
 //! OLD DATA MODEL FUNCTION
@@ -23,7 +34,7 @@ export const loadUserDocument = async (uid) => {
 //   return userDocRef.update({ savedMovies: movies });
 // };
 
-export const storeTagData = async (tags) => {
+export const storeTagData = async (tags: string[]) => {
   let uid = Firebase.auth().currentUser.uid;
   let userDocRef = await firestore.collection("users").doc(uid);
   return userDocRef.update({ tagData: tags });
@@ -42,12 +53,6 @@ export const storeUserDataSettings = async (userDataSettings) => {
     .doc(uid)
     .collection("savedMovies")
     .get();
-};
-
-export const storeSavedFilters = async (savedFiltersData) => {
-  let uid = Firebase.auth().currentUser.uid;
-  let userDocRef = await firestore.collection("users").doc(uid);
-  return userDocRef.update({ savedFilters: savedFiltersData });
 };
 
 //* ------------------------------------------------
@@ -108,6 +113,12 @@ export const storeTaggedMovies = async (taggedMovies) => {
   let uid = Firebase.auth().currentUser.uid;
   let userDocRef = firestore.collection("users").doc(uid);
   return userDocRef.update({ taggedMovies });
+};
+
+export const storeSavedFilters = async (savedFiltersData) => {
+  let uid = Firebase.auth().currentUser.uid;
+  let userDocRef = await firestore.collection("users").doc(uid);
+  return userDocRef.update({ savedFilters: savedFiltersData });
 };
 
 /**

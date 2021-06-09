@@ -3,6 +3,8 @@ import _ from "lodash";
 
 import { loadFromAsyncStorage, saveToAsyncStorage, mergeToAsyncStorage } from "./asyncStorage";
 
+import { IUserDocument, ISavedMovieDoc } from "../../FirestoreStructure";
+
 /**
  * getKeys - generates keys for use in Async Storage
  *
@@ -59,16 +61,17 @@ export const refreshLocalData = async (uid, dataObj) => {
  * @param {*} uid - uid for user logged in, use to create keys
  * @returns {object} dataObj containing data that was stored locally
  */
-export const loadLocalData = async (uid) => {
-  let dataObj = {};
+export const loadLocalData = async (uid): Promise<IUserDocument> => {
   // Convert object style savedMovies to Array of Objects that overmind expects
-  let savedMoviesArray = (await loadFromAsyncStorage(getKey(uid, "savedMovies"))) || [];
+  let savedMoviesArray: ISavedMovieDoc[] =
+    (await loadFromAsyncStorage(getKey(uid, "savedMovies"))) || [];
 
-  dataObj.savedMovies = _.map(savedMoviesArray);
-  dataObj.tagData = (await loadFromAsyncStorage(getKey(uid, "tagData"))) || [];
-  dataObj.settings = (await loadFromAsyncStorage(getKey(uid, "settings"))) || {};
-  dataObj.savedFilters = (await loadFromAsyncStorage(getKey(uid, "savedFilters"))) || [];
-  return dataObj;
+  const savedMovies = _.map(savedMoviesArray);
+  const tagData = (await loadFromAsyncStorage(getKey(uid, "tagData"))) || [];
+  const settings = (await loadFromAsyncStorage(getKey(uid, "settings"))) || {};
+  const savedFilters = (await loadFromAsyncStorage(getKey(uid, "savedFilters"))) || [];
+
+  return { savedMovies, tagData, settings, savedFilters, dataSource: "local" };
 };
 
 /**
@@ -82,7 +85,7 @@ export const loadLocalData = async (uid) => {
  */
 export const saveMoviesToLocal = async (uid, savedMovies) => {
   // Convert savedMovies
-  savedMoviesObj = _.keyBy(savedMovies, "id");
+  let savedMoviesObj = _.keyBy(savedMovies, "id");
   await saveToAsyncStorage(getKey(uid, "savedMovies"), savedMoviesObj);
 };
 
