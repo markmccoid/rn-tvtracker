@@ -8,8 +8,8 @@ import { colors, commonStyles } from "../../globalStyles";
 
 import SavedFiltersItem from "../../components/settings/SavedFiltersItem";
 
-import DragDropEntry from "../../components/DragDropScrollView/DragDropEntry";
-import { sortArray } from "../../components/DragDropScrollView/helperFunctions";
+import DragDropEntry, { sortArray } from "../../components/DragAndSort";
+// import { sortArray } from "../../components/DragAndSort/helperFunctions";
 
 const ITEM_HEIGHT = 40;
 // const VIEW_HEIGHT = 4 * ITEM_HEIGHT + 2;
@@ -39,7 +39,9 @@ const SectionSavedFilters = () => {
     updateSavedFilterOrder(updateArray);
   };
   const updatedFilters = savedFilters;
-  const VIEW_HEIGHT = Math.min(savedFilters.length, 4) * ITEM_HEIGHT + 2;
+  const MAX_VIEW_HEIGHT = Math.min(savedFilters.length, 4) * ITEM_HEIGHT + 2;
+  const VIEW_HEIGHT = savedFilters.length >= 4 ? MAX_VIEW_HEIGHT : undefined;
+  const viewHeightStyle = VIEW_HEIGHT ? { height: VIEW_HEIGHT } : {};
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
@@ -51,21 +53,14 @@ const SectionSavedFilters = () => {
         />
       </View>
 
-      <View
-        style={{
-          height: VIEW_HEIGHT,
-          borderWidth: 1,
-          borderColor: colors.listBorder,
-          backgroundColor: "#ddd",
-        }}
-      >
+      <View style={[viewHeightStyle, styles.scrollView]}>
         <DragDropEntry
           //scrollStyles={{ width: 300, borderWidth: 1, borderColor: "red" }}
-          // updatePositions={(positions) => reSort(positions, savedFilters)}
           updatePositions={(positions) =>
             updateSavedFilterOrder(sortArray(positions, savedFilters, "index"))
           }
           itemHeight={ITEM_HEIGHT}
+          enableDragIndicator
         >
           {savedFilters.map((item) => {
             return (
@@ -98,5 +93,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+  },
+  scrollView: {
+    borderWidth: 1,
+    borderColor: colors.listBorder,
+    backgroundColor: "#ddd",
   },
 });
