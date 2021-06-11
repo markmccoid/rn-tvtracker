@@ -48,7 +48,7 @@ const SearchScreen = ({ navigation, route }) => {
     if (isFocused) {
       setOnDetailsPage(false);
     }
-  }, [isFocused]);
+  });
   // Write this up ----------------------------------------------------------------
   // Had to use the useFocusEffect in conjunction with useIsFocued hook to
   // know when to clear data NOPE -- Just use useEffect and trigger when isfocused changes
