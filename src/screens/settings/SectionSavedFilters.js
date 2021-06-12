@@ -57,7 +57,9 @@ const SectionSavedFilters = () => {
         <DragDropEntry
           //scrollStyles={{ width: 300, borderWidth: 1, borderColor: "red" }}
           updatePositions={(positions) =>
-            updateSavedFilterOrder(sortArray(positions, savedFilters, "index"))
+            updateSavedFilterOrder(
+              sortArray(positions, savedFilters, { positionField: "index" })
+            )
           }
           itemHeight={ITEM_HEIGHT}
           enableDragIndicator
@@ -70,6 +72,7 @@ const SectionSavedFilters = () => {
                   borderColor: colors.listItemBorder,
                   borderWidth: 1,
                   justifyContent: "center",
+                  backgroundColor: "white",
                 }}
                 id={item.id}
                 key={item.id}

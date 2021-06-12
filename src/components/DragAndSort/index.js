@@ -2,6 +2,6 @@ import DragDropEntry from "./DragDropEntry";
 
 export * from "./DragDropEntry";
 export * from "./helperFunctions";
-export { DragIndicatorProps } from "./DefaultDragIndicator";
+export { DragIndicatorProps, DefaultDragIndicator } from "./DefaultDragIndicator";
 
 export default DragDropEntry;

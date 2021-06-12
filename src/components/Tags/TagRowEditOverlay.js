@@ -12,6 +12,10 @@ const TagRowEditOverlay = ({ isVisible, currTagValue, tagId, setIsEditing }) => 
   const actions = useOActions();
   const { editTag } = actions.oSaved;
 
+  React.useEffect(() => {
+    setTagValue(currTagValue);
+  }, [currTagValue]);
+
   return (
     <Overlay isVisible={isVisible} overlayStyle={styles.overlay}>
       <View style={styles.subView}>

@@ -44,7 +44,7 @@ const SectionSort = () => {
         scrollStyles={{ borderWidth: 1, borderColor: colors.listBorder }}
         // updatePositions={(positions) => reSort(positions, savedFilters)}
         updatePositions={(positions) =>
-          updateDefaultSortOrder(sortArray(positions, defaultSort, "index"))
+          updateDefaultSortOrder(sortArray(positions, defaultSort, { positionField: "index" }))
         }
         itemHeight={ITEM_HEIGHT}
       >
@@ -56,6 +56,7 @@ const SectionSort = () => {
                 borderColor: colors.listItemBorder,
                 borderWidth: 1,
                 justifyContent: "center",
+                backgroundColor: "white",
               }}
               id={item.id}
               key={item.id}

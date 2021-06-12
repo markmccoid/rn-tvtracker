@@ -2,11 +2,16 @@ import React from "react";
 import { View } from "react-native";
 import { MotiView, Text, AnimatePresence } from "moti";
 
+export type DragIndicatorConfig = {
+  translateXDistance: number;
+};
+
 export type DragIndicatorProps = {
   itemHeight: number;
   fromLeftOrRight?: "left" | "right";
   currentPosition: number;
   totalItems: number;
+  config?: DragIndicatorConfig;
 };
 /**.
  * Currently this single component encapsulates the drag indicator.
@@ -23,8 +28,10 @@ const DefaultDragIndicator: React.FC<DragIndicatorProps> = ({
   fromLeftOrRight = "right",
   currentPosition,
   totalItems,
+  config = { translateXDistance: 10 },
 }) => {
   const direction = fromLeftOrRight === "left" ? -1 : 1;
+  const { translateXDistance } = config;
 
   return (
     <MotiView
@@ -32,6 +39,7 @@ const DefaultDragIndicator: React.FC<DragIndicatorProps> = ({
         position: "absolute",
         [fromLeftOrRight]: 0,
         backgroundColor: "#eee",
+        justifyContent: "center",
         borderLeftWidth: 1,
         borderRightWidth: 1,
         borderWidth: 1,
@@ -46,7 +54,7 @@ const DefaultDragIndicator: React.FC<DragIndicatorProps> = ({
       }}
       animate={{
         opacity: 1,
-        translateX: 0,
+        translateX: translateXDistance * direction * -1,
         // scale: 1,
       }}
       exit={{
@@ -83,7 +91,6 @@ const DragIndicatorDisplay: React.FC<{
     <View
       style={{
         flexDirection: "row",
-        paddingTop: 4,
         paddingRight: 10,
         paddingLeft: 20,
       }}

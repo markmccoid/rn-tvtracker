@@ -19,7 +19,7 @@ import {
 } from "react-native-gesture-handler";
 import * as Haptics from "expo-haptics";
 
-import { DragIndicatorProps } from "./DefaultDragIndicator";
+import { DragIndicatorProps, DragIndicatorConfig } from "./DefaultDragIndicator";
 
 import { Positions } from "./helperFunctions";
 
@@ -35,6 +35,7 @@ interface Props {
   enableHapticFeedback: boolean;
   enableDragIndicator: boolean;
   dragIndicator: React.FC<DragIndicatorProps>;
+  dragIndicatorConfig: DragIndicatorConfig;
   updatePositions: (positions: Positions) => void;
   itemHeight: number;
   children: React.ReactElement<{ id: number | string }>;
@@ -78,6 +79,7 @@ const MoveableItem = ({
   handle,
   enableDragIndicator,
   dragIndicator,
+  dragIndicatorConfig,
   enableHapticFeedback,
 }: Props) => {
   const Handle = handle;
@@ -156,7 +158,15 @@ const MoveableItem = ({
       translateY.value = clamp(ctx.startingY + event.translationY, 0, boundY);
 
       //* Calculation the position based on items current Y value
-      const newPosition = clamp(Math.floor(translateY.value / itemHeight), 0, numberOfItems);
+      //* The translateY.value/itemHeight return a decimal between 0 to numberOfItems
+      //* I add .5 so that the we get a new position at the center of the next item
+      //* whether moving up or down
+      const newPosition = clamp(
+        Math.floor(translateY.value / itemHeight + 0.5),
+        0,
+        numberOfItems
+      );
+
       //* Check to see if we need to set a new position and do it if so
       if (newPosition !== positions.value[id]) {
         positions.value = objectMove(positions.value, positions.value[id], newPosition);
@@ -211,11 +221,12 @@ const MoveableItem = ({
       flexDirection: "row",
       flex: 1,
       width: "100%",
-      backgroundColor: "white",
       left: 0,
       right: 0,
+      height: itemHeight,
       top: 0, //withTiming(translateY.value, { duration: 16 }),
       zIndex: moving.value ? 1 : 0,
+      // borderRadius: 10,
       shadowColor: "black",
       shadowOffset: { height: 0, width: 0 },
       // borderWidth: 1,
@@ -240,6 +251,7 @@ const MoveableItem = ({
                 fromLeftOrRight="left"
                 currentPosition={movingPos}
                 totalItems={numberOfItems}
+                config={dragIndicatorConfig}
               />
             )}
           </AnimatePresence>
@@ -260,6 +272,7 @@ const MoveableItem = ({
                 fromLeftOrRight="right"
                 currentPosition={movingPos}
                 totalItems={numberOfItems}
+                config={dragIndicatorConfig}
               />
             )}
           </AnimatePresence>
