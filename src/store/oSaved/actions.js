@@ -138,13 +138,8 @@ export const refreshMovie = async ({ state, effects, actions }, movieId) => {
       latestMovieDetails?.posterURL?.length > 0 &&
       !(currentMovieDetails?.posterURL?.length > 0),
   };
-  const {
-    titleMatch,
-    releaseDateMatch,
-    imdbIdMatch,
-    statusMatch,
-    posterMatch,
-  } = fieldsToCheck;
+  const { titleMatch, releaseDateMatch, imdbIdMatch, statusMatch, posterMatch } =
+    fieldsToCheck;
   // if any of our fields we are checking don't Check, refresh
   // only update poster or backdrop URLs if they are empty on currentMovieDetails
   if (!titleMatch || !releaseDateMatch || !imdbIdMatch || !statusMatch || posterMatch) {
@@ -411,6 +406,25 @@ export const deleteTag = async ({ state, effects, actions }, tagId) => {
       actions.oSaved.removeTagFromMovie({ movieId, tagId });
     }
   });
+
+  //- Remove deleted tag from any saved filters it is in ----
+  // Check all saved filters for deleted tag and remove
+  state.oSaved.savedFilters = state.oSaved.savedFilters.map((filter) => {
+    filter.excludeTags = filter.excludeTags.filter((id) => id !== tagId);
+    filter.tags = filter.tags.filter((id) => id !== tagId);
+    return filter;
+  });
+  // Save data to local
+  effects.oSaved.localSaveSavedFilters(state.oAdmin.uid, state.oSaved.savedFilters);
+  // Save to Firebase
+  effects.oSaved.saveSavedFilters(state.oSaved.savedFilters);
+  //----------------------------
+
+  // Check currently applied filter and remove deleted tag
+  state.oSaved.filterData.excludeTags = state.oSaved.filterData.excludeTags.filter(
+    (id) => id !== tagId
+  );
+  state.oSaved.filterData.tags = state.oSaved.filterData.tags.filter((id) => id !== tagId);
 };
 /**
  * Handles deleting tag from oSaved.tagData

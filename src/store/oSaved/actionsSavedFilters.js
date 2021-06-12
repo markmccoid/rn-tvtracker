@@ -3,6 +3,7 @@ import _ from "lodash";
 
 export const updateSavedFilterOrder = ({ state, actions, effects }, savedFilterArray) => {
   // Always saved filter array SORTED.
+  // This sort is now done in the Drag and Sort.
   state.oSaved.savedFilters = _.sortBy(savedFilterArray, ["index"]).map((filter, index) => ({
     ...filter,
     index,
