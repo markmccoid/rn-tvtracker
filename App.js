@@ -19,7 +19,7 @@ const prefix = Linking.createURL("/");
 
 const App = () => {
   const linking = {
-    prefixes: [prefix, "movietracker://"],
+    prefixes: [prefix, "tvtracker://"],
     config: {
       screens: {
         AppNav: {
