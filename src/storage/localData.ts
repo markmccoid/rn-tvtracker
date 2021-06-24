@@ -3,7 +3,7 @@ import _ from "lodash";
 
 import { loadFromAsyncStorage, saveToAsyncStorage, mergeToAsyncStorage } from "./asyncStorage";
 
-import { IUserDocument, ISavedMovieDoc } from "../../FirestoreStructure";
+import { IUserDocument, ISavedMovieDoc } from "../types";
 
 /**
  * getKeys - generates keys for use in Async Storage

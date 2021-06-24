@@ -189,7 +189,7 @@ const SignIn = ({ navigation, route }) => {
 const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
-    backgroundColor: colors.backgroundColor, //"#f8faf9",
+    backgroundColor: "#d7ebdb", //colors.backgroundColor, //"#f8faf9",
     alignItems: "center",
     justifyContent: "center",
     width: "100%",

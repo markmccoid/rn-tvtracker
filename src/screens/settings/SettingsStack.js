@@ -5,6 +5,7 @@ import { MenuIcon, HomeIcon, CloseIcon } from "../../components/common/Icons";
 
 import SettingsScreen from "./SettingsScreen";
 import CreateSavedFilterScreen from "./CreateSavedFilterScreen";
+import { colors } from "../../globalStyles";
 
 const SettingsStack = createStackNavigator();
 
@@ -19,6 +20,9 @@ const SettingsStackScreen = () => {
         component={SettingsScreen}
         options={({ navigation, route }) => {
           return {
+            headerStyle: {
+              backgroundColor: colors.navHeaderColor,
+            },
             headerLeft: () => {
               return (
                 <TouchableOpacity onPress={() => navigation.openDrawer()}>

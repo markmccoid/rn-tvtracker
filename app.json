@@ -9,11 +9,11 @@
     ],
     "version": "0.0.1",
     "orientation": "portrait",
-    "icon": "./assets/MovieTrackerIcon.png",
+    "icon": "./assets/TVTrackerIcon.png",
     "splash": {
-      "image": "./assets/MovieTrackerSplash.png",
+      "image": "./assets/TVTrackerSplash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#4285ec"
+      "backgroundColor": "#84ee4b"
     },
     "updates": {
       "fallbackToCacheTimeout": 0

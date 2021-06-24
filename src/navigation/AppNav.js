@@ -10,6 +10,7 @@ import SearchStack from "../screens/search/SearchStack";
 import TagStack from "../screens/tags/TagStack";
 
 import { ViewMovieIcon, TagIcon, AddIcon } from "../components/common/Icons";
+import { colors } from "../globalStyles";
 
 import SettingsStackScreen from "../screens/settings/SettingsStack";
 import TestCarouselAnim from "../screens/view/ViewMovies/TestCarouselAnim";
@@ -76,11 +77,25 @@ const AppTabsScreen = () => {
       // lazy={false}
       initialRouteName="ViewMoviesTab"
       screenOptions={tabsScreenOptions}
+      tabBarOptions={{
+        style: {
+          backgroundColor: colors.navHeaderColor,
+          borderTopWidth: 1,
+          // borderTopColor: "#555",
+        },
+        inactiveTintColor: "gray",
+        // activeBackgroundColor: colors.primary,
+        // inactiveBackgroundColor: colors.background,
+        activeTintColor: colors.primary,
+        // inactiveBackgroundColor: colors.navHeaderColor,
+      }}
     >
       <AppTabs.Screen
         name="ViewMoviesTab"
         component={ViewStack}
-        options={{ title: "My Movies" }}
+        options={{
+          title: "My Movies",
+        }}
       />
       <AppTabs.Screen
         name="SearchStack"

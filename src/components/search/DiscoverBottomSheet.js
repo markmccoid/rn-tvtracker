@@ -16,10 +16,10 @@ import { colors } from "../../globalStyles";
 import DiscoverAdvanced from "./DiscoverAdvanced";
 import SnapPointProvider from "../../context/AdvancedSearchContext";
 
-import { discoverMoviesMachine } from "../../statemachines/discoverMoviesMachine";
+import { discoverTVMachine } from "../../statemachines/discoverTVMachine";
 
 const DiscoverBottomSheet = ({ navigation, deepLinkTitle }) => {
-  const [discoverState, sendDiscoverEvent] = useMachine(discoverMoviesMachine);
+  const [discoverState, sendDiscoverEvent] = useMachine(discoverTVMachine);
   const [currentSnapPointInfo, setCurrentSnapPointInfo] = React.useState(1);
   const bottomSheetRef = React.useRef(null);
 

@@ -15,6 +15,7 @@ import ViewMoviesScreen from "./ViewMovies/ViewMoviesScreen";
 import ViewMoviesFilterScreen from "./ViewMovies/ViewMoviesFilterScreen";
 import ViewDetails from "./ViewDetails/ViewDetails";
 import DetailPerson from "./ViewDetails/DetailPerson";
+import { colors } from "../../globalStyles";
 
 // const ViewStack = createStackNavigator();
 // const ViewMoviesStackNav = createStackNavigator();
@@ -88,6 +89,9 @@ const ViewStackScreen = () => {
             title: "Movies",
             // Found that the "title" property was not updated often enough, not sure when it was updated
             // headerCenter seems to be more reliable
+            headerStyle: {
+              backgroundColor: colors.navHeaderColor,
+            },
             headerCenter: () => (
               <Text style={{ fontSize: 16, fontWeight: "600" }}>{`${numMovies} Movies`}</Text>
             ),

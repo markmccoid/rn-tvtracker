@@ -18,7 +18,7 @@ const imageHeight = (width / 3 - 20) / 0.67;
 
 // Individual movie "boxes" shown on search result screen
 const SearchResultItem = ({
-  movie,
+  tvShow,
   saveMovie,
   deleteMovie,
   setOnDetailsPage,
@@ -36,21 +36,21 @@ const SearchResultItem = ({
   // NOTE: using push instead of navigate so that each screen is pushed onto stack
   const navigateToDetails = () => {
     setOnDetailsPage(true);
-    if (movie.existsInSaved) {
+    if (tvShow.existsInSaved) {
       push(navigateToScreen, {
-        movieId: movie.id,
+        movieId: tvShow.id,
         movie: undefined,
         notSaved: false,
       });
     } else {
-      push(navigateToScreen, { movie, movieId: undefined, notSaved: true });
+      push(navigateToScreen, { tvShow, movieId: undefined, notSaved: true });
     }
   };
 
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={navigateToDetails} activeOpacity={0.8}>
-        {movie.posterURL ? (
+        {tvShow.posterURL ? (
           <View
             style={{
               borderBottomColor: "black",
@@ -58,14 +58,14 @@ const SearchResultItem = ({
             }}
           >
             <Image
-              source={{ url: movie.posterURL }}
+              source={{ url: tvShow.posterURL }}
               style={styles.image}
               PlaceholderContent={<MaterialIcons name="broken-image" size={64} />}
             />
           </View>
         ) : (
           <View style={[styles.image, styles.imageBackup]}>
-            <Text style={styles.imageBackupText}>{movie.title}</Text>
+            <Text style={styles.imageBackupText}>{tvShow.name}</Text>
           </View>
         )}
       </TouchableOpacity>
@@ -73,22 +73,22 @@ const SearchResultItem = ({
       <TouchableOpacity
         activeOpacity={0.7}
         style={{ flex: 1 }}
-        onPress={() => (movie.existsInSaved ? deleteMovie(movie.id) : saveMovie(movie))}
+        onPress={() => (tvShow.existsInSaved ? deleteMovie(tvShow.id) : saveMovie(tvShow))}
       >
         <View
           style={[
             { flex: 1, alignItems: "center", justifyContent: "center" },
-            movie.existsInSaved && styles.exists,
+            tvShow.existsInSaved && styles.exists,
           ]}
         >
           <Text numberOfLines={1} style={styles.title}>
-            {movie.title}
+            {tvShow.name}
           </Text>
         </View>
 
-        <View style={[styles.addMovieButton, movie.existsInSaved && styles.exists]}>
+        <View style={[styles.addMovieButton, tvShow.existsInSaved && styles.exists]}>
           <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-            {movie.existsInSaved ? <CheckIcon size={20} /> : <AddIcon size={20} />}
+            {tvShow.existsInSaved ? <CheckIcon size={20} /> : <AddIcon size={20} />}
           </View>
         </View>
       </TouchableOpacity>

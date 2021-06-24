@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { predefinedTypesEnum } from "../../statemachines/discoverMoviesMachineBAK";
+import { predefinedTypesEnum } from "../../statemachines/discoverTVMachine";
 import { colors } from "../../globalStyles";
 
 // Style what a selected vs not selected item looks like

@@ -13,6 +13,7 @@ import DiscoverBottomSheet from "../../components/search/DiscoverBottomSheet";
 import SearchResultItem from "../../components/search/SearchResultItem";
 import { useFocusEffect, useIsFocused } from "@react-navigation/native";
 import { colors } from "../../globalStyles";
+import { TVSearchResult, TVSearchItem } from "../../types";
 
 const SearchScreen = ({ navigation, route }) => {
   //Lets us know if we are returning from details page
@@ -23,7 +24,7 @@ const SearchScreen = ({ navigation, route }) => {
   const state = useOState();
   const actions = useOActions();
   const { saveMovie, deleteMovie } = actions.oSaved;
-  const { queryMovieAPI, setIsNewQuery } = actions.oSearch;
+  const { queryTVAPI, setIsNewQuery } = actions.oSearch;
 
   const { isLoading } = state.oSearch;
   const currentPage = state.oSearch.resultCurrentPage;
@@ -34,13 +35,15 @@ const SearchScreen = ({ navigation, route }) => {
     flatListRef.current.scrollToOffset({ animated: true, offest: 0 });
   };
 
+  const tvResultData: TVSearchItem[] = state.oSearch.resultData;
+
   //need to know that this is a new search otherwise
   // it is just pagination
   React.useEffect(() => {
     if (flatListRef.current && state.oSearch.isNewQuery) {
       scrollToTop();
     }
-  }, [state.oSearch.resultData, state.oSearch.isNewQuery]);
+  }, [tvResultData, state.oSearch.isNewQuery]);
 
   // React Navigation hook that runs when this screen gets focus
   // Use this to reset the onDetailsPage flag
@@ -77,23 +80,23 @@ const SearchScreen = ({ navigation, route }) => {
   const fetchMoreData = async () => {
     if (isMoreData) {
       setIsNewQuery(false);
-      await queryMovieAPI(currentPage + 1);
+      await queryTVAPI(currentPage + 1);
     }
   };
 
-  let movieJSX = null;
-  if (state.oSearch.resultData) {
-    movieJSX = (
+  let tvJSX = null;
+  if (tvResultData) {
+    tvJSX = (
       <FlatList
         ref={flatListRef}
-        data={state.oSearch.resultData}
-        keyExtractor={(movie) => movie.id.toString()}
+        data={tvResultData}
+        keyExtractor={(tvShow) => tvShow.id.toString()}
         numColumns={3}
         renderItem={({ item }) => {
           return (
             <SearchResultItem
               key={item.id}
-              movie={item}
+              tvShow={item}
               saveMovie={saveMovie}
               deleteMovie={deleteMovie}
               setOnDetailsPage={setOnDetailsPage}
@@ -115,7 +118,7 @@ const SearchScreen = ({ navigation, route }) => {
         {isLoading && !isMoreData ? (
           <ActivityIndicator size="large" style={{ flex: 1 }} />
         ) : null}
-        <View style={{ alignItems: "center" }}>{movieJSX}</View>
+        <View style={{ alignItems: "center" }}>{tvJSX}</View>
         <DiscoverBottomSheet deepLinkTitle={deepLinkTitle} />
       </View>
     </TouchableWithoutFeedback>

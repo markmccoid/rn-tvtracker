@@ -5,8 +5,6 @@ import { overmind } from "../store/overmind";
 //Predefined enum
 export const predefinedTypesEnum = {
   POPULAR: "Popular",
-  NOWPLAYING: "Now Playing",
-  UPCOMING: "Upcoming",
 };
 export const discoverTypesEnum = {
   TITLE: "Title",
@@ -42,7 +40,7 @@ const resetPredefined = assign({
 const performAdvancedSearch = (context, event) => {
   const { genres, releaseYear, watchProviders, queryType } = context;
   if (genres.length > 0 || releaseYear || watchProviders.length > 0) {
-    overmind.actions.oSearch.queryMovieAPIWithConfig({
+    overmind.actions.oSearch.queryTVAPIWithConfig({
       queryType,
       genres,
       releaseYear,
@@ -53,7 +51,7 @@ const performAdvancedSearch = (context, event) => {
 const performSimpleSearch = (context, event) => {
   const { searchString, queryType, predefinedType } = context;
   if (searchString.length > 0 || queryType === "predefined") {
-    overmind.actions.oSearch.queryMovieAPIWithConfig({
+    overmind.actions.oSearch.queryTVAPIWithConfig({
       queryType,
       searchString,
       predefinedType,
@@ -63,7 +61,7 @@ const performSimpleSearch = (context, event) => {
 
 // Discover movie search state machine
 // States for Title search, Predefined Search and Advanced Search
-export const discoverMoviesMachine = Machine({
+export const discoverTVMachine = Machine({
   id: "discoverMachine",
   initial: "simple",
   context: {

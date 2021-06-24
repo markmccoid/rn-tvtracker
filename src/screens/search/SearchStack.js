@@ -6,6 +6,8 @@ import { MenuIcon } from "../../components/common/Icons";
 import SearchScreen from "./SearchScreen";
 import ViewDetails from "../view/ViewDetails/ViewDetails";
 import DetailPerson from "../view/ViewDetails/DetailPerson";
+import { colors } from "../../globalStyles";
+
 const SearchStack = createStackNavigator();
 
 const SearchStackScreen = () => {
@@ -20,6 +22,9 @@ const SearchStackScreen = () => {
         component={SearchScreen}
         options={({ navigation, route }) => {
           return {
+            headerStyle: {
+              backgroundColor: colors.navHeaderColor,
+            },
             headerLeft: () => {
               return (
                 <TouchableOpacity onPress={() => navigation.openDrawer()}>

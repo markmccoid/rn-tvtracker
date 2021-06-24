@@ -1,5 +1,5 @@
 import Firebase, { firestore } from "./firebase";
-import { IUserDocument, IUserBaseData, ISavedMovieDoc } from "../../FirestoreStructure";
+import { IUserDocument, IUserBaseData, ISavedMovieDoc } from "../types";
 
 export const loadUserDocument = async (uid: string): Promise<IUserDocument> => {
   //Get the movies

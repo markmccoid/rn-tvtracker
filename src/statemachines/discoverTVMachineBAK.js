@@ -31,7 +31,7 @@ const logFunction = (context, event) => console.log("EVENT", event);
 
 // Discover movie search state machine
 // States for Title search, Predefined Search and Advanced Search
-export const discoverMoviesMachine = Machine({
+export const discoverTVMachine = Machine({
   id: "discoverMachine",
   initial: "predefined",
   context: {
