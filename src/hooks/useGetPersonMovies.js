@@ -29,7 +29,7 @@ export const useGetPersonMovies = (personId) => {
   };
   useEffect(() => {
     getPersonMovies();
-  }, [personId, state.oSaved.savedMovies.length]);
+  }, [personId, state.oSaved.savedTVShows.length]);
   // Not using nextPage, prevPage, but could change recommendedData state to be an object and then separate when returning
   // return [recommendedData.data, recommendedData.nextPage, recommendedData.prevPage, isLoading]
   return [personMovieData, isLoading];

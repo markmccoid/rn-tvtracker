@@ -10,7 +10,7 @@ import TagCloud, { TagItem } from "../../../components/TagCloud/TagCloud";
 import PosterImage from "../../../components/common/PosterImage";
 import { colors, styleHelpers } from "../../../globalStyles";
 
-const ViewMovieOverlay = ({ movieId, isVisible, movieDetails, setMovieEditingId }) => {
+const ViewMovieOverlay = ({ movieId, isVisible, movieDetails, setTVShowEditingId }) => {
   const { width } = useDimensions().window;
   const state = useOState();
   const actions = useOActions();
@@ -24,7 +24,7 @@ const ViewMovieOverlay = ({ movieId, isVisible, movieDetails, setMovieEditingId 
   return (
     <Overlay
       isVisible={isVisible}
-      onBackdropPress={() => setMovieEditingId(undefined)}
+      onBackdropPress={() => setTVShowEditingId(undefined)}
       overlayStyle={{
         backgroundColor: colors.tagListbg, //"#e9e4f0",
         marginHorizontal: 10,
@@ -60,7 +60,7 @@ const ViewMovieOverlay = ({ movieId, isVisible, movieDetails, setMovieEditingId 
               },
             ]}
             onPress={() => {
-              setMovieEditingId(undefined);
+              setTVShowEditingId(undefined);
             }}
           >
             <MoreIcon size={25} />
@@ -110,7 +110,7 @@ const ViewMovieOverlay = ({ movieId, isVisible, movieDetails, setMovieEditingId 
           <Button
             onPress={() => {
               deleteMovie(movieId);
-              setMovieEditingId(undefined);
+              setTVShowEditingId(undefined);
             }}
             title="Delete"
             color="white"

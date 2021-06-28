@@ -29,15 +29,13 @@ export const useRecommendedData = (movieId, page = 1) => {
     const prevPage = result.data.page - 1 < 1 ? 1 : result.data.page - 1;
     // the results are not tagged (showing if a movie is already in your saved movies list)
     // tag first and then send back
-    const taggedResults = actions.oSearch.tagOtherMovieResults(
-      result.data.results
-    );
+    const taggedResults = actions.oSearch.tagOtherMovieResults(result.data.results);
     setRecommendedData(taggedResults);
     setIsLoading(false);
   };
   useEffect(() => {
     getRecommendedData();
-  }, [movieId, page, state.oSaved.savedMovies.length]);
+  }, [movieId, page, state.oSaved.savedTVShows.length]);
   // Not using nextPage, prevPage, but could change recommendedData state to be an object and then separate when returning
   // return [recommendedData.data, recommendedData.nextPage, recommendedData.prevPage, isLoading]
   return [recommendedData, isLoading];

@@ -1,4 +1,16 @@
-export const defaultSort = [
+import { SortTypes } from "../../types";
+
+export type SortObjectItem = {
+  id: string;
+  active: boolean;
+  index: number;
+  sortDirection: "asc" | "desc";
+  sortField: string;
+  title: string;
+  type: SortTypes;
+};
+
+export const defaultSort: SortObjectItem[] = [
   {
     id: "userrating",
     sortField: "userRating",

@@ -62,7 +62,7 @@ const ViewStackScreen = () => {
   const state = useOState();
   const actions = useOActions();
   let numGenreFilters = state.oSaved.filterData.genres.length;
-  let numMovies = state.oSaved.getFilteredMovies.length;
+  let numMovies = state.oSaved.getFilteredTVShows.length;
   let numIncludeFilters = state.oSaved.filterData.tags.length;
   let numExcludeFilters = state.oSaved.filterData.excludeTags.length;
   const isGenreFiltered = numGenreFilters > 0;

@@ -2,10 +2,10 @@ import {
   isDataStale,
   refreshLocalData,
   loadLocalData,
-  saveMoviesToLocal,
+  saveTVShowsToLocal,
   saveTagsToLocal,
   saveSettingsToLocal,
-  mergeMovieToLocal,
+  mergeTVShowsToLocal,
   saveSavedFiltersToLocal,
 } from "../../storage/localData";
 
@@ -70,13 +70,14 @@ export const cancelDebounced = async () => {
  * @param {bool} forceRefresh - boolean that will force refresh from firebase
  *  -- default is false coming from hydrateStore
  */
-export const initializeStore = async (uid, forceRefresh) => {
+export const initializeStore = async (uid: string, forceRefresh: boolean) => {
   let dataObj;
   // let userDocument;
   // Check if local data is stale
 
   const localStorageDate = await loadFromAsyncStorage(`${uid}-last_stored_date`);
   // if local data is NOT stale AND we are not forcing Refresh with cloud (forceRefresh===true), load from async storage
+  console.log("LocalStorage?", localStorageDate);
   if (!isDataStale(localStorageDate) && !forceRefresh) {
     dataObj = await loadLocalData(uid);
   } else {
@@ -100,11 +101,11 @@ export const initializeStore = async (uid, forceRefresh) => {
 //*=================================
 //*- LOCAL storage functions
 //*=================================
-export const localSaveMovies = async (uid, savedMovies) => {
-  return saveMoviesToLocal(uid, savedMovies);
+export const localSaveTVShows = async (uid, savedTVShows) => {
+  return saveTVShowsToLocal(uid, savedTVShows);
 };
-export const localMergeMovie = async (uid, movieObj) => {
-  return mergeMovieToLocal(uid, movieObj);
+export const localMergeTVShows = async (uid, tvShowObj) => {
+  return mergeTVShowsToLocal(uid, tvShowObj);
 };
 export const localSaveTags = async (uid, tags) => {
   return saveTagsToLocal(uid, tags);

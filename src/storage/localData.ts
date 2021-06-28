@@ -3,7 +3,8 @@ import _ from "lodash";
 
 import { loadFromAsyncStorage, saveToAsyncStorage, mergeToAsyncStorage } from "./asyncStorage";
 
-import { IUserDocument, ISavedMovieDoc } from "../types";
+import { UserDocument } from "../types";
+import { SavedTVShowsDoc, SavedFilters, Settings, TagData } from "../store/oSaved/state";
 
 /**
  * getKeys - generates keys for use in Async Storage
@@ -15,11 +16,11 @@ import { IUserDocument, ISavedMovieDoc } from "../types";
 function getKey(uid, key) {
   const baseKeys = {
     lastStoredDate: "last_stored_date",
-    savedMovies: "saved_movies",
+    savedTVShows: "saved_tvshows",
     tagData: "tag_data",
     settings: "settings",
     savedFilters: "saved_filters",
-    taggedMovies: "tagged_movies",
+    tagged_tvshows: "tagged_tvshows",
   };
   return `${uid}-${baseKeys[key]}`;
 }
@@ -46,10 +47,13 @@ export const isDataStale = (storageDate) => {
  * @param {string} uid - uid for user logged in, use to create keys
  * @param {object} dataObj - object containing data to store in async storage
  */
-export const refreshLocalData = async (uid, dataObj) => {
+export const refreshLocalData = async (uid: string, dataObj: UserDocument) => {
   // Set the last refresh date
   saveToAsyncStorage(getKey(uid, "lastStoredDate"), format(new Date(), "yyyy-MM-dd"));
-  saveToAsyncStorage(getKey(uid, "savedMovies"), _.keyBy(dataObj.savedMovies, "id"));
+  saveToAsyncStorage(
+    getKey(uid, "savedTVShows"),
+    _.keyBy<SavedTVShowsDoc>(dataObj.savedTVShows, "id")
+  );
   saveToAsyncStorage(getKey(uid, "tagData"), dataObj.tagData);
   saveToAsyncStorage(getKey(uid, "settings"), dataObj.settings);
   saveToAsyncStorage(getKey(uid, "savedFilters"), dataObj.savedFilters);
@@ -61,43 +65,43 @@ export const refreshLocalData = async (uid, dataObj) => {
  * @param {*} uid - uid for user logged in, use to create keys
  * @returns {object} dataObj containing data that was stored locally
  */
-export const loadLocalData = async (uid): Promise<IUserDocument> => {
-  // Convert object style savedMovies to Array of Objects that overmind expects
-  let savedMoviesArray: ISavedMovieDoc[] =
-    (await loadFromAsyncStorage(getKey(uid, "savedMovies"))) || [];
+export const loadLocalData = async (uid: string): Promise<UserDocument> => {
+  // Convert object style savedTVShows to Array of Objects that overmind expects
+  let savedTVShowsArray: SavedTVShowsDoc[] =
+    (await loadFromAsyncStorage(getKey(uid, "savedTVShows"))) || [];
 
-  const savedMovies = _.map(savedMoviesArray);
+  const savedTVShows = _.map(savedTVShowsArray);
   const tagData = (await loadFromAsyncStorage(getKey(uid, "tagData"))) || [];
   const settings = (await loadFromAsyncStorage(getKey(uid, "settings"))) || {};
   const savedFilters = (await loadFromAsyncStorage(getKey(uid, "savedFilters"))) || [];
 
-  return { savedMovies, tagData, settings, savedFilters, dataSource: "local" };
+  return { savedTVShows, tagData, settings, savedFilters, dataSource: "local" };
 };
 
 /**
- * saveMoviesToLocal - saved passed movies to local storage.  When saving
- * "savedMovies" to local storage, we save ALL the movies.
- * NOTE: savedMovies in AsyncStorage saved as an object with movieId as the key.
+ * saveTVShowsToLocal - saved passed movies to local storage.  When saving
+ * "savedTVShows" to local storage, we save ALL the movies.
+ * NOTE: savedTVShows in AsyncStorage saved as an object with movieId as the key.
  * this is so we can use the merge instead of saving all the movies every time.
  *
  * @param {string} uid - uid for user logged in, use to create keys
- * @param {object} savedMovies - object containing data to store in async storage
+ * @param {object} savedTVShows - object containing data to store in async storage
  */
-export const saveMoviesToLocal = async (uid, savedMovies) => {
-  // Convert savedMovies
-  let savedMoviesObj = _.keyBy(savedMovies, "id");
-  await saveToAsyncStorage(getKey(uid, "savedMovies"), savedMoviesObj);
+export const saveTVShowsToLocal = async (uid: string, savedTVShows: SavedTVShowsDoc[]) => {
+  // Convert savedTVShows
+  let savedTVShowsObj = _.keyBy<SavedTVShowsDoc>(savedTVShows, "id");
+  await saveToAsyncStorage(getKey(uid, "savedTVShows"), savedTVShowsObj);
 };
 
 /**
- * mergMovieToLocal - merge passed object properties to savedMovies in local storage.
+ * mergMovieToLocal - merge passed object properties to savedTVShows in local storage.
  * This should be able to update
  *
  * @param {string} uid - uid for user logged in, use to create keys
- * @param {object} movieMergeObj - object containing data to merge in async storage
+ * @param {object} tvShowsMergeObj - object containing data to merge in async storage
  */
-export const mergeMovieToLocal = async (uid, movieMergeObj) => {
-  await mergeToAsyncStorage(getKey(uid, "savedMovies"), movieMergeObj);
+export const mergeTVShowsToLocal = async (uid: string, tvShowsMergeObj: SavedTVShowsDoc) => {
+  await mergeToAsyncStorage(getKey(uid, "savedTVShows"), tvShowsMergeObj);
 };
 
 /**
@@ -106,7 +110,7 @@ export const mergeMovieToLocal = async (uid, movieMergeObj) => {
  * @param {string} uid - uid for user logged in, use to create keys
  * @param {object} tagData - object containing data to store in async storage
  */
-export const saveTagsToLocal = async (uid, tagData) => {
+export const saveTagsToLocal = async (uid: string, tagData: TagData) => {
   await saveToAsyncStorage(getKey(uid, "tagData"), tagData);
 };
 /**
@@ -115,7 +119,7 @@ export const saveTagsToLocal = async (uid, tagData) => {
  * @param {string} uid - uid for user logged in, use to create keys
  * @param {object} settings - object containing data to store in async storage
  */
-export const saveSettingsToLocal = async (uid, settings) => {
+export const saveSettingsToLocal = async (uid: string, settings: Settings) => {
   await saveToAsyncStorage(getKey(uid, "settings"), settings);
 };
 /**
@@ -124,6 +128,6 @@ export const saveSettingsToLocal = async (uid, settings) => {
  * @param {string} uid - uid for user logged in, use to create keys
  * @param {object} savedFilters - object containing data to store in async storage
  */
-export const saveSavedFiltersToLocal = async (uid, savedFilters) => {
+export const saveSavedFiltersToLocal = async (uid: string, savedFilters: SavedFilters) => {
   await saveToAsyncStorage(getKey(uid, "savedFilters"), savedFilters);
 };

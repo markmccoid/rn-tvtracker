@@ -3,12 +3,97 @@ import _ from "lodash";
 import * as helpers from "./stateHelpers";
 import * as defaultConstants from "./defaultContants";
 
-export const state = {
-  savedMovies: [], // Movie data pulled from @markmccoid/tmdb_api
+import { DateObject, SortTypes, Operators } from "../../types";
+
+export type SavedTVShowsDoc = {
+  id: string;
+  name: string;
+  overview: string;
+  firstAirDate: DateObject;
+  lastAirDate: DateObject;
+  posterURL: string;
+  genres: string[];
+  avgEpisodeRunTime: number;
+  status: string;
+  tagLine: string;
+  // TV Tracker created items
+  taggedWith?: string[];
+  userRating: number;
+  savedDate: number;
+};
+
+export type Settings = {
+  defaultFilter: string;
+  defaultSort: defaultConstants.SortObjectItem[];
+};
+
+export type SavedFilters = {
+  id: string;
+  name: string;
+  // Position of filter in scrollview
+  index: number;
+  excludeTagOperator: Operators;
+  excludeTags: string[];
+  genreOperator: Operators;
+  genres: string[];
+  showInDrawer: boolean;
+  tagOperator: Operators;
+  tags: string[];
+};
+
+export type FilterData = {
+  tagOperator: Operators;
+  tags: string[];
+  excludeTagOperator: Operators;
+  excludeTags: string[];
+  genreOperator: Operators;
+  genres: string[];
+  searchFilter: undefined;
+};
+
+export type TagData = { tagId: string; tagName: string };
+
+type State = {
+  savedTVShows: SavedTVShowsDoc[];
+  tagData: TagData[]; // Array of Objects containing tag info { tagId, tagName, members[]??}
+  // This will hold an object (with key of MovieId) for each movie that has
+  // been "tagged".
+  taggedTVShows: {
+    [key: number]: string[];
+  };
+  //Settings object
+  settings: Settings;
+  // Object containing any filter data
+  filterData: FilterData;
+  // saved filters that can be applied
+  // will be an array of object {id, name, description, tagOperator, tags: []}
+  savedFilters: SavedFilters[];
+
+  // Needed for debounced functions.  will be set and checked in actions
+  // that are calling a debounced function so that we can flush if a new
+  // movie is being viewed/edited
+  currentTVShowId: number;
+
+  // The current sort definition for movies.
+  // Upon hydration, the settings.defaultSort is check, otherwise this is the default
+  // Sort Object [{ sortField, sortDirection, active }, ...]
+  currentSort: defaultConstants.SortObjectItem[];
+  // all stuff under generated is not saved to firestore
+  generated: {
+    genres: string[];
+    watchProviders: string[];
+  };
+  getFilteredTVShows: SavedTVShowsDoc[];
+  //! Type needs to change since I'm not sure exactly what will be returned by
+  //! the tmdb call the populated with return.  Should be able to get type from tmdb_api
+  getTVShowDetails: (tvShowId: string) => SavedTVShowsDoc;
+};
+export const state: State = {
+  savedTVShows: [], // Movie data pulled from @markmccoid/tmdb_api
   tagData: [], // Array of Objects containing tag info { tagId, tagName, members[]??}
   // This will hold an object (with key of MovieId) for each movie that has
   // been "tagged".
-  taggedMovies: {},
+  taggedTVShows: {},
   //Settings object
   settings: {
     defaultFilter: undefined,
@@ -31,7 +116,7 @@ export const state = {
   // Needed for debounced functions.  will be set and checked in actions
   // that are calling a debounced function so that we can flush if a new
   // movie is being viewed/edited
-  currentMovieId: undefined,
+  currentTVShowId: undefined,
 
   // The current sort definition for movies.
   // Upon hydration, the settings.defaultSort is check, otherwise this is the default
@@ -43,8 +128,8 @@ export const state = {
     watchProviders: [],
   },
   //------- Getters -----------//
-  getFilteredMovies: derived((state) => {
-    let movieList = state.savedMovies;
+  getFilteredTVShows: derived((state: State) => {
+    let tvShowList = state.savedTVShows;
     // Define the sortFields and sortDirections that we will pass to the
     // lodash sortBy function before returning the data array
     const { sortFields, sortDirections } = state.currentSort
@@ -66,21 +151,24 @@ export const state = {
       state.filterData?.genres.length > 0 ||
       state.filterData?.searchFilter
     ) {
-      movieList = helpers.filterMovies(state.savedMovies, state.filterData);
+      tvShowList = helpers.filterMovies(state.savedTVShows, state.filterData);
     }
-
-    movieList = _.orderBy(movieList, sortFields, sortDirections);
-    // return direction === "asc" ? movieList : movieList.reverse();
-    return movieList;
+    console.log("GET FILTERED", tvShowList);
+    tvShowList = _.orderBy(tvShowList, sortFields, sortDirections);
+    // return direction === "asc" ? tvShowList : tvShowList.reverse();
+    return tvShowList;
   }),
   //--------------
   // Get the movie details object for the passed movie ID
-  getMovieDetails: derived((state) => (movieId) => {
-    if (!movieId) {
+  //! This will need to change to be an async action returning
+  //! details from tmdb_api
+  //! Once done, can type this return properly
+  getTVShowDetails: derived((state: State) => (tvShowId: string) => {
+    if (!tvShowId) {
       return null;
     }
-    let moviesObj = _.keyBy(state.savedMovies, "id");
-    return moviesObj[movieId];
+    let tvShowObj = _.keyBy<SavedTVShowsDoc>(state.savedTVShows, "id");
+    return tvShowObj[tvShowId];
   }),
   //--------------
   // Get the current posterURL and backgroundURL for the passed movieId

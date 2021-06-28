@@ -3,7 +3,7 @@ import { pipe, debounce, mutate, filter } from "overmind";
 import { createEffectsHook } from "overmind-react";
 import { discoverTypesEnum } from "../../statemachines/discoverTVMachine";
 import { Context } from "../overmind";
-import { TVSearchResult, TVSearchItem } from "../../types";
+import { TVSearchResult } from "../../types";
 import { SearchConfig } from "./index";
 
 import * as internalActions from "./internalActions";
@@ -70,6 +70,7 @@ export const queryTVAPI = async ({ state, effects, actions }: Context, page = 1)
   }
   //! Will need to reimplment this for Tagged TV Shows
   let taggedMovies = actions.oSearch.internal.tagResults(results.data);
+
   oSearch.resultData = oSearch.isNewQuery
     ? taggedMovies
     : [...oSearch.resultData, ...taggedMovies];

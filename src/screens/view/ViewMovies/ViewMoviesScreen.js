@@ -70,12 +70,12 @@ const ViewMoviesScreen = ({ navigation, route }) => {
   const [movieDetails, setMovieDetails] = React.useState(undefined);
   const [showSearch, setShowSearch] = useState(false);
   // Used to be in oAdmin.appState, but don't think we need it there, just making local state.
-  const [movieEditingId, setMovieEditingId] = useState(undefined);
+  const [tvShowEditingId, setTVShowEditingId] = useState(undefined);
   const flatListRef = React.useRef();
   const state = useOState();
   const { hydrating } = state.oAdmin.appState;
 
-  const { getFilteredMovies, getMovieDetails } = state.oSaved;
+  const { getFilteredTVShows, getMovieDetails } = state.oSaved;
   // For use in showing the search input component
   const offsetY = React.useRef(new Animated.Value(0)).current;
 
@@ -136,7 +136,7 @@ const ViewMoviesScreen = ({ navigation, route }) => {
         <ViewMoviesListItem
           posterURL={pURL}
           movie={item}
-          setMovieEditingId={setMovieEditingId}
+          setTVShowEditingId={setTVShowEditingId}
         />
       </Animated.View>
     );
@@ -159,7 +159,7 @@ const ViewMoviesScreen = ({ navigation, route }) => {
   // }, [route.params?.filterModified]);
 
   // useEffect(() => {
-  //   if (filterState === "filterModified" && getFilteredMovies().length > 0) {
+  //   if (filterState === "filterModified" && getFilteredTVShows().length > 0) {
   //     flatListRef.current.scrollToIndex({ animated: true, index: 0 });
   //     dispatch({ type: "SCROLLDONE" });
   //     route.params.filterModified = undefined;
@@ -173,12 +173,12 @@ const ViewMoviesScreen = ({ navigation, route }) => {
   //Not sure if setting the param that we are checking in dependancies is good or bad.
   // useEffect(() => {
   //   if (route.params?.returning) {
-  //     setMovieEditingId();
+  //     setTVShowEditingId();
   //     navigation.setParams({ returning: false });
   //   }
   // }, [route.params?.returning]);
 
-  // effect runs whenever getFilteredMovies is dirty
+  // effect runs whenever getFilteredTVShows is dirty
   // this causes the flatlist to scroll to top
   //! this will trigger whenever a movie is updated.
   //! it will scroll to top.  OPTIONS:
@@ -187,23 +187,25 @@ const ViewMoviesScreen = ({ navigation, route }) => {
   //!    won't set dirty indicator to true if just a tag change.
   //!    need dirty indicator because we will still pass new data to flatlist, but DON'T WANT to scroll to top
   useEffect(() => {
-    // console.log("getFilteredMovie RERENDER");
+    // console.log("getFilteredTVShows RERENDER");
     if (flatListRef) {
       flatListRef.current.scrollToOffset({ offset: 0 });
     }
-  }, [getFilteredMovies]);
+  }, [getFilteredTVShows]);
 
   // Get movie details when movie is selected/edit mode
   // probably should move whole overlay section to a separate file
   useEffect(() => {
-    setMovieDetails(getMovieDetails(movieEditingId));
-  }, [movieEditingId]);
+    if (tvShowEditingId) {
+      setMovieDetails(getMovieDetails(tvShowEditingId));
+    }
+  }, [tvShowEditingId]);
 
   return (
     <View style={styles.containerForPortrait}>
       {showSearch ? <ListSearchBar onCancel={() => setShowSearch(false)} /> : null}
       <Animated.FlatList
-        data={getFilteredMovies}
+        data={getFilteredTVShows}
         ref={flatListRef}
         onScroll={(e) => {
           offsetY.setValue(e.nativeEvent.contentOffset.y);
@@ -223,13 +225,13 @@ const ViewMoviesScreen = ({ navigation, route }) => {
 
       {/* Only show when editing a movie - this happens on a long press on movie */}
       <ViewMovieOverlay
-        movieId={movieEditingId}
-        setMovieEditingId={setMovieEditingId}
-        isVisible={!!movieEditingId}
+        movieId={tvShowEditingId}
+        setTVShowEditingId={setTVShowEditingId}
+        isVisible={!!tvShowEditingId}
         movieDetails={movieDetails}
       />
       {/* If there are NO movies after the filters are applied then show a message and Filter button  */}
-      {getFilteredMovies.length === 0 && state.oSaved.savedMovies.length !== 0 && (
+      {getFilteredTVShows.length === 0 && state.oSaved.savedTVShows.length !== 0 && (
         <View style={[styles.noMoviesShownPosition, { alignItems: "center" }]}>
           <Text style={{ fontSize: 20, fontWeight: "600", marginBottom: 10 }}>
             No Movies match current filter.
@@ -250,7 +252,7 @@ const ViewMoviesScreen = ({ navigation, route }) => {
         </View>
       )}
 
-      {state.oSaved.savedMovies.length === 0 && !hydrating && (
+      {state.oSaved.savedTVShows.length === 0 && !hydrating && (
         <View style={[styles.noMoviesShownPosition, styles.noMoviesShownBtnView]}>
           <TouchableOpacity
             style={{ width: 75, height: 75, justifyContent: "center", alignItems: "center" }}

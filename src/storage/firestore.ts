@@ -1,21 +1,29 @@
 import Firebase, { firestore } from "./firebase";
-import { IUserDocument, IUserBaseData, ISavedMovieDoc } from "../types";
+import { UserDocument, UserBaseData } from "../types";
+import { SavedTVShowsDoc } from "../store/oSaved/state";
 
-export const loadUserDocument = async (uid: string): Promise<IUserDocument> => {
+export const loadUserDocument = async (uid: string): Promise<UserDocument> => {
   //Get the movies
-  let movieSnapshot = await firestore
+  let dataSnapshot = await firestore
     .collection("users")
     .doc(uid)
-    .collection("savedMovies")
+    .collection("TV")
+    .doc("tvShowData")
+    .collection("savedTVShows")
     .get();
-  const savedMovies: ISavedMovieDoc[] = movieSnapshot.docs.map(
-    (doc) => doc.data() as ISavedMovieDoc
+  const savedTVShows: SavedTVShowsDoc[] = dataSnapshot.docs.map(
+    (doc) => doc.data() as SavedTVShowsDoc
   );
-
+  console.log("SAVEDTV", savedTVShows);
   // return the full user document's data
-  const userDocSnapshot = await firestore.collection("users").doc(uid).get();
-  const userDoc = userDocSnapshot.data() as IUserDocument;
-  const userDocSantized: IUserBaseData = {
+  const userDocSnapshot = await firestore
+    .collection("users")
+    .doc(uid)
+    .collection("TV")
+    .doc("tvShowData")
+    .get();
+  const userDoc = userDocSnapshot.data() as UserDocument;
+  const userDocSantized: UserBaseData = {
     email: userDoc.email,
     savedFilters: userDoc.savedFilters || [],
     settings: userDoc.settings || {},
@@ -23,8 +31,8 @@ export const loadUserDocument = async (uid: string): Promise<IUserDocument> => {
     dataSource: "cloud",
   };
   // Sending destructured object first.  Had issue where savedMovie object was in user collection
-  // and it was overwriting the savedMovies collection.  Shouldn't happen, but this will keep error from happening if it does.
-  return { ...userDocSantized, savedMovies };
+  // and it was overwriting the savedTVShows collection.  Shouldn't happen, but this will keep error from happening if it does.
+  return { ...userDocSantized, savedTVShows };
 };
 
 //! OLD DATA MODEL FUNCTION
@@ -48,7 +56,7 @@ export const storeUserData = async (userData) => {
 
 export const storeUserDataSettings = async (userDataSettings) => {
   let uid = Firebase.auth().currentUser.uid;
-  let movieSnapshot = await firestore
+  let dataSnapshot = await firestore
     .collection("users")
     .doc(uid)
     .collection("savedMovies")

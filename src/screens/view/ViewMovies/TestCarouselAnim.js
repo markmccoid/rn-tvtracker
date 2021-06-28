@@ -69,10 +69,10 @@ const Backdrop = ({ movies, scrollX }) => {
 
 const TestCarouselAnim = ({ navigation }) => {
   const state = useOState();
-  const { getFilteredMovies } = state.oSaved;
+  const { getFilteredTVShows } = state.oSaved;
   const flatListRef = React.useRef();
   const scrollX = React.useRef(new Animated.Value(0)).current;
-  const movieList = getFilteredMovies;
+  const movieList = getFilteredTVShows;
   return (
     <View style={styles.container}>
       {/* <StatusBar hidden /> */}

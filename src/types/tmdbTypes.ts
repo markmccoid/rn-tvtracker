@@ -1,10 +1,6 @@
 import { SortByOptions } from "@markmccoid/tmdb_api";
 
-export type DateObject = {
-  date?: Date;
-  epoch: number;
-  formatted: string;
-};
+import { DateObject } from "./index";
 
 //-- oSearch Types
 export type AllGenres = {

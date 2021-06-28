@@ -1,12 +1,13 @@
 import Firebase from "../../storage/firebase";
+import { Context } from "../overmind";
 
-export const logUserIn = ({ state }, user) => {
+export const logUserIn = ({ state }: Context, user: { email: string; uid: string }) => {
   state.oAdmin.isLoggedIn = true;
   state.oAdmin.email = user.email;
   state.oAdmin.uid = user.uid;
 };
 
-export const logUserOut = async ({ state, effects, actions }) => {
+export const logUserOut = async ({ state, effects, actions }: Context) => {
   //Before reset, see if we have any debounced functions to flush
   await effects.oSaved.flushDebounced();
   Firebase.auth().signOut();

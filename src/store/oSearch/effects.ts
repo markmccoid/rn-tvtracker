@@ -48,9 +48,7 @@ export const getTVDiscover = async (criteriaObj: DiscoverCriteriaObj, page = 1) 
   finalCriteria = firstAirDateYear ? { firstAirDateYear, ...finalCriteria } : finalCriteria;
   finalCriteria =
     watchProviders.length > 0 ? { watchProviders, ...finalCriteria } : finalCriteria;
-  console.log("Discover Criteria", finalCriteria);
   let results = await tvDiscover(finalCriteria, page);
-  console.log("api", results.apiCall);
   // console.log("Results API", results.apiCall);
   return {
     data: results.data.results,

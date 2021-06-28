@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@gorhom/bottom-sheet": "v3",
+    "@markmccoid/tmdb_api": "0.2.5",
     "@react-native-async-storage/async-storage": "^1.13.0",
     "@react-native-community/hooks": "^2.6.0",
     "@react-native-community/masked-view": "0.1.10",
@@ -17,7 +18,6 @@
     "@react-navigation/drawer": "^5.9.3",
     "@react-navigation/native": "^5.7.6",
     "@react-navigation/stack": "^5.9.3",
-    "@markmccoid/tmdb_api": "0.2.5",
     "@xstate/react": "^1.2.2",
     "date-fns": "^2.16.1",
     "expo": "^41.0.0",
@@ -54,6 +54,7 @@
   },
   "devDependencies": {
     "@babel/core": "~7.9.0",
+    "@types/lodash": "^4.14.170",
     "babel-preset-expo": "8.3.0",
     "typescript": "~4.0.0"
   },
