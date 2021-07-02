@@ -7,21 +7,13 @@ export const loadUserDocument = async (uid: string): Promise<UserDocument> => {
   let dataSnapshot = await firestore
     .collection("users")
     .doc(uid)
-    .collection("TV")
-    .doc("tvShowData")
     .collection("savedTVShows")
     .get();
   const savedTVShows: SavedTVShowsDoc[] = dataSnapshot.docs.map(
     (doc) => doc.data() as SavedTVShowsDoc
   );
-  console.log("SAVEDTV", savedTVShows);
   // return the full user document's data
-  const userDocSnapshot = await firestore
-    .collection("users")
-    .doc(uid)
-    .collection("TV")
-    .doc("tvShowData")
-    .get();
+  const userDocSnapshot = await firestore.collection("users").doc(uid).get();
   const userDoc = userDocSnapshot.data() as UserDocument;
   const userDocSantized: UserBaseData = {
     email: userDoc.email,
@@ -66,20 +58,20 @@ export const storeUserDataSettings = async (userDataSettings) => {
 //* ------------------------------------------------
 //* NEW DATA MODEL.  Add new document to savedMovies Collection
 // document id will be movieId converted to string
-export const addMovieToFirestore = async (movieObj) => {
+export const addTVShowToFirestore = async (tvShowObj: SavedTVShowsDoc) => {
   let uid = Firebase.auth().currentUser.uid;
-  let movieId = movieObj.id;
-  let movieDocRef = firestore
+  let tvShowId = tvShowObj.id;
+  let tvShowDocRef = firestore
     .collection("users")
     .doc(uid)
-    .collection("savedMovies")
-    .doc(movieId.toString());
-  return movieDocRef.set({ ...movieObj });
+    .collection("savedTVShows")
+    .doc(tvShowId.toString());
+  return tvShowDocRef.set({ ...tvShowObj });
 };
 
 // Update the movie document in firestore.
 // expecting full object, not using the { merge: true } flag although, that may only work with set
-// export const updateMovieInFirestore = (movieObj) => {
+// export const updateTVShowInFirestore = (movieObj) => {
 //   let uid = Firebase.auth().currentUser.uid;
 //   let movieId = movieObj.id;
 //   let movieDocRef = firestore
@@ -89,26 +81,27 @@ export const addMovieToFirestore = async (movieObj) => {
 //     .doc(movieId.toString());
 //   return movieDocRef.update({ ...movieObj });
 //};
-export const updateMovieInFirestore = (movieId, updateStmt) => {
+export const updateTVShowInFirestore = (tvShowId, updateStmt) => {
   let uid = Firebase.auth().currentUser.uid;
-  let movieDocRef = firestore
+  console.log("TVSHOWID IN FIRESOTRE", tvShowId);
+  let tvShowDocRef = firestore
     .collection("users")
     .doc(uid)
-    .collection("savedMovies")
-    .doc(movieId.toString());
-  return movieDocRef.update(updateStmt);
+    .collection("savedTVShows")
+    .doc(tvShowId.toString());
+  return tvShowDocRef.update(updateStmt);
 };
 
 // Delete a single savedMovie document from firestore
-export const deleteMovieFromFirestore = async (movieId) => {
+export const deleteTVShowFromFirestore = async (tvShowId) => {
   let uid = Firebase.auth().currentUser.uid;
-  let movieDocRef = firestore
+  let tvShowDocRef = firestore
     .collection("users")
     .doc(uid)
-    .collection("savedMovies")
-    .doc(movieId.toString());
+    .collection("savedTVShows")
+    .doc(tvShowId.toString());
 
-  return movieDocRef.delete();
+  return tvShowDocRef.delete();
 };
 
 export const storeSettings = async (settings) => {
@@ -117,10 +110,10 @@ export const storeSettings = async (settings) => {
   return userDocRef.update({ settings });
 };
 
-export const storeTaggedMovies = async (taggedMovies) => {
+export const storeTaggedTVShows = async (taggedTVShows) => {
   let uid = Firebase.auth().currentUser.uid;
   let userDocRef = firestore.collection("users").doc(uid);
-  return userDocRef.update({ taggedMovies });
+  return userDocRef.update({ taggedTVShows });
 };
 
 export const storeSavedFilters = async (savedFiltersData) => {

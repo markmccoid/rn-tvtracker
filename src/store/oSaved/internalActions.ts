@@ -21,13 +21,13 @@ export const createTaggedTVShowsObj = ({ state }: Context, savedTVShows) => {
   }, {});
 };
 //
-export const updateTaggedWithOnMovie = ({ state, action, effects }, movieId) => {
-  // For some reason movieId came over as string, but is stored as number in overmind.
-  movieId = +movieId;
+export const updateTaggedWithOnTVShow = ({ state }: Context, tvShowId: number) => {
+  // For some reason tvShowId came over as string, but is stored as number in overmind.
+  tvShowId = +tvShowId;
 
-  state.oSaved.savedTVShows.forEach((movie) => {
-    if (movie.id === movieId) {
-      movie.taggedWith = [...state.oSaved.taggedMovies[movieId]];
+  state.oSaved.savedTVShows.forEach((tvShow) => {
+    if (tvShow.id === tvShowId) {
+      tvShow.taggedWith = [...state.oSaved.taggedTVShows[tvShowId]];
     }
   });
 
@@ -42,22 +42,25 @@ export const updateTaggedWithOnMovie = ({ state, action, effects }, movieId) => 
   // }
 };
 
-export const maintainTaggedMoviesObj = async ({ state, actions }, payload) => {
-  const { action, movieId, tagId } = payload;
-  const { taggedMovies } = state.oSaved;
+export const maintainTaggedTVShowObj = async (
+  { state, actions }: Context,
+  payload: { action: string; tvShowId: number; tagId?: string }
+) => {
+  const { action, tvShowId, tagId } = payload;
+  const { taggedTVShows } = state.oSaved;
 
   switch (action) {
-    case "deletemovie":
-      delete taggedMovies[movieId];
+    case "deletetvshow":
+      delete taggedTVShows[tvShowId];
       break;
     case "deletetag":
-      taggedMovies[movieId] = taggedMovies[movieId].filter((id) => id !== tagId);
+      taggedTVShows[tvShowId] = taggedTVShows[tvShowId].filter((id) => id !== tagId);
       break;
     case "addtag":
-      if (!taggedMovies.hasOwnProperty(movieId)) {
-        taggedMovies[movieId] = [tagId];
+      if (!taggedTVShows.hasOwnProperty(tvShowId)) {
+        taggedTVShows[tvShowId] = [tagId];
       } else {
-        taggedMovies[movieId] = [...taggedMovies[movieId], tagId];
+        taggedTVShows[tvShowId] = [...taggedTVShows[tvShowId], tagId];
       }
       break;
     default:

@@ -11,50 +11,49 @@ import { useOState, useOActions } from "../../store/overmind";
 import { FilterIcon, CloseIcon, MenuIcon, SearchIcon } from "../../components/common/Icons";
 import { Badge } from "react-native-elements";
 
-import ViewMoviesScreen from "./ViewMovies/ViewMoviesScreen";
-import ViewMoviesFilterScreen from "./ViewMovies/ViewMoviesFilterScreen";
+import ViewTVShowsScreen from "./ViewTVShows/ViewTVShowsScreen";
+import ViewTVShowsFilterScreen from "./ViewTVShows/ViewTVShowsFilterScreen";
 import ViewDetails from "./ViewDetails/ViewDetails";
 import DetailPerson from "./ViewDetails/DetailPerson";
 import { colors } from "../../globalStyles";
 
 // const ViewStack = createStackNavigator();
-// const ViewMoviesStackNav = createStackNavigator();
-// const ViewMovieDetailsStackNav = createStackNavigator();
+// const ViewTVShowsStackNav = createStackNavigator();
+// const ViewTVShowDetailsStackNav = createStackNavigator();
 
 const ViewStack = createNativeStackNavigator();
-const ViewMoviesStackNav = createNativeStackNavigator();
-// const ViewMovieDetailsStackNav = createNativeStackNavigator();
+const ViewTVShowsStackNav = createNativeStackNavigator();
+// const ViewTVShowDetailsStackNav = createNativeStackNavigator();
 
-enableScreens();
+// enableScreens();
 
-const ViewMoviesStack = () => {
+const ViewTVShowsStack = () => {
   return (
-    // <ViewMoviesStackNav.Navigator mode="modal" headerMode="none" params="Movies">
-    <ViewMoviesStackNav.Navigator
-      initialRouteName="Movies"
+    <ViewTVShowsStackNav.Navigator
+      initialRouteName="TVShowsScreen"
       screenOptions={{
         stackAnimation: "default",
         stackPresentation: "modal",
       }}
       // mode="modal"
       // headerMode="none"
-      // params="Movies"
+      // params="TVShowsScreen"
     >
-      <ViewMoviesStackNav.Screen
-        name="Movies"
-        component={ViewMoviesScreen}
+      <ViewTVShowsStackNav.Screen
+        name="TVShowsScreen"
+        component={ViewTVShowsScreen}
         options={{
           headerShown: false,
         }}
       />
-      <ViewMoviesStackNav.Screen
+      <ViewTVShowsStackNav.Screen
         name="Filter"
-        component={ViewMoviesFilterScreen}
+        component={ViewTVShowsFilterScreen}
         options={{
           headerShown: false,
         }}
       />
-    </ViewMoviesStackNav.Navigator>
+    </ViewTVShowsStackNav.Navigator>
   );
 };
 
@@ -69,34 +68,36 @@ const ViewStackScreen = () => {
   const { clearFilterScreen } = actions.oSaved;
 
   return (
-    <ViewStack.Navigator initialRouteName="Movies">
+    <ViewStack.Navigator initialRouteName="TVShowsScreen">
       <ViewStack.Screen
-        name="ViewMovies"
-        component={ViewMoviesStack}
+        name="ViewTVShows"
+        component={ViewTVShowsStack}
         options={({ navigation, route }) => {
           // If the focused route is not found, we need to assume it's the initial screen
           // This can happen during if there hasn't been any navigation inside the screen
           // In our case, it's "Feed" as that's the first screen inside the navigator
-          const currentScreenName = getFocusedRouteNameFromRoute(route) ?? "Movies";
+          const currentScreenName = getFocusedRouteNameFromRoute(route) ?? "TVShowsScreen";
 
-          // const movieIndex = route?.state?.routeNames?.indexOf("Movies");
+          // const movieIndex = route?.state?.routeNames?.indexOf("TVShowsScreen");
           // let movieKey;
           // if (movieIndex >= 0) {
           //   movieKey = route?.state?.routes[movieIndex]?.key;
           // }
-          // let title = currentScreenName === "Movies" ? `${numMovies} Movies` : "Set Filter";
+          // let title = currentScreenName === "TVShowsScreen" ? `${numMovies} Movies` : "Set Filter";
           return {
-            title: "Movies",
+            title: "TVShowsScreen",
             // Found that the "title" property was not updated often enough, not sure when it was updated
             // headerCenter seems to be more reliable
             headerStyle: {
               backgroundColor: colors.navHeaderColor,
             },
             headerCenter: () => (
-              <Text style={{ fontSize: 16, fontWeight: "600" }}>{`${numMovies} Movies`}</Text>
+              <Text
+                style={{ fontSize: 16, fontWeight: "600" }}
+              >{`${numMovies} TV Shows`}</Text>
             ),
             headerLeft: () => {
-              if (currentScreenName === "Movies") {
+              if (currentScreenName === "TVShowsScreen") {
                 return (
                   <TouchableOpacity onPress={() => navigation.openDrawer()}>
                     <MenuIcon size={30} style={{ marginLeft: 10 }} />
@@ -105,12 +106,12 @@ const ViewStackScreen = () => {
               }
             },
             headerRight: () => {
-              if (currentScreenName === "Movies") {
+              if (currentScreenName === "TVShowsScreen") {
                 return (
                   <View style={{ flexDirection: "row" }}>
                     {/* <TouchableOpacity
                       onPress={() =>
-                        navigation.navigate("Movies", {
+                        navigation.navigate("TVShowsScreen", {
                           showSearch: !paramShowSearch,
                         })
                       }
@@ -125,7 +126,7 @@ const ViewStackScreen = () => {
                       onPress={() => navigation.navigate("Filter")}
                       onLongPress={() => {
                         clearFilterScreen();
-                        // navigation.navigate("Movies", {
+                        // navigation.navigate("TVShowsScreen", {
                         //   filterModified: true,
                         // });
                       }}
@@ -171,7 +172,7 @@ const ViewStackScreen = () => {
                 // Used to be X button for closing filter, now, using createNativeStackNav we don't need.
                 return null;
                 // <TouchableOpacity
-                //   // onPress={() => navigation.navigate("Movies", { returning: true })}
+                //   // onPress={() => navigation.navigate("TVShowsScreen", { returning: true })}
                 //   onPress={() => navigation.goBack()}
                 // >
                 //   <CloseIcon color="black" size={30} style={{ marginRight: 15 }} />

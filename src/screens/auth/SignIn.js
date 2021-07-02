@@ -109,7 +109,7 @@ const SignIn = ({ navigation, route }) => {
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <KeyboardAvoidingView behavior="padding" style={styles.wrapper}>
         <View style={styles.signInWrapper}>
-          <Header>MovieTracker</Header>
+          <Header>TVTracker</Header>
 
           {/* {errors.login && (
             <Text style={styles.errorText}>{errors.login.message}</Text>

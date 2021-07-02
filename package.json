@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@gorhom/bottom-sheet": "v3",
-    "@markmccoid/tmdb_api": "0.2.5",
+    "@markmccoid/tmdb_api": "0.2.6",
     "@react-native-async-storage/async-storage": "^1.13.0",
     "@react-native-community/hooks": "^2.6.0",
     "@react-native-community/masked-view": "0.1.10",

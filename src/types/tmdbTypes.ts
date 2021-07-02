@@ -23,6 +23,7 @@ export type TVSearchItem = {
   overview: string;
   backdropURL: string;
   genres: string[];
+  existsInSaved?: boolean;
 };
 
 // This is not use in the main program, but in queryTVAPI() it get this result

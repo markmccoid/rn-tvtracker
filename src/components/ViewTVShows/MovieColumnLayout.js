@@ -13,7 +13,7 @@ const MovieColumnLayout = ({ movie, setMovieEditingId, navigateToDetails, inEdit
   const state = useOState();
   const actions = useOActions();
   const { deleteMovie, addTagToMovie, removeTagFromMovie } = actions.oSaved;
-  const { getAllMovieTags } = state.oSaved;
+  const { getAllTVShowTags } = state.oSaved;
   const movieReleaseDate = movie.releaseDate?.formatted || " - ";
 
   //Image Dimensions
@@ -177,7 +177,7 @@ const MovieColumnLayout = ({ movie, setMovieEditingId, navigateToDetails, inEdit
         }}
       >
         <TagCloud>
-          {getAllMovieTags(movie.id).map((tagObj) => {
+          {getAllTVShowTags(movie.id).map((tagObj) => {
             return (
               <TagItem
                 key={tagObj.tagId}

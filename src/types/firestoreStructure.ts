@@ -56,7 +56,7 @@ export interface DefaultSortItem {
 export interface UserBaseData {
   email?: string;
   savedFilters: SavedFilters[];
-  settings: Settings | {};
+  settings: Settings;
   tagData: TagData[];
   dataSource: Datasource;
 }

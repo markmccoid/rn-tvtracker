@@ -3,29 +3,29 @@ import { useDimensions } from "@react-native-community/hooks";
 import { useNavigation } from "@react-navigation/native";
 
 import MovieColumnLayout from "./MovieColumnLayout";
-import MoviePortraitLayout from "./MoviePortraitLayout";
+import TVShowPortraitLayout from "./TVShowPortraitLayout";
 
 //NOTE: posterURL is being passed to force a rerender when the image is changed
 // Since we are memoizing this component, it won't rerender when the poserURL
 // is changed because it is stored in the movie object (must be shallow compare on objects?)
-const ViewMoviesListItem = ({ posterURL, movie, setMovieEditingId }) => {
+const ViewTVShowsListItem = ({ posterURL, tvShow, setTVShowEditingId }) => {
   //Bool letting us know if we are in edit mode for this movieId
   const { navigate } = useNavigation();
   const navigateToDetails = () => {
-    navigate("Details", { movieId: movie.id });
+    navigate("Details", { tvShowId: tvShow.id });
   };
 
   return (
-    <MoviePortraitLayout
+    <TVShowPortraitLayout
       posterURL={posterURL}
-      movie={movie}
-      setMovieEditingId={setMovieEditingId}
+      tvShow={tvShow}
+      setTVShowEditingId={setTVShowEditingId}
       navigateToDetails={navigateToDetails}
     />
   );
 };
 
-export default React.memo(ViewMoviesListItem);
+export default React.memo(ViewTVShowsListItem);
 
 /* <MovieColumnLayout
       movie={movie}

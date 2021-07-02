@@ -13,6 +13,9 @@ import {
 export const ViewMovieIcon = ({ size, color, style = {} }) => {
   return <MaterialIcons name="movie" size={size} color={color} style={style} />;
 };
+export const ViewTVShowIcon = ({ size, color, style = {} }) => {
+  return <Feather name="tv" size={size} color={color} style={style} />;
+};
 
 export const SearchIcon = ({ size, color, style }) => {
   return <MaterialIcons name="search" size={size} color={color} style={style} />;

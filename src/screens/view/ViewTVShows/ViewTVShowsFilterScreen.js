@@ -16,7 +16,7 @@ import { Button } from "../../../components/common/Buttons";
 import FilterByTagsContainer from "../../../components/Filter/FilterByTagsContainer";
 import FilterByGenreContainer from "../../../components/Filter/FilterByGenreContainer";
 
-const ViewMoviesFilterScreen = ({ route, navigation }) => {
+const ViewTVShowsFilterScreen = ({ route, navigation }) => {
   const state = useOState();
   const actions = useOActions();
   const { getAllFilterTags, getAllFilterGenres } = state.oSaved;
@@ -63,7 +63,7 @@ const ViewMoviesFilterScreen = ({ route, navigation }) => {
             color="white"
             title="Done"
             onPress={() => {
-              navigation.navigate("Movies", { filterModified: true });
+              navigation.navigate("TVShowsScreen", { filterModified: true });
               // navigation.goBack();
             }}
           />
@@ -127,4 +127,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ViewMoviesFilterScreen;
+export default ViewTVShowsFilterScreen;

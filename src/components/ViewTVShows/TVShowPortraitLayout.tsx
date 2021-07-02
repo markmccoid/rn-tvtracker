@@ -7,11 +7,12 @@ import { useDimensions } from "@react-native-community/hooks";
 import PosterImage from "../common/PosterImage";
 import { colors } from "../../globalStyles";
 
-const MoviePortraitLayout = ({ movie, setMovieEditingId, navigateToDetails }) => {
+const TVShowPortraitLayout = ({ tvShow, setTVShowEditingId, navigateToDetails }) => {
   const { width, height } = useDimensions().window;
-  const movieReleaseDate = movie.releaseDate?.formatted || " - ";
+  //! Should be first air date
+  //const movieReleaseDate = tvShow.releaseDate?.formatted || " - ";
 
-  // const menuItems = createMenuItems({ navigateToDetails, movieId: movie.id });
+  // const menuItems = createMenuItems({ navigateToDetails, movieId: tvShow.id });
   //NOTE-- posterURL images are 300 x 450
   // Height is 1.5 times the width
   let posterWidth = width / 2.2;
@@ -22,7 +23,7 @@ const MoviePortraitLayout = ({ movie, setMovieEditingId, navigateToDetails }) =>
   const styles = StyleSheet.create({
     movieCard: {
       backgroundColor: colors.background,
-      width: "100%",
+      // width: "100%",
       margin: MARGIN,
       width: posterWidth,
       borderWidth: 1,
@@ -51,16 +52,16 @@ const MoviePortraitLayout = ({ movie, setMovieEditingId, navigateToDetails }) =>
         onPress={navigateToDetails}
         activeOpacity={0.9}
         onLongPress={() => {
-          setMovieEditingId(movie.id);
+          setTVShowEditingId(tvShow.id);
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         }}
       >
         <View>
           <PosterImage
-            uri={movie.posterURL}
+            uri={tvShow.posterURL}
             posterWidth={posterWidth}
             posterHeight={posterHeight}
-            placeholderText={movie.title}
+            placeholderText={tvShow.name}
             style={{ borderRadius: BORDER_RADIUS }}
           />
         </View>
@@ -69,4 +70,4 @@ const MoviePortraitLayout = ({ movie, setMovieEditingId, navigateToDetails }) =>
   );
 };
 
-export default MoviePortraitLayout;
+export default TVShowPortraitLayout;

@@ -23,7 +23,7 @@ const SearchScreen = ({ navigation, route }) => {
   const flatListRef = React.useRef();
   const state = useOState();
   const actions = useOActions();
-  const { saveMovie, deleteMovie } = actions.oSaved;
+  const { saveTVShow, deleteMovie } = actions.oSaved;
   const { queryTVAPI, setIsNewQuery } = actions.oSearch;
 
   const { isLoading } = state.oSearch;
@@ -97,7 +97,7 @@ const SearchScreen = ({ navigation, route }) => {
             <SearchResultItem
               key={item.id}
               tvShow={item}
-              saveMovie={saveMovie}
+              saveTVShow={() => saveTVShow(item.id)}
               deleteMovie={deleteMovie}
               setOnDetailsPage={setOnDetailsPage}
               navigateToScreen="DetailsFromSearch"

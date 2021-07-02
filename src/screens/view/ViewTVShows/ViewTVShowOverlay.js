@@ -10,14 +10,14 @@ import TagCloud, { TagItem } from "../../../components/TagCloud/TagCloud";
 import PosterImage from "../../../components/common/PosterImage";
 import { colors, styleHelpers } from "../../../globalStyles";
 
-const ViewMovieOverlay = ({ movieId, isVisible, movieDetails, setTVShowEditingId }) => {
+const ViewTVShowOverlay = ({ tvShowId, isVisible, tvShowDetails, setTVShowEditingId }) => {
   const { width } = useDimensions().window;
   const state = useOState();
   const actions = useOActions();
-  const { getAllMovieTags } = state.oSaved;
-  const { deleteMovie, addTagToMovie, removeTagFromMovie } = actions.oSaved;
+  const { getAllTVShowTags } = state.oSaved;
+  const { deleteTVShow, addTagToTVShow, removeTagFromTVShow } = actions.oSaved;
 
-  const allMovieTags = getAllMovieTags(movieId);
+  const allTVShowTags = getAllTVShowTags(tvShowId);
   let posterWidth = width / 3.2;
   let posterHeight = posterWidth * 1.5;
   let buttonContainerWidth = posterWidth + 10;
@@ -47,7 +47,7 @@ const ViewMovieOverlay = ({ movieId, isVisible, movieDetails, setTVShowEditingId
               flex: 1,
             }}
           >
-            <Text style={styles.title}>{movieDetails?.title}</Text>
+            <Text style={styles.title}>{tvShowDetails?.name}</Text>
           </View>
           <Pressable
             style={({ pressed }) => [
@@ -69,10 +69,10 @@ const ViewMovieOverlay = ({ movieId, isVisible, movieDetails, setTVShowEditingId
         <View style={[styles.imageAndTagRow, { height: posterHeight * 1.2 }]}>
           <View style={styleHelpers.posterImageShadow}>
             <PosterImage
-              uri={movieDetails?.posterURL}
+              uri={tvShowDetails?.posterURL}
               posterWidth={posterWidth}
               posterHeight={posterHeight}
-              placeholderText={movieDetails?.title}
+              placeholderText={tvShowDetails?.name}
               style={{
                 borderRadius: 10,
               }}
@@ -80,7 +80,7 @@ const ViewMovieOverlay = ({ movieId, isVisible, movieDetails, setTVShowEditingId
           </View>
           <ScrollView style={styles.tagCloudWrapper}>
             <TagCloud>
-              {allMovieTags.map((tagObj) => {
+              {allTVShowTags.map((tagObj) => {
                 return (
                   <TagItem
                     key={tagObj.tagId}
@@ -89,14 +89,14 @@ const ViewMovieOverlay = ({ movieId, isVisible, movieDetails, setTVShowEditingId
                     isSelected={tagObj.isSelected}
                     size="s"
                     onSelectTag={() =>
-                      addTagToMovie({
-                        movieId: movieId,
+                      addTagToTVShow({
+                        tvShowId: tvShowId,
                         tagId: tagObj.tagId,
                       })
                     }
                     onDeSelectTag={() =>
-                      removeTagFromMovie({
-                        movieId: movieId,
+                      removeTagFromTVShow({
+                        tvShowId: tvShowId,
                         tagId: tagObj.tagId,
                       })
                     }
@@ -109,7 +109,7 @@ const ViewMovieOverlay = ({ movieId, isVisible, movieDetails, setTVShowEditingId
         <View style={{ width: buttonContainerWidth, alignItems: "center" }}>
           <Button
             onPress={() => {
-              deleteMovie(movieId);
+              deleteTVShow(tvShowId);
               setTVShowEditingId(undefined);
             }}
             title="Delete"
@@ -151,4 +151,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ViewMovieOverlay;
+export default ViewTVShowOverlay;

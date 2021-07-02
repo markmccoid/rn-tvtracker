@@ -1923,10 +1923,10 @@
     "@babel/runtime" "^7.7.2"
     regenerator-runtime "^0.13.3"
 
-"@markmccoid/tmdb_api@0.2.5":
-  version "0.2.5"
-  resolved "https://registry.yarnpkg.com/@markmccoid/tmdb_api/-/tmdb_api-0.2.5.tgz#9cdfdac31310fedc097aeb1eb3588ae706abc026"
-  integrity sha512-kP/cLiBxier+wMx4e+D2l96zSmjYlquhdHDATz0TyEyGkzTSXNseO9brEpXqkAqEQLDjUDtLHI5TGds72xVYIg==
+"@markmccoid/tmdb_api@0.2.6":
+  version "0.2.6"
+  resolved "https://registry.yarnpkg.com/@markmccoid/tmdb_api/-/tmdb_api-0.2.6.tgz#22201b72e989432b794450382f2b4f19da8e66f9"
+  integrity sha512-KQQJjcPUthvnz1uOkx0kBTIbj+Ebk4cj67EG27jmYl8z9jO1WQLqNLpUIe1STFM0UokhVFBsWKLtt4HdkDlT9w==
   dependencies:
     "@babel/runtime" "^7.7.7"
     axios "^0.21.1"

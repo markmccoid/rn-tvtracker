@@ -11,36 +11,42 @@ import { Button } from "../../../components/common/Buttons";
 import PosterImage from "../../../components/common/PosterImage";
 import { colors, styleHelpers } from "../../../globalStyles";
 
-const DetailMainInfo = ({ movie, isInSavedMovies, viewTags, setViewTags, transitionRef }) => {
+const DetailMainInfo = ({
+  tvShow,
+  isInSavedTVShows,
+  viewTags,
+  setViewTags,
+  transitionRef,
+}) => {
   const [overviewHeight, setOverviewHeight] = React.useState(205);
   const actions = useOActions();
   const state = useOState();
-  const { updateUserRatingToMovie, refreshMovie } = actions.oSaved;
-  const { getMovieUserRating } = state.oSaved;
+  const { updateUserRatingToTVShow, refreshTVShow } = actions.oSaved; //!
+  const { getTVShowUserRating } = state.oSaved;
   const navigation = useNavigation();
   const route = useRoute();
   // maybe needs to be in useEffect??? or memoized
-  const movieUserRating = getMovieUserRating(movie.id);
+  const tvShowUserRating = getTVShowUserRating(tvShow.id);
 
   const { width } = useDimensions().window;
 
   const posterWidth = width * 0.35;
   const posterHeight = posterWidth * 1.5;
 
-  // Get data to use from movie object
-  const { overview = "", releaseDate = "", imdbURL = "", runtime = "" } = movie;
+  // Get data to use from tvShow object
+  const { overview = "", releaseDate = "", imdbURL = "", runtime = "" } = tvShow;
 
   const toggleOverview = () => setOverviewHeight((curr) => (curr ? undefined : 205));
   const navigateToRoute = () =>
     navigation.navigate(route.name, {
-      movieId: movie.id,
-      movie: undefined,
+      tvShowId: tvShow.id,
+      tvShow: undefined,
       notSaved: false,
     });
   return (
     <View style={styles.container}>
-      {/* {!ForceTouchGestureHandler.forceTouchAvailable && isInSavedMovies && (
-        <UserRating movieId={movie.id} />
+      {/* {!ForceTouchGestureHandler.forceTouchAvailable && isInSavedTVShows && (
+        <UserRating movieId={tvShow.id} />
       )} */}
       <View
         style={{
@@ -68,33 +74,29 @@ const DetailMainInfo = ({ movie, isInSavedMovies, viewTags, setViewTags, transit
               zIndex: 200,
             }}
           >
-            {isInSavedMovies && (
+            {isInSavedTVShows && (
               <LongTouchUserRating
-                movieId={movie.id}
-                userRating={movieUserRating}
+                tvShowIdId={tvShow.id}
+                userRating={tvShowUserRating}
                 updateUserRating={(userRating) =>
-                  updateUserRatingToMovie({ movieId: movie.id, userRating })
+                  updateUserRatingToTVShow({ tvShowId: tvShow.id, userRating })
                 }
               />
             )}
           </View>
 
-          {/* Need to build the items array so that we don't show the updateMovie option for movies NOT added yet 
-                NOTE: the .filter is just to get rid of the undefined for movies NOT added yet.
-          */}
-
           <DetailMainInfoHoldMenu
-            movie={movie}
+            tvShow={tvShow}
             navigateToRoute={navigateToRoute}
-            isInSavedMovies={isInSavedMovies}
-            refreshMovie={refreshMovie}
+            isInSavedTVShows={isInSavedTVShows}
+            refreshTVShow={refreshTVShow}
           >
             <View style={styleHelpers.posterImageShadow}>
               <PosterImage
-                uri={movie.posterURL}
+                uri={tvShow.posterURL}
                 posterWidth={posterWidth}
                 posterHeight={posterHeight}
-                placeholderText={movie?.title}
+                placeholderText={tvShow?.name}
                 style={{
                   borderRadius: 10,
                 }}
@@ -150,12 +152,12 @@ const DetailMainInfo = ({ movie, isInSavedMovies, viewTags, setViewTags, transit
           <View style={[styles.textRow, { flexWrap: "wrap", width: width / 1.5 }]}>
             <Text style={styles.textRowLabel}>Genre(s): </Text>
 
-            {movie.genres.map((genre, idx) => (
+            {tvShow.genres.map((genre, idx) => (
               <Text key={genre} style={{ fontSize: 18 }}>{`${genre}  `}</Text>
             ))}
           </View>
         </View>
-        {isInSavedMovies && (
+        {isInSavedTVShows && (
           <View
             style={{
               justifyContent: "flex-end",

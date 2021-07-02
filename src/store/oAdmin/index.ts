@@ -8,6 +8,7 @@ export type State = {
   isLoggedIn: boolean;
   appState: {
     dataSource: Datasource;
+    hydrating: boolean;
   };
 };
 
@@ -18,6 +19,7 @@ const state: State = {
   isLoggedIn: undefined,
   appState: {
     dataSource: undefined,
+    hydrating: false,
   },
 };
 export const config = {

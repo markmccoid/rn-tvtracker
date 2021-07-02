@@ -1,6 +1,6 @@
 //* Helpers to get animation values for use in the main flatlist that displays movies.
 
-export const getViewMoviesRotates = (offsetY, animConstants) => {
+export const getViewRotates = (offsetY, animConstants) => {
   const { itemSize, itemIndex } = animConstants;
   const rotateInputRange = [-1, 0, itemSize * (itemIndex + 0.5), itemSize * (itemIndex + 2)];
   const rotateY = offsetY.interpolate({
@@ -19,7 +19,7 @@ export const getViewMoviesRotates = (offsetY, animConstants) => {
   return [rotateX, rotateY, rotateZ];
 };
 
-export const getViewMoviesTranslates = (offsetY, animConstants) => {
+export const getViewTranslates = (offsetY, animConstants) => {
   const { itemSize, itemIndex, absIndex, posterHeight, posterWidth, margin } = animConstants;
   const inputRange = [-1, 0, itemSize * (itemIndex + 0.5), itemSize * (itemIndex + 4)];
   const xOut =
@@ -38,7 +38,7 @@ export const getViewMoviesTranslates = (offsetY, animConstants) => {
   return [translateX, translateY];
 };
 
-export const getViewMoviesScale = (offsetY, animConstants) => {
+export const getViewScale = (offsetY, animConstants) => {
   const { itemSize, itemIndex } = animConstants;
   const inputRange = [-1, 0, itemSize * (itemIndex + 0.5), itemSize * (itemIndex + 4)];
   const scale = offsetY.interpolate({
@@ -48,7 +48,7 @@ export const getViewMoviesScale = (offsetY, animConstants) => {
   return scale;
 };
 
-export const getViewMoviesOpacity = (offsetY, animConstants) => {
+export const getViewOpacity = (offsetY, animConstants) => {
   const { itemSize, itemIndex } = animConstants;
   return offsetY.interpolate({
     inputRange: [

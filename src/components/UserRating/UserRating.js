@@ -8,10 +8,10 @@ const UserRating = ({ movieId }) => {
   const actions = useOActions();
   const state = useOState();
   const { updateUserRatingToMovie } = actions.oSaved;
-  const { getMovieUserRating } = state.oSaved;
+  const { getTVShowUserRating } = state.oSaved;
 
   const arrayOf11 = new Array(11).fill(0);
-  const currentUserRating = getMovieUserRating(movieId);
+  const currentUserRating = getTVShowUserRating(movieId);
   return (
     <View style={styles.container}>
       {arrayOf11.map((_, idx) => {

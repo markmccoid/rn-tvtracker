@@ -12,18 +12,21 @@ import {
 import { loadFromAsyncStorage } from "../../storage/asyncStorage";
 
 import {
-  addMovieToFirestore,
-  deleteMovieFromFirestore,
+  addTVShowToFirestore,
+  deleteTVShowFromFirestore,
   storeSettings,
-  storeTaggedMovies,
-  updateMovieInFirestore,
+  storeTaggedTVShows,
+  updateTVShowInFirestore,
   loadUserDocument,
   storeTagData,
   storeSavedFilters,
 } from "../../storage/firestore";
 
+import { UserDocument } from "../../types";
+
 import _ from "lodash";
-import { movieGetDetails } from "@markmccoid/tmdb_api";
+import { TVShowDetailsBase, tvGetShowDetails } from "@markmccoid/tmdb_api";
+import { SavedTVShowsDoc } from "./state";
 
 const DEBOUCE_WAIT = 12000;
 //=======================================
@@ -42,8 +45,8 @@ export const flushDebounced = async () => {
   let x = "";
   x = await saveTags.flush();
   x = await updatePosterURL.flush();
-  x = await updateMovieTags.flush();
-  x = await updateMovieUserRating.flush();
+  x = await updateTVShowTags.flush();
+  x = await updateTVShowUserRating.flush();
   x = await saveSettings.flush();
   x = await saveSavedFilters.flush();
 };
@@ -56,8 +59,8 @@ export const cancelDebounced = async () => {
   let x = "";
   x = await saveTags.cancel();
   x = await updatePosterURL.cancel();
-  x = await updateMovieTags.cancel();
-  x = await updateMovieUserRating.cancel();
+  x = await updateTVShowTags.cancel();
+  x = await updateTVShowUserRating.cancel();
   x = await saveSettings.cancel();
   x = await saveSavedFilters.cancel();
 };
@@ -71,13 +74,12 @@ export const cancelDebounced = async () => {
  *  -- default is false coming from hydrateStore
  */
 export const initializeStore = async (uid: string, forceRefresh: boolean) => {
-  let dataObj;
+  let dataObj: UserDocument;
   // let userDocument;
   // Check if local data is stale
 
   const localStorageDate = await loadFromAsyncStorage(`${uid}-last_stored_date`);
   // if local data is NOT stale AND we are not forcing Refresh with cloud (forceRefresh===true), load from async storage
-  console.log("LocalStorage?", localStorageDate);
   if (!isDataStale(localStorageDate) && !forceRefresh) {
     dataObj = await loadLocalData(uid);
   } else {
@@ -121,8 +123,8 @@ export const localSaveSavedFilters = async (uid, settings) => {
 //*- Firestore storage functions
 //*=================================
 
-export const addMovie = async (movieObj) => {
-  await addMovieToFirestore(movieObj);
+export const addTVShow = async (tvShowObj: SavedTVShowsDoc): Promise<void> => {
+  await addTVShowToFirestore(tvShowObj);
 };
 
 /**
@@ -137,11 +139,11 @@ export const addMovie = async (movieObj) => {
  * etc...
  */
 export const updateMovie = async (movieId, updateStmt) => {
-  await updateMovieInFirestore(movieId, updateStmt);
+  await updateTVShowInFirestore(movieId, updateStmt);
 };
 
-export const deleteMovie = async (movieId) => {
-  await deleteMovieFromFirestore(movieId);
+export const deleteTVShow = async (tvShowId) => {
+  await deleteTVShowFromFirestore(tvShowId);
 };
 
 //* Debounced UpdatedMovie functions
@@ -149,24 +151,33 @@ export const deleteMovie = async (movieId) => {
 //* to update firestore, we need a separate one for each so that
 //* each debounce function doesn't step on the other.
 //! Debounced Function
-export const updateMovieTags = _.debounce(async (movieId, updateStmt) => {
-  await updateMovieInFirestore(movieId, updateStmt);
-  return;
-}, DEBOUCE_WAIT);
+export const updateTVShowTags = _.debounce(
+  async (tvShowId: number, updateStmt: { taggedWith: string[] }) => {
+    await updateTVShowInFirestore(tvShowId, updateStmt);
+    return;
+  },
+  DEBOUCE_WAIT
+);
 
 //! Debounced Function
-export const updateMovieUserRating = _.debounce(async (movieId, updateStmt) => {
-  await updateMovieInFirestore(movieId, updateStmt);
-  return;
-}, DEBOUCE_WAIT);
+export const updateTVShowUserRating = _.debounce(
+  async (tvShowId: number, updateStmt: { userRating: number }) => {
+    await updateTVShowInFirestore(tvShowId, updateStmt);
+    return;
+  },
+  DEBOUCE_WAIT
+);
 
 // Debounce the update of the posterURL for 10 seconds
 // Done to reduce writes to DB.
 //! Debounced Function
-export const updatePosterURL = _.debounce(async (movieId, updateStmt) => {
-  await updateMovieInFirestore(movieId, updateStmt);
-  return;
-}, DEBOUCE_WAIT);
+export const updatePosterURL = _.debounce(
+  async (tvShowId: number, updateStmt: { posterURL: string }) => {
+    await updateTVShowInFirestore(tvShowId, updateStmt);
+    return;
+  },
+  DEBOUCE_WAIT
+);
 
 //* Settings Object DB Operations -- only save since each time
 //* we overwrite ALL the setting with new settings
@@ -189,10 +200,12 @@ export const saveSavedFilters = _.debounce(async (savedFiltersData) => {
   await storeSavedFilters(savedFiltersData);
 }, DEBOUCE_WAIT);
 
-//* Get more movie details
-export const getMovieDetails = async (movieId) => {
-  let results = await movieGetDetails(movieId);
+//* Get more TV Show details
+export const getTVShowDetails = async (tvShowId: number): Promise<TVShowDetailsBase> => {
+  let results = await tvGetShowDetails(tvShowId);
+  return results;
   return {
     data: { ...results.data },
+    apiCall: results.apiCall,
   };
 };

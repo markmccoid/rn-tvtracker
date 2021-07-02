@@ -1,7 +1,7 @@
 import _ from "lodash";
 import { pipe, debounce, mutate, filter } from "overmind";
 import { createEffectsHook } from "overmind-react";
-import { discoverTypesEnum } from "../../statemachines/discoverTVMachine";
+// import { discoverTypesEnum } from "../../statemachines/discoverTVMachine";
 import { Context } from "../overmind";
 import { TVSearchResult } from "../../types";
 import { SearchConfig } from "./index";
@@ -51,7 +51,7 @@ export const queryTVAPI = async ({ state, effects, actions }: Context, page = 1)
   if (queryType === "predefined") {
     //Get popular movies if no search string
     switch (predefinedType) {
-      case discoverTypesEnum.POPULAR:
+      case "Popular":
         results = await effects.oSearch.getPopularTVShows(page);
         break;
       default:

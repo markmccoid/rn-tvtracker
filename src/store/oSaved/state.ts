@@ -6,20 +6,18 @@ import * as defaultConstants from "./defaultContants";
 import { DateObject, SortTypes, Operators } from "../../types";
 
 export type SavedTVShowsDoc = {
-  id: string;
+  id: number;
   name: string;
-  overview: string;
   firstAirDate: DateObject;
   lastAirDate: DateObject;
   posterURL: string;
   genres: string[];
   avgEpisodeRunTime: number;
   status: string;
-  tagLine: string;
   // TV Tracker created items
   taggedWith?: string[];
   userRating: number;
-  savedDate: number;
+  savedDate: DateObject;
 };
 
 export type Settings = {
@@ -52,8 +50,13 @@ export type FilterData = {
 };
 
 export type TagData = { tagId: string; tagName: string };
+// When dealing with tags turned on and off, the TagDataExtended adds the "isSelected" key
+export type TagDataExtended = TagData & {
+  isSelected?: boolean;
+  tagState?: "include" | "exclude" | "inactive";
+};
 
-type State = {
+export type State = {
   savedTVShows: SavedTVShowsDoc[];
   tagData: TagData[]; // Array of Objects containing tag info { tagId, tagName, members[]??}
   // This will hold an object (with key of MovieId) for each movie that has
@@ -83,10 +86,30 @@ type State = {
     genres: string[];
     watchProviders: string[];
   };
+  // --- GETTERS ---
   getFilteredTVShows: SavedTVShowsDoc[];
   //! Type needs to change since I'm not sure exactly what will be returned by
   //! the tmdb call the populated with return.  Should be able to get type from tmdb_api
-  getTVShowDetails: (tvShowId: string) => SavedTVShowsDoc;
+  getTVShowDetails: (tvShowId: number) => SavedTVShowsDoc;
+  isTVShowSaved: (tvShowId: number) => boolean;
+  getCurrentImageUrls: (tvShowId: number) => {
+    currentPosterURL: string;
+  } | null;
+  getTags: TagData[];
+  getTaggedCount: { [key: string]: number };
+  getTVShowTags: (tvShowId: number) => TagDataExtended[];
+  getUnusedTVShowTags: (tvShowId: number) => TagDataExtended[];
+  getAllTVShowTags: (tvShowId: number) => TagDataExtended[];
+  getTVShowUserRating: (tvShowId: number) => number;
+  getFilterTags: TagDataExtended[];
+  getUnusedFilterTags: TagDataExtended[];
+  getAllFilterTags: TagDataExtended[];
+  getInitialTagsSavedFilter: TagDataExtended[];
+  getFilterGenres: { genre: string; isSelected: boolean }[];
+  getUnusedFilterGenres: { genre: string; isSelected: boolean }[];
+  getAllFilterGenres: { genre: string; isSelected: boolean }[];
+  getDrawerSavedFilters: SavedFilters[];
+  getSavedFilter: (filterId: string) => SavedFilters;
 };
 export const state: State = {
   savedTVShows: [], // Movie data pulled from @markmccoid/tmdb_api
@@ -151,9 +174,8 @@ export const state: State = {
       state.filterData?.genres.length > 0 ||
       state.filterData?.searchFilter
     ) {
-      tvShowList = helpers.filterMovies(state.savedTVShows, state.filterData);
+      tvShowList = helpers.filterTVShows(state.savedTVShows, state.filterData);
     }
-    console.log("GET FILTERED", tvShowList);
     tvShowList = _.orderBy(tvShowList, sortFields, sortDirections);
     // return direction === "asc" ? tvShowList : tvShowList.reverse();
     return tvShowList;
@@ -163,39 +185,43 @@ export const state: State = {
   //! This will need to change to be an async action returning
   //! details from tmdb_api
   //! Once done, can type this return properly
-  getTVShowDetails: derived((state: State) => (tvShowId: string) => {
+  getTVShowDetails: derived((state: State) => (tvShowId: number) => {
     if (!tvShowId) {
       return null;
     }
     let tvShowObj = _.keyBy<SavedTVShowsDoc>(state.savedTVShows, "id");
     return tvShowObj[tvShowId];
   }),
+  isTVShowSaved: derived((state: State) => (tvShowId: number) => {
+    if (!tvShowId) {
+      return false;
+    }
+    return state.savedTVShows.filter((tvShow) => tvShow.id === tvShowId).length >= 1;
+  }),
   //--------------
   // Get the current posterURL and backgroundURL for the passed movieId
-  getCurrentImageUrls: derived((state) => (movieId) => {
-    let movies = state.savedMovies;
+  getCurrentImageUrls: derived((state: State) => (tvShowId: number) => {
+    let tvShows = state.savedTVShows;
 
-    for (let i = 0; i <= movies.length; i++) {
-      if (movieId === movies[i].id) {
-        // return the current image urls for this movies[i]
+    for (let i = 0; i <= tvShows.length; i++) {
+      if (tvShowId === tvShows[i].id) {
+        // return the current image urls for this tvShows[i]
         return {
-          currentPosterURL: movies[i].posterURL,
-          currentBackdropURL: movies[i].backdropURL,
+          currentPosterURL: tvShows[i].posterURL,
         };
       }
     }
-    return {};
   }),
   //*---------------------
   //* TAG State Functions
   // Return tag object with all tags { tagId, tagName }
-  getTags: derived((state) => state.tagData),
+  getTags: derived((state: State) => state.tagData),
 
   //*---------------------
   //* Return an object with tagId as keys and a count
   //* of how many movies each tag is used on
   //* { tagid1: 5, tagid2: 1, ... }
-  getTaggedCount: derived((state) => {
+  getTaggedCount: derived((state: State) => {
     const reducer = (result, value, key) => {
       value.forEach((el) => {
         result[el] = result[el] ? result[el] + 1 : 1;
@@ -204,52 +230,65 @@ export const state: State = {
     };
     // NOTE: if a tag has not yet been used, it will NOT be returned in the below object.
     //  Need to give a default value (probably 0)
-    return _.reduce(state.taggedMovies, reducer, {});
+    const taggedCountObj: { [key: string]: number } = _.reduce(
+      state.taggedTVShows,
+      reducer,
+      {}
+    );
+    return taggedCountObj;
   }),
   //*--------------
-  getMovieTags: derived((state) => (movieId) => {
-    let movieTags = helpers.retrieveMovieTagIds(state, movieId);
+  getTVShowTags: derived((state: State) => (tvShowId: number) => {
+    let tvShowTags = helpers.retrieveTVShowTagIds(state, tvShowId);
     // Since we are only storing the tagId, we need to
     // extract the tagName for the stored tagIds.
     // This helper function will do that
-    return helpers.buildTagObjFromIds(state, movieTags, { isSelected: true });
+
+    const tagDataExtended = helpers.buildTagObjFromIds(state, tvShowTags, {
+      isSelected: true,
+    });
+    return tagDataExtended;
   }),
 
   //*--------------
-  getUnusedMovieTags: derived((state) => (movieId) => {
-    let movieTagIds = helpers.retrieveMovieTagIds(state, movieId);
+  getUnusedTVShowTags: derived((state: State) => (tvShowId: number) => {
+    let tvShowTagIds = helpers.retrieveTVShowTagIds(state, tvShowId);
     let allTagIds = helpers.retrieveTagIds(state.getTags);
 
-    let unusedTagIds = _.difference(allTagIds, movieTagIds);
-    return helpers.buildTagObjFromIds(state, unusedTagIds, { isSelected: false });
+    let unusedTagIds = _.difference(allTagIds, tvShowTagIds);
+    return helpers.buildTagObjFromIds(state, unusedTagIds, {
+      isSelected: false,
+    });
   }),
   //*--------------
-  getAllMovieTags: derived((state) => (movieId) => {
+  getAllTVShowTags: derived((state: State) => (tvShowId: number): TagDataExtended[] => {
     // Take the array of movie tag objects (that have the isSelected property set)
     // and convert to an object with the tagId as the key.
     // This makes it easy to pull the isSelected flag below
-    const unsortedTags = _.keyBy(
-      [...state.getUnusedMovieTags(movieId), ...state.getMovieTags(movieId)],
+    const unsortedTags: { [key: string]: TagDataExtended } = _.keyBy(
+      [...state.getUnusedTVShowTags(tvShowId), ...state.getTVShowTags(tvShowId)],
       "tagId"
     );
 
     // We want to return the tags sorted as they are in the original array
     // Pull all the tags and return the array sorted tag with the isSelected
     // property (attribute) pulled from unsorted tags
-    return helpers.tagSorter(unsortedTags, {
+    const sortedTags = helpers.tagSorter(unsortedTags, {
       sortType: "fromarray",
       sortedTagArray: state.getTags,
       attribute: "isSelected",
     });
+
+    return sortedTags;
   }),
 
   //*----------------------------
   //* USER RATING State Function
-  getMovieUserRating: derived((state) => (movieId) => {
-    if (!state.savedMovies.length) {
+  getTVShowUserRating: derived((state: State) => (tvShowId: number) => {
+    if (!state.savedTVShows.length) {
       return;
     }
-    return state.savedMovies.filter((movie) => movie.id === movieId)[0]?.userRating || 0;
+    return state.savedTVShows.find((tvShow) => tvShow.id === tvShowId)?.userRating || 0;
   }),
 
   //*----------------------------
@@ -259,7 +298,7 @@ export const state: State = {
   // NOTE: filter tags only store the tag id, which is why we need to
   //       call the buildTagObjFromIds and pass whether the tag isSelected or not
   // tag object returned { tagId, tagName, isSelected }
-  getFilterTags: derived((state) => {
+  getFilterTags: derived((state: State) => {
     let filterTagIds = state.filterData.tags;
     let filterExcludeTagIds = state.filterData.excludeTags;
     return [
@@ -269,7 +308,7 @@ export const state: State = {
   }),
   //--------------
   // Returns only the tags that are NOT being used to filter data currently
-  getUnusedFilterTags: derived((state) => {
+  getUnusedFilterTags: derived((state: State) => {
     // Tags being used to filter currently
     let filterTagIds = state.filterData.tags;
     // All tags defined in the system
@@ -277,13 +316,12 @@ export const state: State = {
     let unusedFilterTagIds = allTagIds.filter(
       (tagId) => !filterTagIds.find((tag) => tag === tagId)
     );
-    // Could turn below in to helper if needed
-    // It will take unused tag and create object { tagId, tagName, tagState }
 
+    // It will take unused tag and create object { tagId, tagName, tagState }
     return helpers.buildTagObjFromIds(state, unusedFilterTagIds, { tagState: "inactive" });
   }),
   //--------------
-  getAllFilterTags: derived((state) => {
+  getAllFilterTags: derived((state: State) => {
     // Take the array of filter tag objects (that have the isSelected property set and not yet set.)
     // and convert to an object with the tagId as the key.
     // This makes it easy to pull the isSelected flag when running the tagSorter function (which returns an array)
@@ -305,7 +343,7 @@ export const state: State = {
   //* SAVED FILTER State Functions
   //--------------
   // Returns only the tags that are NOT being used to filter data currently
-  getInitialTagsSavedFilter: derived((state) => {
+  getInitialTagsSavedFilter: derived((state: State) => {
     // All tags defined in the system
     let allTagIds = helpers.retrieveTagIds(state.getTags);
 
@@ -329,14 +367,15 @@ export const state: State = {
 
   //*----------------------------
   //* GENRE State Functions
-  getFilterGenres: derived((state) => {
+  getFilterGenres: derived((state: State) => {
     let filterGenres = state.filterData.genres;
     if (filterGenres.length > 0) {
       return filterGenres.map((genre) => ({ genre, isSelected: true }));
     }
     return [];
   }),
-  getUnusedFilterGenres: derived((state) => {
+
+  getUnusedFilterGenres: derived((state: State) => {
     let filterGenres = state.filterData.genres;
     let allGenres = state.generated.genres;
     let unusedFilterGenres = allGenres.filter(
@@ -344,7 +383,8 @@ export const state: State = {
     );
     return unusedFilterGenres.map((genre) => ({ genre, isSelected: false }));
   }),
-  getAllFilterGenres: derived((state) => {
+
+  getAllFilterGenres: derived((state: State) => {
     const updatedGenreArray = [...state.getFilterGenres, ...state.getUnusedFilterGenres];
     //Sort by genre name so they don't "move" when selected
     return _.sortBy(updatedGenreArray, ["genre"]);
@@ -353,12 +393,13 @@ export const state: State = {
   //*------------------------
   //*- SAVED FILTERS Getters
   //*------------------------
-  getDrawerSavedFilters: derived((state) => {
+  getDrawerSavedFilters: derived((state: State) => {
     // Return only savedFilters that should be shown in the drawer menu
     return _.filter(state.savedFilters, { showInDrawer: true }) || [];
   }),
+
   // Returns the savedFilter Object associated with passed filterId
-  getSavedFilter: derived((state) => (filterId) => {
-    return state.savedFilters.filter((item) => item.id === filterId)[0];
+  getSavedFilter: derived((state: State) => (filterId: string) => {
+    return state.savedFilters.find((item) => item.id === filterId);
   }),
 };

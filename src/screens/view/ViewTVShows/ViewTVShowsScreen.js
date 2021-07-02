@@ -12,15 +12,17 @@ import { useOState, useOActions } from "../../../store/overmind";
 import ListSearchBar from "./ListSearchBar";
 import { AddIcon, FilterIcon } from "../../../components/common/Icons";
 
-import ViewMoviesListItem from "../../../components/ViewMovies/ViewMoviesListItem";
-import ViewMovieOverlay from "./ViewMovieOverlay";
+import ViewTVShowsListItem from "../../../components/ViewTVShows/ViewTVShowsListItem";
+import ViewTVShowOverlay from "./ViewTVShowOverlay";
 import { colors } from "../../../globalStyles";
 import {
-  getViewMoviesRotates,
-  getViewMoviesTranslates,
-  getViewMoviesScale,
-  getViewMoviesOpacity,
+  getViewRotates,
+  getViewTranslates,
+  getViewScale,
+  getViewOpacity,
 } from "./animationHelpers";
+
+import { SavedTVShowsDoc } from "../../../store/oSaved/state";
 
 const { width, height } = Dimensions.get("window");
 const POSTER_WIDTH = width / 2.2;
@@ -33,9 +35,9 @@ const ITEM_SIZE = POSTER_HEIGHT + MARGIN * 2;
 // make things easier to deal with when the filter status
 // changed.
 // Currently, the ONLY status we get on filter changing is when
-// navigating back to the "Movies" route.  There is a param called
+// navigating back to the "TVShowsScreen" route.  There is a param called
 // "filterModified" that is either true or undefined.
-// This filterMachineConfig and filterMachine are used in the ViewMoviesScreen component
+// This filterMachineConfig and filterMachine are used in the ViewTVShowsScreen component
 // useReducer function, which changes the "filterState" variable.
 // There are two useEffect functions that are needed
 // One to monitor the "filterModified" route param
@@ -65,9 +67,9 @@ const filterMachine = (state, event) => {
 };
 
 //---------------
-const ViewMoviesScreen = ({ navigation, route }) => {
+const ViewTVShowsScreen = ({ navigation, route }) => {
   const [filterState, dispatch] = React.useReducer(filterMachine, filterMachineConfig.initial);
-  const [movieDetails, setMovieDetails] = React.useState(undefined);
+  const [tvShowDetails, setTVShowDetails] = React.useState(undefined);
   const [showSearch, setShowSearch] = useState(false);
   // Used to be in oAdmin.appState, but don't think we need it there, just making local state.
   const [tvShowEditingId, setTVShowEditingId] = useState(undefined);
@@ -75,7 +77,7 @@ const ViewMoviesScreen = ({ navigation, route }) => {
   const state = useOState();
   const { hydrating } = state.oAdmin.appState;
 
-  const { getFilteredTVShows, getMovieDetails } = state.oSaved;
+  const { getFilteredTVShows, getTVShowDetails } = state.oSaved;
   // For use in showing the search input component
   const offsetY = React.useRef(new Animated.Value(0)).current;
 
@@ -95,7 +97,7 @@ const ViewMoviesScreen = ({ navigation, route }) => {
     };
   }, []);
 
-  const keyExtractor = React.useCallback((movie, idx) => movie.id.toString() + idx, []);
+  const keyExtractor = React.useCallback((tvShow, idx) => tvShow.id.toString() + idx, []);
 
   const flatListRenderItem = React.useCallback(({ item, index }) => {
     const pURL = item.posterURL;
@@ -112,10 +114,10 @@ const ViewMoviesScreen = ({ navigation, route }) => {
       margin: MARGIN,
     };
 
-    const scale = getViewMoviesScale(offsetY, animConstants);
-    const opacity = getViewMoviesOpacity(offsetY, animConstants);
-    const [translateX, translateY] = getViewMoviesTranslates(offsetY, animConstants);
-    const [rotateX, rotateY, rotateZ] = getViewMoviesRotates(offsetY, animConstants);
+    const scale = getViewScale(offsetY, animConstants);
+    const opacity = getViewOpacity(offsetY, animConstants);
+    const [translateX, translateY] = getViewTranslates(offsetY, animConstants);
+    const [rotateX, rotateY, rotateZ] = getViewRotates(offsetY, animConstants);
     const animStyle = {
       transform: [
         { scale },
@@ -133,9 +135,9 @@ const ViewMoviesScreen = ({ navigation, route }) => {
           ...animStyle,
         }}
       >
-        <ViewMoviesListItem
+        <ViewTVShowsListItem
           posterURL={pURL}
-          movie={item}
+          tvShow={item}
           setTVShowEditingId={setTVShowEditingId}
         />
       </Animated.View>
@@ -197,7 +199,7 @@ const ViewMoviesScreen = ({ navigation, route }) => {
   // probably should move whole overlay section to a separate file
   useEffect(() => {
     if (tvShowEditingId) {
-      setMovieDetails(getMovieDetails(tvShowEditingId));
+      setTVShowDetails(getTVShowDetails(tvShowEditingId));
     }
   }, [tvShowEditingId]);
 
@@ -223,16 +225,16 @@ const ViewMoviesScreen = ({ navigation, route }) => {
         maxToRenderPerBatch={30}
       />
 
-      {/* Only show when editing a movie - this happens on a long press on movie */}
-      <ViewMovieOverlay
-        movieId={tvShowEditingId}
+      {/* Only show when editing a tv show - this happens on a long press on tv show */}
+      <ViewTVShowOverlay
+        tvShowId={tvShowEditingId}
         setTVShowEditingId={setTVShowEditingId}
         isVisible={!!tvShowEditingId}
-        movieDetails={movieDetails}
+        tvShowDetails={tvShowDetails}
       />
       {/* If there are NO movies after the filters are applied then show a message and Filter button  */}
       {getFilteredTVShows.length === 0 && state.oSaved.savedTVShows.length !== 0 && (
-        <View style={[styles.noMoviesShownPosition, { alignItems: "center" }]}>
+        <View style={[styles.noItemsShownPosition, { alignItems: "center" }]}>
           <Text style={{ fontSize: 20, fontWeight: "600", marginBottom: 10 }}>
             No Movies match current filter.
           </Text>
@@ -242,7 +244,7 @@ const ViewMoviesScreen = ({ navigation, route }) => {
 
           <TouchableOpacity
             style={[
-              styles.noMoviesShownBtnView,
+              styles.noItemsShownBtnView,
               { width: 75, height: 75, justifyContent: "center", alignItems: "center" },
             ]}
             onPress={() => navigation.navigate("Filter")}
@@ -253,7 +255,7 @@ const ViewMoviesScreen = ({ navigation, route }) => {
       )}
 
       {state.oSaved.savedTVShows.length === 0 && !hydrating && (
-        <View style={[styles.noMoviesShownPosition, styles.noMoviesShownBtnView]}>
+        <View style={[styles.noItemsShownPosition, styles.noItemsShownBtnView]}>
           <TouchableOpacity
             style={{ width: 75, height: 75, justifyContent: "center", alignItems: "center" }}
             onPress={() => navigation.navigate("Search")}
@@ -276,11 +278,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: colors.background,
   },
-  noMoviesShownPosition: {
+  noItemsShownPosition: {
     position: "absolute",
     top: height / 4,
   },
-  noMoviesShownBtnView: {
+  noItemsShownBtnView: {
     borderRadius: 15,
     borderColor: "black",
     borderWidth: 2,
@@ -295,4 +297,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ViewMoviesScreen;
+export default ViewTVShowsScreen;

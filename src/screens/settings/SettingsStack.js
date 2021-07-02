@@ -32,7 +32,7 @@ const SettingsStackScreen = () => {
             },
             headerRight: () => {
               return (
-                <TouchableOpacity onPress={() => navigation.navigate("ViewMovies")}>
+                <TouchableOpacity onPress={() => navigation.navigate("ViewTVShows")}>
                   <HomeIcon size={30} style={{ marginRight: 10 }} />
                 </TouchableOpacity>
               );

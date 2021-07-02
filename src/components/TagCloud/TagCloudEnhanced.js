@@ -106,7 +106,7 @@ export default TagCloudEnhanced;
 /*
 Usage Example:
   <TagCloud>
-    {getAllMovieTags(movie.id).map((tagObj) => {
+    {getAllTVShowTags(movie.id).map((tagObj) => {
       return (
         <TagItem
           key={tagObj.tagId}

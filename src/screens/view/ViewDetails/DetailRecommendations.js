@@ -11,7 +11,7 @@ const DetailRecommendations = ({ movieId }) => {
   const [scrollIndex, setScrollIndex] = React.useState(0);
   const route = useRoute();
   const actions = useOActions();
-  const { saveMovie, deleteMovie } = actions.oSaved;
+  const { saveTVShow, deleteMovie } = actions.oSaved;
 
   // Everytime we load the recommendations,
   React.useEffect(() => {
@@ -65,7 +65,7 @@ const DetailRecommendations = ({ movieId }) => {
           <SearchResultItem
             key={item.id}
             movie={item}
-            saveMovie={saveMovie}
+            saveTVShow={saveTVShow}
             deleteMovie={deleteMovie}
             setOnDetailsPage={() => {}}
             navigateToScreen={route.name}

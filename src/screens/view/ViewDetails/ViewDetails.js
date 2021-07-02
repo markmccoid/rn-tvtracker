@@ -3,15 +3,15 @@ import { ActivityIndicator, ScrollView, View, Image, Dimensions } from "react-na
 import { AddIcon, DeleteIcon } from "../../../components/common/Icons";
 import { useOState, useOActions } from "../../../store/overmind";
 
-import ViewMovieDetails from "./ViewMovieDetails";
+import ViewTVShowDetails from "./ViewTVShowDetails";
 
 import { TouchableOpacity } from "react-native-gesture-handler";
 
 const { width, height } = Dimensions.get("window");
 /**
- * The ViewDetails screen can show the details for a movie in two states:
- * 1. The movie already exists in your saved movies
- * 2. The movie is from the search area and is not yet saved in your saved movies
+ * The ViewDetails screen can show the details for a tv show in two states:
+ * 1. The tv show already exists in your saved tv shows
+ * 2. The tv show is from the search area and is not yet saved in your saved tv shows
  *
  * In Case #1, the params object will have a "movieId" key which will be used to load the movie
  * details from the store
@@ -23,33 +23,50 @@ const { width, height } = Dimensions.get("window");
  * is NOT saved.  I used this negative way so that if we don't get this param passed we can safely assume that the
  * navigation event is coming from a place where the movie is saved.
  *
+ *
+ *
+ * @param {*} { navigation, route }
+ * @returns
  */
+//* I need to revist both of the above cases.  I don't want to get any details other than a tvShowId
+//* from BOTH cases.  Then I will look up the details in tmdb_api
+//*
+//* We do need to determine if the movie is in our saved list.  We could still use a param "notSaved"
+//* but that seems confusing.  Instead, why not create an Overmind derived getter that accepts
+//* a tvShowId and return true(saved) or false(not saved)?
+//* -- isTVShowSaved(tvShowId: number): boolean
+//*
+//*
 const ViewDetails = ({ navigation, route }) => {
-  const [movieData, setMovieData] = useState(undefined);
-  const [isInSavedMovies, setIsInSavedMovies] = useState(!!!route.params?.notSaved);
+  console.log(" IN VIEW DETAIL ", route.params);
+  const [tvShowData, setTVShowData] = useState(undefined);
+  const [isInSavedTVShows, setIsInSavedTVShows] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const state = useOState();
   const actions = useOActions();
-  const { saveMovie, deleteMovie, apiGetMovieDetails } = actions.oSaved;
-  const getTempMovieDetails = async (movieId) => {
-    movieTemp = await apiGetMovieDetails(movieId);
-    setMovieData(movieTemp.data);
+  const { saveTVShow, deleteTVShow, apiGetTVShowDetails } = actions.oSaved;
+  const getTempTVShowDetails = async (tvShowId) => {
+    tvShowTemp = await apiGetTVShowDetails(tvShowId);
+    setTVShowData(tvShowTemp.data);
   };
 
+  const showIdTemp = route.params?.tvShow || route.params?.tvShowId;
   useEffect(() => {
-    setIsInSavedMovies(!!!route.params?.notSaved); //if undefined or false, return true
-    let movieTemp = {};
-    if (route.params?.movieId) {
-      movieTemp = state.oSaved.getMovieDetails(route.params?.movieId);
-      setMovieData(movieTemp);
+    // setIsInSavedTVShows(!!!route.params?.notSaved); //if undefined or false, return true
+    setIsInSavedTVShows(state.oSaved.isTVShowSaved(showIdTemp));
+    console.log("SAVED?", showIdTemp, state.oSaved.isTVShowSaved(showIdTemp));
+    let tvShowTemp = {};
+    if (route.params?.tvShowId) {
+      tvShowTemp = state.oSaved.getTVShowDetails(route.params?.tvShowId);
+      setTVShowData(tvShowTemp);
       return;
     }
-    if (route.params?.movie) {
-      // movieTemp = route.params?.movie;
-      getTempMovieDetails(route.params?.movie.id);
+    if (route.params?.tvShow) {
+      // tvShowTemp = route.params?.movie;
+      getTempTVShowDetails(route.params?.tvShow.id);
       return;
     }
-  }, [route.params?.movieId, route.params?.movie, route.params?.notSaved]);
+  }, [route.params?.tvShowId, route.params?.tvShow, route.params?.notSaved]);
 
   //---- Set navigation options for detail screen -----
   // 1. Set the title to the current movie title
@@ -57,26 +74,26 @@ const ViewDetails = ({ navigation, route }) => {
   // 3. If the movie is in the list, show a delete icon INSTEAD of the plus.
   //TODO (could be better looking delete icon)
   React.useEffect(() => {
-    if (!movieData) {
+    if (!tvShowData) {
       return;
     }
 
     navigation.setOptions({
-      title: movieData.title,
+      title: tvShowData.title,
       headerRight: () => {
         if (isLoading) {
           return <ActivityIndicator style={{ marginRight: 20 }} />;
         }
-        if (!isInSavedMovies) {
+        if (!isInSavedTVShows) {
           return (
             <TouchableOpacity
               style={{ marginRight: 15 }}
               onPress={async () => {
                 setIsLoading(true);
-                await saveMovie(movieData);
+                await saveTVShow(tvShowData);
                 navigation.navigate(route.name, {
-                  movieId: movieData.id,
-                  movie: undefined,
+                  tvShowId: tvShowData.id,
+                  tvShow: undefined,
                   notSaved: false,
                 });
                 setIsLoading(false);
@@ -92,7 +109,7 @@ const ViewDetails = ({ navigation, route }) => {
               style={{ marginRight: 15 }}
               onPress={async () => {
                 setIsLoading(true);
-                await deleteMovie(movieData.id);
+                await deleteTVShow(tvShowData.id);
                 setIsLoading(false);
                 navigation.goBack();
               }}
@@ -103,12 +120,12 @@ const ViewDetails = ({ navigation, route }) => {
         }
       },
     });
-  }, [movieData, isInSavedMovies, isLoading]);
+  }, [tvShowData, isInSavedTVShows, isLoading]);
 
   // No movieId and no movie passed via params, then just return null
   //TODO: probably need a better "message", but we really should only hit this
   //TODO: when deleteing movie from the right header icon
-  if (!movieData) {
+  if (!tvShowData) {
     return <ActivityIndicator size="large" />;
   }
 
@@ -123,11 +140,11 @@ const ViewDetails = ({ navigation, route }) => {
           opacity: 0.1,
         }}
         source={{
-          uri: movieData.posterURL,
+          uri: tvShowData.posterURL,
         }}
       />
       <ScrollView>
-        <ViewMovieDetails movie={movieData} isInSavedMovies={isInSavedMovies} />
+        <ViewTVShowDetails tvShow={tvShowData} isInSavedTVShows={isInSavedTVShows} />
       </ScrollView>
     </View>
   );

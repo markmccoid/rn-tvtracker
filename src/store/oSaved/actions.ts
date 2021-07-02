@@ -4,6 +4,10 @@ import { pipe, debounce, mutate, filter } from "overmind";
 import * as internalActions from "./internalActions";
 import { removeFromAsyncStorage } from "../../storage/asyncStorage";
 import * as defaultConstants from "./defaultContants";
+import { Context } from "../overmind";
+import { SavedTVShowsDoc } from "./state";
+import { DateObject } from "@markmccoid/tmdb_api";
+import { getCurrentDate, formatDateObjectForSave } from "../../utils/helperFunctions";
 
 export const internal = internalActions;
 // export actions for saved filters.
@@ -13,14 +17,15 @@ export * from "./actionsSavedFilters";
 //* - INITIALIZE (Hydrate Store)
 //*================================================================
 export const hyrdateStore = async (
-  { state, actions, effects },
-  { uid, forceRefresh = false }
+  { state, actions, effects }: Context,
+  { uid, forceRefresh = false }: { uid: string; forceRefresh: boolean }
 ) => {
   //Used in View Movies to "know" when loading is complete
   state.oAdmin.appState.hydrating = true;
 
   let userDocData = await effects.oSaved.initializeStore(uid, forceRefresh);
 
+  state.oSaved.savedTVShows = validateSavedTVShows(userDocData.savedTVShows);
   state.oSaved.tagData = userDocData.tagData;
   state.oSaved.savedFilters = userDocData.savedFilters;
   //Update the datasource (loaded from local or cloud(firestore))
@@ -43,22 +48,6 @@ export const hyrdateStore = async (
 
   state.oSaved.settings.defaultFilter = userDocData?.settings?.defaultFilter;
 
-  //! TEMP adding index to savedFilters if they don't exist
-  //! added in version 1.0.9, but should remove once Lori gets her DB updated.
-  //! Adding index fields to data we want to be able to drag/drop sort.
-  state.oSaved.savedFilters = state.oSaved.savedFilters.map((filter, index) => ({
-    index,
-    ...filter,
-  }));
-  state.oSaved.settings.defaultSort = state.oSaved.settings.defaultSort.map(
-    (sortItem, index) => ({
-      index,
-      id: sortItem.sortField,
-      ...sortItem,
-    })
-  );
-  //!-- END Updates for new fields --
-
   // Copy over default sort. This is future proofing, in case we want to let user change current sort on the fly.
   state.oSaved.currentSort = [...state.oSaved.settings?.defaultSort];
 
@@ -78,7 +67,7 @@ export const hyrdateStore = async (
     actions.oSaved.applySavedFilter(defaultFilterId);
   }
   // Get movie genres from savedMovies objects
-  state.oSaved.generated.genres = getGenresFromMovies(state.oSaved.savedTVShows);
+  state.oSaved.generated.genres = getGenresFromTVShows(state.oSaved.savedTVShows);
   state.oAdmin.appState.hydrating = false;
 };
 
@@ -107,17 +96,20 @@ export const resetOSaved = async ({ state, effects, actions }) => {
  *  If not it will add a savedDate: date.now() to the movie.
  *
  */
-export const refreshMovie = async ({ state, effects, actions }, movieId) => {
-  // Get the lastest data from the API for the passed movieId
+//! NEXT - Lots of duplicate stuff from saving tv show.  What can be combined.
+//! ALSO maybe just update whole saved movie record instead of trying to see if anything has changed.
+export const refreshTVShow = async ({ state, effects, actions }: Context, tvShowId) => {
+  // Get the lastest data from the API for the passed tvShowId
   // get more movie details from tmdbapi
-  const { data: latestMovieDetails } = await effects.oSaved.getMovieDetails(movieId);
+  const { data: latestMovieDetails } = await effects.oSaved.getTVShowDetails(tvShowId);
   // Make sure date isn't undefined and store only epoch and formatted
-  let epoch = latestMovieDetails?.releaseDate?.epoch || "";
-  let formatted = latestMovieDetails?.releaseDate?.formatted || "";
-  latestMovieDetails.releaseDate = { epoch, formatted };
+  //! --- commented out
+  // let epoch = latestMovieDetails?.releaseDate?.epoch || "";
+  // let formatted = latestMovieDetails?.releaseDate?.formatted || "";
+  // latestMovieDetails.releaseDate = { epoch, formatted };
 
   // Get current saved movie
-  const currentMovieDetails = { ...state.oSaved.getMovieDetails(movieId) };
+  const currentMovieDetails = { ...state.oSaved.getTVShowDetails(tvShowId) };
 
   // We will build updateObj and then update if not undefined
   let updateObj = undefined;
@@ -125,7 +117,7 @@ export const refreshMovie = async ({ state, effects, actions }, movieId) => {
 
   //These are the field we are checking.
   const fieldsToCheck = {
-    titleMatch: latestMovieDetails.title === currentMovieDetails.title,
+    titleMatch: latestMovieDetails.name === currentMovieDetails.name,
     releaseDateMatch:
       latestMovieDetails.releaseDate.epoch === currentMovieDetails?.releaseDate?.epoch,
     imdbIdMatch: latestMovieDetails.imdbId === currentMovieDetails.imdbId,
@@ -147,7 +139,6 @@ export const refreshMovie = async ({ state, effects, actions }, movieId) => {
     updateObj = {
       ...updateObj,
       ...latestMovieDetails,
-      backdropURL: currentMovieDetails.backdropURL || latestMovieDetails.backdropURL,
       posterURL: currentMovieDetails.posterURL || latestMovieDetails.posterURL,
     };
   }
@@ -179,12 +170,12 @@ export const refreshMovie = async ({ state, effects, actions }, movieId) => {
 };
 
 /**
- * saveMovie - save the passed movie object to state and firestore
+ * saveTVShow - save the passed TV Show id to state and firestore
  *
  * @param {*} context
- * @param {Object} movieObj
+ * @param {number} tvShowId
  */
-export const saveMovie = async ({ state, effects, actions }, movieObj) => {
+export const saveTVShow = async ({ state, effects, actions }: Context, tvShowId: number) => {
   //! We are tagging the result set so that the search screen will know that the movie
   //! is part of our saved movies.
   //! BUT we do NOT need to save this field in firebase.  We can add it during hydration.
@@ -192,68 +183,82 @@ export const saveMovie = async ({ state, effects, actions }, movieObj) => {
   const { tagResults } = actions.oSearch.internal;
   const searchData = state.oSearch.resultData;
 
-  // check to see if movie exists as a safeguard against duplicates in database
-  if (state.oSaved.savedTVShows.some((movie) => movie.id === movieObj.id)) {
+  // check to see if TV Show exists as a safeguard against duplicates in database
+  if (state.oSaved.savedTVShows.some((tvShow) => tvShow.id === tvShowId)) {
     return;
   }
-  // get more movie details from tmdbapi
-  const movieDetails = await effects.oSaved.getMovieDetails(movieObj.id);
+  // get the details from tmdb_api
+  const tvShowDetailsTMDB = await effects.oSaved.getTVShowDetails(tvShowId);
   // Make sure date isn't undefined and store only epoch and formatted
-  let epoch = movieDetails.data?.releaseDate?.epoch || "";
-  let formatted = movieDetails.data?.releaseDate?.formatted || "";
-  movieDetails.data.releaseDate = { epoch, formatted };
+  // let epoch = tvShowDetailsTMDB.data?.firstAirDate?.epoch || 0;
+  // let formatted = tvShowDetailsTMDB.data?.firstAirDate?.formatted || "";
+  // tvShowDetailsTMDB.data.firstAirDate = { epoch, formatted };
 
   //* Fields NOT from API
   //#  Set a default userRating of 0
-  movieDetails.data.userRating = 0;
-  movieDetails.data.savedDate = Date.now();
+  const tvShowRecordToWrite: SavedTVShowsDoc = {
+    id: tvShowDetailsTMDB.data.id,
+    name: tvShowDetailsTMDB.data.name,
+    firstAirDate: formatDateObjectForSave(tvShowDetailsTMDB.data.firstAirDate),
+    lastAirDate: formatDateObjectForSave(tvShowDetailsTMDB.data.lastAirDate),
+    posterURL: tvShowDetailsTMDB.data.posterURL,
+    genres: tvShowDetailsTMDB.data.genres,
+    avgEpisodeRunTime: tvShowDetailsTMDB.data.avgEpisodeRunTime,
+    status: tvShowDetailsTMDB.data.status,
+    // TV Tracker created items
+    userRating: 0,
+    savedDate: getCurrentDate(),
+  };
 
-  // Store movie in overmind state
-  state.oSaved.savedTVShows = [movieDetails.data, ...state.oSaved.savedTVShows];
+  // Store TV Show in overmind state
+  state.oSaved.savedTVShows = [tvShowRecordToWrite, ...state.oSaved.savedTVShows];
 
-  // When saving movie user is left on search screen, this will update
+  // When saving TV Show user is left on search screen, this will update
   // the screen to show that the selected movige has been saved
-  // state.oSearch.isNewQuery = false;
   state.oSearch.resultData = tagResults(searchData);
   //----------------------------
 
-  // Get movie genres from savedMovies objects and update our genres list in state
-  state.oSaved.generated.genres = getGenresFromMovies(state.oSaved.savedTVShows);
+  // Get TV Show genres from savedTVShows objects and update our genres list in state
+  state.oSaved.generated.genres = getGenresFromTVShows(state.oSaved.savedTVShows);
 
-  // Store all movies to Async Storage
+  // Store all TV Shows to Async Storage
   await effects.oSaved.localSaveTVShows(state.oAdmin.uid, state.oSaved.savedTVShows);
 
-  // Add movie to firebase
-  await effects.oSaved.addMovie(movieDetails.data);
+  // Add TV show to firebase
+  await effects.oSaved.addTVShow(tvShowRecordToWrite);
 };
 
-export const apiGetMovieDetails = async ({ state, effects, actions }, movieId) => {
-  // get more movie details from tmdbapi
-  const movieDetails = await effects.oSaved.getMovieDetails(movieId);
+export const apiGetTVShowDetails = async (
+  { state, effects, actions }: Context,
+  tvShowId: number
+) => {
+  // get more tvShow details from tmdbapi
+  const tvShowDetails = await effects.oSaved.getTVShowDetails(tvShowId);
+  //! I don't think it matters if this return formats the date objects
   // Make sure date isn't undefined and store only epoch and formatted
-  let epoch = movieDetails.data?.releaseDate?.epoch || "";
-  let formatted = movieDetails.data?.releaseDate?.formatted || "";
-  movieDetails.data.releaseDate = { epoch, formatted };
-  return movieDetails;
+  // movieDetails.data.firstAirDate = formatDateObjectForSave(movieDetails.data.firstAirDate);
+  // movieDetails.data.lastAirDate = formatDateObjectForSave(movieDetails.data.lastAirDate);
+
+  return tvShowDetails;
 };
 /**
  *
- * deleteMovie - delete the passed movieId and save to state and firestore
+ * deleteTVShow - delete the passed tvShowId and save to state and firestore
  *
  * @param {*} context
- * @param {string} movieId
+ * @param {string} tvShowId
  */
-export const deleteMovie = async ({ state, effects, actions }, movieId) => {
-  // find and remove movie
+export const deleteTVShow = async ({ state, effects, actions }: Context, tvShowId: number) => {
+  // find and remove TVShow
   state.oSaved.savedTVShows = state.oSaved.savedTVShows.filter(
-    (movie) => movie.id !== movieId
+    (tvShow) => tvShow.id !== tvShowId
   );
 
   //* Don't need to worry about deleting taggedWith in firestore since they are stored in movie document
   //* However we need to update the local store
   // xtaggedMovies
   // delete state.oSaved.taggedMovies[movieId];
-  actions.oSaved.internal.maintainTaggedMoviesObj({ action: "deletemovie", movieId });
+  actions.oSaved.internal.maintainTaggedTVShowObj({ action: "deleteshow", tvShowId });
 
   // When saving movie user is left on search screen, this will update
   // the screen to show that the selected movie has been saved
@@ -267,16 +272,17 @@ export const deleteMovie = async ({ state, effects, actions }, movieId) => {
   effects.oSaved.cancelDebounced();
 
   // Clear any items associated with movie that might be saved in Async storage
-  removeFromAsyncStorage(`castdata-${movieId}`);
+  removeFromAsyncStorage(`castdata-${tvShowId}`);
 
-  // Get movie genres from savedMovies objects
-  state.oSaved.generated.genres = getGenresFromMovies(state.oSaved.savedTVShows);
+  // Get movie genres from savedTVShows array
+  // this makes sure if genre from delete show doesn't exist in other shows it is "removed"
+  state.oSaved.generated.genres = getGenresFromTVShows(state.oSaved.savedTVShows);
 
   // Store all movies to Async Storage
   await effects.oSaved.localSaveTVShows(state.oAdmin.uid, state.oSaved.savedTVShows);
 
-  //* Modified for new Data Model
-  await effects.oSaved.deleteMovie(movieId);
+  //* Firestore
+  await effects.oSaved.deleteTVShow(tvShowId);
 };
 
 /**
@@ -307,39 +313,42 @@ export const updateMovieBackdropImage = async ({ state, effects }, payload) => {
 };
 /**
  * * updated for New Data Model
- * updateMoviePosterImage - update the passed movieIds poster image and save to state and firestore
+ * updateTVShowPosterImage - update the passed Ids poster image and save to state and firestore
  *
  * @param {*} context
  * @param {Object} payload { movieId, posterUrl}
  */
-export const updateMoviePosterImage = async ({ state, effects }, payload) => {
-  const { movieId, posterURL } = payload;
+export const updateTVShowPosterImage = async (
+  { state, effects }: Context,
+  payload: { tvShowId: number; posterURL: string }
+) => {
+  const { tvShowId, posterURL } = payload;
 
-  // check if we are updating a different movie.  If so flush
+  // check if we are updating a different tvShow.  If so flush
   // This has to do with the debounce we do on updating the posterImage
-  state.oSaved.currentMovieId = await checkCurrentMovieId(
-    state.oSaved.currentMovieId,
-    movieId,
+  state.oSaved.currentTVShowId = await checkCurrentTVShowId(
+    state.oSaved.currentTVShowId,
+    tvShowId,
     effects.oSaved.updatePosterURL
   );
 
-  //update the passed movieId's posterURL
-  state.oSaved.savedTVShows.forEach((movie) => {
-    if (movie.id === movieId) {
-      movie.posterURL = posterURL;
+  //update the passed tvShowId's posterURL
+  state.oSaved.savedTVShows.forEach((tvShow) => {
+    if (tvShow.id === tvShowId) {
+      tvShow.posterURL = posterURL;
     }
   });
 
-  //! No longer storing all movies on update, using the MergeItem function from AsyncStorage
+  //! No longer storing all tvShows on update, using the MergeItem function from AsyncStorage
   // await effects.oSaved.localSaveTVShows(state.oAdmin.uid, state.oSaved.savedTVShows);
-  const mergeObj = { [movieId]: { posterURL: posterURL } };
+  const mergeObj = { [tvShowId]: { posterURL: posterURL } };
   await effects.oSaved.localMergeTVShows(state.oAdmin.uid, mergeObj);
 
   const updateStmt = { posterURL: posterURL };
   //Save to firestore
   // await effects.oSaved.updateMovie(movieId, updateStmt); //<---OLD non-debounced call
   //Debounced write to DB
-  effects.oSaved.updatePosterURL(movieId, updateStmt);
+  effects.oSaved.updatePosterURL(tvShowId, updateStmt);
 };
 
 //*================================================================
@@ -467,72 +476,79 @@ export const updateTags = async ({ state, effects }, payload) => {
 //*================================================================
 //-- Add a tagId to the taggedMovie Object
 //-- Also update the taggedWith property on the savedMovies state.
-//-- payload = { movieId, tagId }
-export const addTagToMovie = async ({ state, effects, actions }, payload) => {
-  let taggedMovies = state.oSaved.taggedMovies || {};
-  const { movieId, tagId } = payload;
+//-- payload = {tvShowId, tagId }
+export const addTagToTVShow = async (
+  { state, effects, actions }: Context,
+  payload: { tvShowId: number; tagId: string }
+) => {
+  let taggedTVShows = state.oSaved.taggedTVShows || {};
+  const { tvShowId, tagId } = payload;
 
   // check if we are updating a different movie.  If so flush any debounced calls
-  state.oSaved.currentMovieId = await checkCurrentMovieId(
-    state.oSaved.currentMovieId,
-    movieId,
-    effects.oSaved.updateMovieTags
+  // the effects.oSaved.updateTVShowTags function will only be used to flush (it is a debounced function)
+  state.oSaved.currentTVShowId = await checkCurrentTVShowId(
+    state.oSaved.currentTVShowId,
+    tvShowId,
+    effects.oSaved.updateTVShowTags
   );
 
-  // if the movieId property doesn't exist then no tags have been added, so add as a new array
-  actions.oSaved.internal.maintainTaggedMoviesObj({ action: "addtag", movieId, tagId });
-  // if (!taggedMovies.hasOwnProperty(movieId)) {
-  //   taggedMovies[movieId] = [tagId];
+  // if the tvShowId property doesn't exist then no tags have been added, so add as a new array
+  actions.oSaved.internal.maintainTaggedTVShowObj({ action: "addtag", tvShowId, tagId });
+  // if (!taggedTVShows.hasOwnProperty(tvShowId)) {
+  //   taggedTVShows[tvShowId] = [tagId];
   // } else {
-  //   taggedMovies[movieId] = [...taggedMovies[movieId], tagId];
+  //   taggedTVShows[tvShowId] = [...taggedTVShows[tvShowId], tagId];
   // }
 
   // Find movie that tag is being added to and update state
-  actions.oSaved.internal.updateTaggedWithOnMovie(movieId);
+  actions.oSaved.internal.updateTaggedWithOnTVShow(tvShowId);
 
   //! No longer storing all movies to Async Storage on updates using merge option in AsyncStorage module
   // await effects.oSaved.localSaveTVShows(state.oAdmin.uid, state.oSaved.savedTVShows);
-  const mergeObj = { [movieId]: { taggedWith: [...taggedMovies[movieId]] } };
+  const mergeObj = { [tvShowId]: { taggedWith: [...taggedTVShows[tvShowId]] } };
   await effects.oSaved.localMergeTVShows(state.oAdmin.uid, mergeObj);
 
-  const updateStmt = { taggedWith: [...taggedMovies[movieId]] };
+  const updateStmt = { taggedWith: [...taggedTVShows[tvShowId]] };
   // Update movie document in firestore.
-  await effects.oSaved.updateMovieTags(movieId, updateStmt);
+  await effects.oSaved.updateTVShowTags(tvShowId, updateStmt);
 };
 
 // -- Remove a tagId to the taggedMovies Object
 // -- payload = { movieId, tagId }
-export const removeTagFromMovie = async ({ state, effects, actions }, payload) => {
-  let taggedMovies = state.oSaved.taggedMovies || {};
-  const { movieId, tagId } = payload;
+export const removeTagFromTVShow = async (
+  { state, effects, actions }: Context,
+  payload: { tvShowId: number; tagId: string }
+) => {
+  let taggedTVShows = state.oSaved.taggedTVShows || {};
+  const { tvShowId, tagId } = payload;
 
   // check if we are updating a different movie.  If so flush
-  state.oSaved.currentMovieId = await checkCurrentMovieId(
-    state.oSaved.currentMovieId,
-    movieId,
-    effects.oSaved.updateMovieTags
+  state.oSaved.currentTVShowId = await checkCurrentTVShowId(
+    state.oSaved.currentTVShowId,
+    tvShowId,
+    effects.oSaved.updateTVShowTags
   );
 
-  // taggedMovies[movieId] = taggedMovies[movieId].filter((tag) => tag !== tagId);
-  actions.oSaved.internal.maintainTaggedMoviesObj({ action: "deletetag", movieId, tagId });
+  // taggedTVShows[movieId] = taggedTVShows[movieId].filter((tag) => tag !== tagId);
+  actions.oSaved.internal.maintainTaggedTVShowObj({ action: "deletetag", tvShowId, tagId });
 
   // Find movie that tag is being added to and update state
-  actions.oSaved.internal.updateTaggedWithOnMovie(movieId);
+  actions.oSaved.internal.updateTaggedWithOnTVShow(tvShowId);
 
   // state.oSaved.savedTVShows = updateTaggedWithOnMovie(
   //   movieId,
   //   [...state.oSaved.savedTVShows],
-  //   [...state.oSaved.taggedMovies[movieId] || {}]
+  //   [...state.oSaved.taggedTVShows[movieId] || {}]
   // );
 
   //! No longer storing all movies to Async Storage on updates
   // await effects.oSaved.localSaveTVShows(state.oAdmin.uid, state.oSaved.savedTVShows);
-  const mergeObj = { [movieId]: { taggedWith: [...taggedMovies[movieId]] } };
+  const mergeObj = { [tvShowId]: { taggedWith: [...taggedTVShows[tvShowId]] } };
   await effects.oSaved.localMergeTVShows(state.oAdmin.uid, mergeObj);
 
-  const updateStmt = { taggedWith: [...taggedMovies[movieId]] };
+  const updateStmt = { taggedWith: [...taggedTVShows[tvShowId]] };
   // Update movie document in firestore.
-  await effects.oSaved.updateMovieTags(movieId, updateStmt);
+  await effects.oSaved.updateTVShowTags(tvShowId, updateStmt);
 };
 
 //*================================================================
@@ -543,33 +559,37 @@ export const removeTagFromMovie = async ({ state, effects, actions }, payload) =
 //-- They will be stored on the movie document as *userRating*
 
 /**
- * addUserRatingToMovie - Add the rating the savedMovies.userRating
+ * updateUserRatingToTVShow - Add the rating the savedMovies.userRating
  *  in the store, Async Storage and Firebase.
  *
  */
-export const updateUserRatingToMovie = async ({ state, effects }, payload) => {
-  const { movieId, userRating } = payload;
+export const updateUserRatingToTVShow = async (
+  { state, effects }: Context,
+  payload: { tvShowId: number; userRating: number }
+) => {
+  const { tvShowId, userRating } = payload;
 
   // check if we are updating a different movie.  If so flush
-  state.oSaved.currentMovieId = await checkCurrentMovieId(
-    state.oSaved.currentMovieId,
-    movieId,
-    effects.oSaved.updateMovieUserRating
+  state.oSaved.currentTVShowId = await checkCurrentTVShowId(
+    state.oSaved.currentTVShowId,
+    tvShowId,
+    effects.oSaved.updateTVShowUserRating
   );
 
   // Add userRating to movie
-  state.oSaved.savedTVShows = updateUserRatingOnMovie(
-    movieId,
+  state.oSaved.savedTVShows = updateUserRatingOnTVShow(
+    tvShowId,
     [...state.oSaved.savedTVShows],
     userRating
   );
 
-  const mergeObj = { [movieId]: { userRating: userRating } };
+  const mergeObj = { [tvShowId]: { userRating: userRating } };
   await effects.oSaved.localMergeTVShows(state.oAdmin.uid, mergeObj);
 
   const updateStmt = { userRating: userRating };
   // Update movie document in firestore.
-  await effects.oSaved.updateMovieUserRating(movieId, updateStmt);
+  console.log("action", tvShowId, updateStmt);
+  await effects.oSaved.updateTVShowUserRating(tvShowId, updateStmt);
 };
 
 //*================================================================
@@ -686,14 +706,14 @@ export const updateDefaultSortOrder = ({ state, effects }, newlyIndexedArray) =>
 //*- ACTION HELPERS
 //*==============================================
 /**
- * Takes in an array of Movie objects and extracts the
+ * Takes in an array of TV Show objects and extracts the
  * Genres from each returning a unique list of genres
- * @param {array of Objects} movies
+ * @param {array of Objects} TVShows
  */
-const getGenresFromMovies = (movies) => {
-  let genresSet = new Set();
-  movies.forEach((movie) => {
-    movie.genres.forEach((genre) => genresSet.add(genre));
+const getGenresFromTVShows = (tvShows: SavedTVShowsDoc[]): string[] => {
+  let genresSet: Set<string> = new Set();
+  tvShows.forEach((tvShow) => {
+    tvShow.genres.forEach((genre) => genresSet.add(genre));
   });
   return [...genresSet].sort();
 };
@@ -708,20 +728,31 @@ const getGenresFromMovies = (movies) => {
 //   return movieArray;
 // }
 
-function updateUserRatingOnMovie(movieId, movieArray, userRating) {
-  for (let i = 0; i < movieArray.length; i++) {
-    if (movieArray[i].id === movieId) {
-      movieArray[i] = { ...movieArray[i], userRating };
+function updateUserRatingOnTVShow(tvShowId, tvShowArray, userRating) {
+  for (let i = 0; i < tvShowArray.length; i++) {
+    if (tvShowArray[i].id === tvShowId) {
+      tvShowArray[i] = { ...tvShowArray[i], userRating };
       break;
     }
   }
-  return movieArray;
+  return tvShowArray;
 }
 
-async function checkCurrentMovieId(currentMovieId, newMovieId, debounceToFlush) {
+async function checkCurrentTVShowId(
+  currentTVShowId: number,
+  newTVShowId: number,
+  debounceToFlush: _.DebouncedFunc<() => Promise<void>>
+) {
   // check if we are updating a different movie.  If so flush
-  if (currentMovieId !== newMovieId) {
+  if (currentTVShowId !== newTVShowId) {
     await debounceToFlush.flush();
   }
-  return newMovieId;
+  return newTVShowId;
+}
+//--
+// This function is simply checking that each tvShow object has an ID
+// Currently only called from the Hydrate function to help prevent bad
+// data from getting through
+function validateSavedTVShows(tvShows: SavedTVShowsDoc[]): SavedTVShowsDoc[] {
+  return tvShows.filter((show) => show.id);
 }

@@ -11,10 +11,10 @@ const showRefreshAlert = (msg) => {
 };
 
 const DetailMainInfoHoldMenu = ({
-  movie,
+  tvShow,
   navigateToRoute,
-  isInSavedMovies,
-  refreshMovie,
+  isInSavedTVShows,
+  refreshTVShow,
   children,
 }) => {
   const [isRefreshing, setisRefreshing] = useState(false);
@@ -23,9 +23,9 @@ const DetailMainInfoHoldMenu = ({
   // // Setup hold-menu items for use in the hold menu
   // const menuItemTitle = { text: "Actions", icon: "home", isTitle: true, onPress: () => {} };
   // const menuItemUpdateMovie = {
-  //   text: `Update Movie-${movie.id}`,
+  //   text: `Update Movie-${tvShow.id}`,
   //   onPress: async () => {
-  //     let msg = await refreshMovie(movie.id);
+  //     let msg = await refreshTVShow(tvShow.id);
   //     showRefreshAlert(msg);
   //     navigateToRoute();
   //   },
@@ -47,7 +47,7 @@ const DetailMainInfoHoldMenu = ({
   //   <HoldItem
   //     items={[
   //       menuItemTitle,
-  //       isInSavedMovies ? menuItemUpdateMovie : undefined,
+  //       isInSavedTVShows ? menuItemUpdateMovie : undefined,
   //       menuItemShareMovie,
   //     ].filter((el) => el)}
   //   >
@@ -60,10 +60,10 @@ const DetailMainInfoHoldMenu = ({
     <TouchableOpacity
       activeOpacity={0.8}
       onPress={
-        isInSavedMovies || !isRefreshing
+        isInSavedTVShows || !isRefreshing
           ? async () => {
               setisRefreshing(true);
-              let msg = await refreshMovie(movie.id);
+              let msg = await refreshTVShow(tvShow.id);
               setisRefreshing(false);
               showRefreshAlert(msg);
               navigateToRoute();
@@ -74,10 +74,10 @@ const DetailMainInfoHoldMenu = ({
         !isRefreshing
           ? () => {
               nativeShareItem({
-                message: `Open & Search in Movie Tracker -> \n${Linking.createURL(
-                  `/search/${movie.title}`
+                message: `Open & Search in TV Tracker -> \n${Linking.createURL(
+                  `/search/${tvShow.name}`
                 )}\n Or view in IMDB\n`, //`${movie.title}\n`,
-                url: movie.imdbURL ? movie.imdbURL : movie.posterURL,
+                url: tvShow.imdbURL ? tvShow.imdbURL : tvShow.posterURL,
               });
             }
           : null

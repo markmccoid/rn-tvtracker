@@ -13,8 +13,8 @@ const DetailButtonBar = ({
   setvpiAnimation,
   transitionRef,
   imdbId,
-  movieTitle,
-  isInSavedMovies,
+  tvShowName,
+  isInSavedTVShows,
 }) => {
   // Animated Icons
   const iconAnim = React.useRef(new Animated.Value(0)).current;
@@ -46,7 +46,7 @@ const DetailButtonBar = ({
       />
       <Button
         onPress={async () => {
-          let webURL = `https://google.com/search?query=${movieTitle} movie`;
+          let webURL = `https://google.com/search?query=${tvShowName} tv show`;
           webURL = webURL.replace(/\s+/g, "%20");
           await WebBrowser.openBrowserAsync(webURL);
         }}
@@ -64,7 +64,7 @@ const DetailButtonBar = ({
         noBorder
       />
       {/* ONLY Show below if movie has been saved (Image Picker) */}
-      {isInSavedMovies && (
+      {isInSavedTVShows && (
         <TouchableWithoutFeedback
           onPress={() => {
             Rotate(viewPickImage); //start icon animation

@@ -51,10 +51,10 @@ function AppNavDrawerContent(props) {
             label="Home"
             icon={({ focused, color, size }) => <HomeIcon size={size} />}
             onPress={() =>
-              props.navigation.navigate("ViewMoviesTab", {
-                screen: "ViewMovies",
+              props.navigation.navigate("ViewTVShowsTab", {
+                screen: "ViewTVShows",
                 params: {
-                  screen: "Movies",
+                  screen: "TVShowsScreen",
                 },
               })
             }
@@ -90,7 +90,7 @@ function AppNavDrawerContent(props) {
                 onPress={() => {
                   clearFilterTags();
                   applySavedFilter(filterObj.id);
-                  props.navigation.navigate("Movies", {
+                  props.navigation.navigate("TVShowsScreen", {
                     filterModified: true,
                   });
                   props.navigation.closeDrawer();
@@ -125,7 +125,7 @@ function AppNavDrawerContent(props) {
           onPress={() => {
             setTimeout(
               () =>
-                props.navigation.navigate("ViewMoviesTab", {
+                props.navigation.navigate("ViewTVShowsTab", {
                   screen: "Details",
                   params: { movieId: 520663 },
                 }),

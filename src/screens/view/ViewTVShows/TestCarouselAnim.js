@@ -141,7 +141,7 @@ const TestCarouselAnim = ({ navigation }) => {
           );
         }}
       />
-      <Button title="home" onPress={() => navigation.navigate("ViewMovies")} />
+      <Button title="home" onPress={() => navigation.navigate("ViewTVShows")} />
     </View>
   );
 };

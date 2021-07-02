@@ -1,19 +1,10 @@
-import React from 'react';
-import {
-  View,
-  Text,
-  Button,
-  StyleSheet,
-  Image,
-  ActivityIndicator,
-} from 'react-native';
-import { MaterialIcons } from '@expo/vector-icons';
+import React from "react";
+import { View, Text, Button, StyleSheet, Image, ActivityIndicator } from "react-native";
+import { MaterialIcons } from "@expo/vector-icons";
 
-const SearchResultItem = ({ movie, saveMovie }) => {
+const SearchResultItem = ({ movie, saveTVShow }) => {
   return (
-    <View
-      style={[styles.container, movie.existsInSaved && styles.existsInSaved]}
-    >
+    <View style={[styles.container, movie.existsInSaved && styles.existsInSaved]}>
       <View style={styles.movieInfo}>
         <Text style={styles.title}>{movie.title}</Text>
         <View style={styles.genreContainer}>
@@ -27,9 +18,7 @@ const SearchResultItem = ({ movie, saveMovie }) => {
           <Text style={styles.dateText}> {movie.releaseDate?.formatted}</Text>
         </View>
         <Text>{movie.overview}</Text>
-        {!movie.existsInSaved && (
-          <Button title="Add" onPress={() => saveMovie(movie)} />
-        )}
+        {!movie.existsInSaved && <Button title="Add" onPress={() => saveTVShow(movie)} />}
       </View>
       {movie.posterURL ? (
         <Image
@@ -48,59 +37,59 @@ const SearchResultItem = ({ movie, saveMovie }) => {
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
+    flexDirection: "row",
     margin: 5,
-    borderColor: 'black',
+    borderColor: "black",
     borderWidth: 1,
     padding: 5,
-    backgroundColor: '#ecf0f1',
+    backgroundColor: "#ecf0f1",
   },
   movieInfo: {
     flex: 1,
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 2,
   },
   genreContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     marginBottom: 10,
   },
   genre: {
     padding: 2,
     marginHorizontal: 5,
-    borderColor: 'black',
+    borderColor: "black",
     borderWidth: 1,
     fontSize: 12,
-    backgroundColor: '#34495e44',
+    backgroundColor: "#34495e44",
   },
   dateContainer: {
     marginBottom: 5,
   },
   dateText: {
     fontSize: 14,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   image: {
     width: 150,
     height: 225,
-    borderColor: 'black',
+    borderColor: "black",
     borderWidth: 1,
     marginLeft: 5,
   },
   imageBackup: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   imageBackupText: {
     fontSize: 16,
-    fontWeight: 'bold',
-    textAlign: 'center',
+    fontWeight: "bold",
+    textAlign: "center",
   },
   existsInSaved: {
-    borderColor: 'green',
-    backgroundColor: 'lightgreen',
+    borderColor: "green",
+    backgroundColor: "lightgreen",
     borderWidth: 2,
   },
 });

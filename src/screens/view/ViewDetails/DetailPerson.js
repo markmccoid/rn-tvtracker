@@ -34,7 +34,7 @@ const DetailPerson = ({ navigation, route }) => {
   const [showBio, setShowBio] = useState(false);
   const [personMovieData, isLoading] = useGetPersonMovies(personId);
   const actions = useOActions();
-  const { saveMovie, deleteMovie } = actions.oSaved;
+  const { saveTVShow, deleteMovie } = actions.oSaved;
 
   const toggleShowBio = () => setShowBio((prevState) => !prevState);
   //loads personDetails and movies that person was in(personCredits)
@@ -149,7 +149,7 @@ const DetailPerson = ({ navigation, route }) => {
               <SearchResultItem
                 key={item.id + idx.toString()}
                 movie={item}
-                saveMovie={saveMovie}
+                saveTVShow={saveTVShow}
                 deleteMovie={deleteMovie}
                 setOnDetailsPage={() => {}}
                 navigateToScreen={fromRouteName}

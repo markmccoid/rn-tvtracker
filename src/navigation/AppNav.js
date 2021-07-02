@@ -9,11 +9,11 @@ import ViewStack from "../screens/view/ViewStack";
 import SearchStack from "../screens/search/SearchStack";
 import TagStack from "../screens/tags/TagStack";
 
-import { ViewMovieIcon, TagIcon, AddIcon } from "../components/common/Icons";
+import { ViewTVShowIcon, TagIcon, AddIcon } from "../components/common/Icons";
 import { colors } from "../globalStyles";
 
 import SettingsStackScreen from "../screens/settings/SettingsStack";
-import TestCarouselAnim from "../screens/view/ViewMovies/TestCarouselAnim";
+import TestCarouselAnim from "../screens/view/ViewTVShows/TestCarouselAnim";
 import AppNavDrawerContent from "./AppNavDrawerContent";
 
 //----------------------------------------------------------------
@@ -24,8 +24,8 @@ const tabsScreenOptions = ({ route }) => ({
     let iconComponent;
     let tagStyle = { marginTop: 5 };
     switch (route.name) {
-      case "ViewMoviesTab":
-        iconComponent = <ViewMovieIcon size={size} color={color} style={tagStyle} />;
+      case "ViewTVShowsTab":
+        iconComponent = <ViewTVShowIcon size={size} color={color} style={tagStyle} />;
         break;
       case "SearchStack":
         iconComponent = <AddIcon size={size} color={color} style={tagStyle} />;
@@ -61,8 +61,8 @@ const RedirectToMain = ({ navigation }) => {
   // whenever this component gets focus.
   // Currently this is from the Drawer link "Home"
   useFocusEffect(() => {
-    navigation.navigate("ViewMoviesTab", {
-      screen: "ViewMovies",
+    navigation.navigate("ViewTVShowsTab", {
+      screen: "ViewTVShows",
       params: { screen: "Filter", forgotParam: "shit" },
     });
   });
@@ -75,7 +75,7 @@ const AppTabsScreen = () => {
   return (
     <AppTabs.Navigator
       // lazy={false}
-      initialRouteName="ViewMoviesTab"
+      initialRouteName="ViewTVShowsTab"
       screenOptions={tabsScreenOptions}
       tabBarOptions={{
         style: {
@@ -91,16 +91,16 @@ const AppTabsScreen = () => {
       }}
     >
       <AppTabs.Screen
-        name="ViewMoviesTab"
+        name="ViewTVShowsTab"
         component={ViewStack}
         options={{
-          title: "My Movies",
+          title: "My TV",
         }}
       />
       <AppTabs.Screen
         name="SearchStack"
         component={SearchStack}
-        options={{ title: "Add Movie" }}
+        options={{ title: "Add TV Show" }}
       />
       <AppTabs.Screen name="Tags" component={TagStack} />
     </AppTabs.Navigator>

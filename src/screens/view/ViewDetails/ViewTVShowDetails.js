@@ -42,8 +42,8 @@ const transition2 = (
   </Transition.Sequence>
 );
 
-const ViewSavedMovieDetails = ({ movie, isInSavedMovies }) => {
-  const movieId = movie?.id;
+const ViewTVShowDetails = ({ tvShow, isInSavedTVShows }) => {
+  const tvShowId = tvShow?.id;
   const ref = React.useRef(null);
   const [viewTags, setViewTags] = React.useState(false);
   // Also used for toValue in animations
@@ -56,13 +56,13 @@ const ViewSavedMovieDetails = ({ movie, isInSavedMovies }) => {
   // Animated Icons
   const iconAnim = React.useRef(new Animated.Value(0)).current;
 
-  const castData = useCastData(movieId);
+  const castData = useCastData(tvShowId);
   const state = useOState();
   const actions = useOActions();
-  // let movie = state.oSaved.getMovieDetails(movieId);
-  let tags = state.oSaved.getAllMovieTags(movieId);
-  let assignedTags = state.oSaved.getMovieTags(movieId);
-  let { removeTagFromMovie, addTagToMovie } = actions.oSaved;
+  // let movie = state.oSaved.getMovieDetails(tvShowId);
+  let tags = state.oSaved.getAllTVShowTags(tvShowId);
+  let assignedTags = state.oSaved.getTVShowTags(tvShowId);
+  let { removeTagFromTVShow, addTagToTVShow } = actions.oSaved;
   const { width, height } = useDimensions().window;
 
   const navigation = useNavigation();
@@ -76,33 +76,33 @@ const ViewSavedMovieDetails = ({ movie, isInSavedMovies }) => {
     }).start();
   };
 
-  if (!movie) {
+  if (!tvShow) {
     return null;
   }
   return (
     <View style={{ flex: 1 }}>
-      {/* {isInSavedMovies && <UserRating movieId={movieId} />} */}
+      {/* {isInSavedTVShows && <UserRating tvShowId={tvShowId} />} */}
       <DetailMainInfo
-        movie={movie}
-        isInSavedMovies={isInSavedMovies}
+        tvShow={tvShow}
+        isInSavedTVShows={isInSavedTVShows}
         viewTags={viewTags}
         setViewTags={setViewTags}
         transitionRef={ref}
       />
       {/* Saved Details button Bar and components
         ------------------------------------------- */}
-      {isInSavedMovies && (
+      {isInSavedTVShows && (
         <View>
           <Transitioning.View ref={ref} transition={transition2}>
             <DetailSelectTags
               viewTags={viewTags}
               tags={tags}
               onSelectTag={(tagObj) =>
-                addTagToMovie({ movieId: movie.id, tagId: tagObj.tagId })
+                addTagToTVShow({ tvShowId: tvShow.id, tagId: tagObj.tagId })
               }
-              removeTagFromMovie={(tagObj) =>
-                removeTagFromMovie({
-                  movieId: movie.id,
+              removeTagFromTVShow={(tagObj) =>
+                removeTagFromTVShow({
+                  tvShowId: tvShow.id,
                   tagId: tagObj.tagId,
                 })
               }
@@ -119,8 +119,8 @@ const ViewSavedMovieDetails = ({ movie, isInSavedMovies }) => {
                       isSelected={tagObj.isSelected}
                       size="s"
                       onDeSelectTag={() =>
-                        removeTagFromMovie({
-                          movieId: movie.id,
+                        removeTagFromTVShow({
+                          tvShowId: tvShow.id,
                           tagId: tagObj.tagId,
                         })
                       }
@@ -139,23 +139,23 @@ const ViewSavedMovieDetails = ({ movie, isInSavedMovies }) => {
         setPickImage={setPickImage}
         setvpiAnimation={setvpiAnimation}
         transitionRef={ref}
-        imdbId={movie.imdbId}
-        movieTitle={movie.title}
-        isInSavedMovies={isInSavedMovies}
+        imdbId={tvShow.imdbId}
+        tvShowName={tvShow.name}
+        isInSavedTVShows={isInSavedTVShows}
       />
 
       <Transitioning.View>
-        {isInSavedMovies && (
+        {isInSavedTVShows && (
           <View>
             {/* <DetailSelectTags
                 viewTags={viewTags}
                 tags={tags}
                 onSelectTag={(tagObj) =>
-                  addTagToMovie({ movieId: movie.id, tagId: tagObj.tagId })
+                  addTagToTVShow({ tvShowId: tvShow.id, tagId: tagObj.tagId })
                 }
-                removeTagFromMovie={(tagObj) =>
-                  removeTagFromMovie({
-                    movieId: movie.id,
+                removeTagFromTVShow={(tagObj) =>
+                  removeTagFromTVShow({
+                    tvShowId: tvShow.id,
                     tagId: tagObj.tagId,
                   })
                 }
@@ -163,7 +163,7 @@ const ViewSavedMovieDetails = ({ movie, isInSavedMovies }) => {
 
             {!!!viewPickImage && (
               <PickImage
-                movieId={movie.id}
+                tvShowId={tvShow.id}
                 setViewPickImage={setPickImage}
                 vpiAnimation={vpiAnimation}
               />
@@ -175,15 +175,15 @@ const ViewSavedMovieDetails = ({ movie, isInSavedMovies }) => {
          END Saved Details button Bar and components 
          ------------------------------------------- */}
         <HiddenContainer style={{ marginBottom: 10 }} title="Where To Watch">
-          <DetailWatchProviders movieId={movie.id} />
+          <DetailWatchProviders tvShowId={tvShow.id} />
         </HiddenContainer>
 
         <HiddenContainer style={{ marginVertical: 5 }} title="Recommendations">
-          <DetailRecommendations movieId={movie.id} />
+          <DetailRecommendations tvShowId={tvShow.id} />
         </HiddenContainer>
 
         <HiddenContainer style={{ marginVertical: 5 }} title="Videos">
-          <DetailVideos movieId={movie.id} />
+          <DetailVideos tvShowId={tvShow.id} />
         </HiddenContainer>
 
         <HiddenContainer style={{ marginVertical: 10 }} title="Cast" startOpen>
@@ -230,4 +230,4 @@ const styles = StyleSheet.create({
   },
 });
 //`imdb:///find?q=${movie.title}`
-export default ViewSavedMovieDetails;
+export default ViewTVShowDetails;

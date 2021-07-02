@@ -19,31 +19,31 @@ const imageHeight = (width / 3 - 20) / 0.67;
 // Individual movie "boxes" shown on search result screen
 const SearchResultItem = ({
   tvShow,
-  saveMovie,
+  saveTVShow,
   deleteMovie,
   setOnDetailsPage,
   navigateToScreen,
 }) => {
   const { navigate, push } = useNavigation();
 
-  // If movie exists in library, then we display it in details page differently
+  // If tv show exists in library, then we display it in details page differently
   // The DetailsFromSearch screen is in the SearchStack.js file, but points to
   // the same component as the the details screen from the ViewStack.js screen.
   // Both point to ViewDetails.js
   // The navigateToScreen prop will be either "DetailsFromSearch" from the SearchStack.js
   // OR "Details" from the ViewStack.js.  This is determined if the starting point was "My Movies"(ViewStack)
-  // OR "Add Movie"(SearchStack)
+  // OR "Add tvShow"(SearchStack)
   // NOTE: using push instead of navigate so that each screen is pushed onto stack
   const navigateToDetails = () => {
     setOnDetailsPage(true);
     if (tvShow.existsInSaved) {
       push(navigateToScreen, {
-        movieId: tvShow.id,
-        movie: undefined,
+        tvShowId: tvShow.id,
+        tvShow: undefined,
         notSaved: false,
       });
     } else {
-      push(navigateToScreen, { tvShow, movieId: undefined, notSaved: true });
+      push(navigateToScreen, { tvShow, tvShowId: undefined, notSaved: true });
     }
   };
 
@@ -73,7 +73,7 @@ const SearchResultItem = ({
       <TouchableOpacity
         activeOpacity={0.7}
         style={{ flex: 1 }}
-        onPress={() => (tvShow.existsInSaved ? deleteMovie(tvShow.id) : saveMovie(tvShow))}
+        onPress={() => (tvShow.existsInSaved ? deleteMovie(tvShow.id) : saveTVShow())}
       >
         <View
           style={[
@@ -92,32 +92,6 @@ const SearchResultItem = ({
           </View>
         </View>
       </TouchableOpacity>
-      {/* <View
-        style={[
-          { flex: 1, alignItems: "center", justifyContent: "center" },
-          movie.existsInSaved && styles.exists,
-        ]}
-      >
-        <Text numberOfLines={1} style={styles.title}>
-          {movie.title}
-        </Text>
-      </View>
-      <TouchableOpacity
-        style={[styles.addMovieButton, movie.existsInSaved && styles.exists]}
-        onPress={() =>
-          movie.existsInSaved ? deleteMovie(movie.id) : saveMovie(movie)
-        }
-      >
-        <View
-          style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
-        >
-          {movie.existsInSaved ? (
-            <CheckIcon size={20} />
-          ) : (
-            <AddIcon size={20} />
-          )}
-        </View>
-      </TouchableOpacity> */}
     </View>
   );
 };

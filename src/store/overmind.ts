@@ -34,10 +34,10 @@ import { config as oAdmin } from "./oAdmin";
 
 export const config = namespaced({ oAdmin, oSearch, oSaved });
 export const useOvermind = createHook();
-export const useOState = createStateHook();
-export const useOActions = createActionsHook();
-export const useOEffects = createEffectsHook();
-export const useOReaction = createReactionHook();
+export const useOState = createStateHook<Config>();
+export const useOActions = createActionsHook<Config>();
+export const useOEffects = createEffectsHook<Config>();
+export const useOReaction = createReactionHook<Config>();
 
 // export const overmind = createOvermind(config);
 export const overmind = createOvermind(config, { devtools: "192.168.1.27:3031" });

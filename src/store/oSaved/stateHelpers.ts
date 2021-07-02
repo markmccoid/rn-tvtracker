@@ -1,16 +1,17 @@
 import _ from "lodash";
+import { State, TagData, TagDataExtended } from "./state";
 // These functions are used by the getters in the state
 // They help abstract common functionality used by multiple getters
-export const retrieveTagIds = (tagObjArray) => {
+export const retrieveTagIds = (tagObjArray: TagData[]) => {
   return tagObjArray.map((tagObj) => tagObj.tagId);
 };
 
-export const retrieveMovieTagIds = (state, movieId) => {
-  // Check to make sure we have tags for passed movieId
-  if (!state.taggedMovies || !state.taggedMovies[movieId]) {
+export const retrieveTVShowTagIds = (state: State, tvShowId: number) => {
+  // Check to make sure we have tags for passed tvShowId
+  if (!state.taggedTVShows || !state.taggedTVShows[tvShowId]) {
     return [];
   }
-  return state.taggedMovies[movieId];
+  return state.taggedTVShows[tvShowId];
 };
 /**
  *
@@ -18,10 +19,14 @@ export const retrieveMovieTagIds = (state, movieId) => {
  * @param {*} tagIdArray
  * @param {*} isSelected
  */
-export const buildTagObjFromIds = (state, tagIdArray, isSelected) => {
+export const buildTagObjFromIds = (
+  state: State,
+  tagIdArray: string[],
+  isSelected: { isSelected: boolean } | { tagState: "include" | "exclude" | "inactive" }
+): TagDataExtended[] => {
   // loop through all tags and when find a match in passed tagIdArray
   // return an object { tagId, tagName, isSelected }
-  let tagsObj = state.getTags.reduce((final, tagObj) => {
+  let tagsObj = state.getTags.reduce((final: TagDataExtended[], tagObj) => {
     if (tagIdArray.find((tagId) => tagId === tagObj.tagId)) {
       final = [...final, { tagId: tagObj.tagId, tagName: tagObj.tagName, ...isSelected }];
     }
@@ -42,10 +47,10 @@ export const buildGenreObjFromArray = (filterGenres, isSelected = true) => {
  * Version 2, different approach to the search/filter
  * Thinking that
  *
- * @param {array} savedMoviesIn - array of all movies saved
+ * @param {array} savedTVShowsIn - array of all movies saved
  * @param {*} filterData - data fo filter on
  */
-export const filterMovies = (savedMoviesIn, filterData) => {
+export const filterTVShows = (savedTVShowsIn, filterData) => {
   let {
     tags: filterTags,
     excludeTags: excludeFilterTags,
@@ -56,14 +61,14 @@ export const filterMovies = (savedMoviesIn, filterData) => {
     searchFilter,
   } = filterData;
 
-  return savedMoviesIn.filter((movie, index) => {
+  return savedTVShowsIn.filter((tvShow, index) => {
     // Check each potential filter and bail (return false) on first one that fails.
 
     //=========================
     // Start with SearchFilter
     if (searchFilter) {
-      // If the movie title doesn't match the search filter, bail on this movie
-      if (!movie.title.toLowerCase().includes(searchFilter)) {
+      // If the tvShow title doesn't match the search filter, bail on this tvShow
+      if (!tvShow.name.toLowerCase().includes(searchFilter)) {
         return false;
       }
     }
@@ -71,11 +76,11 @@ export const filterMovies = (savedMoviesIn, filterData) => {
     // Check Genres
     if (filterGenres?.length > 0) {
       if (genreOperator === "AND") {
-        if (!filterGenres.every((genre) => movie.genres.includes(genre))) {
+        if (!filterGenres.every((genre) => tvShow.genres.includes(genre))) {
           return false;
         }
       } else if (genreOperator === "OR") {
-        if (!filterGenres.some((genre) => movie.genres.includes(genre))) {
+        if (!filterGenres.some((genre) => tvShow.genres.includes(genre))) {
           return false;
         }
       }
@@ -87,32 +92,32 @@ export const filterMovies = (savedMoviesIn, filterData) => {
     // flag where true means there are tags to check (either include or exclude tags)
     const filterTagsExist = filterTags.length > 0 || excludeFilterTags.length > 0;
     // If no filter tags exist and we have passed above tests, then simply return true
-    // as this movie should be included in results
+    // as this tvShow should be included in results
     if (!filterTagsExist) {
       return true;
     }
 
-    // If INCLUDE filter tags do exist, but the movie doesn't have any tags assigned
-    // then return false as this movie can't match the tags
-    // if taggedWith doesn't exists, I expect movie?.taggedWith to return undefined, using !!! to
+    // If INCLUDE filter tags do exist, but the tvShow doesn't have any tags assigned
+    // then return false as this tvShow can't match the tags
+    // if taggedWith doesn't exists, I expect tvShow?.taggedWith to return undefined, using !!! to
     // turn to boolean and flip so that undefined becomes truthy and if taggedWith exists, becomes falsey
-    if (filterTags.length > 0 && !!!movie?.taggedWith) {
+    if (filterTags.length > 0 && !!!tvShow?.taggedWith) {
       return false;
     }
 
-    // If we are here, taggedWith WILL exist on the movie object, but still will be safe
-    movieTaggedWith = movie?.taggedWith ?? [];
+    // If we are here, taggedWith WILL exist on the tvShow object, but still will be safe
+    const tvShowTaggedWith = tvShow?.taggedWith ?? [];
     // We also know that there are either filterTags OR excludeFilterTags
     // First check if movie has the Filter Tags in its list
     if (filterTags.length > 0) {
       if (tagOperator === "AND" && filterTags?.length > 0) {
         // AND filter for passed tags
-        if (!filterTags.every((tag) => movieTaggedWith.includes(tag))) {
+        if (!filterTags.every((tag) => tvShowTaggedWith.includes(tag))) {
           return false;
         }
       } else if (tagOperator === "OR" && filterTags?.length > 0) {
         // OR filter for passed tags
-        if (!filterTags.some((tagId) => movieTaggedWith.includes(tagId))) {
+        if (!filterTags.some((tagId) => tvShowTaggedWith.includes(tagId))) {
           return false;
         }
       }
@@ -122,12 +127,12 @@ export const filterMovies = (savedMoviesIn, filterData) => {
     if (excludeFilterTags.length > 0) {
       if (excludeTagOperator === "AND") {
         // AND filter for passed tags
-        if (excludeFilterTags.every((tag) => movieTaggedWith.includes(tag))) {
+        if (excludeFilterTags.every((tag) => tvShowTaggedWith.includes(tag))) {
           return false;
         }
       } else if (excludeTagOperator === "OR") {
         // OR filter for passed tags
-        if (excludeFilterTags.some((tagId) => movieTaggedWith.includes(tagId))) {
+        if (excludeFilterTags.some((tagId) => tvShowTaggedWith.includes(tagId))) {
           return false;
         }
       }
@@ -141,7 +146,16 @@ export const filterMovies = (savedMoviesIn, filterData) => {
  * @param {array} tagsToSort - Array of tag objects
  * @param {object} config - sortType and helpers
  */
-export const tagSorter = (unsortedTags, config) => {
+export const tagSorter = (
+  unsortedTags: {
+    [key: number]: TagDataExtended;
+  },
+  config: {
+    sortType: "fromarray";
+    sortedTagArray: TagData[];
+    attribute: "isSelected" | "tagState";
+  }
+): TagDataExtended[] => {
   const { sortType, sortedTagArray, attribute } = config;
   // We want to return the tags sorted as they are in the original array
   // Pull all the tags and return the array sorted tag with the isSelected
