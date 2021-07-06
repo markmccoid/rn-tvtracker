@@ -59,17 +59,17 @@ const DetailMainInfoHoldMenu = ({
   return (
     <TouchableOpacity
       activeOpacity={0.8}
-      onPress={
-        isInSavedTVShows || !isRefreshing
-          ? async () => {
-              setisRefreshing(true);
-              let msg = await refreshTVShow(tvShow.id);
-              setisRefreshing(false);
-              showRefreshAlert(msg);
-              navigateToRoute();
-            }
-          : null
-      }
+      // onPress={
+      //   isInSavedTVShows || !isRefreshing
+      //     ? async () => {
+      //         setisRefreshing(true);
+      //         let msg = await refreshTVShow(tvShow.id);
+      //         setisRefreshing(false);
+      //         showRefreshAlert(msg);
+      //         navigateToRoute();
+      //       }
+      //     : null
+      // }
       onLongPress={
         !isRefreshing
           ? () => {

@@ -1,6 +1,5 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { View, Text, LayoutAnimation } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { TagContainer, Tag, TagIcon, TagText } from "./TagCloudStyles";
 
@@ -59,7 +58,7 @@ Usage Example:
             addTagToMovie({ movieId: movie.id, tagId: tagObj.tagId })
           }
           onDeSelectTag={() =>
-            removeTagFromMovie({
+            removeTagFromTVShow({
               movieId: movie.id,
               tagId: tagObj.tagId,
             })

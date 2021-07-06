@@ -33,7 +33,7 @@ export function parseToDate(dateString) {
   // if (!(dateString instanceof Date)) {
   //   theDate = parseISO(theDate); // date-fns to convert to javascript date object
   // }
-  console.log("the date", getUnixTime(new Date()));
+  // console.log("the date", getUnixTime(new Date()));
   return {
     epoch: getUnixTime(theDate),
     formatted: format(theDate, "MM-dd-yyyy"),

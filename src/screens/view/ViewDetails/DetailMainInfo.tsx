@@ -1,5 +1,13 @@
 import * as React from "react";
-import { View, Text, StyleSheet, ScrollView, Alert, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  Alert,
+  TouchableOpacity,
+  ImageStyle,
+} from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import DetailMainInfoHoldMenu from "./DetailMainInfoHoldMenu";
 
@@ -10,8 +18,16 @@ import LongTouchUserRating from "./LongTouchUserRating";
 import { Button } from "../../../components/common/Buttons";
 import PosterImage from "../../../components/common/PosterImage";
 import { colors, styleHelpers } from "../../../globalStyles";
+import { TVShowDetails } from "@markmccoid/tmdb_api";
 
-const DetailMainInfo = ({
+type Props = {
+  tvShow: TVShowDetails;
+  isInSavedTVShows: boolean;
+  viewTags: boolean;
+  setViewTags: (viewTags: boolean) => void;
+  transitionRef: React.Ref<View>;
+};
+const DetailMainInfo: React.FC<Props> = ({
   tvShow,
   isInSavedTVShows,
   viewTags,
@@ -34,7 +50,13 @@ const DetailMainInfo = ({
   const posterHeight = posterWidth * 1.5;
 
   // Get data to use from tvShow object
-  const { overview = "", releaseDate = "", imdbURL = "", runtime = "" } = tvShow;
+  const {
+    overview = "",
+    firstAirDate,
+    imdbURL = "",
+    avgEpisodeRunTime = "",
+    lastAirDate,
+  } = tvShow;
 
   const toggleOverview = () => setOverviewHeight((curr) => (curr ? undefined : 205));
   const navigateToRoute = () =>
@@ -76,7 +98,7 @@ const DetailMainInfo = ({
           >
             {isInSavedTVShows && (
               <LongTouchUserRating
-                tvShowIdId={tvShow.id}
+                // tvShowId={tvShow.id}
                 userRating={tvShowUserRating}
                 updateUserRating={(userRating) =>
                   updateUserRatingToTVShow({ tvShowId: tvShow.id, userRating })
@@ -140,13 +162,22 @@ const DetailMainInfo = ({
       <View style={{ flexDirection: "row", flex: 1 }}>
         <View>
           <View style={styles.textRow}>
-            <Text style={styles.textRowLabel}>Released:</Text>
-            <Text style={{ fontSize: 18 }}>{releaseDate.formatted}</Text>
+            <Text style={styles.textRowLabel}>First Air Date:</Text>
+            <Text style={{ fontSize: 18 }}>{firstAirDate?.formatted}</Text>
           </View>
-          {runtime ? (
+          <View style={styles.textRow}>
+            <Text style={styles.textRowLabel}>Latest Air Date:</Text>
+            <Text style={{ fontSize: 18 }}>{lastAirDate?.formatted}</Text>
+          </View>
+          <View style={styles.textRow}>
+            <Text style={styles.textRowLabel}>Status:</Text>
+            <Text style={{ fontSize: 18 }}>{tvShow.status}</Text>
+          </View>
+
+          {avgEpisodeRunTime ? (
             <View style={styles.textRow}>
               <Text style={styles.textRowLabel}>Length: </Text>
-              <Text style={{ fontSize: 18 }}>{runtime} minutes</Text>
+              <Text style={{ fontSize: 18 }}>{avgEpisodeRunTime} minutes</Text>
             </View>
           ) : null}
           <View style={[styles.textRow, { flexWrap: "wrap", width: width / 1.5 }]}>
@@ -203,9 +234,9 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0,
     marginRight: 5,
   },
-  posterImage: (width, height) => ({
-    width,
-    height,
+  posterImage: (widthIn: number, heightIn: number): ImageStyle => ({
+    width: widthIn,
+    height: heightIn,
   }),
   textRow: {
     flexDirection: "row",

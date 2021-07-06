@@ -22,6 +22,7 @@ export type TVSearchItem = {
   firstAirDate: DateObject;
   overview: string;
   backdropURL: string;
+  posterURL: string;
   genres: string[];
   existsInSaved?: boolean;
 };

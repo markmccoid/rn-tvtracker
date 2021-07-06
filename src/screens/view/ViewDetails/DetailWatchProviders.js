@@ -12,9 +12,9 @@ const SMALL_SPACE_BETWEEN = 10;
 const IMAGE_WIDTH = 50;
 const LARGE_SPACE_BETWEEN = 40;
 
-const DetailWatchProviders = ({ movieId }) => {
+const DetailWatchProviders = ({ tvShowId }) => {
   const scrollRef = React.useRef();
-  const [watchProviders, watchProvidersIsLoading] = useWatchProviderData(movieId);
+  const [watchProviders, watchProvidersIsLoading] = useWatchProviderData(tvShowId);
   // Both of these should be calculated in useWatchProviderData hook
   const [flatProviders, setFlatProviders] = React.useState([]);
   const [titles, setTitles] = React.useState([]);
@@ -29,10 +29,10 @@ const DetailWatchProviders = ({ movieId }) => {
       setScrollIndex(0);
     }
   }, [watchProvidersIsLoading]);
-  // Reset scrollIndex to zero when a new movieId is passed
+  // Reset scrollIndex to zero when a new tvShowId is passed
   React.useEffect(() => {
     setScrollIndex(0);
-  }, [movieId]);
+  }, [tvShowId]);
 
   React.useEffect(() => {
     if (!watchProvidersIsLoading) {

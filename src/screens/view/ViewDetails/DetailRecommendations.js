@@ -5,13 +5,13 @@ import { useRecommendedData } from "../../../hooks/useRecommendedData";
 import { useOActions } from "../../../store/overmind";
 import { useRoute } from "@react-navigation/native";
 
-const DetailRecommendations = ({ movieId }) => {
+const DetailRecommendations = ({ tvShowId }) => {
   const flatRef = React.useRef();
-  const [recommendations, recommendIsLoading] = useRecommendedData(movieId);
+  const [recommendations, recommendIsLoading] = useRecommendedData(tvShowId);
   const [scrollIndex, setScrollIndex] = React.useState(0);
   const route = useRoute();
   const actions = useOActions();
-  const { saveTVShow, deleteMovie } = actions.oSaved;
+  const { saveTVShow, deleteTVShow } = actions.oSaved;
 
   // Everytime we load the recommendations,
   React.useEffect(() => {
@@ -20,10 +20,10 @@ const DetailRecommendations = ({ movieId }) => {
       setScrollIndex(0);
     }
   }, [recommendIsLoading]);
-  // Reset scrollIndex to zero when a new movieId is passed
+  // Reset scrollIndex to zero when a new tvShowId is passed
   React.useEffect(() => {
     setScrollIndex(0);
-  }, [movieId]);
+  }, [tvShowId]);
 
   if (recommendIsLoading) {
     return (
@@ -45,7 +45,6 @@ const DetailRecommendations = ({ movieId }) => {
       </View>
     );
   }
-
   if (recommendations.length === 0 && !recommendIsLoading) {
     return (
       <View style={{ flexDirection: "row", justifyContent: "center" }}>
@@ -64,9 +63,9 @@ const DetailRecommendations = ({ movieId }) => {
         return (
           <SearchResultItem
             key={item.id}
-            movie={item}
+            tvShow={item}
             saveTVShow={saveTVShow}
-            deleteMovie={deleteMovie}
+            deleteTVShow={deleteTVShow}
             setOnDetailsPage={() => {}}
             navigateToScreen={route.name}
           />

@@ -132,7 +132,7 @@ const TestCarouselAnim = ({ navigation }) => {
                 <Text style={{ fontSize: 24 }} numberOfLines={1}>
                   {item.title}
                 </Text>
-                <Text>{item.releaseDate.formatted}</Text>
+                <Text>{item.firstAirDate.formatted}</Text>
                 <Text style={{ fontSize: 12 }} numberOfLines={3}>
                   {item.overview}
                 </Text>

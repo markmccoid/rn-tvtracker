@@ -18,7 +18,7 @@ import { Button } from "../../../components/common/Buttons";
 import { colors } from "../../../globalStyles";
 import DataRow from "../../../components/common/DataRow";
 import SearchResultItem from "../../../components/search/SearchResultItem";
-import { useGetPersonMovies } from "../../../hooks/useGetPersonMovies";
+import { useGetPersonTVShows } from "../../../hooks/useGetPersonTVShows";
 
 import { LessIcon, MoreIcon } from "../../../components/common/Icons";
 
@@ -32,7 +32,7 @@ const DetailPerson = ({ navigation, route }) => {
   const { personId, fromRouteName } = route.params;
   const [personInfo, setPersonInfo] = useState(undefined);
   const [showBio, setShowBio] = useState(false);
-  const [personMovieData, isLoading] = useGetPersonMovies(personId);
+  const [personTVShowData, isLoading] = useGetPersonTVShows(personId);
   const actions = useOActions();
   const { saveTVShow, deleteMovie } = actions.oSaved;
 
@@ -144,11 +144,11 @@ const DetailPerson = ({ navigation, route }) => {
             <ActivityIndicator size="large" />
           </View>
         ) : (
-          personMovieData.map((item, idx) => {
+          personTVShowData.map((item, idx) => {
             return (
               <SearchResultItem
                 key={item.id + idx.toString()}
-                movie={item}
+                tvShow={item}
                 saveTVShow={saveTVShow}
                 deleteMovie={deleteMovie}
                 setOnDetailsPage={() => {}}

@@ -17,7 +17,7 @@ import { useVideoData } from "../../../hooks/useVideoData";
 const THUMBNAIL_WIDTH = 120 * 1.77;
 const THUMBNAIL_HEIGHT = 120;
 
-const DetailVideos = ({ movieId }) => {
+const DetailVideos = ({ tvShowId }) => {
   {
     //creat a flatlist to hold
     // create an play button overlay (absolute positioned?)
@@ -25,7 +25,7 @@ const DetailVideos = ({ movieId }) => {
     //
   }
 
-  const [videoData, videoDataLoading] = useVideoData(movieId);
+  const [videoData, videoDataLoading] = useVideoData(tvShowId);
 
   if (videoDataLoading) {
     return (

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { movieGetWatchProviders } from "@markmccoid/tmdb_api";
+import { tvGetWatchProviders } from "@markmccoid/tmdb_api";
 import _ from "lodash";
 
 type ProviderInfo = {
@@ -21,7 +21,7 @@ const initWatchProviders: WatchProvidersType = {
   buy: [],
 };
 
-export function useWatchProviderData(movieId: string): [WatchProvidersType, boolean] {
+export function useWatchProviderData(tvShowId: number): [WatchProvidersType, boolean] {
   let [watchProviders, setWatchProviders] = useState<WatchProvidersType>(initWatchProviders);
   let [isLoading, setIsLoading] = useState<boolean>(true);
 
@@ -29,13 +29,13 @@ export function useWatchProviderData(movieId: string): [WatchProvidersType, bool
   // if not there, then reads from API and saves to local storage
   const loadWatchProviderData = async () => {
     setIsLoading(true);
-    if (!movieId) {
+    if (!tvShowId) {
       setWatchProviders(initWatchProviders);
       setIsLoading(false);
       return;
     }
     // not passing country codes, which means we will only get back 'US'
-    const tempData = await movieGetWatchProviders(movieId);
+    const tempData = await tvGetWatchProviders(tvShowId);
     const tempDataUS: WatchProvidersType = tempData.data.results.US;
     // Sort each array "rent, buy, stream" by their displayPriority
     const finalData = {
@@ -52,6 +52,6 @@ export function useWatchProviderData(movieId: string): [WatchProvidersType, bool
 
   useEffect(() => {
     loadWatchProviderData();
-  }, [movieId]);
+  }, [tvShowId]);
   return [watchProviders, isLoading];
 }

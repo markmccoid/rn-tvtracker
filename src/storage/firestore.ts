@@ -83,7 +83,6 @@ export const addTVShowToFirestore = async (tvShowObj: SavedTVShowsDoc) => {
 //};
 export const updateTVShowInFirestore = (tvShowId, updateStmt) => {
   let uid = Firebase.auth().currentUser.uid;
-  console.log("TVSHOWID IN FIRESOTRE", tvShowId);
   let tvShowDocRef = firestore
     .collection("users")
     .doc(uid)

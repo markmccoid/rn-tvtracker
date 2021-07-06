@@ -20,12 +20,11 @@ const imageHeight = (width / 3 - 20) / 0.67;
 const SearchResultItem = ({
   tvShow,
   saveTVShow,
-  deleteMovie,
+  deleteTVShow,
   setOnDetailsPage,
   navigateToScreen,
 }) => {
   const { navigate, push } = useNavigation();
-
   // If tv show exists in library, then we display it in details page differently
   // The DetailsFromSearch screen is in the SearchStack.js file, but points to
   // the same component as the the details screen from the ViewStack.js screen.
@@ -43,14 +42,14 @@ const SearchResultItem = ({
         notSaved: false,
       });
     } else {
-      push(navigateToScreen, { tvShow, tvShowId: undefined, notSaved: true });
+      push(navigateToScreen, { tvShow: undefined, tvShowId: tvShow.id, notSaved: true });
     }
   };
 
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={navigateToDetails} activeOpacity={0.8}>
-        {tvShow.posterURL ? (
+        {tvShow?.posterURL ? (
           <View
             style={{
               borderBottomColor: "black",
@@ -58,7 +57,7 @@ const SearchResultItem = ({
             }}
           >
             <Image
-              source={{ url: tvShow.posterURL }}
+              source={{ url: tvShow?.posterURL }}
               style={styles.image}
               PlaceholderContent={<MaterialIcons name="broken-image" size={64} />}
             />
@@ -73,7 +72,9 @@ const SearchResultItem = ({
       <TouchableOpacity
         activeOpacity={0.7}
         style={{ flex: 1 }}
-        onPress={() => (tvShow.existsInSaved ? deleteMovie(tvShow.id) : saveTVShow())}
+        onPress={() =>
+          tvShow.existsInSaved ? deleteTVShow(tvShow.id) : saveTVShow(tvShow.id)
+        }
       >
         <View
           style={[

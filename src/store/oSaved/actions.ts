@@ -258,7 +258,7 @@ export const deleteTVShow = async ({ state, effects, actions }: Context, tvShowI
   //* However we need to update the local store
   // xtaggedMovies
   // delete state.oSaved.taggedMovies[movieId];
-  actions.oSaved.internal.maintainTaggedTVShowObj({ action: "deleteshow", tvShowId });
+  actions.oSaved.internal.maintainTaggedTVShowObj({ action: "deletetvshow", tvShowId });
 
   // When saving movie user is left on search screen, this will update
   // the screen to show that the selected movie has been saved
@@ -389,13 +389,13 @@ export const addNewTag = async ({ state, effects }, tagName) => {
 
 /**
  * Handles deleting tag from oSaved.tagData
- * AND removing any instances of tagId from oSaved.userData.tags array of movies
+ * AND removing any instances of tagId from oSaved.userData.tags array of TV shows
  * @param {state, effects, actions} overmind params
  * @param {*} tagId
  */
-export const deleteTag = async ({ state, effects, actions }, tagId) => {
+export const deleteTag = async ({ state, effects, actions }: Context, tagId: string) => {
   let existingTags = state.oSaved.tagData;
-  let { taggedMovies } = state.oSaved;
+  let { taggedTVShows } = state.oSaved;
   //Remove from tagData and save to Storage
   state.oSaved.tagData = existingTags.filter((tag) => tag.tagId !== tagId);
 
@@ -405,12 +405,14 @@ export const deleteTag = async ({ state, effects, actions }, tagId) => {
   await effects.oSaved.saveTags(state.oSaved.tagData);
 
   // Loop through all taggedMovie records and remove the tag being deleted from
-  // any oSaved.taggedMovies and oSaved.savedMovies[n].taggedWith
-  Object.keys(taggedMovies).forEach((movieId) => {
-    // Check each oSaved.taggedMovies object property to see if it's array includes the tag being deleted.
-    if (taggedMovies[movieId].includes(tagId)) {
-      // This action will delete the tag from both the oSaved.taggedMovies and oSaved.savedMovies[n].taggedWith
-      actions.oSaved.removeTagFromMovie({ movieId, tagId });
+  // any oSaved.taggedTVShows and oSaved.savedTVShows[n].taggedWith
+  Object.keys(taggedTVShows).forEach((tvShowIdString) => {
+    // Convert to number to satisfy TypeScript (and because tvShowId is a number!)
+    const tvShowId = +tvShowIdString;
+    // Check each oSaved.taggedTVShows object property to see if it's array includes the tag being deleted.
+    if (taggedTVShows[tvShowId].includes(tagId)) {
+      // This action will delete the tag from both the oSaved.taggedTVShows and oSaved.savedTVShows[n].taggedWith
+      actions.oSaved.removeTagFromTVShow({ tvShowId, tagId });
     }
   });
 
@@ -588,7 +590,6 @@ export const updateUserRatingToTVShow = async (
 
   const updateStmt = { userRating: userRating };
   // Update movie document in firestore.
-  console.log("action", tvShowId, updateStmt);
   await effects.oSaved.updateTVShowUserRating(tvShowId, updateStmt);
 };
 

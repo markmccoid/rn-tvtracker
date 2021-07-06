@@ -38,7 +38,7 @@ const { width, height } = Dimensions.get("window");
 //*
 //*
 const ViewDetails = ({ navigation, route }) => {
-  console.log(" IN VIEW DETAIL ", route.params);
+  // console.log(" IN VIEW DETAIL ", route.params);
   const [tvShowData, setTVShowData] = useState(undefined);
   const [isInSavedTVShows, setIsInSavedTVShows] = useState();
   const [isLoading, setIsLoading] = useState(false);
@@ -47,26 +47,26 @@ const ViewDetails = ({ navigation, route }) => {
   const { saveTVShow, deleteTVShow, apiGetTVShowDetails } = actions.oSaved;
   const getTempTVShowDetails = async (tvShowId) => {
     tvShowTemp = await apiGetTVShowDetails(tvShowId);
-    setTVShowData(tvShowTemp.data);
+    return tvShowTemp.data;
   };
 
-  const showIdTemp = route.params?.tvShow || route.params?.tvShowId;
+  // Not sure if this is best way to do this
+  // Getting saved data for tvShowId because need to check in useEffect
+  // to see if posterURL has changed so that we get new data passed down
+  const savedShowData = state.oSaved.getTVShowDetails(route.params?.tvShowId);
   useEffect(() => {
-    // setIsInSavedTVShows(!!!route.params?.notSaved); //if undefined or false, return true
-    setIsInSavedTVShows(state.oSaved.isTVShowSaved(showIdTemp));
-    console.log("SAVED?", showIdTemp, state.oSaved.isTVShowSaved(showIdTemp));
+    const mergeShowDetails = async (savedDetails = {}) => {
+      let tvShowDetails = await getTempTVShowDetails(route.params?.tvShowId);
+      setTVShowData({ ...tvShowDetails, ...savedDetails });
+    };
+
+    setIsInSavedTVShows(state.oSaved.isTVShowSaved(route.params?.tvShowId));
     let tvShowTemp = {};
     if (route.params?.tvShowId) {
-      tvShowTemp = state.oSaved.getTVShowDetails(route.params?.tvShowId);
-      setTVShowData(tvShowTemp);
-      return;
+      let tvShowSavedData = savedShowData; //state.oSaved.getTVShowDetails(route.params?.tvShowId);
+      mergeShowDetails(tvShowSavedData);
     }
-    if (route.params?.tvShow) {
-      // tvShowTemp = route.params?.movie;
-      getTempTVShowDetails(route.params?.tvShow.id);
-      return;
-    }
-  }, [route.params?.tvShowId, route.params?.tvShow, route.params?.notSaved]);
+  }, [route.params?.tvShowId, route.params?.notSaved, savedShowData?.posterURL]);
 
   //---- Set navigation options for detail screen -----
   // 1. Set the title to the current movie title
@@ -77,9 +77,8 @@ const ViewDetails = ({ navigation, route }) => {
     if (!tvShowData) {
       return;
     }
-
     navigation.setOptions({
-      title: tvShowData.title,
+      title: tvShowData.name,
       headerRight: () => {
         if (isLoading) {
           return <ActivityIndicator style={{ marginRight: 20 }} />;
@@ -90,7 +89,7 @@ const ViewDetails = ({ navigation, route }) => {
               style={{ marginRight: 15 }}
               onPress={async () => {
                 setIsLoading(true);
-                await saveTVShow(tvShowData);
+                await saveTVShow(tvShowData.id);
                 navigation.navigate(route.name, {
                   tvShowId: tvShowData.id,
                   tvShow: undefined,
@@ -140,7 +139,7 @@ const ViewDetails = ({ navigation, route }) => {
           opacity: 0.1,
         }}
         source={{
-          uri: tvShowData.posterURL,
+          uri: tvShowData?.posterURL || null,
         }}
       />
       <ScrollView>

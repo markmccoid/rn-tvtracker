@@ -12,8 +12,10 @@ export const tagResults = (
   const { savedTVShows } = state.oSaved;
   let taggedShows: TVSearchItem[] = [];
   showsToTag.forEach((show) => {
-    if (_.some(savedTVShows, { id: show.id })) {
-      taggedShows.push({ ...show, existsInSaved: true });
+    const foundShow = savedTVShows.find((savedShow) => savedShow.id === show.id);
+    if (foundShow) {
+      const foundSearchShow = { ...show, posterURL: foundShow.posterURL };
+      taggedShows.push({ ...foundSearchShow, existsInSaved: true });
     } else {
       taggedShows.push({ ...show, existsInSaved: false });
     }

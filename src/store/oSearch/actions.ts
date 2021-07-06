@@ -3,7 +3,8 @@ import { pipe, debounce, mutate, filter } from "overmind";
 import { createEffectsHook } from "overmind-react";
 // import { discoverTypesEnum } from "../../statemachines/discoverTVMachine";
 import { Context } from "../overmind";
-import { TVSearchResult } from "../../types";
+import { TVSearchResult, TVSearchItem } from "../../types";
+
 import { SearchConfig } from "./index";
 
 import * as internalActions from "./internalActions";
@@ -104,3 +105,9 @@ export const queryTVAPIWithConfig = pipe(
   }),
   mutate((context: Context) => queryTVAPI(context, 1))
 );
+
+// List of TVShows that need to be tagged.
+// Meaning we need to identify if any of them are saved
+export const tagOtherTVShowResults = ({ actions }: Context, tvShows: TVSearchItem[]) => {
+  return actions.oSearch.internal.tagResults(tvShows);
+};
