@@ -24,7 +24,7 @@ import { colors } from "../globalStyles";
 function AppNavDrawerContent(props) {
   const state = useOState();
   const actions = useOActions();
-  const { applySavedFilter, clearFilterTags, hyrdateStore } = actions.oSaved;
+  const { applySavedFilter, clearFilterTags, hydrateStore } = actions.oSaved;
   const { logUserOut } = actions.oAdmin;
   // only return savedFilters that are marked to show up in
   const savedFilters = state.oSaved.getDrawerSavedFilters;
@@ -112,7 +112,7 @@ function AppNavDrawerContent(props) {
             )}
             icon={({ focused, color, size }) => <SyncIcon size={size - 5} />}
             onPress={() => {
-              hyrdateStore({ uid, forceRefresh: true });
+              hydrateStore({ uid, forceRefresh: true });
               props.navigation.closeDrawer();
             }}
           />

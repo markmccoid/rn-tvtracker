@@ -79,24 +79,26 @@ export const initializeStore = async (uid: string, forceRefresh: boolean) => {
   // Check if local data is stale
 
   const localStorageDate = await loadFromAsyncStorage(`${uid}-last_stored_date`);
+  dataObj = await loadLocalData(uid);
+  //! NO LONGER USING Firebase just Async Storage
   // if local data is NOT stale AND we are not forcing Refresh with cloud (forceRefresh===true), load from async storage
-  if (!isDataStale(localStorageDate) && !forceRefresh) {
-    dataObj = await loadLocalData(uid);
-  } else {
-    // Before we pull data from Firestore, we must flush any debounced calls waiting
-    flushDebounced();
-    // data is stale, so load from firebase
-    dataObj = await loadUserDocument(uid);
+  // if (!isDataStale(localStorageDate) && !forceRefresh) {
+  //   dataObj = await loadLocalData(uid);
+  // } else {
+  //   // Before we pull data from Firestore, we must flush any debounced calls waiting
+  //   flushDebounced();
+  //   // data is stale, so load from firebase
+  //   dataObj = await loadUserDocument(uid);
 
-    // dataObj.savedMovies = userDocument?.savedMovies || [];
-    // dataObj.tagData = userDocument?.tagData || [];
-    // dataObj.settings = userDocument?.settings || {};
-    // dataObj.savedFilters = userDocument?.savedFilters || [];
-    // dataObj.taggedMovies = userDocument?.taggedMovies || {};
-    // dataObj.dataSource = "cloud";
-    // Must refresh local data also -- Firestore is the source of truth for data.
-    refreshLocalData(uid, dataObj);
-  }
+  //   // dataObj.savedMovies = userDocument?.savedMovies || [];
+  //   // dataObj.tagData = userDocument?.tagData || [];
+  //   // dataObj.settings = userDocument?.settings || {};
+  //   // dataObj.savedFilters = userDocument?.savedFilters || [];
+  //   // dataObj.taggedMovies = userDocument?.taggedMovies || {};
+  //   // dataObj.dataSource = "cloud";
+  //   // Must refresh local data also -- Firestore is the source of truth for data.
+  //   refreshLocalData(uid, dataObj);
+  // }
   return dataObj;
 };
 
@@ -117,6 +119,18 @@ export const localSaveSettings = async (uid, settings) => {
 };
 export const localSaveSavedFilters = async (uid, settings) => {
   return saveSavedFiltersToLocal(uid, settings);
+};
+
+//*=================================
+//*- Get TV Show Details from TMDB Api
+//*=================================
+export const getTVShowDetails = async (tvShowId: number): Promise<TVShowDetailsBase> => {
+  let results = await tvGetShowDetails(tvShowId);
+  return results;
+  return {
+    data: { ...results.data },
+    apiCall: results.apiCall,
+  };
 };
 
 //*=================================
@@ -199,13 +213,3 @@ export const saveTags = _.debounce(async (tags) => {
 export const saveSavedFilters = _.debounce(async (savedFiltersData) => {
   await storeSavedFilters(savedFiltersData);
 }, DEBOUCE_WAIT);
-
-//* Get more TV Show details
-export const getTVShowDetails = async (tvShowId: number): Promise<TVShowDetailsBase> => {
-  let results = await tvGetShowDetails(tvShowId);
-  return results;
-  return {
-    data: { ...results.data },
-    apiCall: results.apiCall,
-  };
-};

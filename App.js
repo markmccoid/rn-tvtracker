@@ -9,7 +9,6 @@ import * as Linking from "expo-linking";
 import { overmind } from "./src/store/overmind";
 import { initTMDB } from "@markmccoid/tmdb_api";
 import { LogBox } from "react-native";
-const envData = require("./env.json");
 
 import RootNav from "./src/navigation/RootNav";
 import { colors } from "./src/globalStyles";
@@ -30,10 +29,10 @@ const App = () => {
                 SearchStack: {
                   screens: {
                     Search: {
-                      path: "search/:title",
+                      path: "search/:name",
                       parse: {
-                        //right now just dealing with spaces in titles
-                        title: (title) => title.replace(/%20/g, " "),
+                        //right now just dealing with spaces in names
+                        name: (name) => name.replace(/%20/g, " "),
                       },
                     },
                   },
@@ -70,7 +69,7 @@ const App = () => {
   //   };
   // }, []);
 
-  initTMDB(envData.tmdbId);
+  // initTMDB(envData.tmdbId);
   // const overmind = createOvermind(config, { devtools: "192.168.1.7:3031" });
   // const overmind = createOvermind(config);
   return (

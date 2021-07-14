@@ -258,7 +258,7 @@ const ViewTVShowsScreen = ({ navigation, route }) => {
         <View style={[styles.noItemsShownPosition, styles.noItemsShownBtnView]}>
           <TouchableOpacity
             style={{ width: 75, height: 75, justifyContent: "center", alignItems: "center" }}
-            onPress={() => navigation.navigate("Search")}
+            onPress={() => navigation.navigate("SearchStack", { screen: "Search" })}
           >
             <AddIcon size={50} />
           </TouchableOpacity>

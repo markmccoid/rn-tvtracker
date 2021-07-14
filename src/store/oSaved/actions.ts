@@ -16,7 +16,7 @@ export * from "./actionsSavedFilters";
 //*================================================================
 //* - INITIALIZE (Hydrate Store)
 //*================================================================
-export const hyrdateStore = async (
+export const hydrateStore = async (
   { state, actions, effects }: Context,
   { uid, forceRefresh = false }: { uid: string; forceRefresh: boolean }
 ) => {
@@ -56,8 +56,9 @@ export const hyrdateStore = async (
     state.oSaved.settings.defaultFilter = null;
     // Save data to local
     await effects.oSaved.localSaveSettings(uid, state.oSaved.settings);
+    // -- COMMENT OUT FIRESTORE
     // Save to firestore
-    await effects.oSaved.saveSettings(state.oSaved.settings);
+    // await effects.oSaved.saveSettings(state.oSaved.settings);
   }
 
   // Apply a default filter, if one has been selected in settings and we are not doing a forced refresh
@@ -74,16 +75,18 @@ export const hyrdateStore = async (
 //*================================================================
 //* - Reset oSaved on user Logout
 //*================================================================
-export const resetOSaved = async ({ state, effects, actions }) => {
+export const resetOSaved = async ({ state, effects, actions }: Context) => {
   state.oSaved.savedTVShows = [];
   state.oSaved.tagData = [];
-  state.oSaved.taggedMovies = {};
-  state.oSaved.settings = {};
+  state.oSaved.taggedTVShows = {};
+  state.oSaved.settings = {
+    defaultFilter: undefined,
+    defaultSort: defaultConstants.defaultSort,
+  };
   // state.oSaved.filterData = {};
   actions.oSaved.clearFilterScreen();
   state.oSaved.savedFilters = [];
   state.oSaved.generated.genres = [];
-  state.oSaved.settings.defaultSort = defaultConstants.defaultSort;
 };
 
 //*================================================================
@@ -225,7 +228,7 @@ export const saveTVShow = async ({ state, effects, actions }: Context, tvShowId:
   await effects.oSaved.localSaveTVShows(state.oAdmin.uid, state.oSaved.savedTVShows);
 
   // Add TV show to firebase
-  await effects.oSaved.addTVShow(tvShowRecordToWrite);
+  // await effects.oSaved.addTVShow(tvShowRecordToWrite);
 };
 
 export const apiGetTVShowDetails = async (
@@ -282,7 +285,7 @@ export const deleteTVShow = async ({ state, effects, actions }: Context, tvShowI
   await effects.oSaved.localSaveTVShows(state.oAdmin.uid, state.oSaved.savedTVShows);
 
   //* Firestore
-  await effects.oSaved.deleteTVShow(tvShowId);
+  // await effects.oSaved.deleteTVShow(tvShowId);
 };
 
 /**
@@ -307,9 +310,9 @@ export const updateMovieBackdropImage = async ({ state, effects }, payload) => {
   await effects.oSaved.localMergeTVShows(state.oAdmin.uid, mergeObj);
 
   //Save to firestore
-  const updateStmt = { backdropURL: backdropURL };
+  // const updateStmt = { backdropURL: backdropURL };
   //Save to firestore
-  await effects.oSaved.updateMovie(movieId, updateStmt);
+  // await effects.oSaved.updateMovie(movieId, updateStmt);
 };
 /**
  * * updated for New Data Model
@@ -324,13 +327,14 @@ export const updateTVShowPosterImage = async (
 ) => {
   const { tvShowId, posterURL } = payload;
 
+  // -- COMMENT OUT FIRESTORE
   // check if we are updating a different tvShow.  If so flush
   // This has to do with the debounce we do on updating the posterImage
-  state.oSaved.currentTVShowId = await checkCurrentTVShowId(
-    state.oSaved.currentTVShowId,
-    tvShowId,
-    effects.oSaved.updatePosterURL
-  );
+  // state.oSaved.currentTVShowId = await checkCurrentTVShowId(
+  //   state.oSaved.currentTVShowId,
+  //   tvShowId,
+  //   effects.oSaved.updatePosterURL
+  // );
 
   //update the passed tvShowId's posterURL
   state.oSaved.savedTVShows.forEach((tvShow) => {
@@ -344,11 +348,12 @@ export const updateTVShowPosterImage = async (
   const mergeObj = { [tvShowId]: { posterURL: posterURL } };
   await effects.oSaved.localMergeTVShows(state.oAdmin.uid, mergeObj);
 
-  const updateStmt = { posterURL: posterURL };
+  // -- COMMENT OUT FIRESTORE
+  // const updateStmt = { posterURL: posterURL };
   //Save to firestore
   // await effects.oSaved.updateMovie(movieId, updateStmt); //<---OLD non-debounced call
   //Debounced write to DB
-  effects.oSaved.updatePosterURL(tvShowId, updateStmt);
+  // effects.oSaved.updatePosterURL(tvShowId, updateStmt);
 };
 
 //*================================================================
@@ -383,8 +388,9 @@ export const addNewTag = async ({ state, effects }, tagName) => {
 
   // Store tags to Async Storage
   await effects.oSaved.localSaveTags(state.oAdmin.uid, state.oSaved.tagData);
+  // -- COMMENT OUT FIRESTORE
   // Store tags to firestore
-  await effects.oSaved.saveTags(state.oSaved.tagData);
+  // await effects.oSaved.saveTags(state.oSaved.tagData);
 };
 
 /**
@@ -425,8 +431,9 @@ export const deleteTag = async ({ state, effects, actions }: Context, tagId: str
   });
   // Save data to local
   effects.oSaved.localSaveSavedFilters(state.oAdmin.uid, state.oSaved.savedFilters);
+  // -- COMMENT OUT FIRESTORE
   // Save to Firebase
-  effects.oSaved.saveSavedFilters(state.oSaved.savedFilters);
+  // effects.oSaved.saveSavedFilters(state.oSaved.savedFilters);
   //----------------------------
 
   // Check currently applied filter and remove deleted tag
@@ -454,8 +461,9 @@ export const editTag = async ({ state, effects }, payload) => {
 
   // Store tags to Async Storage
   await effects.oSaved.localSaveTags(state.oAdmin.uid, state.oSaved.tagData);
+  // -- COMMENT OUT FIRESTORE
   // Store tags to firestore
-  await effects.oSaved.saveTags(state.oSaved.tagData);
+  // await effects.oSaved.saveTags(state.oSaved.tagData);
 };
 
 /**
@@ -469,8 +477,9 @@ export const updateTags = async ({ state, effects }, payload) => {
 
   // Store tags to Async Storage
   await effects.oSaved.localSaveTags(state.oAdmin.uid, state.oSaved.tagData);
+  // -- COMMENT OUT FIRESTORE
   // Store tags to firestore
-  await effects.oSaved.saveTags([...state.oSaved.tagData]);
+  // await effects.oSaved.saveTags([...state.oSaved.tagData]);
 };
 
 //*================================================================
@@ -485,14 +494,14 @@ export const addTagToTVShow = async (
 ) => {
   let taggedTVShows = state.oSaved.taggedTVShows || {};
   const { tvShowId, tagId } = payload;
-
-  // check if we are updating a different movie.  If so flush any debounced calls
+  // -- COMMENT OUT FIRESTORE
+  // check if we are updating a different tv show.  If so flush any debounced calls
   // the effects.oSaved.updateTVShowTags function will only be used to flush (it is a debounced function)
-  state.oSaved.currentTVShowId = await checkCurrentTVShowId(
-    state.oSaved.currentTVShowId,
-    tvShowId,
-    effects.oSaved.updateTVShowTags
-  );
+  // state.oSaved.currentTVShowId = await checkCurrentTVShowId(
+  //   state.oSaved.currentTVShowId,
+  //   tvShowId,
+  //   effects.oSaved.updateTVShowTags
+  // );
 
   // if the tvShowId property doesn't exist then no tags have been added, so add as a new array
   actions.oSaved.internal.maintainTaggedTVShowObj({ action: "addtag", tvShowId, tagId });
@@ -510,9 +519,10 @@ export const addTagToTVShow = async (
   const mergeObj = { [tvShowId]: { taggedWith: [...taggedTVShows[tvShowId]] } };
   await effects.oSaved.localMergeTVShows(state.oAdmin.uid, mergeObj);
 
-  const updateStmt = { taggedWith: [...taggedTVShows[tvShowId]] };
+  // -- COMMENT OUT FIRESTORE
+  // const updateStmt = { taggedWith: [...taggedTVShows[tvShowId]] };
   // Update movie document in firestore.
-  await effects.oSaved.updateTVShowTags(tvShowId, updateStmt);
+  // await effects.oSaved.updateTVShowTags(tvShowId, updateStmt);
 };
 
 // -- Remove a tagId to the taggedMovies Object
@@ -524,12 +534,13 @@ export const removeTagFromTVShow = async (
   let taggedTVShows = state.oSaved.taggedTVShows || {};
   const { tvShowId, tagId } = payload;
 
+  // -- COMMENT OUT FIRESTORE
   // check if we are updating a different movie.  If so flush
-  state.oSaved.currentTVShowId = await checkCurrentTVShowId(
-    state.oSaved.currentTVShowId,
-    tvShowId,
-    effects.oSaved.updateTVShowTags
-  );
+  // state.oSaved.currentTVShowId = await checkCurrentTVShowId(
+  //   state.oSaved.currentTVShowId,
+  //   tvShowId,
+  //   effects.oSaved.updateTVShowTags
+  // );
 
   // taggedTVShows[movieId] = taggedTVShows[movieId].filter((tag) => tag !== tagId);
   actions.oSaved.internal.maintainTaggedTVShowObj({ action: "deletetag", tvShowId, tagId });
@@ -548,9 +559,10 @@ export const removeTagFromTVShow = async (
   const mergeObj = { [tvShowId]: { taggedWith: [...taggedTVShows[tvShowId]] } };
   await effects.oSaved.localMergeTVShows(state.oAdmin.uid, mergeObj);
 
-  const updateStmt = { taggedWith: [...taggedTVShows[tvShowId]] };
+  // -- COMMENT OUT FIRESTORE
+  // const updateStmt = { taggedWith: [...taggedTVShows[tvShowId]] };
   // Update movie document in firestore.
-  await effects.oSaved.updateTVShowTags(tvShowId, updateStmt);
+  // await effects.oSaved.updateTVShowTags(tvShowId, updateStmt);
 };
 
 //*================================================================
@@ -625,11 +637,11 @@ export const setExcludeTagOperator = ({ state }, tagOperator) => {
   state.oSaved.filterData.excludeTagOperator = tagOperator;
 };
 
-export const clearFilterTags = ({ state }) => {
+export const clearFilterTags = ({ state }: Context) => {
   state.oSaved.filterData.tags = [];
   state.oSaved.filterData.excludeTags = [];
 };
-export const clearFilterScreen = ({ state }) => {
+export const clearFilterScreen = ({ state }: Context) => {
   state.oSaved.filterData.tags = [];
   state.oSaved.filterData.excludeTags = [];
   state.oSaved.filterData.genres = [];
@@ -638,21 +650,21 @@ export const clearFilterScreen = ({ state }) => {
 //*================================================================
 //* GENRE Actions
 //*================================================================
-export const addGenreToFilter = ({ state }, genre) => {
+export const addGenreToFilter = ({ state }: Context, genre) => {
   let filterData = state.oSaved.filterData;
   filterData.genres.push(genre);
 };
 
-export const removeGenreFromFilter = ({ state }, genre) => {
+export const removeGenreFromFilter = ({ state }: Context, genre) => {
   let filterData = state.oSaved.filterData;
   filterData.genres = filterData.genres.filter((item) => item !== genre);
 };
 
-export const clearFilterGenres = ({ state }) => {
+export const clearFilterGenres = ({ state }: Context) => {
   state.oSaved.filterData.genres = [];
 };
 
-export const setGenreOperator = ({ state }, genreOperator) => {
+export const setGenreOperator = ({ state }: Context, genreOperator) => {
   state.oSaved.filterData.genreOperator = genreOperator;
 };
 
@@ -682,8 +694,9 @@ export const updateDefaultSortItem = ({ state, effects }, payload) => {
 
   // Save data to local
   effects.oSaved.localSaveSettings(state.oAdmin.uid, state.oSaved.settings);
+  // -- COMMENT OUT FIRESTORE
   // Save to firestore
-  effects.oSaved.saveSettings(state.oSaved.settings);
+  // effects.oSaved.saveSettings(state.oSaved.settings);
 };
 
 //* update when sort item order is changed
@@ -699,8 +712,9 @@ export const updateDefaultSortOrder = ({ state, effects }, newlyIndexedArray) =>
 
   // Save data to local
   effects.oSaved.localSaveSettings(state.oAdmin.uid, state.oSaved.settings);
+  // -- COMMENT OUT FIRESTORE
   // Save to firestore
-  effects.oSaved.saveSettings(state.oSaved.settings);
+  // effects.oSaved.saveSettings(state.oSaved.settings);
 };
 
 //*==============================================

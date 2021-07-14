@@ -78,6 +78,18 @@ export const loadLocalData = async (uid: string): Promise<UserDocument> => {
   return { savedTVShows, tagData, settings, savedFilters, dataSource: "local" };
 };
 
+type Users = {
+  uid: string;
+  username: string;
+};
+export const loadUsersFromStorage = async (): Promise<Users[]> => {
+  return loadFromAsyncStorage("Users");
+};
+
+export const saveUsersToStorage = async (users: Users[]): Promise<void> => {
+  await saveToAsyncStorage("Users", users);
+};
+
 /**
  * saveTVShowsToLocal - saved passed movies to local storage.  When saving
  * "savedTVShows" to local storage, we save ALL the movies.

@@ -11,175 +11,180 @@ import {
   Alert,
   ActivityIndicator,
 } from "react-native";
-import { useOState, useOActions } from "../../store/overmind";
-import Firebase, { firestore } from "../../storage/firebase";
-import { colors } from "../../globalStyles";
+import uuidv4 from "uuid/v4";
 
+import { loadUsersFromStorage, saveUsersToStorage } from "../../storage/localData";
+
+import { useOState, useOActions } from "../../store/overmind";
+import { colors } from "../../globalStyles";
 import { Header, ButtonText } from "./authStyles";
 
 const SignIn = ({ navigation, route }) => {
   const state = useOState();
   const actions = useOActions();
   let { isLoggedIn } = state.oAdmin;
+  let { logUserIn } = actions.oAdmin;
   const { initialTagCreation } = actions.oSaved;
 
   // const [isLoading, setIsLoading] = React.useState(
   //   route.params?.authStatus === 'loading' ? true : false
   // );
   const [isLoading, setIsLoading] = React.useState(false);
-  const [email, setEmail] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [confirmPassword, setConfirmPassword] = React.useState("");
+  const [viewState, setViewState] = React.useState("showusers"); // showusers or createuser
+  const [username, setUsername] = React.useState("");
+  const [allUsers, setAllUsers] = React.useState([]);
   const [error, setError] = React.useState("");
 
-  // create refs for use is changing input focus
-  const passwordRef = React.useRef();
-  const confirmPasswordRef = React.useRef();
-  //--Are we signing In or Creating User?
-  const isSignIn = route.params?.screenFunction !== "create" ? true : false;
-
+  // Load users from Async Storage
+  React.useEffect(() => {
+    const loadUsers = async () => {
+      const loadedUsers = await loadUsersFromStorage();
+      setAllUsers(loadedUsers || []);
+    };
+    loadUsers();
+  }, []);
   //---------------------------------
-  // Submit is logging into Firebase
-  const onSubmit = () => {
-    if (!email || !password) {
-      Keyboard.dismiss();
-      Alert.alert("Must enter an email and password");
+  const createUser = async () => {
+    if (!username || username.length === 0) {
+      Alert.alert("You must enter a username");
       return;
     }
-    if (!isSignIn && password !== confirmPassword) {
-      Keyboard.dismiss();
-      Alert.alert("Passwords do not match");
-      return;
-    }
-    setIsLoading(true);
-    if (isSignIn) {
-      Firebase.auth()
-        .signInWithEmailAndPassword(email, password)
-        .then((resp) => {
-          setIsLoading(false);
-        })
-        .catch((error) => {
-          setError(error.message);
-          setIsLoading(false);
-          Keyboard.dismiss();
-          Alert.alert(error.message);
-        });
-    } else {
-      const tagData = initialTagCreation();
-      Firebase.auth()
-        .createUserWithEmailAndPassword(email, password)
-        .then((resp) => {
-          firestore.collection("users").doc(resp.user.uid).set({
-            email,
-            tagData,
-          });
-        })
-        .catch((error) => {
-          setIsLoading(false);
-          setError(error.message);
-          Keyboard.dismiss();
-          Alert.alert(error.message);
-        });
-    }
+
+    // create new user object
+    const newUser = { uid: uuidv4(), username };
+
+    // Add new users to allUsers state
+    setAllUsers([newUser, ...allUsers]);
+
+    //! Can check for duplicate name to keep from adding that
+    // Save To Async Storage in Users key
+    saveUsersToStorage([newUser, ...allUsers]);
+    setViewState("viewusers");
   };
 
-  //--- Setup second password for Create User screen
-  let ConfirmPassword = !isSignIn && (
-    <>
-      <TextInput
-        style={styles.inputBox}
-        placeholder="Confirm Password"
-        secureTextEntry={true}
-        ref={confirmPasswordRef}
-        returnKeyType="go"
-        onChangeText={setConfirmPassword}
-        onSubmitEditing={onSubmit}
-      />
-    </>
-  );
-  if (isLoading || isLoggedIn === undefined) {
-    return (
-      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-        <ActivityIndicator size="large" />
-      </View>
-    );
-  }
+  // -- LOG THE USER IN
+  const onSelectUser = async (username, uid) => {
+    logUserIn({ uid, username });
+  };
+  // const onSubmit = () => {
+  //   setIsLoading(true);
+  //   if (isSignIn) {
+  //     Firebase.auth()
+  //       .signInWithEmailAndPassword(email, password)
+  //       .then((resp) => {
+  //         setIsLoading(false);
+  //       })
+  //       .catch((error) => {
+  //         setError(error.message);
+  //         setIsLoading(false);
+  //         Keyboard.dismiss();
+  //         Alert.alert(error.message);
+  //       });
+  //   } else {
+  //     const tagData = initialTagCreation();
+  //     Firebase.auth()
+  //       .createUserWithEmailAndPassword(email, password)
+  //       .then((resp) => {
+  //         firestore.collection("users").doc(resp.user.uid).set({
+  //           email,
+  //           tagData,
+  //         });
+  //       })
+  //       .catch((error) => {
+  //         setIsLoading(false);
+  //         setError(error.message);
+  //         Keyboard.dismiss();
+  //         Alert.alert(error.message);
+  //       });
+  //   }
+  // };
+
+  // if (isLoading || isLoggedIn === undefined) {
+  //   return (
+  //     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+  //       <ActivityIndicator size="large" />
+  //     </View>
+  //   );
+  // }
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <KeyboardAvoidingView behavior="padding" style={styles.wrapper}>
         <View style={styles.signInWrapper}>
           <Header>TVTracker</Header>
+          {viewState === "showusers" && (
+            <>
+              <View>
+                {allUsers.map((user) => {
+                  return (
+                    <View>
+                      <TouchableOpacity onPress={() => onSelectUser(user.username, user.uid)}>
+                        <Text key={user.uid}>
+                          {user.username}-{user.uid}
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  );
+                })}
+              </View>
+            </>
+          )}
+          {viewState === "createuser" && (
+            <>
+              <TextInput
+                style={styles.inputBox}
+                autoCapitalize="none"
+                autoCorrect={false}
+                autoFocus={true}
+                placeholder="Enter Username"
+                keyboardType="default"
+                returnKeyType="done"
+                onChangeText={setUsername}
+                onSubmitEditing={() => passwordRef.current.focus()}
+              />
 
-          {/* {errors.login && (
-            <Text style={styles.errorText}>{errors.login.message}</Text>
-          )} */}
-          <TextInput
-            style={styles.inputBox}
-            autoCapitalize="none"
-            autoCorrect={false}
-            autoFocus={true}
-            placeholder="Email"
-            keyboardType="email-address"
-            returnKeyType="next"
-            onChangeText={setEmail}
-            onSubmitEditing={() => passwordRef.current.focus()}
-          />
-
-          <TextInput
-            style={styles.inputBox}
-            placeholder="Password"
-            ref={passwordRef}
-            secureTextEntry={true}
-            returnKeyType={isSignIn ? "go" : "next"}
-            onChangeText={setPassword}
-            onSubmitEditing={isSignIn ? onSubmit : () => confirmPasswordRef.current.focus()}
-          />
-
-          {!isSignIn ? (
-            ConfirmPassword
-          ) : (
-            <TouchableOpacity onPress={() => navigation.push("ForgotPassword")}>
-              <Text
+              <View
                 style={{
+                  flexDirection: "row",
+                  width: "85%",
+                  justifyContent: "space-between",
+                  alignItems: "space-between",
                   marginTop: 10,
-                  fontSize: 16,
-                  color: "#888",
-                  fontWeight: "bold",
                 }}
               >
-                Forgot Password?
-              </Text>
+                <TouchableOpacity onPress={createUser}>
+                  <Text style={styles.button}>Create User</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => setViewState("showusers")}>
+                  <Text
+                    style={[
+                      styles.button,
+                      {
+                        backgroundColor: colors.excludeRed,
+                      },
+                    ]}
+                  >
+                    Cancel
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </>
+          )}
+
+          {viewState === "showusers" && (
+            <TouchableOpacity
+              style={{
+                width: "85%",
+                backgroundColor: colors.primary,
+                padding: 15,
+                marginVertical: 20,
+                borderRadius: 5,
+              }}
+              onPress={() => setViewState("createuser")}
+            >
+              <ButtonText>Create New User</ButtonText>
             </TouchableOpacity>
           )}
-
-          {isSignIn && (
-            <View style={{ flexDirection: "row", marginTop: 10 }}>
-              <Text style={{ marginRight: 5, fontSize: 16, color: "#888" }}>
-                Haven't signed up yet?
-              </Text>
-              <TouchableOpacity
-                onPress={() => navigation.push("CreateAccount", { screenFunction: "create" })}
-              >
-                <Text style={{ fontSize: 16, color: "#333", fontWeight: "bold" }}>
-                  Sign Up
-                </Text>
-              </TouchableOpacity>
-            </View>
-          )}
-
-          <TouchableOpacity
-            style={{
-              width: "85%",
-              backgroundColor: colors.primary,
-              padding: 15,
-              marginVertical: 20,
-              borderRadius: 5,
-            }}
-            onPress={onSubmit}
-          >
-            <ButtonText>{isSignIn ? "Sign In" : "Sign Up"}</ButtonText>
-          </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
     </TouchableWithoutFeedback>
@@ -213,6 +218,14 @@ const styles = StyleSheet.create({
     borderColor: "#e5e5e5",
     borderWidth: 1,
     textAlign: "center",
+  },
+  button: {
+    fontSize: 18,
+    color: "white",
+    backgroundColor: colors.primary,
+    padding: 10,
+    marginVertical: 10,
+    borderRadius: 5,
   },
   bottomButtons: {
     flexDirection: "row",
