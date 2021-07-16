@@ -28,7 +28,7 @@ function AppNavDrawerContent(props) {
   const { logUserOut } = actions.oAdmin;
   // only return savedFilters that are marked to show up in
   const savedFilters = state.oSaved.getDrawerSavedFilters;
-  const { email, uid, appState } = state.oAdmin;
+  const { username, uid, appState } = state.oAdmin;
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.background }}>
@@ -41,9 +41,9 @@ function AppNavDrawerContent(props) {
             color={colors.darkfg}
             style={{ marginLeft: 20, paddingRight: 20, paddingTop: 10 }}
           />
-          <View style={{ flexDirection: "column" }}>
-            <Text style={styles.userText}>{email}</Text>
-            <Text style={styles.userText}>Loaded From {appState.dataSource}</Text>
+          <View style={{ flexDirection: "column", justifyContent: "center", paddingTop: 10 }}>
+            <Text style={styles.userText}>{username}</Text>
+            {/* <Text style={styles.userText}>Loaded From {appState.dataSource}</Text> */}
           </View>
         </View>
         <View style={styles.menuItemStyle}>
@@ -103,7 +103,7 @@ function AppNavDrawerContent(props) {
           </View>
         </View>
 
-        <View style={styles.menuItemStyle}>
+        {/* <View style={styles.menuItemStyle}>
           <DrawerItem
             label={({ focused, color }) => (
               <Text
@@ -116,7 +116,7 @@ function AppNavDrawerContent(props) {
               props.navigation.closeDrawer();
             }}
           />
-        </View>
+        </View> */}
 
         {/*
           // Drawer example that navigates into details to a specific movie
@@ -165,6 +165,7 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     backgroundColor: colors.darkbg,
     flexDirection: "row",
+    alignItems: "center",
   },
   userText: {
     color: colors.darkfg,

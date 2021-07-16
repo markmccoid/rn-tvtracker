@@ -1,7 +1,12 @@
 import { parseISO, differenceInDays, format } from "date-fns";
 import _ from "lodash";
 
-import { loadFromAsyncStorage, saveToAsyncStorage, mergeToAsyncStorage } from "./asyncStorage";
+import {
+  loadFromAsyncStorage,
+  saveToAsyncStorage,
+  mergeToAsyncStorage,
+  removeFromAsyncStorage,
+} from "./asyncStorage";
 
 import { UserDocument } from "../types";
 import { SavedTVShowsDoc, SavedFilters, Settings, TagData } from "../store/oSaved/state";
@@ -59,8 +64,11 @@ export const refreshLocalData = async (uid: string, dataObj: UserDocument) => {
   saveToAsyncStorage(getKey(uid, "savedFilters"), dataObj.savedFilters);
 };
 
+//--======================
+//-- Loading Data routines
+//--======================
 /**
- *
+ * loadLocalData - Loads all local data for a user
  *
  * @param {*} uid - uid for user logged in, use to create keys
  * @returns {object} dataObj containing data that was stored locally
@@ -78,16 +86,42 @@ export const loadLocalData = async (uid: string): Promise<UserDocument> => {
   return { savedTVShows, tagData, settings, savedFilters, dataSource: "local" };
 };
 
-type Users = {
+type User = {
   uid: string;
   username: string;
 };
-export const loadUsersFromStorage = async (): Promise<Users[]> => {
+
+/**
+ * loadUsersFromStorage - Loads stored users from storage
+ */
+export const loadUsersFromStorage = async (): Promise<User[]> => {
   return loadFromAsyncStorage("Users");
 };
 
-export const saveUsersToStorage = async (users: Users[]): Promise<void> => {
+/**
+ * loadCurrentUserFromStorage - Loads the current active user from storage
+ */
+export const loadCurrentUserFromStorage = async (): Promise<User> => {
+  return loadFromAsyncStorage("CurrentUser");
+};
+
+//--======================
+//-- Saving Data routines
+//--======================
+/**
+ * saveUsersToStorage - saves users data to local storage
+ *
+ * @param {Users} users - users array to store to storage
+ */
+export const saveUsersToStorage = async (users: User[]): Promise<void> => {
   await saveToAsyncStorage("Users", users);
+};
+
+/**
+ * saveCurrentUserToStorage - Saves the currently active user to storage
+ */
+export const saveCurrentUserToStorage = async (currentUser: User): Promise<void> => {
+  await saveToAsyncStorage("CurrentUser", currentUser);
 };
 
 /**
@@ -142,4 +176,20 @@ export const saveSettingsToLocal = async (uid: string, settings: Settings) => {
  */
 export const saveSavedFiltersToLocal = async (uid: string, savedFilters: SavedFilters) => {
   await saveToAsyncStorage(getKey(uid, "savedFilters"), savedFilters);
+};
+
+//--======================
+//-- Delete Data routines
+//--======================
+/**
+ * loadLocalData - Loads all local data for a user
+ *
+ * @param {*} uid - uid for user logged in, use to create keys
+ * @returns {object} dataObj containing data that was stored locally
+ */
+export const deleteLocalData = async (uid: string): Promise<void> => {
+  await removeFromAsyncStorage(getKey(uid, "savedTVShows"));
+  await removeFromAsyncStorage(getKey(uid, "tagData"));
+  await removeFromAsyncStorage(getKey(uid, "settings"));
+  await removeFromAsyncStorage(getKey(uid, "savedFilters"));
 };

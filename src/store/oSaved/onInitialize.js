@@ -1,6 +1,8 @@
 // import Firebase, { firestore } from "../../storage/firebase";
 import { loadFromAsyncStorage } from "../../storage/asyncStorage";
 import uuidv4 from "uuid/v4";
+
+import { saveCurrentUserToStorage, loadCurrentUserFromStorage } from "../../storage/localData";
 const envData = require("../../../env.json");
 import { initTMDB } from "@markmccoid/tmdb_api";
 
@@ -10,10 +12,14 @@ let unsubscribe = () => {};
 let undo = () => {};
 export const onInitialize = async ({ state, effects, actions }) => {
   // Sets up Listener for Auth state.  If logged
-  console.log("IN oSaved onINIT");
   await initTMDB(envData.tmdbId);
-  const user = { email: "Guest User", uid: "guestuser" };
-  actions.oAdmin.logUserIn(user);
+  const currentUser = await loadCurrentUserFromStorage();
+  //const user = { email: "Guest User", uid: "guestuser" };
+  if (currentUser?.uid) {
+    actions.oAdmin.logUserIn(currentUser);
+  } else {
+    actions.oAdmin.logUserOut(currentUser);
+  }
 
   // unsubscribe = Firebase.auth().onAuthStateChanged(async (user) => {
   //   console.log("IN oSaved onINIT LISTENER");
