@@ -19,7 +19,7 @@ export function sortArray<T extends BaseArray>(
   baseArray: T[],
   { positionField, idField = "id" }: { positionField?: string; idField: string }
 ) {
-  if (Object.keys(positions).length <= 1) {
+  if (Object.keys(positions).length < 1) {
     return;
   }
 
