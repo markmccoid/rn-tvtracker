@@ -2,8 +2,8 @@ import React from "react";
 import { StyleSheet, Text, View, ScrollView } from "react-native";
 import SettingsSortItem from "../../components/settings/SettingsSortItem";
 import { useOActions, useOState } from "../../store/overmind";
-
 import DragDropEntry, { sortArray } from "../../components/DragAndSort";
+import { sortDefinitions } from "../../store/oSaved/defaultContants.ts";
 // import { sortArray } from "../../components/DragAndSort/helperFunctions";
 
 import { colors, commonStyles } from "../../globalStyles";
@@ -27,6 +27,7 @@ const SectionSort = () => {
     // in the passed baseArray (savedFilterArray), then replace the index property in said filter with the
     // one from the positions object
     const updateArray = Object.keys(positions).map((id) => {
+      console.log("IN UPDATE array");
       const filterToUpdate = baseArray.findIndex((filter) => filter.id === id);
       return { ...baseArray[filterToUpdate], index: positions[id] };
     });
@@ -49,6 +50,7 @@ const SectionSort = () => {
         itemHeight={ITEM_HEIGHT}
       >
         {defaultSort.map((item) => {
+          item = { ...item, ...sortDefinitions[item.id] };
           return (
             <View
               style={{
@@ -63,6 +65,7 @@ const SectionSort = () => {
             >
               <SettingsSortItem
                 key={item.title}
+                id={item.id}
                 title={item.title}
                 type={item.type}
                 active={item.active}

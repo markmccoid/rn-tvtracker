@@ -15,6 +15,7 @@ function getButtonState(active, direction) {
   return indexMap[direction];
 }
 const SettingsSortItem = ({
+  id,
   title,
   direction,
   active,
@@ -59,13 +60,13 @@ const SettingsSortItem = ({
   }, [direction, active]);
 
   const handleSortItemUpdate = (index) => {
-    let payload = { title, active, direction };
+    let payload = { id, active, direction };
     let indexDecodeMap = { 0: "asc", 1: "desc" };
     payload = { ...payload, active: true, direction: indexDecodeMap[index] };
     updateDefaultSortItem(payload);
   };
   const toggleActive = (_) => {
-    updateDefaultSortItem({ active: !active, title, direction });
+    updateDefaultSortItem({ active: !active, id, direction });
   };
   return (
     <View style={styles.container}>
