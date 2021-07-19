@@ -6,7 +6,7 @@ import { Context } from "../overmind";
 // -- Meaning they are not called by external processes.
 
 /**
- * createTaggedMovie - the taggedWith property is stored on each movies document
+ * createTaggedTVShowsObj - the taggedWith property is stored on each movies document
  * it contains all the tags the movies is tagged with this function
  * replaces the oSaved.taggedMovies object with data from the cloud
  * Called from the hydrateStore action
@@ -44,7 +44,11 @@ export const updateTaggedWithOnTVShow = ({ state }: Context, tvShowId: number) =
 
 export const maintainTaggedTVShowObj = async (
   { state, actions }: Context,
-  payload: { action: string; tvShowId: number; tagId?: string }
+  payload: {
+    action: "deletetvshow" | "deletetag" | "addtag";
+    tvShowId: number;
+    tagId?: string;
+  }
 ) => {
   const { action, tvShowId, tagId } = payload;
   const { taggedTVShows } = state.oSaved;

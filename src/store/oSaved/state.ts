@@ -10,6 +10,7 @@ export type SavedTVShowsDoc = {
   name: string;
   firstAirDate: DateObject;
   lastAirDate: DateObject;
+  nextAirDate: DateObject;
   posterURL: string;
   genres: string[];
   avgEpisodeRunTime: number;
@@ -46,7 +47,7 @@ export type FilterData = {
   excludeTags: string[];
   genreOperator: Operators;
   genres: string[];
-  searchFilter: undefined;
+  searchFilter: string;
 };
 
 export type TagData = { tagId: string; tagName: string };
@@ -155,7 +156,14 @@ export const state: State = {
     let tvShowList = state.savedTVShows;
     // Define the sortFields and sortDirections that we will pass to the
     // lodash sortBy function before returning the data array
-    const { sortFields, sortDirections } = state.currentSort
+    // First we must "hydrate" the currentSort and add in the fields that
+    // we don't save.
+    const fullCurrentSort = state.currentSort.map((sortItem) => ({
+      ...sortItem,
+      ...defaultConstants.sortDefinitions[sortItem.id],
+    }));
+
+    const { sortFields, sortDirections } = fullCurrentSort
       .filter((sort) => sort.active)
       .reduce(
         (finalObj, sort) => {

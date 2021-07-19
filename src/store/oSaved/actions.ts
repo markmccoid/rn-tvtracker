@@ -67,7 +67,7 @@ export const hydrateStore = async (
     //Apply default Filter
     actions.oSaved.applySavedFilter(defaultFilterId);
   }
-  // Get movie genres from savedMovies objects
+  // Get movie genres from savedTVShows objects
   state.oSaved.generated.genres = getGenresFromTVShows(state.oSaved.savedTVShows);
   state.oAdmin.appState.hydrating = false;
 };
@@ -90,7 +90,7 @@ export const resetOSaved = async ({ state, effects, actions }: Context) => {
 };
 
 //*================================================================
-//* - MOVIE (state.savedMovies) Actions
+//* - MOVIE (state.savedTVShows) Actions
 //*================================================================
 /**
  * Refresh Movie
@@ -204,6 +204,7 @@ export const saveTVShow = async ({ state, effects, actions }: Context, tvShowId:
     name: tvShowDetailsTMDB.data.name,
     firstAirDate: formatDateObjectForSave(tvShowDetailsTMDB.data.firstAirDate),
     lastAirDate: formatDateObjectForSave(tvShowDetailsTMDB.data.lastAirDate),
+    nextAirDate: formatDateObjectForSave(tvShowDetailsTMDB.data?.nextEpisodeToAir?.airDate),
     posterURL: tvShowDetailsTMDB.data.posterURL,
     genres: tvShowDetailsTMDB.data.genres,
     avgEpisodeRunTime: tvShowDetailsTMDB.data.avgEpisodeRunTime,
@@ -483,10 +484,10 @@ export const updateTags = async ({ state, effects }, payload) => {
 };
 
 //*================================================================
-//* - TAGGED MOVIES  Actions
+//* - TAGGED TVShow  Actions
 //*================================================================
 //-- Add a tagId to the taggedMovie Object
-//-- Also update the taggedWith property on the savedMovies state.
+//-- Also update the taggedWith property on the savedTVShows state.
 //-- payload = {tvShowId, tagId }
 export const addTagToTVShow = async (
   { state, effects, actions }: Context,
@@ -545,16 +546,10 @@ export const removeTagFromTVShow = async (
   // taggedTVShows[movieId] = taggedTVShows[movieId].filter((tag) => tag !== tagId);
   actions.oSaved.internal.maintainTaggedTVShowObj({ action: "deletetag", tvShowId, tagId });
 
-  // Find movie that tag is being added to and update state
+  // Find tvShow that tag is being added to and update state
   actions.oSaved.internal.updateTaggedWithOnTVShow(tvShowId);
 
-  // state.oSaved.savedTVShows = updateTaggedWithOnMovie(
-  //   movieId,
-  //   [...state.oSaved.savedTVShows],
-  //   [...state.oSaved.taggedTVShows[movieId] || {}]
-  // );
-
-  //! No longer storing all movies to Async Storage on updates
+  //! No longer storing all tvShows to Async Storage on updates
   // await effects.oSaved.localSaveTVShows(state.oAdmin.uid, state.oSaved.savedTVShows);
   const mergeObj = { [tvShowId]: { taggedWith: [...taggedTVShows[tvShowId]] } };
   await effects.oSaved.localMergeTVShows(state.oAdmin.uid, mergeObj);
@@ -566,15 +561,15 @@ export const removeTagFromTVShow = async (
 };
 
 //*================================================================
-//* - userRating MOVIES  Actions
+//* - userRating TV Show  Actions
 //*================================================================
 //-- userRatings are defined as a number between 1 and 10.
-//-- Their main purpose is to be available to be part of the sort of the movies
+//-- Their main purpose is to be available to be part of the sort of the tvShows
 //-- They will be stored on the movie document as *userRating*
 
 /**
- * updateUserRatingToTVShow - Add the rating the savedMovies.userRating
- *  in the store, Async Storage and Firebase.
+ * updateUserRatingToTVShow - Add the rating the savedTVShows.userRating
+ *  in the store, Async Storage.
  *
  */
 export const updateUserRatingToTVShow = async (
@@ -583,14 +578,15 @@ export const updateUserRatingToTVShow = async (
 ) => {
   const { tvShowId, userRating } = payload;
 
+  // -- COMMENT OUT FIRESTORE
   // check if we are updating a different movie.  If so flush
-  state.oSaved.currentTVShowId = await checkCurrentTVShowId(
-    state.oSaved.currentTVShowId,
-    tvShowId,
-    effects.oSaved.updateTVShowUserRating
-  );
+  // state.oSaved.currentTVShowId = await checkCurrentTVShowId(
+  //   state.oSaved.currentTVShowId,
+  //   tvShowId,
+  //   effects.oSaved.updateTVShowUserRating
+  // );
 
-  // Add userRating to movie
+  // Add userRating to tv show
   state.oSaved.savedTVShows = updateUserRatingOnTVShow(
     tvShowId,
     [...state.oSaved.savedTVShows],
@@ -600,9 +596,10 @@ export const updateUserRatingToTVShow = async (
   const mergeObj = { [tvShowId]: { userRating: userRating } };
   await effects.oSaved.localMergeTVShows(state.oAdmin.uid, mergeObj);
 
-  const updateStmt = { userRating: userRating };
-  // Update movie document in firestore.
-  await effects.oSaved.updateTVShowUserRating(tvShowId, updateStmt);
+  // -- COMMENT OUT FIRESTORE
+  // const updateStmt = { userRating: userRating };
+  // // Update movie document in firestore.
+  // await effects.oSaved.updateTVShowUserRating(tvShowId, updateStmt);
 };
 
 //*================================================================
@@ -672,7 +669,7 @@ export const setGenreOperator = ({ state }: Context, genreOperator) => {
 // debounce
 export const setSearchFilter = pipe(
   debounce(300),
-  mutate(({ state }, search) => {
+  mutate(({ state }: Context, search: string) => {
     state.oSaved.filterData.searchFilter = search.toLowerCase();
   })
 );
@@ -680,11 +677,11 @@ export const setSearchFilter = pipe(
 //*==============================================
 //*- SORT Actions
 //*==============================================
-export const updateDefaultSortItem = ({ state, effects }, payload) => {
-  const { title, active, direction } = payload;
+export const updateDefaultSortItem = ({ state, effects }: Context, payload) => {
+  const { id, active, direction } = payload;
   //Update the settings.defaultSort AND currentSort
   const newSortArray = state.oSaved.settings.defaultSort.map((sortItem) => {
-    if (sortItem.title === title) {
+    if (sortItem.id === id) {
       return { ...sortItem, active, sortDirection: direction };
     }
     return sortItem;
@@ -700,7 +697,7 @@ export const updateDefaultSortItem = ({ state, effects }, payload) => {
 };
 
 //* update when sort item order is changed
-export const updateDefaultSortOrder = ({ state, effects }, newlyIndexedArray) => {
+export const updateDefaultSortOrder = ({ state, effects }: Context, newlyIndexedArray) => {
   // Always saved filter array SORTED.
   state.oSaved.settings.defaultSort = _.sortBy(newlyIndexedArray, ["index"]).map(
     (sortItem, index) => ({
@@ -733,17 +730,11 @@ const getGenresFromTVShows = (tvShows: SavedTVShowsDoc[]): string[] => {
   return [...genresSet].sort();
 };
 
-// function updateTaggedWithOnMovie(movieId, movieArray, taggedWithArray) {
-//   for (let i = 0; i < movieArray.length; i++) {
-//     if (movieArray[i].id === movieId) {
-//       movieArray[i] = { ...movieArray[i], taggedWith: taggedWithArray };
-//       break;
-//     }
-//   }
-//   return movieArray;
-// }
-
-function updateUserRatingOnTVShow(tvShowId, tvShowArray, userRating) {
+function updateUserRatingOnTVShow(
+  tvShowId: number,
+  tvShowArray: SavedTVShowsDoc[],
+  userRating: number
+) {
   for (let i = 0; i < tvShowArray.length; i++) {
     if (tvShowArray[i].id === tvShowId) {
       tvShowArray[i] = { ...tvShowArray[i], userRating };
@@ -753,17 +744,18 @@ function updateUserRatingOnTVShow(tvShowId, tvShowArray, userRating) {
   return tvShowArray;
 }
 
-async function checkCurrentTVShowId(
-  currentTVShowId: number,
-  newTVShowId: number,
-  debounceToFlush: _.DebouncedFunc<() => Promise<void>>
-) {
-  // check if we are updating a different movie.  If so flush
-  if (currentTVShowId !== newTVShowId) {
-    await debounceToFlush.flush();
-  }
-  return newTVShowId;
-}
+// async function checkCurrentTVShowId(
+//   currentTVShowId: number,
+//   newTVShowId: number,
+//   debounceToFlush: _.DebouncedFunc<() => Promise<void>>
+// ) {
+//   // check if we are updating a different movie.  If so flush
+//   if (currentTVShowId !== newTVShowId) {
+//     await debounceToFlush.flush();
+//   }
+//   return newTVShowId;
+// }
+
 //--
 // This function is simply checking that each tvShow object has an ID
 // Currently only called from the Hydrate function to help prevent bad
