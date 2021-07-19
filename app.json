@@ -24,7 +24,7 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.mccoidco.tvtracker",
-      "buildNumber": "0.0.1"
+      "buildNumber": "0.0.2"
     }
   }
 }

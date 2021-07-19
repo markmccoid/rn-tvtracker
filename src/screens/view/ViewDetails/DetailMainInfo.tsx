@@ -20,6 +20,9 @@ import PosterImage from "../../../components/common/PosterImage";
 import { colors, styleHelpers } from "../../../globalStyles";
 import { TVShowDetails } from "@markmccoid/tmdb_api";
 
+import DatesScroller from "./DatesScroller";
+import { AverageEpisodeTimeBlock, ShowStatusBlock, GenresBlock } from "./DetailBlocks";
+
 type Props = {
   tvShow: TVShowDetails;
   isInSavedTVShows: boolean;
@@ -57,6 +60,7 @@ const DetailMainInfo: React.FC<Props> = ({
     avgEpisodeRunTime = "",
     lastAirDate,
   } = tvShow;
+  const nextAirDate = tvShow.nextEpisodeToAir?.airDate;
 
   const toggleOverview = () => setOverviewHeight((curr) => (curr ? undefined : 205));
   const navigateToRoute = () =>
@@ -67,9 +71,6 @@ const DetailMainInfo: React.FC<Props> = ({
     });
   return (
     <View style={styles.container}>
-      {/* {!ForceTouchGestureHandler.forceTouchAvailable && isInSavedTVShows && (
-        <UserRating movieId={tvShow.id} />
-      )} */}
       <View
         style={{
           flex: 1,
@@ -159,62 +160,49 @@ const DetailMainInfo: React.FC<Props> = ({
         </View>
       </View>
       {/* Release Date, Length, Genres + ShowTags button */}
-      <View style={{ flexDirection: "row", flex: 1 }}>
-        <View>
-          <View style={styles.textRow}>
-            <Text style={styles.textRowLabel}>First Air Date:</Text>
-            <Text style={{ fontSize: 18 }}>{firstAirDate?.formatted}</Text>
-          </View>
-          <View style={styles.textRow}>
-            <Text style={styles.textRowLabel}>Latest Air Date:</Text>
-            <Text style={{ fontSize: 18 }}>{lastAirDate?.formatted}</Text>
-          </View>
-          <View style={styles.textRow}>
-            <Text style={styles.textRowLabel}>Status:</Text>
-            <Text style={{ fontSize: 18 }}>{tvShow.status}</Text>
-          </View>
+      <View style={{ flexDirection: "column", flex: 1 }}>
+        {/* DATES Scroller */}
+        <DatesScroller
+          firstAirDate={firstAirDate}
+          lastAirDate={lastAirDate}
+          nextAirDate={nextAirDate}
+        />
+        {/* <View style={[styles.textRow, { flexWrap: "wrap", width: width / 1.5 }]}> */}
 
-          {avgEpisodeRunTime ? (
-            <View style={styles.textRow}>
-              <Text style={styles.textRowLabel}>Length: </Text>
-              <Text style={{ fontSize: 18 }}>{avgEpisodeRunTime} minutes</Text>
-            </View>
-          ) : null}
-          <View style={[styles.textRow, { flexWrap: "wrap", width: width / 1.5 }]}>
-            <Text style={styles.textRowLabel}>Genre(s): </Text>
-
-            {tvShow.genres.map((genre, idx) => (
-              <Text key={genre} style={{ fontSize: 18 }}>{`${genre}  `}</Text>
-            ))}
+        <View style={{ flexDirection: "row" }}>
+          <View style={{ flexDirection: "column" }}>
+            <ShowStatusBlock status={tvShow.status} />
+            <AverageEpisodeTimeBlock avgEpisodeRunTime={avgEpisodeRunTime} />
           </View>
-        </View>
-        {isInSavedTVShows && (
-          <View
-            style={{
-              justifyContent: "flex-end",
-              alignItems: "center",
-              marginBottom: 10,
-              flexGrow: 1,
-            }}
-          >
-            <Button
-              onPress={() => {
-                if (transitionRef.current) {
-                  transitionRef.current.animateNextTransition();
-                }
-                setViewTags((prev) => !prev);
+          {isInSavedTVShows && (
+            <View
+              style={{
+                justifyContent: "flex-end",
+                alignItems: "center",
+                marginVertical: 10,
+                flexGrow: 1,
               }}
-              title={viewTags ? "Hide Tags" : "Show Tags"}
-              bgOpacity="ff"
-              bgColor={colors.primary}
-              small
-              // width={100}
-              wrapperStyle={{ borderRadius: 10, paddingLeft: 10, paddingRight: 10 }}
-              color="#fff"
-              noBorder
-            />
-          </View>
-        )}
+            >
+              <Button
+                onPress={() => {
+                  if (transitionRef.current) {
+                    transitionRef.current.animateNextTransition();
+                  }
+                  setViewTags((prev) => !prev);
+                }}
+                title={viewTags ? "Hide Tags" : "Show Tags"}
+                bgOpacity="ff"
+                bgColor={colors.primary}
+                small
+                // width={100}
+                wrapperStyle={{ borderRadius: 10, paddingLeft: 10, paddingRight: 10 }}
+                color="#fff"
+                noBorder
+              />
+            </View>
+          )}
+        </View>
+        <GenresBlock genres={tvShow.genres} />
       </View>
     </View>
   );
