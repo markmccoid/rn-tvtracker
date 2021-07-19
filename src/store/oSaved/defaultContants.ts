@@ -1,50 +1,77 @@
 import { SortTypes } from "../../types";
 
 export type SortObjectItem = {
-  id: string;
+  id: number;
   active: boolean;
   index: number;
   sortDirection: "asc" | "desc";
-  sortField: string;
-  title: string;
-  type: SortTypes;
 };
 
-export const defaultSort: SortObjectItem[] = [
-  {
-    id: "userrating",
+export type SortDefinitions = {
+  [key: number]: { sortField: string; title: string; type: SortTypes };
+};
+
+export const sortDefinitions: SortDefinitions = {
+  0: {
     sortField: "userRating",
     title: "User Rating",
+    type: "num",
+  },
+  1: {
+    sortField: "name",
+    title: "Name",
+    type: "alpha",
+  },
+  2: {
+    sortField: "lastAirDate.epoch",
+    title: "Last Air Date",
+    type: "date",
+  },
+  3: {
+    sortField: "savedDate",
+    title: "Saved Date",
+    type: "date",
+  },
+  4: {
+    sortField: "nextAirDate",
+    title: "Next Air Date",
+    type: "date",
+  },
+};
+export const defaultSort: SortObjectItem[] = [
+  {
+    // title: "User Rating",
+    id: 0,
     sortDirection: "desc",
     active: true,
-    type: "num",
     index: 0,
   },
   {
-    id: "name",
-    sortField: "name",
-    title: "Name",
+    // title: "Name",
+    id: 1,
     sortDirection: "asc",
     active: true,
-    type: "alpha",
     index: 1,
   },
   {
-    id: "firstairdate",
-    sortField: "firstAirDate.epoch",
-    title: "First Air Date",
+    // title: "Last Air Date",
+    id: 2,
     sortDirection: "desc",
     active: false,
-    type: "date",
     index: 2,
   },
   {
-    id: "saveddate",
-    sortField: "savedDate",
-    title: "Saved Date",
+    // title: "Saved Date",
+    id: 3,
     sortDirection: "desc",
     active: false,
-    type: "date",
     index: 3,
+  },
+  {
+    // title: "Next Air Date",
+    id: 4,
+    sortDirection: "desc",
+    active: false,
+    index: 4,
   },
 ];
