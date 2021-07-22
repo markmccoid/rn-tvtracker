@@ -18,7 +18,8 @@ export type SavedTVShowsDoc = {
   // TV Tracker created items
   taggedWith?: string[];
   userRating: number;
-  savedDate: DateObject;
+  dateSaved: number; //Unix epoch time
+  dateLastUpdated?: number; //Unix epoch time
 };
 
 export type Settings = {

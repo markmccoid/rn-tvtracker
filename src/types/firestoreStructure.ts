@@ -28,7 +28,7 @@ export type DetailTVInfo = {
   // Application created
   taggedWith?: string[];
   userRating: number;
-  savedDate: number;
+  dateSaved: number;
 };
 
 /**

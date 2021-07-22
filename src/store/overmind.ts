@@ -40,4 +40,4 @@ export const useOEffects = createEffectsHook<Config>();
 export const useOReaction = createReactionHook<Config>();
 
 // export const overmind = createOvermind(config);
-export const overmind = createOvermind(config, { devtools: "192.168.1.7:3031" });
+export const overmind = createOvermind(config, { devtools: "192.168.1.21:3031" });

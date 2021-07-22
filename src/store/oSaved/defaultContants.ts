@@ -28,7 +28,7 @@ export const sortDefinitions: SortDefinitions = {
     type: "date",
   },
   3: {
-    sortField: "savedDate",
+    sortField: "dateSaved",
     title: "Saved Date",
     type: "date",
   },

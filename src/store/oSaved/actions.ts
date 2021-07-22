@@ -8,6 +8,7 @@ import { Context } from "../overmind";
 import { SavedTVShowsDoc } from "./state";
 import { DateObject } from "@markmccoid/tmdb_api";
 import { getCurrentDate, formatDateObjectForSave } from "../../utils/helperFunctions";
+import { fromUnixTime, differenceInDays, parseISO } from "date-fns";
 
 export const internal = internalActions;
 // export actions for saved filters.
@@ -67,8 +68,23 @@ export const hydrateStore = async (
     //Apply default Filter
     actions.oSaved.applySavedFilter(defaultFilterId);
   }
+
   // Get movie genres from savedTVShows objects
   state.oSaved.generated.genres = getGenresFromTVShows(state.oSaved.savedTVShows);
+
+  //! TEST Implemententation
+  // Find shows that need updating and update them
+  const showUpdateList = createUpdateList(state.oSaved.savedTVShows);
+  console.log("update list", showUpdateList);
+  //map will return array of promises
+  let updates = await showUpdateList.map(async (tvShowId) => {
+    return await actions.oSaved.refreshTVShow(tvShowId);
+  });
+  //awaiting all promises to return array with power level
+  await Promise.all(updates);
+  //! END Update Shows
+  //! ------------------
+
   state.oAdmin.appState.hydrating = false;
 };
 
@@ -90,86 +106,54 @@ export const resetOSaved = async ({ state, effects, actions }: Context) => {
 };
 
 //*================================================================
-//* - MOVIE (state.savedTVShows) Actions
+//* - TV Show (state.savedTVShows) Actions
 //*================================================================
 /**
- * Refresh Movie
- *  Will update movies data IF title, releaseDate, imdbId or status has changed.
- *  Also checks to see if the savedDate property is on the movie in question (internal field)
- *  If not it will add a savedDate: date.now() to the movie.
+ * Refresh TV Show
+ * Updates passed tvShowId record in savedTVShows
+ * as well as updating the lastUpdateDate
  *
  */
-//! NEXT - Lots of duplicate stuff from saving tv show.  What can be combined.
-//! ALSO maybe just update whole saved movie record instead of trying to see if anything has changed.
-export const refreshTVShow = async ({ state, effects, actions }: Context, tvShowId) => {
+export const refreshTVShow = async (
+  { state, effects, actions }: Context,
+  tvShowId: number
+) => {
   // Get the lastest data from the API for the passed tvShowId
   // get more movie details from tmdbapi
-  const { data: latestMovieDetails } = await effects.oSaved.getTVShowDetails(tvShowId);
-  // Make sure date isn't undefined and store only epoch and formatted
-  //! --- commented out
-  // let epoch = latestMovieDetails?.releaseDate?.epoch || "";
-  // let formatted = latestMovieDetails?.releaseDate?.formatted || "";
-  // latestMovieDetails.releaseDate = { epoch, formatted };
+  const { data: latesTVShowDetails } = await effects.oSaved.getTVShowDetails(tvShowId);
+
+  //! IMPLEMENTATION
+  //! Do not update the posterURL as user could have changed
+  //! Create Object with only items that will be updated as to leave
+  //! any system and user created data alone
+  //removed id, posterURL, userRating, dateSaved,
+  const tvShowRecordUpdates = {
+    name: latesTVShowDetails.name,
+    firstAirDate: formatDateObjectForSave(latesTVShowDetails.firstAirDate),
+    lastAirDate: formatDateObjectForSave(latesTVShowDetails.lastAirDate),
+    nextAirDate: formatDateObjectForSave(latesTVShowDetails?.nextEpisodeToAir?.airDate),
+    genres: latesTVShowDetails.genres,
+    avgEpisodeRunTime: latesTVShowDetails.avgEpisodeRunTime,
+    status: latesTVShowDetails.status,
+    // TV Tracker created items
+    dateLastUpdated: getCurrentDate().epoch,
+  };
 
   // Get current saved movie
-  const currentMovieDetails = { ...state.oSaved.getTVShowDetails(tvShowId) };
-
-  // We will build updateObj and then update if not undefined
-  let updateObj = undefined;
-  let returnMessage = "Movie Up To Date\n";
-
-  //These are the field we are checking.
-  const fieldsToCheck = {
-    titleMatch: latestMovieDetails.name === currentMovieDetails.name,
-    releaseDateMatch:
-      latestMovieDetails.releaseDate.epoch === currentMovieDetails?.releaseDate?.epoch,
-    imdbIdMatch: latestMovieDetails.imdbId === currentMovieDetails.imdbId,
-    statusMatch: latestMovieDetails.status === currentMovieDetails.status,
-    posterMatch:
-      latestMovieDetails?.posterURL?.length > 0 &&
-      !(currentMovieDetails?.posterURL?.length > 0),
+  const updatedTVShowDetails = {
+    ...state.oSaved.getTVShowDetails(tvShowId),
+    ...tvShowRecordUpdates,
   };
-  const { titleMatch, releaseDateMatch, imdbIdMatch, statusMatch, posterMatch } =
-    fieldsToCheck;
-  // if any of our fields we are checking don't Check, refresh
-  // only update poster or backdrop URLs if they are empty on currentMovieDetails
-  if (!titleMatch || !releaseDateMatch || !imdbIdMatch || !statusMatch || posterMatch) {
-    returnMessage += `${!titleMatch && "- Title Updated - "}`;
-    returnMessage += `${!releaseDateMatch && "- Release Date Updated - "}`;
-    returnMessage += `${!imdbIdMatch && "- imdb ID Updated - "}`;
-    returnMessage += `${!statusMatch && "- Status Updated - "}`;
-    returnMessage += `${!posterMatch && "- Poster Updated - "}`;
-    updateObj = {
-      ...updateObj,
-      ...latestMovieDetails,
-      posterURL: currentMovieDetails.posterURL || latestMovieDetails.posterURL,
-    };
-  }
 
-  // Check if savedDate is present, if not, add undefined savedDate
-  if (!currentMovieDetails?.savedDate) {
-    updateObj = { ...updateObj, savedDate: Date.now() };
-  }
+  console.log("UPDATED TV", updatedTVShowDetails);
+  // state.oSaved.savedTVShows = [
+  //   ...state.oSaved.savedTVShows.filter((tvShow) => tvShowId !== tvShow.id),
+  //   updatedTVShowDetails,
+  // ];
 
-  if (updateObj) {
-    //Merge with existing item
-    state.oSaved.savedTVShows = state.oSaved.savedTVShows.map((movie) => {
-      if (movie.id === movieId) {
-        return { ...movie, ...updateObj };
-      }
-      return movie;
-    });
-
-    // Store all movies to Async Storage
-    const mergeObj = { [movieId]: { ...updateObj } };
-    await effects.oSaved.localMergeTVShows(state.oAdmin.uid, mergeObj);
-
-    //Save to firestore
-    const updateStmt = { ...updateObj };
-    //Save to firestore
-    await effects.oSaved.updateMovie(movieId, updateStmt);
-  }
-  return returnMessage;
+  // // Store all movies to Async Storage
+  // const mergeObj = { [movieId]: { ...updateObj } };
+  // await effects.oSaved.localMergeTVShows(state.oAdmin.uid, mergeObj);
 };
 
 /**
@@ -211,7 +195,8 @@ export const saveTVShow = async ({ state, effects, actions }: Context, tvShowId:
     status: tvShowDetailsTMDB.data.status,
     // TV Tracker created items
     userRating: 0,
-    savedDate: getCurrentDate(),
+    dateSaved: getCurrentDate().epoch,
+    dateLastUpdated: getCurrentDate().epoch,
   };
 
   // Store TV Show in overmind state
@@ -762,4 +747,55 @@ function updateUserRatingOnTVShow(
 // data from getting through
 function validateSavedTVShows(tvShows: SavedTVShowsDoc[]): SavedTVShowsDoc[] {
   return tvShows.filter((show) => show.id);
+}
+
+function createUpdateList(tvShows: SavedTVShowsDoc[]): number[] {
+  // Loop through TV Shows and return a list of tvShowId numbers
+  // which should be updated
+  return tvShows.reduce((tvShowIds: number[], tvShow) => {
+    // Is show status canceled or Ended, do NOT update
+    if (tvShow.status === "Canceled" || tvShow.status === "Ended") {
+      return tvShowIds;
+    }
+    // create date-fns date objects and helper object
+    const showDates = {
+      nextAirDate: tvShow.nextAirDate?.epoch && fromUnixTime(tvShow.nextAirDate.epoch),
+      lastAirDate: tvShow.lastAirDate?.epoch && fromUnixTime(tvShow.lastAirDate.epoch),
+      firstAirDate: tvShow.firstAirDate?.epoch && fromUnixTime(tvShow.firstAirDate.epoch),
+      lastUpdateDate: tvShow.dateLastUpdated && fromUnixTime(tvShow.dateLastUpdated),
+    };
+    const dateComparisons = {
+      nextAirLessEqualToday: tvShow.nextAirDate?.epoch <= getCurrentDate().epoch,
+      // How many days have passed since the last air date
+      daysSinceLastAirDate: differenceInDays(new Date(), showDates.lastAirDate),
+      daysSinceLastUpdate: differenceInDays(new Date(), showDates.lastUpdateDate) || 0,
+    };
+
+    // nextAirDate exists and is less than or equal to todays date
+    // Which means this date has passed an a new next air date should be available
+    // unless this was last episode
+    if (tvShow.nextAirDate && dateComparisons.nextAirLessEqualToday) {
+      return [...tvShowIds, tvShow.id];
+    }
+
+    // nextAirDate is undefined, but show is not canceled or ended
+    // either In Production or planned or Returning Series where we are waiting for next season.
+    //--OPTION 1
+    // If In Production or Planned, then we can use the dateLastUpdated to determine what to do
+    if (tvShow.status !== "Returning Series" && dateComparisons.daysSinceLastUpdate > 7) {
+      return [...tvShowIds, tvShow.id];
+    }
+    //--OPTION 2
+    // If Returning Series, check only if it has been 6 months since Last Air Date and been 7 days
+    // since lastUpdateDate
+    if (
+      tvShow.status === "Returning Series" &&
+      !showDates.nextAirDate &&
+      dateComparisons.daysSinceLastAirDate > 180
+    ) {
+      return [...tvShowIds, tvShow.id];
+    }
+    // Must return existing array if nothing matches.
+    return tvShowIds;
+  }, []);
 }

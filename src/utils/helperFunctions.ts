@@ -1,4 +1,4 @@
-import { parseISO, getUnixTime, format } from "date-fns";
+import { parseISO, formatISO, getUnixTime, format } from "date-fns";
 import { DateObject } from "../types";
 
 export const formatDateObjectForSave = (
@@ -40,9 +40,16 @@ export function parseToDate(dateString) {
   }; // Turns the return milliseconds into seconds (unix date)
 }
 
-export function getCurrentDate() {
+type CurrentDate = {
+  epoch: number;
+  // ISO standard DATE only string.  Use date-fns parseISO to use in other date-fns functions
+  ISO: string;
+  formatted: string;
+};
+export function getCurrentDate(): CurrentDate {
   return {
     epoch: getUnixTime(new Date()),
+    ISO: formatISO(new Date(), { representation: "date" }),
     formatted: format(new Date(), "MM-dd-yyyy"),
   };
 }
