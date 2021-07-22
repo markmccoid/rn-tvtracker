@@ -8,23 +8,31 @@ import {
   TouchableOpacity,
   ImageStyle,
 } from "react-native";
-import Animated, {
-  useSharedValue,
-  useAnimatedRef,
-  useDerivedValue,
-  scrollTo,
-  useAnimatedReaction,
-} from "react-native-reanimated";
+import { colors } from "../../../globalStyles";
 
-const ITEM_WIDTH = 130;
+import { LinearGradient } from "expo-linear-gradient";
+// import Animated, {
+//   useSharedValue,
+//   useAnimatedRef,
+//   useDerivedValue,
+//   scrollTo,
+//   useAnimatedReaction,
+// } from "react-native-reanimated";
 
+const GenreView = ({ genre }) => {
+  return (
+    <View style={styles.genreItem}>
+      <Text key={genre} style={{ fontSize: 16 }}>{`${genre}`}</Text>
+    </View>
+  );
+};
 export const GenresBlock = ({ genres }) => {
   return (
     <View style={{ flexDirection: "row" }}>
       <Text style={styles.textRowLabel}>Genre(s): </Text>
       <ScrollView horizontal bounces={true} showsHorizontalScrollIndicator={false}>
         {genres.map((genre, idx) => (
-          <Text key={genre} style={{ fontSize: 18 }}>{`${genre}  `}</Text>
+          <GenreView key={genre} genre={genre} />
         ))}
       </ScrollView>
     </View>
@@ -51,6 +59,16 @@ export const AverageEpisodeTimeBlock = ({ avgEpisodeRunTime }) => {
 };
 
 const styles = StyleSheet.create({
+  genreItem: {
+    borderWidth: 1,
+    borderColor: colors.listBorder,
+    borderRadius: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 5,
+    paddingVertical: 2,
+    marginRight: 5,
+  },
   textRow: {
     flexDirection: "row",
   },

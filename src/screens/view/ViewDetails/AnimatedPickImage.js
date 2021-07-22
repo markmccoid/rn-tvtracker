@@ -19,13 +19,12 @@ const getImages = async (tvShowId) => {
   return posterImages.data;
 };
 
-const PickImage = ({ tvShowId, vpiAnimation, setViewPickImage }) => {
+const AnimatedPickImage = ({ tvShowId, setPosterHeight }) => {
   const [posterData, setPosterData] = React.useState([]);
   const [largeImage, setLargeImage] = React.useState(undefined);
   const [posterWidth, posterHeight] = useImageDims("m");
   const [posterWidthLarge, posterHeightLarge] = useImageDims("l");
-  // Get the opacity animation value
-  const fadeAnim = React.useRef(new Animated.Value(0)).current;
+
   // Get Overmind store data
   const state = useOState();
   const actions = useOActions();
@@ -33,23 +32,7 @@ const PickImage = ({ tvShowId, vpiAnimation, setViewPickImage }) => {
   const { updateTVShowPosterImage } = actions.oSaved;
 
   const heightOfView = posterData.length > 2 ? 2.25 : 1.25;
-  // console.log('heigthofview', heightOfView);
-  const fadeIn = () => {
-    Animated.timing(fadeAnim, {
-      toValue: 1,
-      duration: 1000,
-      useNativeDriver: false,
-    }).start();
-  };
-  const fadeOut = () => {
-    // Start the fade out animation
-    // At the end set the pickImage state from ViewDetails back to false
-    Animated.timing(fadeAnim, {
-      toValue: 0,
-      duration: 800,
-      useNativeDriver: false,
-    }).start(() => setViewPickImage(1));
-  };
+
   // Called once on mount with array of posterURLs and when new poster is selected
   // They are annotated with isCurrentImage
   // final object is { posterURL: string, isCurrentImage: boolean }
@@ -76,15 +59,10 @@ const PickImage = ({ tvShowId, vpiAnimation, setViewPickImage }) => {
   React.useEffect(() => {
     const currentPoster = getCurrentImageUrls(tvShowId).currentPosterURL;
     getImages(tvShowId).then((data) => updatePosterData(data, currentPoster));
-    fadeIn();
   }, []);
 
-  React.useEffect(() => {
-    if (vpiAnimation === "closing") {
-      fadeOut();
-    }
-  }, [vpiAnimation]);
   if (largeImage) {
+    // setPosterHeight(posterHeightLarge);
     return (
       <View style={styles.largeImageContainer}>
         <TouchableOpacity onPress={() => setLargeImage(undefined)}>
@@ -97,19 +75,11 @@ const PickImage = ({ tvShowId, vpiAnimation, setViewPickImage }) => {
       </View>
     );
   }
+  // setPosterHeight((prev) =>
+  //   posterData?.length > 2 ? posterHeight * 2.25 : posterHeight * 1.5
+  // );
   return (
-    <Animated.View
-      style={[
-        styles.container,
-        {
-          opacity: fadeAnim,
-          height: fadeAnim.interpolate({
-            inputRange: [0, 1],
-            outputRange: [0, posterHeight * heightOfView],
-          }),
-        },
-      ]}
-    >
+    <Animated.View style={[styles.container]}>
       <View style={styles.headerContainer}>
         <Text style={styles.header}>Pick Image</Text>
       </View>
@@ -154,6 +124,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderColor: "black",
     borderWidth: 1,
+    flex: 1,
   },
   scroll: {
     flexDirection: "row",
@@ -185,6 +156,7 @@ const styles = StyleSheet.create({
   largeImageContainer: {
     alignItems: "center",
     marginVertical: 10,
+    zIndex: 100,
   },
   largeImage: {
     width: 300,
@@ -192,4 +164,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default PickImage;
+export default AnimatedPickImage;

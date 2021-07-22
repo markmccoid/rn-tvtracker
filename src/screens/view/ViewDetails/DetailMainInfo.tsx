@@ -27,7 +27,7 @@ type Props = {
   tvShow: TVShowDetails;
   isInSavedTVShows: boolean;
   viewTags: boolean;
-  setViewTags: (viewTags: boolean) => void;
+  setViewTags: (viewTags: boolean) => boolean;
   transitionRef: React.Ref<View>;
 };
 const DetailMainInfo: React.FC<Props> = ({

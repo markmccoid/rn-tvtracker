@@ -5,31 +5,34 @@ import {
   StyleSheet,
   ScrollView,
   Alert,
-  TouchableOpacity,
+  Pressable,
   ImageStyle,
 } from "react-native";
-import Animated, {
-  useSharedValue,
-  useAnimatedRef,
-  useDerivedValue,
-  scrollTo,
-  useAnimatedReaction,
-} from "react-native-reanimated";
+import Animated from "react-native-reanimated";
+
+import format from "date-fns/format";
+import formatISO from "date-fns/formatISO";
+import parseISO from "date-fns/parseISO";
+
 import { MotiView, AnimatePresence, useAnimationState } from "moti";
 
 const ITEM_WIDTH = 110;
 
-const DateFormatted = ({ dateLabel, dateText, bgColor }) => {
+const DateFormatted = ({ dateLabel, dateText, bgColor, onPress = undefined }) => {
   return (
-    <View
-      style={[
-        styles.singleDateContainer,
-        { backgroundColor: `${bgColor}44`, borderColor: bgColor },
-      ]}
+    <Pressable
+      onPress={onPress}
+      style={({ pressed }) => {
+        return [
+          styles.singleDateContainer,
+          { backgroundColor: `${bgColor}44`, borderColor: bgColor },
+          pressed && onPress && { opacity: 0.8, borderWidth: 2 },
+        ];
+      }}
     >
       <Text style={styles.dateLabel}>{dateLabel}</Text>
       <Text style={styles.dateText}>{dateText}</Text>
-    </View>
+    </Pressable>
   );
 };
 const DatesScroller = ({ lastAirDate, nextAirDate, firstAirDate }) => {
@@ -37,23 +40,23 @@ const DatesScroller = ({ lastAirDate, nextAirDate, firstAirDate }) => {
     from: { opacity: 0, scale: 0.5 },
     to: { opacity: 1, scale: 1 },
   });
+  const [showDayOfWeek, setShowDayOfWeek] = React.useState(false);
 
+  const nextAirDateDOW = nextAirDate?.epoch
+    ? format(
+        parseISO(formatISO(nextAirDate?.epoch * 1000, { representation: "date" })),
+        "EEEE MMM dd"
+      )
+    : undefined;
+
+  const toggleDateFormat = () => setShowDayOfWeek((prev) => !prev);
   return (
     <View style={styles.container}>
       <View style={{}}>
         <Animated.ScrollView
           horizontal
-          // contentContainerStyle={{ width: ITEM_WIDTH * 3 }}
           showsHorizontalScrollIndicator={false}
-          // pagingEnabled
           scrollEventThrottle={16}
-          onScroll={(e) => {
-            // console.log("onScroll label", labelBeingScrolled.value);
-            // if (!labelBeingScrolled.value) {
-            //   labelBeingScrolled.value = true;
-            // }
-            // scrollValue.value = e.nativeEvent.contentOffset.x;
-          }}
         >
           <MotiView
             state={dateAnimation}
@@ -71,8 +74,9 @@ const DatesScroller = ({ lastAirDate, nextAirDate, firstAirDate }) => {
           >
             <DateFormatted
               dateLabel="Next Episode"
-              dateText={nextAirDate?.formatted}
+              dateText={showDayOfWeek ? nextAirDateDOW : nextAirDate?.formatted}
               bgColor="#5657D6"
+              onPress={toggleDateFormat}
             />
           </MotiView>
           <MotiView

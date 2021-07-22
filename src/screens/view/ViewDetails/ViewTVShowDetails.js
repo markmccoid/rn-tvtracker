@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { View, Animated, StyleSheet, TouchableOpacity, Dimensions } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
+import { MotiView, AnimatePresence } from "moti";
 
 import { useOState, useOActions } from "../../../store/overmind";
 import { useDimensions } from "@react-native-community/hooks";
@@ -16,7 +17,7 @@ import DetailCastInfo from "./DetailCastInfo";
 import DetailWatchProviders from "./DetailWatchProviders";
 import DetailRecommendations from "./DetailRecommendations";
 import DetailVideos from "./DetailVideos";
-import PickImage from "./PickImage";
+import AnimatedPickImage from "./AnimatedPickImage";
 import HiddenContainer from "../../../components/HiddenContainer/HiddenContainer";
 import DetailSelectTags from "./DetailSelectTags";
 import DetailButtonBar from "./DetailButtonBar";
@@ -46,13 +47,13 @@ const ViewTVShowDetails = ({ tvShow, isInSavedTVShows }) => {
   const tvShowId = tvShow?.id;
   const ref = React.useRef(null);
   const [viewTags, setViewTags] = React.useState(false);
+  const [posterHeight, setPosterHeight] = React.useState(500);
+
   // Also used for toValue in animations
   // 0 = opened
   // 1 = closed -- The one is the value it is going TO, and 1 will be open.
   const [viewPickImage, setPickImage] = React.useState(1);
-  // using to control when the animation is done in PickImage
-  // vpiAnimation = 'closing' means the button is closing the pick image component
-  const [vpiAnimation, setvpiAnimation] = React.useState(undefined);
+
   // Animated Icons
   const iconAnim = React.useRef(new Animated.Value(0)).current;
 
@@ -137,30 +138,42 @@ const ViewTVShowDetails = ({ tvShow, isInSavedTVShows }) => {
         setViewTags={setViewTags}
         viewPickImage={viewPickImage}
         setPickImage={setPickImage}
-        setvpiAnimation={setvpiAnimation}
-        transitionRef={ref}
         imdbId={tvShow.imdbId}
         tvShowName={tvShow.name}
         isInSavedTVShows={isInSavedTVShows}
       />
 
-      <Transitioning.View>
+      <View style={{ overflow: "visible", zIndex: 10 }}>
+        {isInSavedTVShows && (
+          <AnimatePresence>
+            {!!!viewPickImage && (
+              <MotiView
+                from={{
+                  opacity: 0,
+                  height: 0,
+                }}
+                animate={{
+                  opacity: 1,
+                  height: posterHeight,
+                }}
+                transition={{
+                  type: "timing",
+                  duration: 500,
+                }}
+                exit={{
+                  opacity: 0,
+                  height: 0,
+                }}
+              >
+                <AnimatedPickImage tvShowId={tvShow.id} setPosterHeight={setPosterHeight} />
+              </MotiView>
+            )}
+          </AnimatePresence>
+        )}
+      </View>
+      {/* <Transitioning.View>
         {isInSavedTVShows && (
           <View>
-            {/* <DetailSelectTags
-                viewTags={viewTags}
-                tags={tags}
-                onSelectTag={(tagObj) =>
-                  addTagToTVShow({ tvShowId: tvShow.id, tagId: tagObj.tagId })
-                }
-                removeTagFromTVShow={(tagObj) =>
-                  removeTagFromTVShow({
-                    tvShowId: tvShow.id,
-                    tagId: tagObj.tagId,
-                  })
-                }
-              /> */}
-
             {!!!viewPickImage && (
               <PickImage
                 tvShowId={tvShow.id}
@@ -170,42 +183,41 @@ const ViewTVShowDetails = ({ tvShow, isInSavedTVShows }) => {
             )}
           </View>
         )}
-
-        {/* ------------------------------------------- 
+      </Transitioning.View> */}
+      {/* ------------------------------------------- 
          END Saved Details button Bar and components 
          ------------------------------------------- */}
-        <HiddenContainer style={{ marginBottom: 10 }} title="Where To Watch">
-          <DetailWatchProviders tvShowId={tvShow.id} />
-        </HiddenContainer>
+      <HiddenContainer style={{ marginBottom: 10 }} title="Where To Watch">
+        <DetailWatchProviders tvShowId={tvShow.id} />
+      </HiddenContainer>
 
-        <HiddenContainer style={{ marginVertical: 5 }} title="Recommendations">
-          <DetailRecommendations tvShowId={tvShow.id} />
-        </HiddenContainer>
+      <HiddenContainer style={{ marginVertical: 5 }} title="Recommendations">
+        <DetailRecommendations tvShowId={tvShow.id} />
+      </HiddenContainer>
 
-        <HiddenContainer style={{ marginVertical: 5 }} title="Videos">
-          <DetailVideos tvShowId={tvShow.id} />
-        </HiddenContainer>
+      <HiddenContainer style={{ marginVertical: 5 }} title="Videos">
+        <DetailVideos tvShowId={tvShow.id} />
+      </HiddenContainer>
 
-        <HiddenContainer style={{ marginVertical: 10 }} title="Cast" startOpen>
-          <View>
-            <View style={styles.castInfo}>
-              {castData.map((person, idx) => (
-                <TouchableOpacity
-                  key={person.personId + idx.toString()}
-                  onPress={() =>
-                    navigation.push(`${route.name}Person`, {
-                      personId: person.personId,
-                      fromRouteName: route.name,
-                    })
-                  }
-                >
-                  <DetailCastInfo person={person} screenWidth={width} key={person.personId} />
-                </TouchableOpacity>
-              ))}
-            </View>
+      <HiddenContainer style={{ marginVertical: 10 }} title="Cast" startOpen>
+        <View>
+          <View style={styles.castInfo}>
+            {castData.map((person, idx) => (
+              <TouchableOpacity
+                key={person.personId + idx.toString()}
+                onPress={() =>
+                  navigation.push(`${route.name}Person`, {
+                    personId: person.personId,
+                    fromRouteName: route.name,
+                  })
+                }
+              >
+                <DetailCastInfo person={person} screenWidth={width} key={person.personId} />
+              </TouchableOpacity>
+            ))}
           </View>
-        </HiddenContainer>
-      </Transitioning.View>
+        </View>
+      </HiddenContainer>
     </View>
   );
 };

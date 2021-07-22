@@ -10,8 +10,6 @@ import { CaretRightIcon, ImagesIcon } from "../../../components/common/Icons";
 const DetailButtonBar = ({
   viewPickImage,
   setPickImage,
-  setvpiAnimation,
-  transitionRef,
   imdbId,
   tvShowName,
   isInSavedTVShows,
@@ -46,7 +44,7 @@ const DetailButtonBar = ({
       />
       <Button
         onPress={async () => {
-          let webURL = `https://google.com/search?query=${tvShowName} tv show`;
+          let webURL = `https://google.com/search?query=${tvShowName} tv showg`;
           webURL = webURL.replace(/\s+/g, "%20");
           await WebBrowser.openBrowserAsync(webURL);
         }}
@@ -68,10 +66,7 @@ const DetailButtonBar = ({
         <TouchableWithoutFeedback
           onPress={() => {
             Rotate(viewPickImage); //start icon animation
-            if (transitionRef.current) {
-              transitionRef.current.animateNextTransition();
-            }
-            viewPickImage === 1 ? setvpiAnimation("open") : setvpiAnimation("closing");
+
             setPickImage((prevValue) => (prevValue === 0 ? 1 : 0));
           }}
         >
