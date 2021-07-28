@@ -22,19 +22,22 @@ import { useGetPersonTVShows } from "../../../hooks/useGetPersonTVShows";
 
 import { LessIcon, MoreIcon } from "../../../components/common/Icons";
 
+//@types
+import { DetailPersonScreenProps } from "../viewTypes";
+
 const { width, height } = Dimensions.get("window");
 const PICTURE_WIDTH = (width - 5) / 3;
 const MARGIN = 5;
 const PICTURE_HEIGHT = PICTURE_WIDTH * (9 / 6);
 
 //--Main Component
-const DetailPerson = ({ navigation, route }) => {
+const DetailPerson = ({ navigation, route }: DetailPersonScreenProps) => {
   const { personId, fromRouteName } = route.params;
   const [personInfo, setPersonInfo] = useState(undefined);
   const [showBio, setShowBio] = useState(false);
   const [personTVShowData, isLoading] = useGetPersonTVShows(personId);
   const actions = useOActions();
-  const { saveTVShow, deleteMovie } = actions.oSaved;
+  const { saveTVShow, deleteTVShow } = actions.oSaved;
 
   const toggleShowBio = () => setShowBio((prevState) => !prevState);
   //loads personDetails and movies that person was in(personCredits)
@@ -42,7 +45,7 @@ const DetailPerson = ({ navigation, route }) => {
     const getPersonInfo = async (personId) => {
       const personDetails = await getPersonDetails(personId);
       //const personCredits = await movieGetPersonCredits(personId);
-      // also get person movies?
+      // also get person tv shows
       setPersonInfo(personDetails.data);
     };
 
@@ -150,7 +153,7 @@ const DetailPerson = ({ navigation, route }) => {
                 key={item.id + idx.toString()}
                 tvShow={item}
                 saveTVShow={saveTVShow}
-                deleteMovie={deleteMovie}
+                deleteTVShow={deleteTVShow}
                 setOnDetailsPage={() => {}}
                 navigateToScreen={fromRouteName}
               />

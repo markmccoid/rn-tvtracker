@@ -48,6 +48,7 @@
     "react-native-swipe-list-view": "^3.0.1",
     "react-native-web": "~0.13.12",
     "react-navigation-hooks": "^1.1.0",
+    "react-query": "^3.19.1",
     "styled-components": "^5.0.1",
     "tinycolor2": "^1.4.1",
     "xstate": "^4.16.1"

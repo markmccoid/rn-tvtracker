@@ -5,13 +5,11 @@ import { useOState } from "../../store/overmind";
 import TagInput from "../../components/Tags/TagInput";
 import TagsView from "../../components/Tags/TagsView";
 import { colors } from "../../globalStyles";
+import { TagsScreenProps } from "./tagTypes";
 
-import { withTheme } from "react-native-elements";
-
-const TagScreen = () => {
+const TagScreen = ({ navigation, route }: TagsScreenProps) => {
   //Get tag data from Overmind
   const state = useOState();
-  const { tagData, getTaggedCount } = state.oSaved;
 
   return (
     <View style={styles.wrapper}>

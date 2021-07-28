@@ -3,6 +3,10 @@ import { ActivityIndicator, ScrollView, View, Image, Dimensions } from "react-na
 import { AddIcon, DeleteIcon } from "../../../components/common/Icons";
 import { useOState, useOActions } from "../../../store/overmind";
 
+//@types
+import { DetailsScreenProps } from "../viewTypes";
+import { TVShowDetails } from "@markmccoid/tmdb_api";
+
 import ViewTVShowDetails from "./ViewTVShowDetails";
 
 import { TouchableOpacity } from "react-native-gesture-handler";
@@ -37,16 +41,16 @@ const { width, height } = Dimensions.get("window");
 //* -- isTVShowSaved(tvShowId: number): boolean
 //*
 //*
-const ViewDetails = ({ navigation, route }) => {
+const ViewDetails = ({ navigation, route }: DetailsScreenProps) => {
   // console.log(" IN VIEW DETAIL ", route.params);
-  const [tvShowData, setTVShowData] = useState(undefined);
-  const [isInSavedTVShows, setIsInSavedTVShows] = useState();
-  const [isLoading, setIsLoading] = useState(false);
+  const [tvShowData, setTVShowData] = useState<TVShowDetails>(undefined);
+  const [isInSavedTVShows, setIsInSavedTVShows] = useState<boolean>();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const state = useOState();
   const actions = useOActions();
   const { saveTVShow, deleteTVShow, apiGetTVShowDetails } = actions.oSaved;
-  const getTempTVShowDetails = async (tvShowId) => {
-    tvShowTemp = await apiGetTVShowDetails(tvShowId);
+  const getTempTVShowDetails = async (tvShowId: number) => {
+    const tvShowTemp = await apiGetTVShowDetails(tvShowId);
     return tvShowTemp.data;
   };
 
@@ -61,7 +65,7 @@ const ViewDetails = ({ navigation, route }) => {
     };
 
     setIsInSavedTVShows(state.oSaved.isTVShowSaved(route.params?.tvShowId));
-    let tvShowTemp = {};
+
     if (route.params?.tvShowId) {
       let tvShowSavedData = savedShowData; //state.oSaved.getTVShowDetails(route.params?.tvShowId);
       mergeShowDetails(tvShowSavedData);
@@ -92,7 +96,6 @@ const ViewDetails = ({ navigation, route }) => {
                 await saveTVShow(tvShowData.id);
                 navigation.navigate(route.name, {
                   tvShowId: tvShowData.id,
-                  tvShow: undefined,
                   notSaved: false,
                 });
                 setIsLoading(false);

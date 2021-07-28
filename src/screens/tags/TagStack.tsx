@@ -4,8 +4,9 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { MenuIcon } from "../../components/common/Icons";
 import { colors } from "../../globalStyles";
 import TagScreen from "./TagScreen";
-
-const TagStack = createStackNavigator();
+//* types
+import { TagStackParamList } from "./tagTypes";
+const TagStack = createStackNavigator<TagStackParamList>();
 
 const TagStackScreen = () => {
   return (

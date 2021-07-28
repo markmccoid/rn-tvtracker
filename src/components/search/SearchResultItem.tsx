@@ -12,6 +12,9 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 
 import { MaterialIcons } from "@expo/vector-icons";
 import { CheckIcon, AddIcon } from "../common/Icons";
+//@types
+import { DetailsScreenNavigation } from "../../screens/view/viewTypes";
+
 const { width, height } = Dimensions.get("window");
 const imageWidth = width / 3 - 20;
 const imageHeight = (width / 3 - 20) / 0.67;
@@ -24,7 +27,7 @@ const SearchResultItem = ({
   setOnDetailsPage,
   navigateToScreen,
 }) => {
-  const { navigate, push } = useNavigation();
+  const { navigate, push } = useNavigation<DetailsScreenNavigation>();
   // If tv show exists in library, then we display it in details page differently
   // The DetailsFromSearch screen is in the SearchStack.js file, but points to
   // the same component as the the details screen from the ViewStack.js screen.
@@ -38,11 +41,10 @@ const SearchResultItem = ({
     if (tvShow.existsInSaved) {
       push(navigateToScreen, {
         tvShowId: tvShow.id,
-        tvShow: undefined,
         notSaved: false,
       });
     } else {
-      push(navigateToScreen, { tvShow: undefined, tvShowId: tvShow.id, notSaved: true });
+      push(navigateToScreen, { tvShowId: tvShow.id, notSaved: true });
     }
   };
 

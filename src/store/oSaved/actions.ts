@@ -1,4 +1,4 @@
-import _ from "lodash";
+import _, { merge } from "lodash";
 import uuidv4 from "uuid/v4";
 import { pipe, debounce, mutate, filter } from "overmind";
 import * as internalActions from "./internalActions";
@@ -80,7 +80,7 @@ export const hydrateStore = async (
   let updates = await showUpdateList.map(async (tvShowId) => {
     return await actions.oSaved.refreshTVShow(tvShowId);
   });
-  //awaiting all promises to return array with power level
+
   await Promise.all(updates);
   //! END Update Shows
   //! ------------------
@@ -145,15 +145,15 @@ export const refreshTVShow = async (
     ...tvShowRecordUpdates,
   };
 
-  console.log("UPDATED TV", updatedTVShowDetails);
-  // state.oSaved.savedTVShows = [
-  //   ...state.oSaved.savedTVShows.filter((tvShow) => tvShowId !== tvShow.id),
-  //   updatedTVShowDetails,
-  // ];
+  state.oSaved.savedTVShows = [
+    ...state.oSaved.savedTVShows.filter((tvShow) => tvShowId !== tvShow.id),
+    updatedTVShowDetails,
+  ];
 
-  // // Store all movies to Async Storage
-  // const mergeObj = { [movieId]: { ...updateObj } };
-  // await effects.oSaved.localMergeTVShows(state.oAdmin.uid, mergeObj);
+  // Store all movies to Async Storage
+  const mergeObj = { [tvShowId]: { ...updatedTVShowDetails } };
+  await effects.oSaved.localMergeTVShows(state.oAdmin.uid, mergeObj);
+  console.log("UPDATED TV show", mergeObj[tvShowId].name);
 };
 
 /**
@@ -700,8 +700,120 @@ export const updateDefaultSortOrder = ({ state, effects }: Context, newlyIndexed
 };
 
 //*==============================================
+//*- TV SHOW SEASON DATA
+//*==============================================
+/** getTVShowSeasonData
+ * gets season data from tmdb api and stores in
+ * tempSeasonsData.
+ * Also will merge in any saved season/episode data
+ * stored in savedEpisodeWatchData
+ */
+export const getTVShowSeasonData = async (
+  { state, effects }: Context,
+  { tvShowId, seasonNumbers }: { tvShowId: number; seasonNumbers: number[] }
+) => {
+  //! If we don't have season data for tvShowId, then pull it and save
+  if (!state.oSaved.tempSeasonsData[tvShowId]) {
+    const seasonData = await effects.oSaved.getTVShowSeasonDataAPI(tvShowId, seasonNumbers);
+    // Exclude any "special" season (seasonNumber === 0)
+    const regularSeasons = seasonData.filter((season) => season.seasonNumber !== 0);
+    const specialSeason = seasonData.filter((season) => season.seasonNumber === 0);
+    state.oSaved.tempSeasonsData = {
+      ...state.oSaved.tempSeasonsData,
+      [tvShowId]: [...regularSeasons, ...specialSeason],
+    };
+  }
+  // Merge watch data
+  const updatedSeasons = mergeSavedEpisodeWatchData(
+    state.oSaved.savedEpisodeWatchData[tvShowId],
+    state.oSaved.tempSeasonsData[tvShowId]
+  );
+
+  //Save merged data to Overmind
+  state.oSaved.tempSeasonsData = {
+    ...state.oSaved.tempSeasonsData,
+    [tvShowId]: updatedSeasons,
+  };
+};
+/** updateWatchedData
+ *
+ */
+export const updateWatchedData = (
+  { state, effects }: Context,
+  {
+    tvShowId,
+    seasonNumber,
+    episodeNumber,
+  }: { tvShowId: number; seasonNumber: number; episodeNumber: number }
+) => {};
+/** clearTempSeasonData
+ *
+ */
+export const clearTempSeasonData = ({ state }: Context) => {
+  state.oSaved.tempSeasonsData = [];
+};
+/** setTVShowEpisode
+ *
+ */
+export const setTVShowEpisode = (
+  { state, effects }: Context,
+  payload: { tvShowId: number; seasonNumber: number; episodeNumber: number }
+) => {
+  const { tvShowId, seasonNumber, episodeNumber } = payload;
+  // If this exists, then we are removing the "watch flag"
+  //TODO Need to check is all episodes are blank.  If so remove tvShowId from object
+  if (state.oSaved.savedEpisodeWatchData[tvShowId]?.[`${seasonNumber}-${episodeNumber}`]) {
+    delete state.oSaved.savedEpisodeWatchData[tvShowId][`${seasonNumber}-${episodeNumber}`];
+  } else {
+    // didn't exist so marking as watched
+    state.oSaved.savedEpisodeWatchData = {
+      ...state.oSaved.savedEpisodeWatchData,
+      [tvShowId]: {
+        ...state.oSaved.savedEpisodeWatchData[tvShowId],
+        [`${seasonNumber}-${episodeNumber}`]:
+          !state.oSaved.savedEpisodeWatchData[tvShowId]?.[`${seasonNumber}-${episodeNumber}`],
+      },
+    };
+  }
+
+  //TODO Save to async Storage
+
+  // merge with tempSeasonsData
+  const updatedSeasons = mergeSavedEpisodeWatchData(
+    state.oSaved.savedEpisodeWatchData[tvShowId],
+    state.oSaved.tempSeasonsData[tvShowId]
+  );
+
+  //Save merged data to Overmind
+  state.oSaved.tempSeasonsData = {
+    ...state.oSaved.tempSeasonsData,
+    [tvShowId]: updatedSeasons,
+  };
+};
+//*==============================================
 //*- ACTION HELPERS
 //*==============================================
+/** merge savedEpisodeWatchData
+ * This function will be called on the initial merging of the data
+ * AND whenever an episode is marked as watch or unwatched
+ */
+//TODO Need to create an action that is called when an episode is marked as watched/unwatched and
+//TODO call this function to make sure tempSeasonsData is always up to date.
+const mergeSavedEpisodeWatchData = (episodeWatchData, tempSeasonsData) => {
+  // Merge watch data
+  // Loop through each seasons episodes and look to see if any watch data has been saved
+  const updatedSeasons = tempSeasonsData.map((season) => {
+    const updatedEpisodes = season.episodes.map((ep) => {
+      return {
+        ...ep,
+        watched: !!episodeWatchData?.[`${season.seasonNumber}-${ep.episodeNumber}`],
+      };
+    });
+    return { ...season, episodes: updatedEpisodes };
+  });
+  return updatedSeasons;
+};
+
 /**
  * Takes in an array of TV Show objects and extracts the
  * Genres from each returning a unique list of genres
@@ -774,7 +886,11 @@ function createUpdateList(tvShows: SavedTVShowsDoc[]): number[] {
     // nextAirDate exists and is less than or equal to todays date
     // Which means this date has passed an a new next air date should be available
     // unless this was last episode
-    if (tvShow.nextAirDate && dateComparisons.nextAirLessEqualToday) {
+    if (
+      tvShow.nextAirDate &&
+      dateComparisons.nextAirLessEqualToday &&
+      dateComparisons.daysSinceLastUpdate > 1
+    ) {
       return [...tvShowIds, tvShow.id];
     }
 

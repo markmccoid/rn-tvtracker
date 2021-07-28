@@ -4,6 +4,7 @@ import * as helpers from "./stateHelpers";
 import * as defaultConstants from "./defaultContants";
 
 import { DateObject, SortTypes, Operators } from "../../types";
+import { TVShowSeasonDetails } from "@markmccoid/tmdb_api";
 
 export type SavedTVShowsDoc = {
   id: number;
@@ -21,6 +22,13 @@ export type SavedTVShowsDoc = {
   dateSaved: number; //Unix epoch time
   dateLastUpdated?: number; //Unix epoch time
 };
+
+// The key will be seasonNum-EpisodeNum -> [1-5]
+export type WatchedSeasonEpisodes = {
+  [seasonKeyEpisodeKey: string]: boolean;
+};
+export type savedEpisodeWatchData = Record<number, WatchedSeasonEpisodes>;
+export type tempSeasonsData = Record<number, TVShowSeasonDetails[]>;
 
 export type Settings = {
   defaultFilter: string;
@@ -60,6 +68,7 @@ export type TagDataExtended = TagData & {
 
 export type State = {
   savedTVShows: SavedTVShowsDoc[];
+  savedEpisodeWatchData: savedEpisodeWatchData;
   tagData: TagData[]; // Array of Objects containing tag info { tagId, tagName, members[]??}
   // This will hold an object (with key of MovieId) for each movie that has
   // been "tagged".
@@ -88,11 +97,13 @@ export type State = {
     genres: string[];
     watchProviders: string[];
   };
+  tempSeasonsData: { [key: number]: TVShowSeasonDetails[] };
   // --- GETTERS ---
   getFilteredTVShows: SavedTVShowsDoc[];
   //! Type needs to change since I'm not sure exactly what will be returned by
   //! the tmdb call the populated with return.  Should be able to get type from tmdb_api
   getTVShowDetails: (tvShowId: number) => SavedTVShowsDoc;
+  getTVShowSeasonDetails: (tvShowId: number) => TVShowSeasonDetails[];
   isTVShowSaved: (tvShowId: number) => boolean;
   getCurrentImageUrls: (tvShowId: number) => {
     currentPosterURL: string;
@@ -115,6 +126,7 @@ export type State = {
 };
 export const state: State = {
   savedTVShows: [], // Movie data pulled from @markmccoid/tmdb_api
+  savedEpisodeWatchData: {},
   tagData: [], // Array of Objects containing tag info { tagId, tagName, members[]??}
   // This will hold an object (with key of MovieId) for each movie that has
   // been "tagged".
@@ -152,6 +164,7 @@ export const state: State = {
     genres: [],
     watchProviders: [],
   },
+  tempSeasonsData: [],
   //------- Getters -----------//
   getFilteredTVShows: derived((state: State) => {
     let tvShowList = state.savedTVShows;
@@ -220,6 +233,9 @@ export const state: State = {
         };
       }
     }
+  }),
+  getTVShowSeasonDetails: derived((state: State) => (tvShowId: number) => {
+    return state.tempSeasonsData[tvShowId];
   }),
   //*---------------------
   //* TAG State Functions

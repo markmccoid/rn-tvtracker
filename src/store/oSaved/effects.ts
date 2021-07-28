@@ -25,7 +25,13 @@ import {
 import { UserDocument } from "../../types";
 
 import _ from "lodash";
-import { TVShowDetailsBase, tvGetShowDetails } from "@markmccoid/tmdb_api";
+import {
+  tvGetShowDetails,
+  TVShowDetailsBase,
+  tvGetShowSeasonDetails,
+  TVShowSeasonDetails,
+} from "@markmccoid/tmdb_api";
+
 import { SavedTVShowsDoc } from "./state";
 
 const DEBOUCE_WAIT = 12000;
@@ -131,6 +137,19 @@ export const getTVShowDetails = async (tvShowId: number): Promise<TVShowDetailsB
     data: { ...results.data },
     apiCall: results.apiCall,
   };
+};
+
+//*=================================
+//*- Get TV Show Season Details from TMDB Api
+//*=================================
+export const getTVShowSeasonDataAPI = async (tvShowId: number, seasonNumbers: number[]) => {
+  const seasonData = await Promise.all(
+    seasonNumbers.map(async (season) => {
+      // Need to pull off just the data piece.
+      return tvGetShowSeasonDetails(tvShowId, season).then((resp) => resp.data);
+    })
+  );
+  return seasonData;
 };
 
 //*=================================

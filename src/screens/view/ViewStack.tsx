@@ -15,17 +15,13 @@ import ViewTVShowsScreen from "./ViewTVShows/ViewTVShowsScreen";
 import ViewTVShowsFilterScreen from "./ViewTVShows/ViewTVShowsFilterScreen";
 import ViewDetails from "./ViewDetails/ViewDetails";
 import DetailPerson from "./ViewDetails/DetailPerson";
+import DetailSeasonsScreen from "./ViewDetails/DetailSeasonsScreen";
 import { colors } from "../../globalStyles";
+// @types imports
+import { ViewTVStackParamList, ViewTVShowsParamList } from "./viewTypes";
 
-// const ViewStack = createStackNavigator();
-// const ViewTVShowsStackNav = createStackNavigator();
-// const ViewTVShowDetailsStackNav = createStackNavigator();
-
-const ViewStack = createNativeStackNavigator();
-const ViewTVShowsStackNav = createNativeStackNavigator();
-// const ViewTVShowDetailsStackNav = createNativeStackNavigator();
-
-// enableScreens();
+const ViewStack = createNativeStackNavigator<ViewTVStackParamList>();
+const ViewTVShowsStackNav = createNativeStackNavigator<ViewTVShowsParamList>();
 
 const ViewTVShowsStack = () => {
   return (
@@ -68,7 +64,7 @@ const ViewStackScreen = () => {
   const { clearFilterScreen } = actions.oSaved;
 
   return (
-    <ViewStack.Navigator initialRouteName="TVShowsScreen">
+    <ViewStack.Navigator>
       <ViewStack.Screen
         name="ViewTVShows"
         component={ViewTVShowsStack}
@@ -201,7 +197,8 @@ const ViewStackScreen = () => {
           };
         }}
       />
-      <ViewStack.Screen name="DetailsPerson" component={DetailPerson} />
+      <ViewStack.Screen name="DetailPerson" component={DetailPerson} />
+      <ViewStack.Screen name="DetailSeasons" component={DetailSeasonsScreen} />
     </ViewStack.Navigator>
   );
 };

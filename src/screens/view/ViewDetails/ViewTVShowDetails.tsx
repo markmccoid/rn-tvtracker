@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { View, Animated, StyleSheet, TouchableOpacity, Dimensions } from "react-native";
+import { View, Animated, StyleSheet, TouchableOpacity, Dimensions, Text } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { MotiView, AnimatePresence } from "moti";
 
@@ -22,12 +22,20 @@ import HiddenContainer from "../../../components/HiddenContainer/HiddenContainer
 import DetailSelectTags from "./DetailSelectTags";
 import DetailButtonBar from "./DetailButtonBar";
 
+//@types
+import {
+  DetailSeasonsScreenRouteProp,
+  DetailSeasonsScreenNavigation,
+  DetailPersonScreenRouteProp,
+  DetailPersonScreenNavigation,
+} from "../viewTypes";
+
 // Need to figure out how to have multiple transition sets for a single transitioning view
 // OR maybe wrap both in their own transitioning view
 const transition = (
   <Transition.Together>
     <Transition.In durationMs={400} type="scale" interpolation="linear" />
-    <Transition.Change durationMs={400} interpolation="easein" />
+    <Transition.Change durationMs={400} interpolation="easeIn" />
     <Transition.Out durationMs={3000} type="scale" interpolation="linear" />
   </Transition.Together>
 );
@@ -39,7 +47,7 @@ const transition2 = (
       <Transition.In durationMs={300} type="fade" interpolation="linear" />
       <Transition.In durationMs={300} type="scale" interpolation="linear" />
     </Transition.Together>
-    <Transition.Change durationMs={100} interpolation="easein" />
+    <Transition.Change durationMs={100} interpolation="easeIn" />
   </Transition.Sequence>
 );
 
@@ -66,8 +74,10 @@ const ViewTVShowDetails = ({ tvShow, isInSavedTVShows }) => {
   let { removeTagFromTVShow, addTagToTVShow } = actions.oSaved;
   const { width, height } = useDimensions().window;
 
-  const navigation = useNavigation();
-  const route = useRoute();
+  const navigation = useNavigation<DetailSeasonsScreenNavigation>();
+  const personNavigation = useNavigation<DetailSeasonsScreenNavigation>();
+  const route = useRoute<DetailSeasonsScreenRouteProp>();
+  const personRoute = useRoute<DetailPersonScreenRouteProp>();
 
   const Rotate = (toValue) => {
     Animated.timing(iconAnim, {
@@ -92,6 +102,18 @@ const ViewTVShowDetails = ({ tvShow, isInSavedTVShows }) => {
       />
       {/* Saved Details button Bar and components
         ------------------------------------------- */}
+      <View>
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate("DetailSeasons", {
+              tvShowId: tvShow.id,
+              seasonNumbers: tvShow?.seasons.map((show) => show.seasonNumber),
+            })
+          }
+        >
+          <Text>SEASONS</Text>
+        </TouchableOpacity>
+      </View>
       {isInSavedTVShows && (
         <View>
           <Transitioning.View ref={ref} transition={transition2}>
@@ -206,7 +228,7 @@ const ViewTVShowDetails = ({ tvShow, isInSavedTVShows }) => {
               <TouchableOpacity
                 key={person.personId + idx.toString()}
                 onPress={() =>
-                  navigation.push(`${route.name}Person`, {
+                  personNavigation.push(`${personRoute.name}Person`, {
                     personId: person.personId,
                     fromRouteName: route.name,
                   })
