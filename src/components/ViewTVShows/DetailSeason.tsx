@@ -11,15 +11,18 @@ import {
   Linking,
   TouchableOpacity,
 } from "react-native";
+import { useOActions, useOState } from "../../store/overmind";
 
 import DetailSeasonEpisode from "./DetailSeasonEpisode";
 
 type Props = {
   tvShowId: number;
   season: TVShowSeasonDetails;
-  onSetTVShowEpisode: (episodeNumber: number) => void;
 };
-const DetailSeason = ({ tvShowId, season, onSetTVShowEpisode }: Props) => {
+const DetailSeason = ({ tvShowId, season }: Props) => {
+  // console.log("Render DetailSeasons", season.seasonNumber);
+  const state = useOState();
+  const episodes = state.oSaved.getTVShowEpisodes(tvShowId, season.seasonNumber);
   const seasonName =
     season.name === `Season ${season.seasonNumber}` || season.seasonNumber === 0
       ? season.name
@@ -30,11 +33,12 @@ const DetailSeason = ({ tvShowId, season, onSetTVShowEpisode }: Props) => {
         <Text style={styles.seasonText}>{seasonName}</Text>
       </View>
       <View style={{ flexDirection: "column", marginHorizontal: 5 }}>
-        {season.episodes.map((ep) => (
+        {episodes.map((ep) => (
           <DetailSeasonEpisode
             key={ep.episodeNumber}
-            episode={ep}
-            onSetTVShowEpisode={onSetTVShowEpisode}
+            episodeNumber={ep.episodeNumber}
+            seasonNumber={ep.seasonNumber}
+            tvShowId={tvShowId}
           />
         ))}
       </View>

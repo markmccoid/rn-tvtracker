@@ -7,6 +7,8 @@ import {
   saveSettingsToLocal,
   mergeTVShowsToLocal,
   saveSavedFiltersToLocal,
+  saveEpisodeStateToLocal,
+  mergeEpisodeStateToLocal,
 } from "../../storage/localData";
 
 import { loadFromAsyncStorage } from "../../storage/asyncStorage";
@@ -84,7 +86,7 @@ export const initializeStore = async (uid: string, forceRefresh: boolean) => {
   // let userDocument;
   // Check if local data is stale
 
-  const localStorageDate = await loadFromAsyncStorage(`${uid}-last_stored_date`);
+  // const localStorageDate = await loadFromAsyncStorage(`${uid}-last_stored_date`);
   dataObj = await loadLocalData(uid);
   //! NO LONGER USING Firebase just Async Storage
   // if local data is NOT stale AND we are not forcing Refresh with cloud (forceRefresh===true), load from async storage
@@ -116,6 +118,12 @@ export const localSaveTVShows = async (uid, savedTVShows) => {
 };
 export const localMergeTVShows = async (uid, tvShowObj) => {
   return mergeTVShowsToLocal(uid, tvShowObj);
+};
+export const localSaveEpisodeState = async (uid, savedEpisodeState) => {
+  return saveEpisodeStateToLocal(uid, savedEpisodeState);
+};
+export const localMergeEpisodeState = async (uid, EpisodeStateMergeObj) => {
+  return mergeEpisodeStateToLocal(uid, EpisodeStateMergeObj);
 };
 export const localSaveTags = async (uid, tags) => {
   return saveTagsToLocal(uid, tags);

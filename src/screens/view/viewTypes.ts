@@ -9,7 +9,7 @@ import {
 export type ViewTVStackParamList = {
   ViewTVShows: undefined;
   Details: { tvShowId: number; notSaved: boolean };
-  DetailPerson: { personId: number; fromRouteName: string };
+  DetailsPerson: { personId: number; fromRouteName: string };
   DetailSeasons: {
     tvShowId: number;
     // an array with the season numbers returned for tvShowId

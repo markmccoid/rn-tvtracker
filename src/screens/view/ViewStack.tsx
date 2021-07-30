@@ -197,7 +197,7 @@ const ViewStackScreen = () => {
           };
         }}
       />
-      <ViewStack.Screen name="DetailPerson" component={DetailPerson} />
+      <ViewStack.Screen name="DetailsPerson" component={DetailPerson} />
       <ViewStack.Screen name="DetailSeasons" component={DetailSeasonsScreen} />
     </ViewStack.Navigator>
   );

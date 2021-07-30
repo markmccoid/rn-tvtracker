@@ -8,6 +8,7 @@ import { useDimensions } from "@react-native-community/hooks";
 import { useCastData } from "../../../hooks/useCastData";
 import { Transitioning, Transition } from "react-native-reanimated";
 
+import { colors } from "../../../globalStyles";
 import TagCloud, { TagItem } from "../../../components/TagCloud/TagCloud";
 import HidableView from "../../../components/common/HidableView";
 import { CaretRightIcon, ImagesIcon } from "../../../components/common/Icons";
@@ -102,16 +103,27 @@ const ViewTVShowDetails = ({ tvShow, isInSavedTVShows }) => {
       />
       {/* Saved Details button Bar and components
         ------------------------------------------- */}
-      <View>
+      <View
+        style={{
+          borderWidth: 1,
+          borderRadius: 10,
+          margin: 5,
+          width: width / 2,
+          backgroundColor: colors.primary,
+        }}
+      >
         <TouchableOpacity
-          onPress={() =>
+          style={{ padding: 5, alignItems: "center" }}
+          onPress={() => {
             navigation.navigate("DetailSeasons", {
               tvShowId: tvShow.id,
               seasonNumbers: tvShow?.seasons.map((show) => show.seasonNumber),
-            })
-          }
+            });
+          }}
         >
-          <Text>SEASONS</Text>
+          <Text style={{ color: "white" }}>{`View ${
+            tvShow?.seasons.filter((s) => s.seasonNumber !== 0).length
+          } Seasons`}</Text>
         </TouchableOpacity>
       </View>
       {isInSavedTVShows && (
@@ -227,12 +239,12 @@ const ViewTVShowDetails = ({ tvShow, isInSavedTVShows }) => {
             {castData.map((person, idx) => (
               <TouchableOpacity
                 key={person.personId + idx.toString()}
-                onPress={() =>
+                onPress={() => {
                   personNavigation.push(`${personRoute.name}Person`, {
                     personId: person.personId,
                     fromRouteName: route.name,
-                  })
-                }
+                  });
+                }}
               >
                 <DetailCastInfo person={person} screenWidth={width} key={person.personId} />
               </TouchableOpacity>

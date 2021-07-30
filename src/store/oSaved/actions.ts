@@ -6,7 +6,7 @@ import { removeFromAsyncStorage } from "../../storage/asyncStorage";
 import * as defaultConstants from "./defaultContants";
 import { Context } from "../overmind";
 import { SavedTVShowsDoc } from "./state";
-import { DateObject } from "@markmccoid/tmdb_api";
+import { DateObject, Episode, TVShowSeasonDetails } from "@markmccoid/tmdb_api";
 import { getCurrentDate, formatDateObjectForSave } from "../../utils/helperFunctions";
 import { fromUnixTime, differenceInDays, parseISO } from "date-fns";
 
@@ -27,6 +27,7 @@ export const hydrateStore = async (
   let userDocData = await effects.oSaved.initializeStore(uid, forceRefresh);
 
   state.oSaved.savedTVShows = validateSavedTVShows(userDocData.savedTVShows);
+  state.oSaved.savedEpisodeState = userDocData.savedEpisodeState;
   state.oSaved.tagData = userDocData.tagData;
   state.oSaved.savedFilters = userDocData.savedFilters;
   //Update the datasource (loaded from local or cloud(firestore))
@@ -75,7 +76,8 @@ export const hydrateStore = async (
   //! TEST Implemententation
   // Find shows that need updating and update them
   const showUpdateList = createUpdateList(state.oSaved.savedTVShows);
-  console.log("update list", showUpdateList);
+  // console.log("update list", showUpdateList);
+  //
   //map will return array of promises
   let updates = await showUpdateList.map(async (tvShowId) => {
     return await actions.oSaved.refreshTVShow(tvShowId);
@@ -702,11 +704,37 @@ export const updateDefaultSortOrder = ({ state, effects }: Context, newlyIndexed
 //*==============================================
 //*- TV SHOW SEASON DATA
 //*==============================================
+/** testFormatTVShowSeasonData
+ * converts the array model to an object model
+ * Not being used anywhere, but just testing
+ */
+type EpisodeObject = {
+  [key: number]: Episode;
+};
+type TVShowSeasonDetailsObject = {
+  [key: number]: Omit<TVShowSeasonDetails, "episodes"> & EpisodeObject;
+};
+//- testFormatTVShowSeasonData function
+function testFormatTVShowSeasonData(
+  seasonData: TVShowSeasonDetails[]
+): TVShowSeasonDetailsObject {
+  let workingSeasons = [...seasonData];
+  workingSeasons = workingSeasons.map((season) => {
+    // console.log("SEASON", season);
+    const newSeason = { ...season };
+    newSeason.episodes = _.keyBy([...newSeason.episodes], "episodeNumber");
+    return newSeason;
+    // console.log("season", season.episodes);
+  });
+
+  return _.keyBy(workingSeasons, "seasonNumber");
+}
+
 /** getTVShowSeasonData
  * gets season data from tmdb api and stores in
  * tempSeasonsData.
  * Also will merge in any saved season/episode data
- * stored in savedEpisodeWatchData
+ * stored in savedEpisodeState
  */
 export const getTVShowSeasonData = async (
   { state, effects }: Context,
@@ -718,22 +746,23 @@ export const getTVShowSeasonData = async (
     // Exclude any "special" season (seasonNumber === 0)
     const regularSeasons = seasonData.filter((season) => season.seasonNumber !== 0);
     const specialSeason = seasonData.filter((season) => season.seasonNumber === 0);
+
     state.oSaved.tempSeasonsData = {
       ...state.oSaved.tempSeasonsData,
       [tvShowId]: [...regularSeasons, ...specialSeason],
     };
   }
-  // Merge watch data
-  const updatedSeasons = mergeSavedEpisodeWatchData(
-    state.oSaved.savedEpisodeWatchData[tvShowId],
-    state.oSaved.tempSeasonsData[tvShowId]
-  );
+  // // Merge watch data
+  // const updatedSeasons = mergesavedEpisodeState(
+  //   state.oSaved.savedEpisodeState[tvShowId],
+  //   state.oSaved.tempSeasonsData[tvShowId]
+  // );
 
-  //Save merged data to Overmind
-  state.oSaved.tempSeasonsData = {
-    ...state.oSaved.tempSeasonsData,
-    [tvShowId]: updatedSeasons,
-  };
+  // //Save merged data to Overmind
+  // state.oSaved.tempSeasonsData = {
+  //   ...state.oSaved.tempSeasonsData,
+  //   [tvShowId]: updatedSeasons,
+  // };
 };
 /** updateWatchedData
  *
@@ -752,54 +781,49 @@ export const updateWatchedData = (
 export const clearTempSeasonData = ({ state }: Context) => {
   state.oSaved.tempSeasonsData = [];
 };
-/** setTVShowEpisode
+/** toggleTVShowEpisodeState
  *
  */
-export const setTVShowEpisode = (
+export const toggleTVShowEpisodeState = async (
   { state, effects }: Context,
   payload: { tvShowId: number; seasonNumber: number; episodeNumber: number }
 ) => {
   const { tvShowId, seasonNumber, episodeNumber } = payload;
+  const tvShowWatchData = state.oSaved.savedEpisodeState[tvShowId];
   // If this exists, then we are removing the "watch flag"
-  //TODO Need to check is all episodes are blank.  If so remove tvShowId from object
-  if (state.oSaved.savedEpisodeWatchData[tvShowId]?.[`${seasonNumber}-${episodeNumber}`]) {
-    delete state.oSaved.savedEpisodeWatchData[tvShowId][`${seasonNumber}-${episodeNumber}`];
+
+  if (tvShowWatchData?.[`${seasonNumber}-${episodeNumber}`]) {
+    delete tvShowWatchData[`${seasonNumber}-${episodeNumber}`];
+    // If there are no more episodes marked as watched, remove the tvShowId key
+    if (Object.keys(tvShowWatchData).length === 0) {
+      delete state.oSaved.savedEpisodeState[tvShowId];
+    }
   } else {
     // didn't exist so marking as watched
-    state.oSaved.savedEpisodeWatchData = {
-      ...state.oSaved.savedEpisodeWatchData,
+    state.oSaved.savedEpisodeState = {
+      ...state.oSaved.savedEpisodeState,
       [tvShowId]: {
-        ...state.oSaved.savedEpisodeWatchData[tvShowId],
+        ...tvShowWatchData,
         [`${seasonNumber}-${episodeNumber}`]:
-          !state.oSaved.savedEpisodeWatchData[tvShowId]?.[`${seasonNumber}-${episodeNumber}`],
+          !tvShowWatchData?.[`${seasonNumber}-${episodeNumber}`],
       },
     };
   }
-
-  //TODO Save to async Storage
-
-  // merge with tempSeasonsData
-  const updatedSeasons = mergeSavedEpisodeWatchData(
-    state.oSaved.savedEpisodeWatchData[tvShowId],
-    state.oSaved.tempSeasonsData[tvShowId]
-  );
-
-  //Save merged data to Overmind
-  state.oSaved.tempSeasonsData = {
-    ...state.oSaved.tempSeasonsData,
-    [tvShowId]: updatedSeasons,
-  };
+  //! Currently not taking into account if the key was deleted
+  const mergeObj = { [tvShowId]: { ...state.oSaved.savedEpisodeState?.[tvShowId] } };
+  //! maybe check if mergeObj is empty [tvShowId]: {}  If so, delete from storage, else merge?
+  await effects.oSaved.localMergeEpisodeState(state.oAdmin.uid, mergeObj);
 };
 //*==============================================
 //*- ACTION HELPERS
 //*==============================================
-/** merge savedEpisodeWatchData
+/** merge savedEpisodeState
  * This function will be called on the initial merging of the data
  * AND whenever an episode is marked as watch or unwatched
  */
 //TODO Need to create an action that is called when an episode is marked as watched/unwatched and
 //TODO call this function to make sure tempSeasonsData is always up to date.
-const mergeSavedEpisodeWatchData = (episodeWatchData, tempSeasonsData) => {
+const mergesavedEpisodeState = (episodeWatchData, tempSeasonsData) => {
   // Merge watch data
   // Loop through each seasons episodes and look to see if any watch data has been saved
   const updatedSeasons = tempSeasonsData.map((season) => {

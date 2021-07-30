@@ -4,7 +4,8 @@ import * as helpers from "./stateHelpers";
 import * as defaultConstants from "./defaultContants";
 
 import { DateObject, SortTypes, Operators } from "../../types";
-import { TVShowSeasonDetails } from "@markmccoid/tmdb_api";
+import { TVShowSeasonDetails, Episode } from "@markmccoid/tmdb_api";
+import { de } from "date-fns/locale";
 
 export type SavedTVShowsDoc = {
   id: number;
@@ -24,11 +25,19 @@ export type SavedTVShowsDoc = {
 };
 
 // The key will be seasonNum-EpisodeNum -> [1-5]
+// { [tvShowId]: { [1-5]: true, ...}}
 export type WatchedSeasonEpisodes = {
   [seasonKeyEpisodeKey: string]: boolean;
 };
-export type savedEpisodeWatchData = Record<number, WatchedSeasonEpisodes>;
-export type tempSeasonsData = Record<number, TVShowSeasonDetails[]>;
+export type SavedEpisodeState = Record<number, WatchedSeasonEpisodes>;
+
+export interface TempSeasonDataEpisode extends Episode {
+  watched?: boolean;
+}
+export interface TempSeasonsData extends TVShowSeasonDetails {
+  episodes: TempSeasonDataEpisode[];
+}
+export type tempSeasonsData = Record<number, TempSeasonsData[]>;
 
 export type Settings = {
   defaultFilter: string;
@@ -68,7 +77,7 @@ export type TagDataExtended = TagData & {
 
 export type State = {
   savedTVShows: SavedTVShowsDoc[];
-  savedEpisodeWatchData: savedEpisodeWatchData;
+  savedEpisodeState: SavedEpisodeState;
   tagData: TagData[]; // Array of Objects containing tag info { tagId, tagName, members[]??}
   // This will hold an object (with key of MovieId) for each movie that has
   // been "tagged".
@@ -104,6 +113,10 @@ export type State = {
   //! the tmdb call the populated with return.  Should be able to get type from tmdb_api
   getTVShowDetails: (tvShowId: number) => SavedTVShowsDoc;
   getTVShowSeasonDetails: (tvShowId: number) => TVShowSeasonDetails[];
+  getTVShowSeasons: (tvShowId: number) => Omit<TVShowSeasonDetails, "episodes">[];
+  getTVShowEpisodes: (tvShowId: number, seasonNumber: number) => Episode[];
+  getTVShowEpisode: (tvShowId: number, seasonNumber: number, episodeNumber) => Episode;
+  getTVShowEpisodeState: (tvShowId: number, seasonNumber: number, episodeNumber) => boolean;
   isTVShowSaved: (tvShowId: number) => boolean;
   getCurrentImageUrls: (tvShowId: number) => {
     currentPosterURL: string;
@@ -126,7 +139,7 @@ export type State = {
 };
 export const state: State = {
   savedTVShows: [], // Movie data pulled from @markmccoid/tmdb_api
-  savedEpisodeWatchData: {},
+  savedEpisodeState: {},
   tagData: [], // Array of Objects containing tag info { tagId, tagName, members[]??}
   // This will hold an object (with key of MovieId) for each movie that has
   // been "tagged".
@@ -214,6 +227,53 @@ export const state: State = {
     let tvShowObj = _.keyBy<SavedTVShowsDoc>(state.savedTVShows, "id");
     return tvShowObj[tvShowId];
   }),
+  //* ------
+  getTVShowSeasons: derived((state: State) => (tvShowId: number) => {
+    // return undefined if tvShowId is not in tempSeasonsData
+    if (!state.tempSeasonsData?.[tvShowId]) return;
+
+    const holdSeasons = [...state.tempSeasonsData?.[tvShowId]];
+    return holdSeasons.map((season) => {
+      const newSeason = { ...season, episodes: undefined };
+      delete newSeason.episodes;
+      return newSeason;
+    });
+  }),
+  //* ------
+  getTVShowEpisodes: derived((state: State) => (tvShowId: number, seasonNumber: number) => {
+    const holdSeasons = [...state.tempSeasonsData[tvShowId]];
+    return [...holdSeasons.find((season) => season.seasonNumber === seasonNumber).episodes];
+  }),
+  //* ------
+  getTVShowEpisode: derived(
+    (state: State) => (tvShowId: number, seasonNumber: number, episodeNumber: number) => {
+      const holdSeasons = [...state.tempSeasonsData[tvShowId]];
+      let holdEpisode = {
+        ...holdSeasons
+          .find((season) => season.seasonNumber === seasonNumber)
+          .episodes.find((ep) => ep.episodeNumber === episodeNumber),
+      };
+
+      // holdEpisode = {
+      //   ...holdEpisode,
+      //   watched:
+      //     !!state.savedEpisodeState?.[tvShowId]?.[`${seasonNumber}-${episodeNumber}`],
+      // };
+      return holdEpisode;
+    }
+  ),
+  getTVShowEpisodeState: derived(
+    (state: State) => (tvShowId: number, seasonNumber: number, episodeNumber: number) => {
+      if (!state.savedEpisodeState?.[tvShowId]?.[`${seasonNumber}-${episodeNumber}`]) {
+        return false;
+      }
+      return state.savedEpisodeState?.[tvShowId]?.[`${seasonNumber}-${episodeNumber}`];
+    }
+  ),
+  //* ------
+  /** isTVShowSaved
+   *
+   */
   isTVShowSaved: derived((state: State) => (tvShowId: number) => {
     if (!tvShowId) {
       return false;

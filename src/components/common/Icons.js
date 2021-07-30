@@ -16,6 +16,12 @@ export const ViewMovieIcon = ({ size, color, style = {} }) => {
 export const ViewTVShowIcon = ({ size, color, style = {} }) => {
   return <Feather name="tv" size={size} color={color} style={style} />;
 };
+export const EyeEmptyIcon = ({ size, color, style = {} }) => {
+  return <AntDesign name="eyeo" size={size} color={color} style={style} />;
+};
+export const EyeFilledIcon = ({ size, color, style = {} }) => {
+  return <AntDesign name="eye" size={size} color={color} style={style} />;
+};
 
 export const SearchIcon = ({ size, color, style }) => {
   return <MaterialIcons name="search" size={size} color={color} style={style} />;

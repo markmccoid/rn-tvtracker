@@ -1,7 +1,7 @@
 import { TVShowDetails } from "@markmccoid/tmdb_api";
 import { SavedTVShowsDoc } from "../store/oSaved/state";
 import { DateObject, Operators, SortTypes, Datasource } from "./index";
-import { SavedFilters, TagData, Settings } from "../store/oSaved/state";
+import { SavedFilters, TagData, Settings, SavedEpisodeState } from "../store/oSaved/state";
 /**
  * Data that is saved in Firestore for every movie user saves
  */
@@ -58,6 +58,7 @@ export interface UserBaseData {
   savedFilters: SavedFilters[];
   settings: Settings;
   tagData: TagData[];
+  savedEpisodeState: SavedEpisodeState;
   dataSource: Datasource;
 }
 /**UserDocument

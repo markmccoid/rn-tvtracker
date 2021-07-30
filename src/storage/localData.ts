@@ -9,7 +9,13 @@ import {
 } from "./asyncStorage";
 
 import { UserDocument } from "../types";
-import { SavedTVShowsDoc, SavedFilters, Settings, TagData } from "../store/oSaved/state";
+import {
+  SavedTVShowsDoc,
+  SavedFilters,
+  Settings,
+  TagData,
+  SavedEpisodeState,
+} from "../store/oSaved/state";
 
 /**
  * getKeys - generates keys for use in Async Storage
@@ -26,6 +32,7 @@ function getKey(uid, key) {
     settings: "settings",
     savedFilters: "saved_filters",
     tagged_tvshows: "tagged_tvshows",
+    savedEpisodeState: "saved_episode_state",
   };
   return `${uid}-${baseKeys[key]}`;
 }
@@ -82,8 +89,16 @@ export const loadLocalData = async (uid: string): Promise<UserDocument> => {
   const tagData = (await loadFromAsyncStorage(getKey(uid, "tagData"))) || [];
   const settings = (await loadFromAsyncStorage(getKey(uid, "settings"))) || {};
   const savedFilters = (await loadFromAsyncStorage(getKey(uid, "savedFilters"))) || [];
-
-  return { savedTVShows, tagData, settings, savedFilters, dataSource: "local" };
+  const savedEpisodeState =
+    (await loadFromAsyncStorage(getKey(uid, "savedEpisodeState"))) || {};
+  return {
+    savedTVShows,
+    tagData,
+    settings,
+    savedFilters,
+    savedEpisodeState,
+    dataSource: "local",
+  };
 };
 
 type User = {
@@ -151,6 +166,38 @@ export const mergeTVShowsToLocal = async (uid: string, tvShowsMergeObj: SavedTVS
 };
 
 /**
+ * saveEpisodeStateToLocal - saved passed episode state to local storage.
+ * This will overwrite anything at the
+ * NOTE: savedEpisodeData in AsyncStorage saved as an object with movieId as the key.
+ * this is so we can use the merge instead of saving all the movies every time.
+ *
+ * @param {string} uid - uid for user logged in, use to create keys
+ * @param {object} savedEpisodeState - object containing data to store in async storage
+ */
+export const saveEpisodeStateToLocal = async (
+  uid: string,
+  savedEpisodeState: SavedEpisodeState
+) => {
+  // Convert savedEpisodeState
+  let savedEpisodeStateObj = _.keyBy(savedEpisodeState, "id");
+  await saveToAsyncStorage(getKey(uid, "savedEpisodeState"), savedEpisodeStateObj);
+};
+
+/**
+ * mergeEpisodeStateToLocal - merge passed object properties to savedEpisodeState in local storage.
+ * This should be able to update
+ *
+ * @param {string} uid - uid for user logged in, use to create keys
+ * @param {object} EpisodeStateMergeObj - object containing data to merge in async storage
+ */
+export const mergeEpisodeStateToLocal = async (
+  uid: string,
+  EpisodeStateMergeObj: SavedEpisodeState
+) => {
+  await mergeToAsyncStorage(getKey(uid, "savedEpisodeState"), EpisodeStateMergeObj);
+};
+
+/**
  * saveTagsToLocal - saved passed Tags.
  *
  * @param {string} uid - uid for user logged in, use to create keys
@@ -189,6 +236,7 @@ export const saveSavedFiltersToLocal = async (uid: string, savedFilters: SavedFi
  */
 export const deleteLocalData = async (uid: string): Promise<void> => {
   await removeFromAsyncStorage(getKey(uid, "savedTVShows"));
+  await removeFromAsyncStorage(getKey(uid, "savedEpisodeState"));
   await removeFromAsyncStorage(getKey(uid, "tagData"));
   await removeFromAsyncStorage(getKey(uid, "settings"));
   await removeFromAsyncStorage(getKey(uid, "savedFilters"));

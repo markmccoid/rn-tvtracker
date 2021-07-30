@@ -22,35 +22,37 @@ const DetailSeasonsScreen = ({ navigation, route }: DetailSeasonsScreenProps) =>
   const seasonNumbers = route.params?.seasonNumbers;
   const actions = useOActions();
   const state = useOState();
-  const { getTVShowSeasonData, clearTempSeasonData, setTVShowEpisode } = actions.oSaved;
-  const { tempSeasonsData, getTVShowSeasonDetails } = state.oSaved;
-
+  const [loading, setLoading] = React.useState(false);
+  const [seasonData, setSeasonData] = React.useState(undefined);
+  const { getTVShowSeasonData, clearTempSeasonData, toggleTVShowEpisodeState } =
+    actions.oSaved;
+  const { tempSeasonsData, getTVShowSeasonDetails, getTVShowSeasons } = state.oSaved;
   const getSeasonData = async () => {
+    setLoading(true);
     await getTVShowSeasonData({ tvShowId, seasonNumbers });
+    setSeasonData(getTVShowSeasons(tvShowId));
+    setLoading(false);
   };
   React.useEffect(() => {
     getSeasonData();
+    // return () => console.log("unmount");
   }, [tvShowId]);
 
-  const seasonDetails = getTVShowSeasonDetails(tvShowId);
+  if (loading || !seasonData) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
 
-  const onSetTVShowEpisode =
-    (tvShowId: number, seasonNumber: number) => (episodeNumber: number) =>
-      setTVShowEpisode({ tvShowId, seasonNumber, episodeNumber });
   return (
     <View>
       <Text>DETAIL SEASONS</Text>
       <ScrollView style={{ padding: 0, margin: 0 }}>
-        {seasonDetails &&
-          seasonDetails.map((season) => {
-            return (
-              <DetailSeason
-                key={season.id}
-                season={season}
-                tvShowId={tvShowId}
-                onSetTVShowEpisode={onSetTVShowEpisode(tvShowId, season.seasonNumber)}
-              />
-            );
+        {seasonData &&
+          seasonData.map((season) => {
+            return <DetailSeason key={season.id} season={season} tvShowId={tvShowId} />;
           })}
       </ScrollView>
     </View>
