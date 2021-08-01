@@ -6,13 +6,23 @@ import { removeFromAsyncStorage } from "../../storage/asyncStorage";
 import * as defaultConstants from "./defaultContants";
 import { Context } from "../overmind";
 import { SavedTVShowsDoc } from "./state";
-import { DateObject, Episode, TVShowSeasonDetails } from "@markmccoid/tmdb_api";
+import {
+  TVShowDetails as TMDBTVShowDetails,
+  DateObject,
+  Episode,
+  TVShowSeasonDetails,
+} from "@markmccoid/tmdb_api";
 import { getCurrentDate, formatDateObjectForSave } from "../../utils/helperFunctions";
 import { fromUnixTime, differenceInDays, parseISO } from "date-fns";
 
 export const internal = internalActions;
 // export actions for saved filters.
 export * from "./actionsSavedFilters";
+
+//*----
+//*TYPES
+//*----
+export type TVShowDetails = TMDBTVShowDetails & { logoURLS: string[] };
 
 //*================================================================
 //* - INITIALIZE (Hydrate Store)
@@ -155,7 +165,7 @@ export const refreshTVShow = async (
   // Store all movies to Async Storage
   const mergeObj = { [tvShowId]: { ...updatedTVShowDetails } };
   await effects.oSaved.localMergeTVShows(state.oAdmin.uid, mergeObj);
-  console.log("UPDATED TV show", mergeObj[tvShowId].name);
+  // console.log("UPDATED TV show", mergeObj[tvShowId].name);
 };
 
 /**
@@ -178,6 +188,7 @@ export const saveTVShow = async ({ state, effects, actions }: Context, tvShowId:
   }
   // get the details from tmdb_api
   const tvShowDetailsTMDB = await effects.oSaved.getTVShowDetails(tvShowId);
+  const tvShowLogos = await effects.oSaved.getTVShowLogoImages(tvShowId);
   // Make sure date isn't undefined and store only epoch and formatted
   // let epoch = tvShowDetailsTMDB.data?.firstAirDate?.epoch || 0;
   // let formatted = tvShowDetailsTMDB.data?.firstAirDate?.formatted || "";
@@ -222,15 +233,16 @@ export const saveTVShow = async ({ state, effects, actions }: Context, tvShowId:
 export const apiGetTVShowDetails = async (
   { state, effects, actions }: Context,
   tvShowId: number
-) => {
+): Promise<{ data: TVShowDetails; apiCall: string }> => {
   // get more tvShow details from tmdbapi
   const tvShowDetails = await effects.oSaved.getTVShowDetails(tvShowId);
+  const tvShowLogoURLs = await effects.oSaved.getTVShowLogoImages(tvShowId);
   //! I don't think it matters if this return formats the date objects
   // Make sure date isn't undefined and store only epoch and formatted
   // movieDetails.data.firstAirDate = formatDateObjectForSave(movieDetails.data.firstAirDate);
   // movieDetails.data.lastAirDate = formatDateObjectForSave(movieDetails.data.lastAirDate);
 
-  return tvShowDetails;
+  return { ...tvShowDetails, data: { ...tvShowDetails.data, logoURLS: tvShowLogoURLs.data } };
 };
 /**
  *
@@ -764,17 +776,7 @@ export const getTVShowSeasonData = async (
   //   [tvShowId]: updatedSeasons,
   // };
 };
-/** updateWatchedData
- *
- */
-export const updateWatchedData = (
-  { state, effects }: Context,
-  {
-    tvShowId,
-    seasonNumber,
-    episodeNumber,
-  }: { tvShowId: number; seasonNumber: number; episodeNumber: number }
-) => {};
+
 /** clearTempSeasonData
  *
  */
@@ -931,7 +933,8 @@ function createUpdateList(tvShows: SavedTVShowsDoc[]): number[] {
     if (
       tvShow.status === "Returning Series" &&
       !showDates.nextAirDate &&
-      dateComparisons.daysSinceLastAirDate > 180
+      dateComparisons.daysSinceLastAirDate > 180 &&
+      dateComparisons.daysSinceLastUpdate > 7
     ) {
       return [...tvShowIds, tvShow.id];
     }

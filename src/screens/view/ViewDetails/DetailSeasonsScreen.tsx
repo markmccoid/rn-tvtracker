@@ -16,10 +16,13 @@ import DetailSeason from "../../../components/ViewTVShows/DetailSeason";
 import { DetailSeasonsScreenProps } from "../viewTypes";
 
 import { useOActions, useOState } from "../../../store/overmind";
+import { colors } from "../../../globalStyles";
 
 const DetailSeasonsScreen = ({ navigation, route }: DetailSeasonsScreenProps) => {
   const tvShowId = route.params?.tvShowId;
   const seasonNumbers = route.params?.seasonNumbers;
+  const logo = route.params?.logo;
+
   const actions = useOActions();
   const state = useOState();
   const [loading, setLoading] = React.useState(false);
@@ -48,8 +51,14 @@ const DetailSeasonsScreen = ({ navigation, route }: DetailSeasonsScreenProps) =>
 
   return (
     <View>
-      <Text>DETAIL SEASONS</Text>
-      <ScrollView style={{ padding: 0, margin: 0 }}>
+      <View style={styles.logoContainer}>
+        {!logo.logoURL ? (
+          <Text style={styles.showName}>{logo.showName}</Text>
+        ) : (
+          <Image source={{ uri: logo.logoURL }} style={{ width: 171, height: 50 }} />
+        )}
+      </View>
+      <ScrollView style={{ padding: 0, marginBottom: 50 }}>
         {seasonData &&
           seasonData.map((season) => {
             return <DetailSeason key={season.id} season={season} tvShowId={tvShowId} />;
@@ -58,5 +67,23 @@ const DetailSeasonsScreen = ({ navigation, route }: DetailSeasonsScreenProps) =>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  logoContainer: {
+    alignItems: "center",
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.commonBorder,
+    borderTopWidth: 1,
+    borderTopColor: colors.commonBorder,
+    backgroundColor: "#313131", //colors.background,
+  },
+  showName: {
+    fontSize: 20,
+    fontWeight: "600",
+    alignItems: "center",
+    color: "#dedede",
+  },
+});
 
 export default DetailSeasonsScreen;

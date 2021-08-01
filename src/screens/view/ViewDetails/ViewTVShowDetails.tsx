@@ -30,6 +30,7 @@ import {
   DetailPersonScreenRouteProp,
   DetailPersonScreenNavigation,
 } from "../viewTypes";
+import { TVShowDetails } from "../../../store/oSaved/actions";
 
 // Need to figure out how to have multiple transition sets for a single transitioning view
 // OR maybe wrap both in their own transitioning view
@@ -51,8 +52,11 @@ const transition2 = (
     <Transition.Change durationMs={100} interpolation="easeIn" />
   </Transition.Sequence>
 );
-
-const ViewTVShowDetails = ({ tvShow, isInSavedTVShows }) => {
+type Props = {
+  tvShow: TVShowDetails;
+  isInSavedTVShows: boolean;
+};
+const ViewTVShowDetails = ({ tvShow, isInSavedTVShows }: Props) => {
   const tvShowId = tvShow?.id;
   const ref = React.useRef(null);
   const [viewTags, setViewTags] = React.useState(false);
@@ -118,6 +122,7 @@ const ViewTVShowDetails = ({ tvShow, isInSavedTVShows }) => {
             navigation.navigate("DetailSeasons", {
               tvShowId: tvShow.id,
               seasonNumbers: tvShow?.seasons.map((show) => show.seasonNumber),
+              logo: { showName: tvShow.name },
             });
           }}
         >

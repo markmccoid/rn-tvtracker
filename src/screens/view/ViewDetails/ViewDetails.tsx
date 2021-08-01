@@ -5,7 +5,7 @@ import { useOState, useOActions } from "../../../store/overmind";
 
 //@types
 import { DetailsScreenProps } from "../viewTypes";
-import { TVShowDetails } from "@markmccoid/tmdb_api";
+import { TVShowDetails } from "../../../store/oSaved/actions";
 
 import ViewTVShowDetails from "./ViewTVShowDetails";
 

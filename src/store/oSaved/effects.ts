@@ -31,6 +31,7 @@ import {
   tvGetShowDetails,
   TVShowDetailsBase,
   tvGetShowSeasonDetails,
+  tvGetImages,
   TVShowSeasonDetails,
 } from "@markmccoid/tmdb_api";
 
@@ -82,31 +83,7 @@ export const cancelDebounced = async () => {
  *  -- default is false coming from hydrateStore
  */
 export const initializeStore = async (uid: string, forceRefresh: boolean) => {
-  let dataObj: UserDocument;
-  // let userDocument;
-  // Check if local data is stale
-
-  // const localStorageDate = await loadFromAsyncStorage(`${uid}-last_stored_date`);
-  dataObj = await loadLocalData(uid);
-  //! NO LONGER USING Firebase just Async Storage
-  // if local data is NOT stale AND we are not forcing Refresh with cloud (forceRefresh===true), load from async storage
-  // if (!isDataStale(localStorageDate) && !forceRefresh) {
-  //   dataObj = await loadLocalData(uid);
-  // } else {
-  //   // Before we pull data from Firestore, we must flush any debounced calls waiting
-  //   flushDebounced();
-  //   // data is stale, so load from firebase
-  //   dataObj = await loadUserDocument(uid);
-
-  //   // dataObj.savedMovies = userDocument?.savedMovies || [];
-  //   // dataObj.tagData = userDocument?.tagData || [];
-  //   // dataObj.settings = userDocument?.settings || {};
-  //   // dataObj.savedFilters = userDocument?.savedFilters || [];
-  //   // dataObj.taggedMovies = userDocument?.taggedMovies || {};
-  //   // dataObj.dataSource = "cloud";
-  //   // Must refresh local data also -- Firestore is the source of truth for data.
-  //   refreshLocalData(uid, dataObj);
-  // }
+  const dataObj: UserDocument = await loadLocalData(uid);
   return dataObj;
 };
 
@@ -158,6 +135,13 @@ export const getTVShowSeasonDataAPI = async (tvShowId: number, seasonNumbers: nu
     })
   );
   return seasonData;
+};
+
+//*=================================
+//*- Get TV Show Season Logos (header images)
+//*=================================
+export const getTVShowLogoImages = async (tvShowId: number) => {
+  return await tvGetImages(tvShowId, "logos");
 };
 
 //*=================================

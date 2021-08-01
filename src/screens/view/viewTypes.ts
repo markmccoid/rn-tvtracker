@@ -15,6 +15,10 @@ export type ViewTVStackParamList = {
     // an array with the season numbers returned for tvShowId
     // sometimes Season 0 is included sometimes not
     seasonNumbers: number[];
+    // Need aspect ratio as all logos are different:
+    // height * aspect = width
+    // width / aspect = height
+    logo?: { logoURL?: string; aspectRatio?: number; showName?: string };
   };
 };
 

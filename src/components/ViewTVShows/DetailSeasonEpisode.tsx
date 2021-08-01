@@ -42,7 +42,7 @@ const DetailSeasonEpisode = ({ tvShowId, seasonNumber, episodeNumber }: Props) =
         flexDirection: "row",
         borderWidth: 1,
         borderRadius: 5,
-        // padding: 10,
+        backgroundColor: "#e0a52577",
         marginBottom: 5,
         justifyContent: "space-between",
       }}
@@ -53,7 +53,7 @@ const DetailSeasonEpisode = ({ tvShowId, seasonNumber, episodeNumber }: Props) =
         </View>
         <View style={{ flexDirection: "column" }}>
           <Text style={styles.epName}>{episode.name}</Text>
-          <Text>{`${episode.airDate.formatted}`}</Text>
+          <Text>{`${episode.airDate?.formatted || "Unknown"}`}</Text>
         </View>
       </View>
       <TouchableOpacity
