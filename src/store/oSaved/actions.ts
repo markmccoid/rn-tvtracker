@@ -1,11 +1,11 @@
-import _, { merge } from "lodash";
+import _ from "lodash";
 import uuidv4 from "uuid/v4";
 import { pipe, debounce, mutate, filter } from "overmind";
 import * as internalActions from "./internalActions";
-import { removeFromAsyncStorage } from "../../storage/asyncStorage";
+import { loadFromAsyncStorage, removeFromAsyncStorage } from "../../storage/asyncStorage";
 import * as defaultConstants from "./defaultContants";
 import { Context } from "../overmind";
-import { SavedTVShowsDoc } from "./state";
+import { EpisodeRunTimeGroup, SavedTVShowsDoc, TempSeasonsData } from "./state";
 import {
   TVShowDetails as TMDBTVShowDetails,
   DateObject,
@@ -146,6 +146,7 @@ export const refreshTVShow = async (
     nextAirDate: formatDateObjectForSave(latesTVShowDetails?.nextEpisodeToAir?.airDate),
     genres: latesTVShowDetails.genres,
     avgEpisodeRunTime: latesTVShowDetails.avgEpisodeRunTime,
+    episodeRunTimeGroup: groupAvgRunTime(latesTVShowDetails.avgEpisodeRunTime),
     status: latesTVShowDetails.status,
     // TV Tracker created items
     dateLastUpdated: getCurrentDate().epoch,
@@ -205,6 +206,7 @@ export const saveTVShow = async ({ state, effects, actions }: Context, tvShowId:
     posterURL: tvShowDetailsTMDB.data.posterURL,
     genres: tvShowDetailsTMDB.data.genres,
     avgEpisodeRunTime: tvShowDetailsTMDB.data.avgEpisodeRunTime,
+    episodeRunTimeGroup: groupAvgRunTime(tvShowDetailsTMDB.data.avgEpisodeRunTime),
     status: tvShowDetailsTMDB.data.status,
     // TV Tracker created items
     userRating: 0,
@@ -745,14 +747,12 @@ function testFormatTVShowSeasonData(
 /** getTVShowSeasonData
  * gets season data from tmdb api and stores in
  * tempSeasonsData.
- * Also will merge in any saved season/episode data
- * stored in savedEpisodeState
  */
 export const getTVShowSeasonData = async (
   { state, effects }: Context,
   { tvShowId, seasonNumbers }: { tvShowId: number; seasonNumbers: number[] }
 ) => {
-  //! If we don't have season data for tvShowId, then pull it and save
+  //! If we don't have season data for tvShowId, then query the api and save it
   if (!state.oSaved.tempSeasonsData[tvShowId]) {
     const seasonData = await effects.oSaved.getTVShowSeasonDataAPI(tvShowId, seasonNumbers);
     // Exclude any "special" season (seasonNumber === 0)
@@ -764,17 +764,6 @@ export const getTVShowSeasonData = async (
       [tvShowId]: [...regularSeasons, ...specialSeason],
     };
   }
-  // // Merge watch data
-  // const updatedSeasons = mergesavedEpisodeState(
-  //   state.oSaved.savedEpisodeState[tvShowId],
-  //   state.oSaved.tempSeasonsData[tvShowId]
-  // );
-
-  // //Save merged data to Overmind
-  // state.oSaved.tempSeasonsData = {
-  //   ...state.oSaved.tempSeasonsData,
-  //   [tvShowId]: updatedSeasons,
-  // };
 };
 
 /** clearTempSeasonData
@@ -783,23 +772,45 @@ export const getTVShowSeasonData = async (
 export const clearTempSeasonData = ({ state }: Context) => {
   state.oSaved.tempSeasonsData = [];
 };
+
+//*==================================
+//- EPISODE STATE
+//*==================================
 /** toggleTVShowEpisodeState
  *
  */
 export const toggleTVShowEpisodeState = async (
   { state, effects }: Context,
   payload: { tvShowId: number; seasonNumber: number; episodeNumber: number }
-) => {
+): Promise<boolean> => {
   const { tvShowId, seasonNumber, episodeNumber } = payload;
   const tvShowWatchData = state.oSaved.savedEpisodeState[tvShowId];
-  // If this exists, then we are removing the "watch flag"
+  // Needed to know if we are toggling episode to "watched"(true) or "not watched"(false)
+  // So that we know if we should ask them to mark all previous episodes as watched.
+  let isNextStateWatched = true;
 
+  // Determine if the previous episode is marked as watched.
+  // if not, then ask (or just do) if all previous episodes
+  // should be marked as watched.
+  const previousKey = findPreviousEpisodeKey(
+    state.oSaved.tempSeasonsData[tvShowId],
+    seasonNumber,
+    episodeNumber
+  );
+
+  let prevKeyState = true;
+  if (previousKey) {
+    prevKeyState = !!state.oSaved.savedEpisodeState?.[tvShowId]?.[previousKey];
+  }
+
+  // If this exists, then we are removing the "watch flag"
   if (tvShowWatchData?.[`${seasonNumber}-${episodeNumber}`]) {
     delete tvShowWatchData[`${seasonNumber}-${episodeNumber}`];
     // If there are no more episodes marked as watched, remove the tvShowId key
     if (Object.keys(tvShowWatchData).length === 0) {
       delete state.oSaved.savedEpisodeState[tvShowId];
     }
+    isNextStateWatched = false;
   } else {
     // didn't exist so marking as watched
     state.oSaved.savedEpisodeState = {
@@ -811,6 +822,47 @@ export const toggleTVShowEpisodeState = async (
       },
     };
   }
+  //! merging into state ONLY works if adding an item as marked
+  //! since we are merging, removing an item will not work
+  //! TWO options - when deleting rewrite whole key and merge when adding
+  //! OR save 'false' states also.
+  //! OPTION 3 ---- Store on disk ONLY in savedTVShows (like taggedWith)
+  //!  -- call it episodeState: { [key: string]: boolean }
+  //!  -- still most likely will need to save with false states
+  const mergeObj = { [tvShowId]: { ...state.oSaved.savedEpisodeState?.[tvShowId] } };
+
+  //! maybe check if mergeObj is empty [tvShowId]: {}  If so, delete from storage, else merge?
+  await effects.oSaved.localMergeEpisodeState(state.oAdmin.uid, mergeObj);
+
+  const x = await loadFromAsyncStorage(`${state.oAdmin.uid}-saved_episode_state`);
+  console.log("AFTER Storage", x);
+  // If previous episode is NOT watched AND next state IS watched, then return true
+  // assumes UI will ask if users wants to mark all as watched
+  console.log("Return from Toggle", previousKey && !prevKeyState && isNextStateWatched);
+
+  return previousKey && !prevKeyState && isNextStateWatched;
+};
+
+/**markAllPreviousEpisodes
+ *
+ */
+export const markAllPreviousEpisodes = async (
+  { state, effects }: Context,
+  payload: { tvShowId: number; seasonNumber: number; episodeNumber: number }
+): Promise<void> => {
+  const { tvShowId, seasonNumber, episodeNumber } = payload;
+  // Based on season and episode, get an object with the episode to mark as watched
+  const mergeEpisodeStateData = markPreviousEpisodes(
+    seasonNumber,
+    episodeNumber,
+    state.oSaved.tempSeasonsData[tvShowId]
+  );
+  // Merge with savedEpisodeState data
+  state.oSaved.savedEpisodeState = {
+    ...state.oSaved.savedEpisodeState,
+    [tvShowId]: { ...state.oSaved.savedEpisodeState[tvShowId], ...mergeEpisodeStateData },
+  };
+
   //! Currently not taking into account if the key was deleted
   const mergeObj = { [tvShowId]: { ...state.oSaved.savedEpisodeState?.[tvShowId] } };
   //! maybe check if mergeObj is empty [tvShowId]: {}  If so, delete from storage, else merge?
@@ -819,27 +871,6 @@ export const toggleTVShowEpisodeState = async (
 //*==============================================
 //*- ACTION HELPERS
 //*==============================================
-/** merge savedEpisodeState
- * This function will be called on the initial merging of the data
- * AND whenever an episode is marked as watch or unwatched
- */
-//TODO Need to create an action that is called when an episode is marked as watched/unwatched and
-//TODO call this function to make sure tempSeasonsData is always up to date.
-const mergesavedEpisodeState = (episodeWatchData, tempSeasonsData) => {
-  // Merge watch data
-  // Loop through each seasons episodes and look to see if any watch data has been saved
-  const updatedSeasons = tempSeasonsData.map((season) => {
-    const updatedEpisodes = season.episodes.map((ep) => {
-      return {
-        ...ep,
-        watched: !!episodeWatchData?.[`${season.seasonNumber}-${ep.episodeNumber}`],
-      };
-    });
-    return { ...season, episodes: updatedEpisodes };
-  });
-  return updatedSeasons;
-};
-
 /**
  * Takes in an array of TV Show objects and extracts the
  * Genres from each returning a unique list of genres
@@ -867,25 +898,81 @@ function updateUserRatingOnTVShow(
   return tvShowArray;
 }
 
-// async function checkCurrentTVShowId(
-//   currentTVShowId: number,
-//   newTVShowId: number,
-//   debounceToFlush: _.DebouncedFunc<() => Promise<void>>
-// ) {
-//   // check if we are updating a different movie.  If so flush
-//   if (currentTVShowId !== newTVShowId) {
-//     await debounceToFlush.flush();
-//   }
-//   return newTVShowId;
-// }
+//*=========================
+//- Previous Episode State Marking helpers
+//*=========================
+/** findPreviousEpisodeKey
+ *
+ */
+function findPreviousEpisodeKey(
+  tempSeasonsData: TVShowSeasonDetails[],
+  seasonNumber: number,
+  episodeNumber: number
+) {
+  if (seasonNumber === 0) return undefined;
+  if (seasonNumber === 1 && episodeNumber === 1) return undefined;
 
-//--
+  if (episodeNumber === 1 && seasonNumber !== 1) {
+    // Find the number of episodes in the previous season
+    const numOfEpisodes = tempSeasonsData.find(
+      (season) => season.seasonNumber === seasonNumber - 1
+    ).episodes.length;
+    return `${seasonNumber - 1}-${numOfEpisodes}`;
+  }
+
+  return `${seasonNumber}-${episodeNumber - 1}`;
+}
+
+/** recurseSeasonsBackwards
+ *
+ */
+function markPreviousEpisodes(
+  startingSeason,
+  startingEpisode,
+  tempSeasonsData: TVShowSeasonDetails[]
+) {
+  let watchedObj = {};
+  //* Recursive function
+  const recurseSeasonsBackwards = (seasonNumber: number, numOfEpisodes: number) => {
+    for (let i = 1; i <= numOfEpisodes; i++) {
+      watchedObj[`${seasonNumber}-${i}`] = true;
+    }
+    if (seasonNumber === 1) return watchedObj;
+    const nextNumEpisodes = tempSeasonsData.find(
+      (season) => season.seasonNumber === seasonNumber - 1
+    ).episodes.length;
+
+    return recurseSeasonsBackwards(seasonNumber - 1, nextNumEpisodes);
+  };
+  //* -----------------
+  recurseSeasonsBackwards(startingSeason, startingEpisode);
+  console.log("WATCHED OBJ", watchedObj);
+  return watchedObj;
+}
+
+//*=========================
+//- savedTVShow validation
+//*=========================
 // This function is simply checking that each tvShow object has an ID
 // Currently only called from the Hydrate function to help prevent bad
 // data from getting through
 function validateSavedTVShows(tvShows: SavedTVShowsDoc[]): SavedTVShowsDoc[] {
   return tvShows.filter((show) => show.id);
 }
+
+function groupAvgRunTime(avgEpisodeRunTime: number): EpisodeRunTimeGroup {
+  // Creates 4 groups
+  // 0 - 0 to 15 minutes
+  // 1 - 16 to 30 minutes
+  // 2 - 31 to 60 minutes
+  // 3 - Over 60 minutes or undefined
+  if (avgEpisodeRunTime <= 15) return 0;
+  if (avgEpisodeRunTime <= 30) return 1;
+  if (avgEpisodeRunTime <= 60) return 2;
+  return 3;
+}
+
+//*==========================
 
 function createUpdateList(tvShows: SavedTVShowsDoc[]): number[] {
   // Loop through TV Shows and return a list of tvShowId numbers

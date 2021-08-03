@@ -28,8 +28,13 @@ const DetailSeasonEpisode = ({ tvShowId, seasonNumber, episodeNumber }: Props) =
   const { toggleTVShowEpisodeState } = actions.oSaved;
   const { savedEpisodeState } = state.oSaved;
   const episode = state.oSaved.getTVShowEpisode(tvShowId, seasonNumber, episodeNumber);
-  const [episodeState, setEpisodeState] = React.useState(false);
+  // const [episodeState, setEpisodeState] = React.useState(false);
   const [askToMark, setAskToMark] = React.useState(false);
+  const episodeState = state.oSaved.getTVShowEpisodeState(
+    tvShowId,
+    seasonNumber,
+    episodeNumber
+  );
   // const episodeState = state.oSaved.getTVShowEpisodeState(tvShowId,seasonNumber, episodeNumber);
   // React.useEffect(() => {
   //   setEpisodeState(state.oSaved.getTVShowEpisodeState(tvShowId, seasonNumber, episodeNumber));
@@ -39,10 +44,6 @@ const DetailSeasonEpisode = ({ tvShowId, seasonNumber, episodeNumber }: Props) =
   // the functionality to update episode state (mark all previous as watched) the UI
   // wouldn't be updated until coming back in.  THUS, this use effect was born.
   // Should be a better way, but for now, this is it.
-  React.useEffect(() => {
-    // setEpisodeState(!!savedEpisodeState?.[tvShowId]?.[`${seasonNumber}-${episodeNumber}`]);
-    setEpisodeState(state.oSaved.getTVShowEpisodeState(tvShowId, seasonNumber, episodeNumber));
-  }, [savedEpisodeState?.[tvShowId]?.[`${seasonNumber}-${episodeNumber}`]]);
 
   React.useEffect(() => {
     if (askToMark) {

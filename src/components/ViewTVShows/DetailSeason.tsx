@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import { useOActions, useOState } from "../../store/overmind";
 
-import DetailSeasonEpisode from "./DetailSeasonEpisode";
+import DetailSeasonEpisode from "./DetailSeasonEpisodeTest";
 
 type Props = {
   tvShowId: number;

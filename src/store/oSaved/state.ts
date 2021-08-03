@@ -5,7 +5,10 @@ import * as defaultConstants from "./defaultContants";
 
 import { DateObject, SortTypes, Operators } from "../../types";
 import { TVShowSeasonDetails, Episode } from "@markmccoid/tmdb_api";
-import { de } from "date-fns/locale";
+
+// 0 = 0 to 15 minutes, 1 = 16 to 30 minutes,
+// 2 = 31 to 60 minutes, 3 = Over 60 minutes or undefined
+export type EpisodeRunTimeGroup = 0 | 1 | 2 | 3;
 
 export type SavedTVShowsDoc = {
   id: number;
@@ -16,6 +19,7 @@ export type SavedTVShowsDoc = {
   posterURL: string;
   genres: string[];
   avgEpisodeRunTime: number;
+  episodeRunTimeGroup: EpisodeRunTimeGroup;
   status: string;
   // TV Tracker created items
   taggedWith?: string[];
@@ -31,13 +35,13 @@ export type WatchedSeasonEpisodes = {
 };
 export type SavedEpisodeState = Record<number, WatchedSeasonEpisodes>;
 
-export interface TempSeasonDataEpisode extends Episode {
-  watched?: boolean;
-}
-export interface TempSeasonsData extends TVShowSeasonDetails {
-  episodes: TempSeasonDataEpisode[];
-}
-export type tempSeasonsData = Record<number, TempSeasonsData[]>;
+// export interface TempSeasonDataEpisode extends Episode {
+//   watched?: boolean;
+// }
+// export interface TempSeasonsData extends TVShowSeasonDetails {
+//   episodes: TempSeasonDataEpisode[];
+// }
+export type TempSeasonsData = Record<number, TVShowSeasonDetails[]>;
 
 export type Settings = {
   defaultFilter: string;
@@ -106,7 +110,7 @@ export type State = {
     genres: string[];
     watchProviders: string[];
   };
-  tempSeasonsData: { [key: number]: TVShowSeasonDetails[] };
+  tempSeasonsData: TempSeasonsData;
   // --- GETTERS ---
   getFilteredTVShows: SavedTVShowsDoc[];
   //! Type needs to change since I'm not sure exactly what will be returned by
