@@ -9,6 +9,10 @@ import {
 
 import { IConfig, IOnInitialize, IContext } from "overmind";
 
+// import { IContext } from 'overmind'
+
+// export type Context = IContext<typeof config>;
+
 // Due to circular typing we have to define an
 // explicit typing of state, actions and effects since
 // TS 3.9
@@ -32,7 +36,7 @@ import { config as oSearch } from "./oSearch";
 import { config as oSaved } from "./oSaved";
 import { config as oAdmin } from "./oAdmin";
 
-export const config = namespaced({ oAdmin, oSearch, oSaved });
+export const config = namespaced({ oAdmin, oSaved, oSearch });
 export const useOvermind = createHook();
 export const useOState = createStateHook<Config>();
 export const useOActions = createActionsHook<Config>();

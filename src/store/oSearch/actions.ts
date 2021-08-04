@@ -1,7 +1,5 @@
 import _ from "lodash";
 import { pipe, debounce, mutate, filter } from "overmind";
-import { createEffectsHook } from "overmind-react";
-// import { discoverTypesEnum } from "../../statemachines/discoverTVMachine";
 import { Context } from "../overmind";
 import { TVSearchResult, TVSearchItem } from "../../types";
 
@@ -16,7 +14,6 @@ export const internal = internalActions;
 export const setIsNewQuery = ({ state }: Context, value) => {
   state.oSearch.isNewQuery = value;
 };
-
 export const clearSearchString = ({ state }: Context) => {
   state.oSearch.searchString = undefined;
 };
@@ -34,6 +31,7 @@ export const searchSetup = async ({ state, effects }: Context) => {
  */
 export const queryTVAPI = async ({ state, effects, actions }: Context, page = 1) => {
   let { oSearch } = state;
+
   const {
     queryType,
     predefinedType,

@@ -33,9 +33,14 @@ export const sortDefinitions: SortDefinitions = {
     type: "date",
   },
   4: {
-    sortField: "nextAirDate",
+    sortField: "nextAirDate.epoch",
     title: "Next Air Date",
     type: "date",
+  },
+  5: {
+    sortField: "episodeRunTimeGroup",
+    title: "Episode Run Time",
+    type: "num",
   },
 };
 export const defaultSort: SortObjectItem[] = [
@@ -73,5 +78,12 @@ export const defaultSort: SortObjectItem[] = [
     sortDirection: "desc",
     active: false,
     index: 4,
+  },
+  {
+    // title: "Episode Run Time Group",
+    id: 5,
+    sortDirection: "desc",
+    active: false,
+    index: 5,
   },
 ];

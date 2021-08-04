@@ -32,7 +32,7 @@ function getKey(uid, key) {
     settings: "settings",
     savedFilters: "saved_filters",
     tagged_tvshows: "tagged_tvshows",
-    savedEpisodeState: "saved_episode_state",
+    tempEpisodeState: "saved_episode_state",
   };
   return `${uid}-${baseKeys[key]}`;
 }
@@ -89,14 +89,13 @@ export const loadLocalData = async (uid: string): Promise<UserDocument> => {
   const tagData = (await loadFromAsyncStorage(getKey(uid, "tagData"))) || [];
   const settings = (await loadFromAsyncStorage(getKey(uid, "settings"))) || {};
   const savedFilters = (await loadFromAsyncStorage(getKey(uid, "savedFilters"))) || [];
-  const savedEpisodeState =
-    (await loadFromAsyncStorage(getKey(uid, "savedEpisodeState"))) || {};
+  const tempEpisodeState = (await loadFromAsyncStorage(getKey(uid, "tempEpisodeState"))) || {};
   return {
     savedTVShows,
     tagData,
     settings,
     savedFilters,
-    savedEpisodeState,
+    tempEpisodeState,
     dataSource: "local",
   };
 };
@@ -172,19 +171,19 @@ export const mergeTVShowsToLocal = async (uid: string, tvShowsMergeObj: SavedTVS
  * this is so we can use the merge instead of saving all the movies every time.
  *
  * @param {string} uid - uid for user logged in, use to create keys
- * @param {object} savedEpisodeState - object containing data to store in async storage
+ * @param {object} tempEpisodeState - object containing data to store in async storage
  */
 export const saveEpisodeStateToLocal = async (
   uid: string,
-  savedEpisodeState: SavedEpisodeState
+  tempEpisodeState: SavedEpisodeState
 ) => {
-  // Convert savedEpisodeState
-  let savedEpisodeStateObj = _.keyBy(savedEpisodeState, "id");
-  await saveToAsyncStorage(getKey(uid, "savedEpisodeState"), savedEpisodeStateObj);
+  // Convert tempEpisodeState
+  let tempEpisodeStateObj = _.keyBy(tempEpisodeState, "id");
+  await saveToAsyncStorage(getKey(uid, "tempEpisodeState"), tempEpisodeStateObj);
 };
 
 /**
- * mergeEpisodeStateToLocal - merge passed object properties to savedEpisodeState in local storage.
+ * mergeEpisodeStateToLocal - merge passed object properties to tempEpisodeState in local storage.
  * This should be able to update
  *
  * @param {string} uid - uid for user logged in, use to create keys
@@ -194,7 +193,7 @@ export const mergeEpisodeStateToLocal = async (
   uid: string,
   EpisodeStateMergeObj: SavedEpisodeState
 ) => {
-  await mergeToAsyncStorage(getKey(uid, "savedEpisodeState"), EpisodeStateMergeObj);
+  await mergeToAsyncStorage(getKey(uid, "tempEpisodeState"), EpisodeStateMergeObj);
 };
 
 /**
@@ -236,7 +235,7 @@ export const saveSavedFiltersToLocal = async (uid: string, savedFilters: SavedFi
  */
 export const deleteLocalData = async (uid: string): Promise<void> => {
   await removeFromAsyncStorage(getKey(uid, "savedTVShows"));
-  await removeFromAsyncStorage(getKey(uid, "savedEpisodeState"));
+  await removeFromAsyncStorage(getKey(uid, "tempEpisodeState"));
   await removeFromAsyncStorage(getKey(uid, "tagData"));
   await removeFromAsyncStorage(getKey(uid, "settings"));
   await removeFromAsyncStorage(getKey(uid, "savedFilters"));

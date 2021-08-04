@@ -1,4 +1,3 @@
-import Firebase from "../../storage/firebase";
 import { Context } from "../overmind";
 
 export const logUserIn = (

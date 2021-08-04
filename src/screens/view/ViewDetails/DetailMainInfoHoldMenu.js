@@ -7,7 +7,7 @@ import * as Linking from "expo-linking";
 import { nativeShareItem } from "../../../utils/nativeShareItem";
 
 const showRefreshAlert = (msg) => {
-  Alert.alert("Movie Refresh", msg);
+  Alert.alert("TV Show Refresh", msg);
 };
 
 const DetailMainInfoHoldMenu = ({
@@ -59,17 +59,18 @@ const DetailMainInfoHoldMenu = ({
   return (
     <TouchableOpacity
       activeOpacity={0.8}
-      // onPress={
-      //   isInSavedTVShows || !isRefreshing
-      //     ? async () => {
-      //         setisRefreshing(true);
-      //         let msg = await refreshTVShow(tvShow.id);
-      //         setisRefreshing(false);
-      //         showRefreshAlert(msg);
-      //         navigateToRoute();
-      //       }
-      //     : null
-      // }
+      onPress={
+        isInSavedTVShows || !isRefreshing
+          ? async () => {
+              setisRefreshing(true);
+              await refreshTVShow(tvShow.id);
+              const msg = `${tvShow.name} has been updated.`;
+              setisRefreshing(false);
+              showRefreshAlert(msg);
+              navigateToRoute();
+            }
+          : null
+      }
       onLongPress={
         !isRefreshing
           ? () => {
