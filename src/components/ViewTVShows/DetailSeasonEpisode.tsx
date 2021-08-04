@@ -26,7 +26,7 @@ const DetailSeasonEpisode = ({ tvShowId, seasonNumber, episodeNumber }: Props) =
   const state = useOState();
   const actions = useOActions();
   const { toggleTVShowEpisodeState } = actions.oSaved;
-  const { savedEpisodeState } = state.oSaved;
+  const { tempEpisodeState } = state.oSaved;
   const episode = state.oSaved.getTVShowEpisode(tvShowId, seasonNumber, episodeNumber);
   const [episodeState, setEpisodeState] = React.useState(false);
   const [askToMark, setAskToMark] = React.useState(false);
@@ -40,9 +40,9 @@ const DetailSeasonEpisode = ({ tvShowId, seasonNumber, episodeNumber }: Props) =
   // wouldn't be updated until coming back in.  THUS, this use effect was born.
   // Should be a better way, but for now, this is it.
   React.useEffect(() => {
-    // setEpisodeState(!!savedEpisodeState?.[tvShowId]?.[`${seasonNumber}-${episodeNumber}`]);
+    // setEpisodeState(!!tempEpisodeState?.[tvShowId]?.[`${seasonNumber}-${episodeNumber}`]);
     setEpisodeState(state.oSaved.getTVShowEpisodeState(tvShowId, seasonNumber, episodeNumber));
-  }, [savedEpisodeState?.[tvShowId]?.[`${seasonNumber}-${episodeNumber}`]]);
+  }, [tempEpisodeState?.[tvShowId]?.[`${seasonNumber}-${episodeNumber}`]]);
 
   React.useEffect(() => {
     if (askToMark) {

@@ -26,7 +26,7 @@ const DetailSeasonEpisode = ({ tvShowId, seasonNumber, episodeNumber }: Props) =
   const state = useOState();
   const actions = useOActions();
   const { toggleTVShowEpisodeState } = actions.oSaved;
-  const { savedEpisodeState } = state.oSaved;
+  const { tempEpisodeState } = state.oSaved;
   const episode = state.oSaved.getTVShowEpisode(tvShowId, seasonNumber, episodeNumber);
   // const [episodeState, setEpisodeState] = React.useState(false);
   const [askToMark, setAskToMark] = React.useState(false);

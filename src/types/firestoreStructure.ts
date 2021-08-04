@@ -58,7 +58,7 @@ export interface UserBaseData {
   savedFilters: SavedFilters[];
   settings: Settings;
   tagData: TagData[];
-  savedEpisodeState: SavedEpisodeState;
+  tempEpisodeState: SavedEpisodeState;
   dataSource: Datasource;
 }
 /**UserDocument

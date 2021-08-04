@@ -23,6 +23,7 @@ export type SavedTVShowsDoc = {
   status: string;
   // TV Tracker created items
   taggedWith?: string[];
+  episodeState?: WatchedSeasonEpisodes;
   userRating: number;
   dateSaved: number; //Unix epoch time
   dateLastUpdated?: number; //Unix epoch time
@@ -81,7 +82,7 @@ export type TagDataExtended = TagData & {
 
 export type State = {
   savedTVShows: SavedTVShowsDoc[];
-  savedEpisodeState: SavedEpisodeState;
+  tempEpisodeState: SavedEpisodeState;
   tagData: TagData[]; // Array of Objects containing tag info { tagId, tagName, members[]??}
   // This will hold an object (with key of MovieId) for each movie that has
   // been "tagged".
@@ -143,7 +144,7 @@ export type State = {
 };
 export const state: State = {
   savedTVShows: [], // Movie data pulled from @markmccoid/tmdb_api
-  savedEpisodeState: {},
+  tempEpisodeState: {},
   tagData: [], // Array of Objects containing tag info { tagId, tagName, members[]??}
   // This will hold an object (with key of MovieId) for each movie that has
   // been "tagged".
@@ -261,17 +262,17 @@ export const state: State = {
       // holdEpisode = {
       //   ...holdEpisode,
       //   watched:
-      //     !!state.savedEpisodeState?.[tvShowId]?.[`${seasonNumber}-${episodeNumber}`],
+      //     !!state.tempEpisodeState?.[tvShowId]?.[`${seasonNumber}-${episodeNumber}`],
       // };
       return holdEpisode;
     }
   ),
   getTVShowEpisodeState: derived(
     (state: State) => (tvShowId: number, seasonNumber: number, episodeNumber: number) => {
-      if (!state.savedEpisodeState?.[tvShowId]?.[`${seasonNumber}-${episodeNumber}`]) {
-        return false;
-      }
-      return state.savedEpisodeState?.[tvShowId]?.[`${seasonNumber}-${episodeNumber}`];
+      // if (!state.tempEpisodeState?.[tvShowId]?.[`${seasonNumber}-${episodeNumber}`]) {
+      //   return false;
+      // }
+      return !!state.tempEpisodeState?.[tvShowId]?.[`${seasonNumber}-${episodeNumber}`];
     }
   ),
   //* ------

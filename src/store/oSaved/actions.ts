@@ -14,6 +14,7 @@ import {
 } from "@markmccoid/tmdb_api";
 import { getCurrentDate, formatDateObjectForSave } from "../../utils/helperFunctions";
 import { fromUnixTime, differenceInDays, parseISO } from "date-fns";
+import { actions } from "xstate";
 
 export const internal = internalActions;
 // export actions for saved filters.
@@ -37,7 +38,6 @@ export const hydrateStore = async (
   let userDocData = await effects.oSaved.initializeStore(uid, forceRefresh);
 
   state.oSaved.savedTVShows = validateSavedTVShows(userDocData.savedTVShows);
-  state.oSaved.savedEpisodeState = userDocData.savedEpisodeState;
   state.oSaved.tagData = userDocData.tagData;
   state.oSaved.savedFilters = userDocData.savedFilters;
   //Update the datasource (loaded from local or cloud(firestore))
@@ -45,6 +45,7 @@ export const hydrateStore = async (
   // Tag data is stored on the movies document.  This function creates the
   // oSaved.taggedMovies data structure within Overmind
   actions.oSaved.internal.createTaggedTVShowsObj(userDocData.savedTVShows);
+  actions.oSaved.internal.hydrateEpisodeState(userDocData.savedTVShows);
   //------------
   // SETTINGS
   // loading all settings from state first(holds any defaults), then settings in firestore
@@ -780,11 +781,12 @@ export const clearTempSeasonData = ({ state }: Context) => {
  *
  */
 export const toggleTVShowEpisodeState = async (
-  { state, effects }: Context,
+  { state, actions, effects }: Context,
   payload: { tvShowId: number; seasonNumber: number; episodeNumber: number }
 ): Promise<boolean> => {
   const { tvShowId, seasonNumber, episodeNumber } = payload;
-  const tvShowWatchData = state.oSaved.savedEpisodeState[tvShowId];
+  const tvShowWatchData = state.oSaved.tempEpisodeState[tvShowId];
+
   // Needed to know if we are toggling episode to "watched"(true) or "not watched"(false)
   // So that we know if we should ask them to mark all previous episodes as watched.
   let isNextStateWatched = true;
@@ -800,21 +802,18 @@ export const toggleTVShowEpisodeState = async (
 
   let prevKeyState = true;
   if (previousKey) {
-    prevKeyState = !!state.oSaved.savedEpisodeState?.[tvShowId]?.[previousKey];
+    prevKeyState = !!state.oSaved.tempEpisodeState?.[tvShowId]?.[previousKey];
   }
 
   // If this exists, then we are removing the "watch flag"
   if (tvShowWatchData?.[`${seasonNumber}-${episodeNumber}`]) {
-    delete tvShowWatchData[`${seasonNumber}-${episodeNumber}`];
-    // If there are no more episodes marked as watched, remove the tvShowId key
-    if (Object.keys(tvShowWatchData).length === 0) {
-      delete state.oSaved.savedEpisodeState[tvShowId];
-    }
+    // delete tvShowWatchData[`${seasonNumber}-${episodeNumber}`];
+    tvShowWatchData[`${seasonNumber}-${episodeNumber}`] = false;
     isNextStateWatched = false;
   } else {
     // didn't exist so marking as watched
-    state.oSaved.savedEpisodeState = {
-      ...state.oSaved.savedEpisodeState,
+    state.oSaved.tempEpisodeState = {
+      ...state.oSaved.tempEpisodeState,
       [tvShowId]: {
         ...tvShowWatchData,
         [`${seasonNumber}-${episodeNumber}`]:
@@ -822,24 +821,20 @@ export const toggleTVShowEpisodeState = async (
       },
     };
   }
-  //! merging into state ONLY works if adding an item as marked
-  //! since we are merging, removing an item will not work
-  //! TWO options - when deleting rewrite whole key and merge when adding
-  //! OR save 'false' states also.
-  //! OPTION 3 ---- Store on disk ONLY in savedTVShows (like taggedWith)
-  //!  -- call it episodeState: { [key: string]: boolean }
-  //!  -- still most likely will need to save with false states
-  const mergeObj = { [tvShowId]: { ...state.oSaved.savedEpisodeState?.[tvShowId] } };
 
-  //! maybe check if mergeObj is empty [tvShowId]: {}  If so, delete from storage, else merge?
-  await effects.oSaved.localMergeEpisodeState(state.oAdmin.uid, mergeObj);
+  // Update savedTVShows state array
+  actions.oSaved.internal.updateEpisodeStateOnTVShow(tvShowId);
 
-  const x = await loadFromAsyncStorage(`${state.oAdmin.uid}-saved_episode_state`);
-  console.log("AFTER Storage", x);
+  // --OPTION 3 ---- Store on disk ONLY in savedTVShows (like taggedWith)
+  // -- call it episodeState: { [key: string]: boolean }
+  // -- still most likely will need to save with false states
+  const mergeObj = {
+    [tvShowId]: { episodeState: { ...state.oSaved.tempEpisodeState?.[tvShowId] } },
+  };
+  await effects.oSaved.localMergeTVShows(state.oAdmin.uid, mergeObj);
+
   // If previous episode is NOT watched AND next state IS watched, then return true
   // assumes UI will ask if users wants to mark all as watched
-  console.log("Return from Toggle", previousKey && !prevKeyState && isNextStateWatched);
-
   return previousKey && !prevKeyState && isNextStateWatched;
 };
 
@@ -847,26 +842,30 @@ export const toggleTVShowEpisodeState = async (
  *
  */
 export const markAllPreviousEpisodes = async (
-  { state, effects }: Context,
+  { state, actions, effects }: Context,
   payload: { tvShowId: number; seasonNumber: number; episodeNumber: number }
 ): Promise<void> => {
   const { tvShowId, seasonNumber, episodeNumber } = payload;
   // Based on season and episode, get an object with the episode to mark as watched
-  const mergeEpisodeStateData = markPreviousEpisodes(
+  const mergeEpisodeStateData = buildEpisodesToMarkObj(
     seasonNumber,
     episodeNumber,
     state.oSaved.tempSeasonsData[tvShowId]
   );
-  // Merge with savedEpisodeState data
-  state.oSaved.savedEpisodeState = {
-    ...state.oSaved.savedEpisodeState,
-    [tvShowId]: { ...state.oSaved.savedEpisodeState[tvShowId], ...mergeEpisodeStateData },
+  // Merge with tempEpisodeState data
+  state.oSaved.tempEpisodeState = {
+    ...state.oSaved.tempEpisodeState,
+    [tvShowId]: { ...state.oSaved.tempEpisodeState[tvShowId], ...mergeEpisodeStateData },
   };
 
-  //! Currently not taking into account if the key was deleted
-  const mergeObj = { [tvShowId]: { ...state.oSaved.savedEpisodeState?.[tvShowId] } };
-  //! maybe check if mergeObj is empty [tvShowId]: {}  If so, delete from storage, else merge?
-  await effects.oSaved.localMergeEpisodeState(state.oAdmin.uid, mergeObj);
+  // update the savedTVShow array with any episode state that has changed for this tvShow
+  actions.oSaved.internal.updateEpisodeStateOnTVShow(tvShowId);
+
+  // save to async storage
+  const mergeObj = {
+    [tvShowId]: { episodeState: { ...state.oSaved.tempEpisodeState?.[tvShowId] } },
+  };
+  await effects.oSaved.localMergeTVShows(state.oAdmin.uid, mergeObj);
 };
 //*==============================================
 //*- ACTION HELPERS
@@ -926,7 +925,7 @@ function findPreviousEpisodeKey(
 /** recurseSeasonsBackwards
  *
  */
-function markPreviousEpisodes(
+function buildEpisodesToMarkObj(
   startingSeason,
   startingEpisode,
   tempSeasonsData: TVShowSeasonDetails[]
@@ -946,7 +945,6 @@ function markPreviousEpisodes(
   };
   //* -----------------
   recurseSeasonsBackwards(startingSeason, startingEpisode);
-  console.log("WATCHED OBJ", watchedObj);
   return watchedObj;
 }
 

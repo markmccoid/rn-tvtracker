@@ -96,8 +96,8 @@ export const localSaveTVShows = async (uid, savedTVShows) => {
 export const localMergeTVShows = async (uid, tvShowObj) => {
   return mergeTVShowsToLocal(uid, tvShowObj);
 };
-export const localSaveEpisodeState = async (uid, savedEpisodeState) => {
-  return saveEpisodeStateToLocal(uid, savedEpisodeState);
+export const localSaveEpisodeState = async (uid, tempEpisodeState) => {
+  return saveEpisodeStateToLocal(uid, tempEpisodeState);
 };
 export const localMergeEpisodeState = async (uid, EpisodeStateMergeObj) => {
   return mergeEpisodeStateToLocal(uid, EpisodeStateMergeObj);

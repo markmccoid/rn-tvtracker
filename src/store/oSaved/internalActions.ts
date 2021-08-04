@@ -20,6 +20,23 @@ export const createTaggedTVShowsObj = ({ state }: Context, savedTVShows) => {
     return acc;
   }, {});
 };
+
+/**
+ * hydrateEpisodeState - the episodeState property is stored on each tvShows document
+ * it contains the episode state of the give tvShows seasons/episodes
+ * hydrates the oSaved.episodeState object with data from the cloud
+ * Called from the hydrateStore action
+ * @param {array} savedTVShows
+ */
+export const hydrateEpisodeState = ({ state }: Context, savedTVShows) => {
+  state.oSaved.tempEpisodeState = savedTVShows.reduce((acc, tvShow) => {
+    if (tvShow?.episodeState) {
+      return { ...acc, [tvShow.id]: tvShow.episodeState };
+    }
+    return acc;
+  }, {});
+};
+
 //
 export const updateTaggedWithOnTVShow = ({ state }: Context, tvShowId: number) => {
   // For some reason tvShowId came over as string, but is stored as number in overmind.
@@ -30,16 +47,16 @@ export const updateTaggedWithOnTVShow = ({ state }: Context, tvShowId: number) =
       tvShow.taggedWith = [...state.oSaved.taggedTVShows[tvShowId]];
     }
   });
-
-  // for (let i = 0; i < state.oSaved.savedTVShows.length; i++) {
-  //   if (state.oSaved.savedTVShows[i].id === movieId) {
-  //     state.oSaved.savedTVShows[i] = {
-  //       ...state.oSaved.savedTVShows[i],
-  //       taggedWith: state.oSaved.taggedMovies[movieId],
-  //     };
-  //     break;
-  //   }
-  // }
+};
+/**updateEpisodeStateOnTVShow
+ *
+ */
+export const updateEpisodeStateOnTVShow = ({ state }: Context, tvShowId: number) => {
+  state.oSaved.savedTVShows.forEach((tvShow) => {
+    if (tvShow.id === tvShowId) {
+      tvShow.episodeState = { ...state.oSaved.tempEpisodeState[tvShowId] };
+    }
+  });
 };
 
 export const maintainTaggedTVShowObj = async (
