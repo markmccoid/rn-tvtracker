@@ -1,32 +1,23 @@
 import { TVShowSeasonDetails } from "@markmccoid/tmdb_api";
 import React, { useEffect, useState } from "react";
-import {
-  View,
-  ActivityIndicator,
-  Text,
-  Dimensions,
-  Image,
-  ScrollView,
-  StyleSheet,
-  Linking,
-  TouchableOpacity,
-} from "react-native";
-import { useOActions, useOState } from "../../store/overmind";
+import { View, Text, StyleSheet } from "react-native";
+import { MotiView } from "moti";
+import { useOState } from "../../store/overmind";
 
-import DetailSeasonEpisode from "./DetailSeasonEpisodeTest";
+import DetailSeasonEpisode from "./DetailSeasonEpisode";
 
 type Props = {
   tvShowId: number;
   season: TVShowSeasonDetails;
 };
 const DetailSeason = ({ tvShowId, season }: Props) => {
-  // console.log("Render DetailSeasons", season.seasonNumber);
   const state = useOState();
   const episodes = state.oSaved.getTVShowEpisodes(tvShowId, season.seasonNumber);
   const seasonName =
     season.name === `Season ${season.seasonNumber}` || season.seasonNumber === 0
       ? season.name
       : `Season ${season.seasonNumber} - ${season.name}`;
+
   return (
     <View key={season.seasonNumber}>
       <View style={styles.seasonName}>
@@ -35,9 +26,10 @@ const DetailSeason = ({ tvShowId, season }: Props) => {
       <View style={{ flexDirection: "column", marginHorizontal: 5 }}>
         {episodes.map((ep) => (
           <DetailSeasonEpisode
-            key={ep.episodeNumber}
-            episodeNumber={ep.episodeNumber}
-            seasonNumber={ep.seasonNumber}
+            key={`${ep.seasonNumber}-${ep.episodeNumber}`}
+            episode={ep}
+            // episodeNumber={ep.episodeNumber}
+            // seasonNumber={ep.seasonNumber}
             tvShowId={tvShowId}
           />
         ))}
@@ -57,4 +49,4 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
 });
-export default DetailSeason;
+export default React.memo(DetailSeason);

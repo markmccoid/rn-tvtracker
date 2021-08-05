@@ -785,6 +785,11 @@ export const toggleTVShowEpisodeState = async (
   payload: { tvShowId: number; seasonNumber: number; episodeNumber: number }
 ): Promise<boolean> => {
   const { tvShowId, seasonNumber, episodeNumber } = payload;
+  // Since we are assigning true/false directly to tempEpisodeState[tvShowId] we need
+  // to make sure it exists first!
+  if (!state.oSaved.tempEpisodeState[tvShowId]) {
+    state.oSaved.tempEpisodeState = { ...state.oSaved.tempEpisodeState, [tvShowId]: {} };
+  }
   const tvShowWatchData = state.oSaved.tempEpisodeState[tvShowId];
 
   // Needed to know if we are toggling episode to "watched"(true) or "not watched"(false)
@@ -812,14 +817,7 @@ export const toggleTVShowEpisodeState = async (
     isNextStateWatched = false;
   } else {
     // didn't exist so marking as watched
-    state.oSaved.tempEpisodeState = {
-      ...state.oSaved.tempEpisodeState,
-      [tvShowId]: {
-        ...tvShowWatchData,
-        [`${seasonNumber}-${episodeNumber}`]:
-          !tvShowWatchData?.[`${seasonNumber}-${episodeNumber}`],
-      },
-    };
+    tvShowWatchData[`${seasonNumber}-${episodeNumber}`] = true;
   }
 
   // Update savedTVShows state array
@@ -852,11 +850,16 @@ export const markAllPreviousEpisodes = async (
     episodeNumber,
     state.oSaved.tempSeasonsData[tvShowId]
   );
+
   // Merge with tempEpisodeState data
-  state.oSaved.tempEpisodeState = {
-    ...state.oSaved.tempEpisodeState,
-    [tvShowId]: { ...state.oSaved.tempEpisodeState[tvShowId], ...mergeEpisodeStateData },
-  };
+  Object.entries(mergeEpisodeStateData).forEach(
+    ([key, value]: [key: string, value: boolean]) => {
+      if (!state.oSaved.tempEpisodeState[tvShowId]?.[key]) {
+        console.log("updating state", key);
+        state.oSaved.tempEpisodeState[tvShowId][key] = value;
+      }
+    }
+  );
 
   // update the savedTVShow array with any episode state that has changed for this tvShow
   actions.oSaved.internal.updateEpisodeStateOnTVShow(tvShowId);

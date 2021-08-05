@@ -13,23 +13,26 @@ import {
 } from "react-native";
 import { useOActions, useOState } from "../../store/overmind";
 
-import { EyeEmptyIcon, EyeFilledIcon } from "../../components/common/Icons";
+import { EyeEmptyIcon, EyeFilledIcon } from "../common/Icons";
 
 type Props = {
   tvShowId: number;
-  seasonNumber: number;
-  episodeNumber: number;
+  episode: Episode;
 };
 const { width, height } = Dimensions.get("window");
 
-const DetailSeasonEpisode = ({ tvShowId, seasonNumber, episodeNumber }: Props) => {
+const DetailSeasonEpisode = ({ tvShowId, episode }: Props) => {
   const state = useOState();
   const actions = useOActions();
   const { toggleTVShowEpisodeState } = actions.oSaved;
-  const { tempEpisodeState } = state.oSaved;
-  const episode = state.oSaved.getTVShowEpisode(tvShowId, seasonNumber, episodeNumber);
-  const [episodeState, setEpisodeState] = React.useState(false);
+  // const episode = state.oSaved.getTVShowEpisode(tvShowId, seasonNumber, episodeNumber);
+  // const [episodeState, setEpisodeState] = React.useState(false);
   const [askToMark, setAskToMark] = React.useState(false);
+  const episodeState = state.oSaved.getTVShowEpisodeState(
+    tvShowId,
+    episode.seasonNumber,
+    episode.episodeNumber
+  );
   // const episodeState = state.oSaved.getTVShowEpisodeState(tvShowId,seasonNumber, episodeNumber);
   // React.useEffect(() => {
   //   setEpisodeState(state.oSaved.getTVShowEpisodeState(tvShowId, seasonNumber, episodeNumber));
@@ -40,17 +43,16 @@ const DetailSeasonEpisode = ({ tvShowId, seasonNumber, episodeNumber }: Props) =
   // wouldn't be updated until coming back in.  THUS, this use effect was born.
   // Should be a better way, but for now, this is it.
   React.useEffect(() => {
-    // setEpisodeState(!!tempEpisodeState?.[tvShowId]?.[`${seasonNumber}-${episodeNumber}`]);
-    setEpisodeState(state.oSaved.getTVShowEpisodeState(tvShowId, seasonNumber, episodeNumber));
-  }, [tempEpisodeState?.[tvShowId]?.[`${seasonNumber}-${episodeNumber}`]]);
-
-  React.useEffect(() => {
     if (askToMark) {
       Alert.alert("Mark Previous", "Mark all previous?", [
         {
           text: "Ok",
           onPress: () =>
-            actions.oSaved.markAllPreviousEpisodes({ tvShowId, seasonNumber, episodeNumber }),
+            actions.oSaved.markAllPreviousEpisodes({
+              tvShowId,
+              seasonNumber: episode.seasonNumber,
+              episodeNumber: episode.episodeNumber,
+            }),
         },
         { text: "Cancel" },
       ]);
@@ -86,7 +88,7 @@ const DetailSeasonEpisode = ({ tvShowId, seasonNumber, episodeNumber }: Props) =
           setAskToMark(
             await toggleTVShowEpisodeState({
               tvShowId,
-              seasonNumber,
+              seasonNumber: episode.seasonNumber,
               episodeNumber: episode.episodeNumber,
             })
           );
@@ -112,4 +114,4 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
 });
-export default DetailSeasonEpisode;
+export default React.memo(DetailSeasonEpisode);

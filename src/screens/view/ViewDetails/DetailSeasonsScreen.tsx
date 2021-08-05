@@ -6,6 +6,7 @@ import {
   Dimensions,
   Image,
   ScrollView,
+  FlatList,
   StyleSheet,
   Linking,
   TouchableOpacity,
@@ -30,15 +31,18 @@ const DetailSeasonsScreen = ({ navigation, route }: DetailSeasonsScreenProps) =>
   const { getTVShowSeasonData, clearTempSeasonData, toggleTVShowEpisodeState } =
     actions.oSaved;
   const { tempSeasonsData, getTVShowSeasonDetails, getTVShowSeasons } = state.oSaved;
+
   const getSeasonData = async () => {
     setLoading(true);
+    // if (!getTVShowSeasons(tvShowId)) {
     await getTVShowSeasonData({ tvShowId, seasonNumbers });
+    // }
     setSeasonData(getTVShowSeasons(tvShowId));
     setLoading(false);
   };
   React.useEffect(() => {
     getSeasonData();
-    // return () => console.log("unmount");
+    // setSeasonData(getTVShowSeasons(tvShowId));
   }, [tvShowId]);
 
   if (loading || !seasonData) {
@@ -48,6 +52,10 @@ const DetailSeasonsScreen = ({ navigation, route }: DetailSeasonsScreenProps) =>
       </View>
     );
   }
+  const renderItem = ({ item }) => {
+    if (!item) return null;
+    return <DetailSeason key={item.id} season={item} tvShowId={tvShowId} />;
+  };
 
   return (
     <View>
@@ -58,12 +66,18 @@ const DetailSeasonsScreen = ({ navigation, route }: DetailSeasonsScreenProps) =>
           <Image source={{ uri: logo.logoURL }} style={{ width: 171, height: 50 }} />
         )}
       </View>
-      <ScrollView style={{ padding: 0, marginBottom: 50 }}>
+      {/* <ScrollView style={{ padding: 0, marginBottom: 50 }}>
         {seasonData &&
           seasonData.map((season) => {
             return <DetailSeason key={season.id} season={season} tvShowId={tvShowId} />;
           })}
-      </ScrollView>
+      </ScrollView> */}
+
+      <FlatList
+        data={seasonData}
+        renderItem={renderItem}
+        keyExtractor={(item) => `${item.id}`}
+      />
     </View>
   );
 };

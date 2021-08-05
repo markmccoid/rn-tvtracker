@@ -1,5 +1,5 @@
 import { derived } from "overmind";
-import _ from "lodash";
+import _, { memoize } from "lodash";
 import * as helpers from "./stateHelpers";
 import * as defaultConstants from "./defaultContants";
 
@@ -237,8 +237,8 @@ export const state: State = {
     // return undefined if tvShowId is not in tempSeasonsData
     if (!state.tempSeasonsData?.[tvShowId]) return;
 
-    const holdSeasons = [...state.tempSeasonsData?.[tvShowId]];
-    return holdSeasons.map((season) => {
+    // const holdSeasons = [...state.tempSeasonsData?.[tvShowId]];
+    return state.tempSeasonsData?.[tvShowId].map((season) => {
       const newSeason = { ...season, episodes: undefined };
       delete newSeason.episodes;
       return newSeason;
@@ -246,8 +246,9 @@ export const state: State = {
   }),
   //* ------
   getTVShowEpisodes: derived((state: State) => (tvShowId: number, seasonNumber: number) => {
-    const holdSeasons = [...state.tempSeasonsData[tvShowId]];
-    return [...holdSeasons.find((season) => season.seasonNumber === seasonNumber).episodes];
+    return state.tempSeasonsData[tvShowId].find(
+      (season) => season.seasonNumber === seasonNumber
+    ).episodes;
   }),
   //* ------
   getTVShowEpisode: derived(
@@ -258,12 +259,6 @@ export const state: State = {
           .find((season) => season.seasonNumber === seasonNumber)
           .episodes.find((ep) => ep.episodeNumber === episodeNumber),
       };
-
-      // holdEpisode = {
-      //   ...holdEpisode,
-      //   watched:
-      //     !!state.tempEpisodeState?.[tvShowId]?.[`${seasonNumber}-${episodeNumber}`],
-      // };
       return holdEpisode;
     }
   ),
