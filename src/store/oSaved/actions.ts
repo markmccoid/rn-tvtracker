@@ -855,7 +855,6 @@ export const markAllPreviousEpisodes = async (
   Object.entries(mergeEpisodeStateData).forEach(
     ([key, value]: [key: string, value: boolean]) => {
       if (!state.oSaved.tempEpisodeState[tvShowId]?.[key]) {
-        console.log("updating state", key);
         state.oSaved.tempEpisodeState[tvShowId][key] = value;
       }
     }

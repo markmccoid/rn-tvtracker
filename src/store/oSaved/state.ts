@@ -237,7 +237,6 @@ export const state: State = {
     // return undefined if tvShowId is not in tempSeasonsData
     if (!state.tempSeasonsData?.[tvShowId]) return;
 
-    // const holdSeasons = [...state.tempSeasonsData?.[tvShowId]];
     return state.tempSeasonsData?.[tvShowId].map((season) => {
       const newSeason = { ...season, episodes: undefined };
       delete newSeason.episodes;

@@ -5,12 +5,14 @@ import {
   Text,
   Dimensions,
   Image,
-  ScrollView,
+  SectionList,
   FlatList,
   StyleSheet,
   Linking,
   TouchableOpacity,
+  SafeAreaView,
 } from "react-native";
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 
 import DetailSeason from "../../../components/ViewTVShows/DetailSeason";
 //@types
@@ -34,15 +36,12 @@ const DetailSeasonsScreen = ({ navigation, route }: DetailSeasonsScreenProps) =>
 
   const getSeasonData = async () => {
     setLoading(true);
-    // if (!getTVShowSeasons(tvShowId)) {
     await getTVShowSeasonData({ tvShowId, seasonNumbers });
-    // }
     setSeasonData(getTVShowSeasons(tvShowId));
     setLoading(false);
   };
   React.useEffect(() => {
     getSeasonData();
-    // setSeasonData(getTVShowSeasons(tvShowId));
   }, [tvShowId]);
 
   if (loading || !seasonData) {
@@ -52,13 +51,22 @@ const DetailSeasonsScreen = ({ navigation, route }: DetailSeasonsScreenProps) =>
       </View>
     );
   }
+
+  //* RENDER ITEM function
   const renderItem = ({ item }) => {
     if (!item) return null;
-    return <DetailSeason key={item.id} season={item} tvShowId={tvShowId} />;
+    return (
+      <DetailSeason
+        key={item.seasonNumber}
+        seasonNumber={item.seasonNumber}
+        seasonName={item.name}
+        tvShowId={tvShowId}
+      />
+    );
   };
 
   return (
-    <View>
+    <View style={{ flex: 1 }}>
       <View style={styles.logoContainer}>
         {!logo.logoURL ? (
           <Text style={styles.showName}>{logo.showName}</Text>
@@ -66,14 +74,9 @@ const DetailSeasonsScreen = ({ navigation, route }: DetailSeasonsScreenProps) =>
           <Image source={{ uri: logo.logoURL }} style={{ width: 171, height: 50 }} />
         )}
       </View>
-      {/* <ScrollView style={{ padding: 0, marginBottom: 50 }}>
-        {seasonData &&
-          seasonData.map((season) => {
-            return <DetailSeason key={season.id} season={season} tvShowId={tvShowId} />;
-          })}
-      </ScrollView> */}
 
       <FlatList
+        style={{ padding: 0 }}
         data={seasonData}
         renderItem={renderItem}
         keyExtractor={(item) => `${item.id}`}

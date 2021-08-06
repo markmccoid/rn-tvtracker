@@ -18,21 +18,24 @@ import { EyeEmptyIcon, EyeFilledIcon } from "../common/Icons";
 type Props = {
   tvShowId: number;
   episode: Episode;
+  episodeState: boolean;
 };
 const { width, height } = Dimensions.get("window");
 
-const DetailSeasonEpisode = ({ tvShowId, episode }: Props) => {
+const DetailSeasonEpisode = ({ tvShowId, episode, episodeState }: Props) => {
   const state = useOState();
   const actions = useOActions();
   const { toggleTVShowEpisodeState } = actions.oSaved;
   // const episode = state.oSaved.getTVShowEpisode(tvShowId, seasonNumber, episodeNumber);
   // const [episodeState, setEpisodeState] = React.useState(false);
   const [askToMark, setAskToMark] = React.useState(false);
-  const episodeState = state.oSaved.getTVShowEpisodeState(
-    tvShowId,
-    episode.seasonNumber,
-    episode.episodeNumber
-  );
+  //!! Hopefully delete
+  // const episodeState = state.oSaved.getTVShowEpisodeState(
+  //   tvShowId,
+  //   episode.seasonNumber,
+  //   episode.episodeNumber
+  // );
+  //!!
   // const episodeState = state.oSaved.getTVShowEpisodeState(tvShowId,seasonNumber, episodeNumber);
   // React.useEffect(() => {
   //   setEpisodeState(state.oSaved.getTVShowEpisodeState(tvShowId, seasonNumber, episodeNumber));
@@ -60,6 +63,7 @@ const DetailSeasonEpisode = ({ tvShowId, episode }: Props) => {
     }
   }, [askToMark]);
 
+  // console.log("episode render", episode.seasonNumber, episode.episodeNumber);
   return (
     <View
       style={{
