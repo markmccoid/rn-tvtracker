@@ -640,7 +640,7 @@ export const clearFilterTags = ({ state }: Context) => {
   state.oSaved.filterData.tags = [];
   state.oSaved.filterData.excludeTags = [];
 };
-export const clearFilterScreen = ({ state }: Context) => {
+export const clearFilterScreen = ({ state }: Context): void => {
   state.oSaved.filterData.tags = [];
   state.oSaved.filterData.excludeTags = [];
   state.oSaved.filterData.genres = [];
@@ -719,32 +719,6 @@ export const updateDefaultSortOrder = ({ state, effects }: Context, newlyIndexed
 //*==============================================
 //*- TV SHOW SEASON DATA
 //*==============================================
-/** testFormatTVShowSeasonData
- * converts the array model to an object model
- * Not being used anywhere, but just testing
- */
-type EpisodeObject = {
-  [key: number]: Episode;
-};
-type TVShowSeasonDetailsObject = {
-  [key: number]: Omit<TVShowSeasonDetails, "episodes"> & EpisodeObject;
-};
-//- testFormatTVShowSeasonData function
-function testFormatTVShowSeasonData(
-  seasonData: TVShowSeasonDetails[]
-): TVShowSeasonDetailsObject {
-  let workingSeasons = [...seasonData];
-  workingSeasons = workingSeasons.map((season) => {
-    // console.log("SEASON", season);
-    const newSeason = { ...season };
-    newSeason.episodes = _.keyBy([...newSeason.episodes], "episodeNumber");
-    return newSeason;
-    // console.log("season", season.episodes);
-  });
-
-  return _.keyBy(workingSeasons, "seasonNumber");
-}
-
 /** getTVShowSeasonData
  * gets season data from tmdb api and stores in
  * tempSeasonsData.

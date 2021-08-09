@@ -16,28 +16,41 @@ import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 
 import DetailSeason from "../../../components/ViewTVShows/DetailSeason";
 //@types
-import { DetailSeasonsScreenProps } from "../viewTypes";
+import { SeasonsScreenProps } from "../viewTypes";
 
 import { useOActions, useOState } from "../../../store/overmind";
 import { colors } from "../../../globalStyles";
+import { PrivateValueStore } from "@react-navigation/native";
 
-const DetailSeasonsScreen = ({ navigation, route }: DetailSeasonsScreenProps) => {
+const SeasonsScreen = ({ navigation, route }: SeasonsScreenProps) => {
+  const routeName = route.name;
   const tvShowId = route.params?.tvShowId;
-  const seasonNumbers = route.params?.seasonNumbers;
+  let seasonNumbers = route.params?.seasonNumbers;
   const logo = route.params?.logo;
 
   const actions = useOActions();
   const state = useOState();
   const [loading, setLoading] = React.useState(false);
   const [seasonData, setSeasonData] = React.useState(undefined);
-  const { getTVShowSeasonData, clearTempSeasonData, toggleTVShowEpisodeState } =
-    actions.oSaved;
-  const { tempSeasonsData, getTVShowSeasonDetails, getTVShowSeasons } = state.oSaved;
+  const [seasonState, setSeasonState] = React.useState(undefined);
+  const { getTVShowSeasonData, apiGetTVShowDetails } = actions.oSaved;
+  const { getTVShowSeasons } = state.oSaved;
 
   const getSeasonData = async () => {
     setLoading(true);
+    if (!seasonNumbers) {
+      const show = await apiGetTVShowDetails(tvShowId);
+      seasonNumbers = show.data.seasons.map((season) => season.seasonNumber);
+    }
     await getTVShowSeasonData({ tvShowId, seasonNumbers });
-    setSeasonData(getTVShowSeasons(tvShowId));
+    const seasonDets = getTVShowSeasons(tvShowId);
+    setSeasonData(seasonDets);
+    setSeasonState(
+      seasonDets.reduce((final, season) => {
+        final = { ...final, [season.seasonNumber]: false };
+        return final;
+      }, {})
+    );
     setLoading(false);
   };
   React.useEffect(() => {
@@ -52,6 +65,12 @@ const DetailSeasonsScreen = ({ navigation, route }: DetailSeasonsScreenProps) =>
     );
   }
 
+  //* Optional HEADER JSX
+  const Header = () => (
+    <View>
+      <Text>Optional Header</Text>
+    </View>
+  );
   //* RENDER ITEM function
   const renderItem = ({ item }) => {
     if (!item) return null;
@@ -61,6 +80,13 @@ const DetailSeasonsScreen = ({ navigation, route }: DetailSeasonsScreenProps) =>
         seasonNumber={item.seasonNumber}
         seasonName={item.name}
         tvShowId={tvShowId}
+        seasonState={seasonState[item.seasonNumber]}
+        toggleSeasonState={() =>
+          setSeasonState((prev) => ({
+            ...prev,
+            [item.seasonNumber]: !prev[item.seasonNumber],
+          }))
+        }
       />
     );
   };
@@ -74,7 +100,8 @@ const DetailSeasonsScreen = ({ navigation, route }: DetailSeasonsScreenProps) =>
           <Image source={{ uri: logo.logoURL }} style={{ width: 171, height: 50 }} />
         )}
       </View>
-
+      {/* only show "Header" is calling route is ViewStackSeasons */}
+      {routeName === "ViewStackSeasons" && <Header />}
       <FlatList
         style={{ padding: 0 }}
         data={seasonData}
@@ -103,4 +130,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default DetailSeasonsScreen;
+export default SeasonsScreen;

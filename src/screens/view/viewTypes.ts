@@ -26,6 +26,13 @@ export type ViewTVStackParamList = {
 export type ViewTVShowsParamList = {
   TVShowsScreen: undefined;
   Filter: undefined;
+  ViewStackSeasons: {
+    tvShowId: number;
+    // Need aspect ratio as all logos are different:
+    // height * aspect = width
+    // width / aspect = height
+    logo?: { logoURL?: string; aspectRatio?: number; showName?: string };
+  };
 };
 
 //* Create Props to be used by each of the screens
@@ -39,15 +46,12 @@ export type ViewTVShowsScreenProps = NativeStackScreenProps<
 export type DetailsScreenProps = NativeStackScreenProps<ViewTVStackParamList, "Details">;
 
 //- DetailSeasons
-export type DetailSeasonsScreenProps = NativeStackScreenProps<
-  ViewTVStackParamList,
-  "DetailSeasons"
->;
+export type SeasonsScreenProps = NativeStackScreenProps<ViewTVStackParamList, "DetailSeasons">;
 
 //- Detail Person
 export type DetailPersonScreenProps = NativeStackScreenProps<
   ViewTVStackParamList,
-  "DetailPerson"
+  "DetailsPerson"
 >;
 
 //* Types for useNavigation hooks

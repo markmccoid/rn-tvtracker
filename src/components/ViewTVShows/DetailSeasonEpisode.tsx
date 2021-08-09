@@ -1,4 +1,5 @@
 import { TVShowSeasonDetails, Episode } from "@markmccoid/tmdb_api";
+import { MotiView } from "moti";
 import React, { useEffect, useState } from "react";
 import {
   View,

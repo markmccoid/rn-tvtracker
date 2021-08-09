@@ -1,21 +1,19 @@
 import React from "react";
 import { View, TouchableOpacity, Text } from "react-native";
 
-import { createStackNavigator } from "@react-navigation/stack";
-import { enableScreens } from "react-native-screens";
 import { createNativeStackNavigator } from "react-native-screens/native-stack";
 import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
 
 import { useOState, useOActions } from "../../store/overmind";
 
-import { FilterIcon, CloseIcon, MenuIcon, SearchIcon } from "../../components/common/Icons";
+import { FilterIcon, MenuIcon } from "../../components/common/Icons";
 import { Badge } from "react-native-elements";
 
 import ViewTVShowsScreen from "./ViewTVShows/ViewTVShowsScreen";
 import ViewTVShowsFilterScreen from "./ViewTVShows/ViewTVShowsFilterScreen";
 import ViewDetails from "./ViewDetails/ViewDetails";
 import DetailPerson from "./ViewDetails/DetailPerson";
-import DetailSeasonsScreen from "./ViewDetails/DetailSeasonsScreen";
+import SeasonsScreen from "./ViewDetails/SeasonsScreen";
 import { colors } from "../../globalStyles";
 // @types imports
 import { ViewTVStackParamList, ViewTVShowsParamList } from "./viewTypes";
@@ -45,6 +43,13 @@ const ViewTVShowsStack = () => {
       <ViewTVShowsStackNav.Screen
         name="Filter"
         component={ViewTVShowsFilterScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <ViewTVShowsStackNav.Screen
+        name="ViewStackSeasons"
+        component={SeasonsScreen}
         options={{
           headerShown: false,
         }}
@@ -198,7 +203,7 @@ const ViewStackScreen = () => {
         }}
       />
       <ViewStack.Screen name="DetailsPerson" component={DetailPerson} />
-      <ViewStack.Screen name="DetailSeasons" component={DetailSeasonsScreen} />
+      <ViewStack.Screen name="DetailSeasons" component={SeasonsScreen} />
     </ViewStack.Navigator>
   );
 };

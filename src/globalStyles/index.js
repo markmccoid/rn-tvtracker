@@ -16,6 +16,10 @@ export const colors = {
   listBackground: "white",
   listItemBackground: "white",
   commonBorder: "#777",
+  episodeLengthGroup0: "orange",
+  episodeLengthGroup1: "green",
+  episodeLengthGroup2: "blue",
+  episodeLengthGroup3: "red",
 };
 
 export const fonts = {

@@ -1,14 +1,37 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import * as Haptics from "expo-haptics";
+import { useNavigation } from "@react-navigation/native";
 
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { useDimensions } from "@react-native-community/hooks";
 import PosterImage from "../common/PosterImage";
 import { colors } from "../../globalStyles";
+import { SavedTVShowsDoc } from "../../store/oSaved/state";
+import { MotiView } from "moti";
 
-const TVShowPortraitLayout = ({ tvShow, setTVShowEditingId, navigateToDetails }) => {
+type Props = {
+  tvShow: SavedTVShowsDoc;
+  setTVShowEditingId: (tvShowId: number) => void;
+  navigateToDetails: () => void;
+};
+
+const setEpisodeGroupStyles = (group, maxWidth) => {
+  //0 < 15, 1 < 30, 2 < 60, 3/undefined everything else
+  switch (group) {
+    case 0:
+      return { backgroundColor: colors.episodeLengthGroup0, width: maxWidth / 4 };
+    case 1:
+      return { backgroundColor: colors.episodeLengthGroup1, width: maxWidth / 3 };
+    case 2:
+      return { backgroundColor: colors.episodeLengthGroup2, width: maxWidth / 2 };
+    default:
+      return { backgroundColor: colors.episodeLengthGroup3, width: maxWidth / 1.5 };
+  }
+};
+const TVShowPortraitLayout = ({ tvShow, setTVShowEditingId, navigateToDetails }: Props) => {
   const { width, height } = useDimensions().window;
+  const navigation = useNavigation();
   //! Should be first air date
   //const movieReleaseDate = tvShow.releaseDate?.formatted || " - ";
 
@@ -22,8 +45,7 @@ const TVShowPortraitLayout = ({ tvShow, setTVShowEditingId, navigateToDetails })
 
   const styles = StyleSheet.create({
     movieCard: {
-      backgroundColor: colors.background,
-      // width: "100%",
+      // backgroundColor: colors.background,
       margin: MARGIN,
       width: posterWidth,
       borderWidth: 1,
@@ -34,9 +56,6 @@ const TVShowPortraitLayout = ({ tvShow, setTVShowEditingId, navigateToDetails })
       shadowOffset: { width: 5, height: 5 },
       shadowOpacity: 0.5,
       shadowRadius: 5,
-      // shadowOffset: { width: 1, height: 2 },
-      // shadowOpacity: 0.5,
-      // shadowRadius: 3,
       elevation: 1,
     },
     imageBackupText: {
@@ -46,13 +65,20 @@ const TVShowPortraitLayout = ({ tvShow, setTVShowEditingId, navigateToDetails })
     },
   });
 
+  const episodeGroupStyles = setEpisodeGroupStyles(tvShow.episodeRunTimeGroup, posterWidth);
   return (
     <View style={styles.movieCard}>
+      <View style={{ marginBottom: 3, height: 6, borderRadius: 3, ...episodeGroupStyles }} />
+
       <TouchableOpacity
         onPress={navigateToDetails}
         activeOpacity={0.9}
         onLongPress={() => {
-          setTVShowEditingId(tvShow.id);
+          navigation.navigate("ViewStackSeasons", {
+            tvShowId: tvShow.id,
+            logo: { showName: tvShow.name },
+          });
+          // setTVShowEditingId(tvShow.id);
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         }}
       >
