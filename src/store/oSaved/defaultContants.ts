@@ -24,7 +24,7 @@ export const sortDefinitions: SortDefinitions = {
   },
   2: {
     sortField: "lastAirDate.epoch",
-    title: "Last Air Date",
+    title: "Last Aired",
     type: "date",
   },
   3: {
@@ -34,12 +34,12 @@ export const sortDefinitions: SortDefinitions = {
   },
   4: {
     sortField: "nextAirDate.epoch",
-    title: "Next Air Date",
+    title: "Next Airing",
     type: "date",
   },
   5: {
     sortField: "episodeRunTimeGroup",
-    title: "Episode Run Time",
+    title: "Episode Length",
     type: "num",
   },
 };

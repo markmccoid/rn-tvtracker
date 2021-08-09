@@ -42,16 +42,16 @@ const SettingsSortItem = ({
   };
   const sortDescription = {
     alpha: {
-      asc: "Sort Text from A to Z",
-      desc: "Sort Text from Z to A",
+      asc: "Sort from A to Z",
+      desc: "Sort from Z to A",
     },
     num: {
-      asc: "Sort Number from Lowest to Highest",
-      desc: "Sort Number from Highest to Lowest",
+      asc: "Sort from Lowest to Highest",
+      desc: "Sort from Highest to Lowest",
     },
     date: {
-      asc: "Sort Dates from Oldest to Most Recent",
-      desc: "Sort Dates from Most Recent to Oldest",
+      asc: "Sort Oldest to Most Recent",
+      desc: "Sort Most Recent to Oldest",
     },
   };
 

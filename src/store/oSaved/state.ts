@@ -207,6 +207,7 @@ export const state: State = {
         },
         { sortFields: [], sortDirections: [] }
       );
+
     //Determine if any filter criteria is set, if not do not call filterMovies helper.
     if (
       state.filterData?.tags.length > 0 ||
@@ -216,7 +217,9 @@ export const state: State = {
     ) {
       tvShowList = helpers.filterTVShows(state.savedTVShows, state.filterData);
     }
+
     tvShowList = _.orderBy(tvShowList, sortFields, sortDirections);
+
     // return direction === "asc" ? tvShowList : tvShowList.reverse();
     return tvShowList;
   }),
