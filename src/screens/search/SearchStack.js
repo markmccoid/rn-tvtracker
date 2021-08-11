@@ -22,13 +22,14 @@ const SearchStackScreen = () => {
         component={SearchScreen}
         options={({ navigation, route }) => {
           return {
+            headerTintColor: colors.darkText,
             headerStyle: {
               backgroundColor: colors.navHeaderColor,
             },
             headerLeft: () => {
               return (
                 <TouchableOpacity onPress={() => navigation.openDrawer()}>
-                  <MenuIcon size={30} style={{ marginLeft: 10 }} />
+                  <MenuIcon size={30} color={colors.darkText} style={{ marginLeft: 10 }} />
                 </TouchableOpacity>
               );
             },

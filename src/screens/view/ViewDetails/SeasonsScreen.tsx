@@ -21,6 +21,7 @@ import { SeasonsScreenProps } from "../viewTypes";
 import { useOActions, useOState } from "../../../store/overmind";
 import { colors } from "../../../globalStyles";
 import { PrivateValueStore } from "@react-navigation/native";
+import { ScrollView } from "react-native-gesture-handler";
 
 const SeasonsScreen = ({ navigation, route }: SeasonsScreenProps) => {
   const routeName = route.name;
@@ -102,12 +103,31 @@ const SeasonsScreen = ({ navigation, route }: SeasonsScreenProps) => {
       </View>
       {/* only show "Header" is calling route is ViewStackSeasons */}
       {routeName === "ViewStackSeasons" && <Header />}
-      <FlatList
+      {/* <FlatList
         style={{ padding: 0 }}
         data={seasonData}
         renderItem={renderItem}
         keyExtractor={(item) => `${item.id}`}
-      />
+      /> */}
+      <ScrollView>
+        {seasonData.map((item) => {
+          return (
+            <DetailSeason
+              key={item.seasonNumber}
+              seasonNumber={item.seasonNumber}
+              seasonName={item.name}
+              tvShowId={tvShowId}
+              seasonState={seasonState[item.seasonNumber]}
+              toggleSeasonState={() =>
+                setSeasonState((prev) => ({
+                  ...prev,
+                  [item.seasonNumber]: !prev[item.seasonNumber],
+                }))
+              }
+            />
+          );
+        })}
+      </ScrollView>
     </View>
   );
 };

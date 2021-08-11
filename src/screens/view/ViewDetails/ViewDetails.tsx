@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import { ActivityIndicator, ScrollView, View, Image, Dimensions } from "react-native";
 import { AddIcon, DeleteIcon } from "../../../components/common/Icons";
 import { useOState, useOActions } from "../../../store/overmind";
-
+import { colors } from "../../../globalStyles";
 //@types
 import { DetailsScreenProps } from "../viewTypes";
 import { TVShowDetails } from "../../../store/oSaved/actions";
@@ -42,7 +42,7 @@ const { width, height } = Dimensions.get("window");
 //*
 //*
 const ViewDetails = ({ navigation, route }: DetailsScreenProps) => {
-  // console.log(" IN VIEW DETAIL ", route.params);
+  // console.log(" IN VIEW DETAIL ", route.name);
   const [tvShowData, setTVShowData] = useState<TVShowDetails>(undefined);
   const [isInSavedTVShows, setIsInSavedTVShows] = useState<boolean>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -77,12 +77,19 @@ const ViewDetails = ({ navigation, route }: DetailsScreenProps) => {
   // 2. Add a + icon for movies that are have not yet been added to list.
   // 3. If the movie is in the list, show a delete icon INSTEAD of the plus.
   //TODO (could be better looking delete icon)
+  const headerBackTitle = route.name === "Details" ? { headerBackTitle: "Back" } : {};
+  console.log("header BT", headerBackTitle);
   React.useEffect(() => {
     if (!tvShowData) {
       return;
     }
     navigation.setOptions({
+      ...headerBackTitle,
       title: tvShowData.name,
+      headerTintColor: colors.darkText,
+      headerStyle: {
+        backgroundColor: colors.navHeaderColor,
+      },
       headerRight: () => {
         if (isLoading) {
           return <ActivityIndicator style={{ marginRight: 20 }} />;
@@ -132,7 +139,7 @@ const ViewDetails = ({ navigation, route }: DetailsScreenProps) => {
   }
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, backgroundColor: colors.background }}>
       <Image
         style={{
           position: "absolute",

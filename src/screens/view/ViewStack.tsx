@@ -86,7 +86,6 @@ const ViewStackScreen = () => {
           // }
           // let title = currentScreenName === "TVShowsScreen" ? `${numMovies} Movies` : "Set Filter";
           return {
-            title: "TVShowsScreen",
             // Found that the "title" property was not updated often enough, not sure when it was updated
             // headerCenter seems to be more reliable
             headerStyle: {
@@ -94,14 +93,14 @@ const ViewStackScreen = () => {
             },
             headerCenter: () => (
               <Text
-                style={{ fontSize: 16, fontWeight: "600" }}
+                style={{ color: colors.darkText, fontSize: 16, fontWeight: "600" }}
               >{`${numMovies} TV Shows`}</Text>
             ),
             headerLeft: () => {
               if (currentScreenName === "TVShowsScreen") {
                 return (
                   <TouchableOpacity onPress={() => navigation.openDrawer()}>
-                    <MenuIcon size={30} style={{ marginLeft: 10 }} />
+                    <MenuIcon size={30} color={colors.darkText} style={{ marginLeft: 10 }} />
                   </TouchableOpacity>
                 );
               }
@@ -132,7 +131,11 @@ const ViewStackScreen = () => {
                         // });
                       }}
                     >
-                      <FilterIcon color="black" size={30} style={{ marginRight: 15 }} />
+                      <FilterIcon
+                        color={colors.darkText}
+                        size={30}
+                        style={{ marginRight: 15 }}
+                      />
                       {numIncludeFilters > 0 && (
                         <Badge
                           status="success"
@@ -189,6 +192,7 @@ const ViewStackScreen = () => {
         options={({ navigation, route }) => {
           return {
             title: "",
+            headerTintColor: "#274315",
             headerRight: () => {
               return null;
             },
@@ -202,8 +206,16 @@ const ViewStackScreen = () => {
           };
         }}
       />
-      <ViewStack.Screen name="DetailsPerson" component={DetailPerson} />
-      <ViewStack.Screen name="DetailSeasons" component={SeasonsScreen} />
+      <ViewStack.Screen
+        name="DetailsPerson"
+        options={{ headerTintColor: "#274315" }}
+        component={DetailPerson}
+      />
+      <ViewStack.Screen
+        name="DetailSeasons"
+        options={{ headerTintColor: "#274315" }}
+        component={SeasonsScreen}
+      />
     </ViewStack.Navigator>
   );
 };

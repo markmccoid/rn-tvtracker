@@ -1,4 +1,5 @@
 export const colors = {
+  darkText: "#274315",
   splashGreenLight: "#84ee4b",
   splashGreenDark: "#578e2c",
   primary: "#59922D", //"#4285ec",
