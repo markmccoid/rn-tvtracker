@@ -29,6 +29,7 @@ import {
   DetailSeasonsScreenNavigation,
   DetailPersonScreenRouteProp,
   DetailPersonScreenNavigation,
+  DetailsScreenRouteProp,
 } from "../viewTypes";
 import { TVShowDetails } from "../../../store/oSaved/actions";
 
@@ -79,9 +80,11 @@ const ViewTVShowDetails = ({ tvShow, isInSavedTVShows }: Props) => {
   let { removeTagFromTVShow, addTagToTVShow } = actions.oSaved;
   const { width, height } = useDimensions().window;
 
-  const navigation = useNavigation<DetailSeasonsScreenNavigation>();
-  const personNavigation = useNavigation<DetailSeasonsScreenNavigation>();
-  const route = useRoute<DetailSeasonsScreenRouteProp>();
+  const navigation = useNavigation<
+    DetailSeasonsScreenNavigation | DetailPersonScreenNavigation
+  >();
+  // const personNavigation = useNavigation<DetailPersonScreenNavigation>();
+  const route = useRoute<DetailsScreenRouteProp>();
   const personRoute = useRoute<DetailPersonScreenRouteProp>();
 
   const Rotate = (toValue) => {
@@ -119,7 +122,7 @@ const ViewTVShowDetails = ({ tvShow, isInSavedTVShows }: Props) => {
         <TouchableOpacity
           style={{ padding: 5, alignItems: "center" }}
           onPress={() => {
-            navigation.navigate("DetailSeasons", {
+            navigation.navigate(`${route.name}Seasons`, {
               tvShowId: tvShow.id,
               seasonNumbers: tvShow?.seasons.map((show) => show.seasonNumber),
               logo: { showName: tvShow.name },
@@ -173,8 +176,6 @@ const ViewTVShowDetails = ({ tvShow, isInSavedTVShows }: Props) => {
         </View>
       )}
       <DetailButtonBar
-        viewTags={viewTags}
-        setViewTags={setViewTags}
         viewPickImage={viewPickImage}
         setPickImage={setPickImage}
         imdbId={tvShow.imdbId}
@@ -210,19 +211,6 @@ const ViewTVShowDetails = ({ tvShow, isInSavedTVShows }: Props) => {
           </AnimatePresence>
         )}
       </View>
-      {/* <Transitioning.View>
-        {isInSavedTVShows && (
-          <View>
-            {!!!viewPickImage && (
-              <PickImage
-                tvShowId={tvShow.id}
-                setViewPickImage={setPickImage}
-                vpiAnimation={vpiAnimation}
-              />
-            )}
-          </View>
-        )}
-      </Transitioning.View> */}
       {/* ------------------------------------------- 
          END Saved Details button Bar and components 
          ------------------------------------------- */}
@@ -245,7 +233,7 @@ const ViewTVShowDetails = ({ tvShow, isInSavedTVShows }: Props) => {
               <TouchableOpacity
                 key={person.personId + idx.toString()}
                 onPress={() => {
-                  personNavigation.push(`${personRoute.name}Person`, {
+                  navigation.push(`${route.name}Person`, {
                     personId: person.personId,
                     fromRouteName: route.name,
                   });

@@ -122,6 +122,7 @@ export type State = {
   getTVShowEpisodes: (tvShowId: number, seasonNumber: number) => Episode[];
   getTVShowEpisode: (tvShowId: number, seasonNumber: number, episodeNumber) => Episode;
   getTVShowEpisodeState: (tvShowId: number, seasonNumber: number, episodeNumber) => boolean;
+  getWathedEpisodes: (tvShowId: number, seasonNumber: number) => number;
   isTVShowSaved: (tvShowId: number) => boolean;
   getCurrentImageUrls: (tvShowId: number) => {
     currentPosterURL: string;
@@ -272,6 +273,43 @@ export const state: State = {
       return !!state.tempEpisodeState?.[tvShowId]?.[`${seasonNumber}-${episodeNumber}`];
     }
   ),
+  getWathedEpisodes: derived((state: State) => (tvShowId, seasonNumber) => {
+    if (!state.tempEpisodeState?.[tvShowId]) {
+      return 0;
+    }
+    const tempSeasonEpisodeState = state.tempEpisodeState[tvShowId];
+    //Using reduce to take the keys '1-2', '1-3', etc and producing an object:
+    // { [seasonNumber]: number }
+    //DOWNSIDE: this calculates whole object for each season.  Meaning this is
+    // called by each season and each season only needs one number, but this produces
+    // all numbers each time.
+    //! Two "fix" options.  1 - store obj in state on first call and check it each time (memoize essentially)
+    //! Option 2: while harder, probably better long term.  Change format of tempEpisodeState to:
+    /* { [tvShowId]: {
+            [seasonNumber]: {
+              [episodeNumber]: boolean
+              ...
+            }
+            ...
+          }
+          ...
+        }*/
+    //! This change would necessitate changes to anything that used tempEpisodeState.
+    //! Probably would just need to update Actions and State getters.  UI Should be fine.
+    const seasonEpisodesState = Object.keys(tempSeasonEpisodeState).reduce(
+      (fin, epStateKey) => {
+        const seasonNumber = epStateKey.slice(0, epStateKey.indexOf("-"));
+
+        fin[seasonNumber] = fin[seasonNumber]
+          ? fin[seasonNumber] + tempSeasonEpisodeState[epStateKey]
+          : +tempSeasonEpisodeState[epStateKey];
+        return fin;
+      },
+      {}
+    );
+
+    return seasonEpisodesState[seasonNumber] || 0;
+  }),
   //* ------
   /** isTVShowSaved
    *

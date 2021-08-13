@@ -6,6 +6,7 @@ import { MenuIcon } from "../../components/common/Icons";
 import SearchScreen from "./SearchScreen";
 import ViewDetails from "../view/ViewDetails/ViewDetails";
 import DetailPerson from "../view/ViewDetails/DetailPerson";
+import SeasonsScreen from "../view/ViewDetails/SeasonsScreen";
 import { colors } from "../../globalStyles";
 
 const SearchStack = createStackNavigator();
@@ -38,6 +39,11 @@ const SearchStackScreen = () => {
       />
       <SearchStack.Screen name="DetailsFromSearch" component={ViewDetails} />
       <SearchStack.Screen name="DetailsFromSearchPerson" component={DetailPerson} />
+      <SearchStack.Screen
+        name="DetailsFromSearchSeasons"
+        options={{ headerTintColor: "#274315", title: "" }}
+        component={SeasonsScreen}
+      />
     </SearchStack.Navigator>
   );
 };

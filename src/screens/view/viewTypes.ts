@@ -10,7 +10,7 @@ export type ViewTVStackParamList = {
   ViewTVShows: undefined;
   Details: { tvShowId: number; notSaved: boolean };
   DetailsPerson: { personId: number; fromRouteName: string };
-  DetailSeasons: {
+  DetailsSeasons: {
     tvShowId: number;
     // an array with the season numbers returned for tvShowId
     // sometimes Season 0 is included sometimes not
@@ -46,7 +46,10 @@ export type ViewTVShowsScreenProps = NativeStackScreenProps<
 export type DetailsScreenProps = NativeStackScreenProps<ViewTVStackParamList, "Details">;
 
 //- DetailSeasons
-export type SeasonsScreenProps = NativeStackScreenProps<ViewTVStackParamList, "DetailSeasons">;
+export type SeasonsScreenProps = NativeStackScreenProps<
+  ViewTVStackParamList,
+  "DetailsSeasons"
+>;
 
 //- Detail Person
 export type DetailPersonScreenProps = NativeStackScreenProps<
@@ -64,15 +67,16 @@ export type DetailsScreenNavigation = NativeStackNavigationProp<
 // DetailSeasons screen
 export type DetailSeasonsScreenNavigation = NativeStackNavigationProp<
   ViewTVStackParamList,
-  "DetailSeasons"
+  "DetailsSeasons"
 >;
 
 // DetailSeasons screen
 export type DetailPersonScreenNavigation = NativeStackNavigationProp<
   ViewTVStackParamList,
-  "DetailPerson"
+  "DetailsPerson"
 >;
 
 //* Types for useRoute hooks
-export type DetailSeasonsScreenRouteProp = RouteProp<ViewTVStackParamList, "DetailSeasons">;
-export type DetailPersonScreenRouteProp = RouteProp<ViewTVStackParamList, "DetailPerson">;
+export type DetailSeasonsScreenRouteProp = RouteProp<ViewTVStackParamList, "DetailsSeasons">;
+export type DetailPersonScreenRouteProp = RouteProp<ViewTVStackParamList, "DetailsPerson">;
+export type DetailsScreenRouteProp = RouteProp<ViewTVStackParamList, "Details">;

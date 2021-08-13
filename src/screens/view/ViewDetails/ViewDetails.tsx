@@ -77,14 +77,12 @@ const ViewDetails = ({ navigation, route }: DetailsScreenProps) => {
   // 2. Add a + icon for movies that are have not yet been added to list.
   // 3. If the movie is in the list, show a delete icon INSTEAD of the plus.
   //TODO (could be better looking delete icon)
-  const headerBackTitle = route.name === "Details" ? { headerBackTitle: "Back" } : {};
-  console.log("header BT", headerBackTitle);
+
   React.useEffect(() => {
     if (!tvShowData) {
       return;
     }
     navigation.setOptions({
-      ...headerBackTitle,
       title: tvShowData.name,
       headerTintColor: colors.darkText,
       headerStyle: {

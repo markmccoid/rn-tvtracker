@@ -192,6 +192,7 @@ const ViewStackScreen = () => {
         options={({ navigation, route }) => {
           return {
             title: "",
+            headerBackTitle: "Back",
             headerTintColor: "#274315",
             headerRight: () => {
               return null;
@@ -208,12 +209,16 @@ const ViewStackScreen = () => {
       />
       <ViewStack.Screen
         name="DetailsPerson"
-        options={{ headerTintColor: "#274315" }}
+        options={{ headerTintColor: "#274315", title: "" }}
         component={DetailPerson}
       />
       <ViewStack.Screen
-        name="DetailSeasons"
-        options={{ headerTintColor: "#274315" }}
+        name="DetailsSeasons"
+        options={{
+          headerTintColor: "#274315",
+          title: "",
+          // , headerBackTitle: "Back"
+        }}
         component={SeasonsScreen}
       />
     </ViewStack.Navigator>

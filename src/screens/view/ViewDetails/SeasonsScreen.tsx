@@ -22,6 +22,11 @@ import { useOActions, useOState } from "../../../store/overmind";
 import { colors } from "../../../globalStyles";
 import { PrivateValueStore } from "@react-navigation/native";
 import { ScrollView } from "react-native-gesture-handler";
+import { TVShowSeasonDetails } from "@markmccoid/tmdb_api";
+
+type SeasonState = { [seasonNumber: number]: boolean } & {
+  seasonCount: number;
+};
 
 const SeasonsScreen = ({ navigation, route }: SeasonsScreenProps) => {
   const routeName = route.name;
@@ -31,14 +36,17 @@ const SeasonsScreen = ({ navigation, route }: SeasonsScreenProps) => {
 
   const actions = useOActions();
   const state = useOState();
+
   const [loading, setLoading] = React.useState(false);
-  const [seasonData, setSeasonData] = React.useState(undefined);
-  const [seasonState, setSeasonState] = React.useState(undefined);
+  const [seasonData, setSeasonData] =
+    React.useState<Omit<TVShowSeasonDetails, "episodes">[]>(undefined);
+  const [seasonState, setSeasonState] = React.useState<SeasonState>(undefined);
   const { getTVShowSeasonData, apiGetTVShowDetails } = actions.oSaved;
   const { getTVShowSeasons } = state.oSaved;
 
   const getSeasonData = async () => {
     setLoading(true);
+    // Season numbers will be passed if coming from the Details screen
     if (!seasonNumbers) {
       const show = await apiGetTVShowDetails(tvShowId);
       seasonNumbers = show.data.seasons.map((season) => season.seasonNumber);
@@ -46,14 +54,25 @@ const SeasonsScreen = ({ navigation, route }: SeasonsScreenProps) => {
     await getTVShowSeasonData({ tvShowId, seasonNumbers });
     const seasonDets = getTVShowSeasons(tvShowId);
     setSeasonData(seasonDets);
-    setSeasonState(
-      seasonDets.reduce((final, season) => {
-        final = { ...final, [season.seasonNumber]: false };
+    const tempSeasonStates = seasonDets.reduce<SeasonState>(
+      (final: SeasonState, season): SeasonState => {
+        const seasonCount = final?.seasonCount ? final.seasonCount + 1 : 1;
+        final = { ...final, [season.seasonNumber]: false, seasonCount };
         return final;
-      }, {})
+      },
+      {}
     );
+    if (tempSeasonStates.seasonCount === 1) {
+      tempSeasonStates[1] = true;
+    }
+    setSeasonState(tempSeasonStates);
     setLoading(false);
   };
+  React.useEffect(() => {
+    navigation.setOptions({
+      title: "",
+    });
+  }, []);
   React.useEffect(() => {
     getSeasonData();
   }, [tvShowId]);
@@ -75,6 +94,7 @@ const SeasonsScreen = ({ navigation, route }: SeasonsScreenProps) => {
   //* RENDER ITEM function
   const renderItem = ({ item }) => {
     if (!item) return null;
+
     return (
       <DetailSeason
         key={item.seasonNumber}
@@ -110,7 +130,7 @@ const SeasonsScreen = ({ navigation, route }: SeasonsScreenProps) => {
         keyExtractor={(item) => `${item.id}`}
       /> */}
       <ScrollView>
-        {seasonData.map((item) => {
+        {seasonData.map((item, idx, dataArray) => {
           return (
             <DetailSeason
               key={item.seasonNumber}
