@@ -22,12 +22,64 @@ import { useOActions, useOState } from "../../../store/overmind";
 import { colors } from "../../../globalStyles";
 import { PrivateValueStore } from "@react-navigation/native";
 import { ScrollView } from "react-native-gesture-handler";
-import { TVShowSeasonDetails } from "@markmccoid/tmdb_api";
+import { Episode, TVShowSeasonDetails } from "@markmccoid/tmdb_api";
+import TagItem from "../../../components/Tags/TagItem";
+
+import {
+  sectionData,
+  sectionHeader,
+} from "../../../components/ViewTVShows/SeasonSectionListItems";
 
 type SeasonState = { [seasonNumber: number]: boolean } & {
   seasonCount: number;
 };
 
+export type SectionListTitle = {
+  title: {
+    tvShowId: number;
+    seasonName: string;
+    seasonNumber: number;
+    numberOfEpisodes: number;
+  };
+};
+
+export type SectionListDataItem = {
+  tvShowId: number;
+  episode: Episode;
+};
+type SectionListData = {
+  data: SectionListDataItem[];
+};
+type SectionListType = SectionListTitle & SectionListData;
+
+export type Separators = {
+  highlight: () => void;
+  unhighlight: () => void;
+  updateProps: (select: "leading" | "trailing", newProps: any) => void;
+};
+const formatForSectionList = (
+  tvShowId: number,
+  seasonDetails: TVShowSeasonDetails[]
+): SectionListType[] => {
+  const sectionArray = seasonDetails.map((season) => {
+    const title = {
+      seasonName: season.name,
+      seasonNumber: season.seasonNumber,
+      numberOfEpisodes: season.episodes.length,
+    };
+    const episodes = season.episodes.map((episode) => {
+      return {
+        tvShowId,
+        episode,
+      };
+    });
+    return {
+      title,
+      data: episodes,
+    };
+  });
+  return sectionArray;
+};
 const SeasonsScreen = ({ navigation, route }: SeasonsScreenProps) => {
   const routeName = route.name;
   const tvShowId = route.params?.tvShowId;
@@ -38,11 +90,10 @@ const SeasonsScreen = ({ navigation, route }: SeasonsScreenProps) => {
   const state = useOState();
 
   const [loading, setLoading] = React.useState(false);
-  const [seasonData, setSeasonData] =
-    React.useState<Omit<TVShowSeasonDetails, "episodes">[]>(undefined);
+  const [seasonData, setSeasonData] = React.useState<SectionListType[]>([]);
   const [seasonState, setSeasonState] = React.useState<SeasonState>(undefined);
   const { getTVShowSeasonData, apiGetTVShowDetails } = actions.oSaved;
-  const { getTVShowSeasons } = state.oSaved;
+  const { getTVShowSeasonDetails } = state.oSaved;
 
   const getSeasonData = async () => {
     setLoading(true);
@@ -52,8 +103,10 @@ const SeasonsScreen = ({ navigation, route }: SeasonsScreenProps) => {
       seasonNumbers = show.data.seasons.map((season) => season.seasonNumber);
     }
     await getTVShowSeasonData({ tvShowId, seasonNumbers });
-    const seasonDets = getTVShowSeasons(tvShowId);
-    setSeasonData(seasonDets);
+    const seasonDets = getTVShowSeasonDetails(tvShowId);
+
+    setSeasonData(formatForSectionList(tvShowId, seasonDets));
+    //* Below for determining if we should expand first season (if only 1 season for show)
     const tempSeasonStates = seasonDets.reduce<SeasonState>(
       (final: SeasonState, season): SeasonState => {
         const seasonCount = final?.seasonCount ? final.seasonCount + 1 : 1;
@@ -123,28 +176,16 @@ const SeasonsScreen = ({ navigation, route }: SeasonsScreenProps) => {
       </View>
       {/* only show "Header" is calling route is ViewStackSeasons */}
       {routeName === "ViewStackSeasons" && <Header />}
-      {/* <FlatList
-        style={{ padding: 0 }}
-        data={seasonData}
-        renderItem={renderItem}
-        keyExtractor={(item) => `${item.id}`}
-      /> */}
-      <ScrollView
-        scrollEventThrottle={100}
-        onScroll={(ev) => {
-          const { contentInset, contentOffset, contentSize, layoutMeasurement, zoomScale } =
-            ev.nativeEvent;
-          // console.log(contentOffset.y, contentSize);
 
-          // nativeEvent: {
-          //   contentInset: {bottom, left, right, top},
-          //   contentOffset: {x, y},
-          //   contentSize: {height, width},
-          //   layoutMeasurement: {height, width},
-          //   zoomScale
-          // }}
-        }}
-      >
+      <SectionList
+        style={{ width: "100%" }}
+        sections={seasonData}
+        keyExtractor={(item, index) => item.tvShowId.toString() + index}
+        renderItem={sectionData}
+        renderSectionHeader={sectionHeader}
+      />
+      {/* 
+      
         {seasonData.map((item, idx, dataArray) => {
           return (
             <DetailSeason
@@ -161,8 +202,7 @@ const SeasonsScreen = ({ navigation, route }: SeasonsScreenProps) => {
               }
             />
           );
-        })}
-      </ScrollView>
+        })} */}
     </View>
   );
 };

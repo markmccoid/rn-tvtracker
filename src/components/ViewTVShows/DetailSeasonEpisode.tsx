@@ -90,13 +90,12 @@ const DetailSeasonEpisode = ({ tvShowId, episode, episodeState }: Props) => {
         activeOpacity={0.75}
         onPress={async () => {
           // setEpisodeState((prev) => !prev);
-          setAskToMark(
-            await toggleTVShowEpisodeState({
-              tvShowId,
-              seasonNumber: episode.seasonNumber,
-              episodeNumber: episode.episodeNumber,
-            })
-          );
+          const toggleResult = await toggleTVShowEpisodeState({
+            tvShowId,
+            seasonNumber: episode.seasonNumber,
+            episodeNumber: episode.episodeNumber,
+          });
+          setAskToMark(toggleResult);
         }}
       >
         {episodeState ? (

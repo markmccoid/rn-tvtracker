@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, Pressable } from "react-native";
+import { View, Text, StyleSheet, Pressable, Dimensions } from "react-native";
 import { MotiView, useAnimationState } from "moti";
 import Animated, {
   useSharedValue,
@@ -9,7 +9,32 @@ import Animated, {
   withSequence,
 } from "react-native-reanimated";
 
-import OpenButton from "../common/OpenButton";
+const { width, height } = Dimensions.get("window");
+const EpisodesWatched = ({ episodesWatched, numberOfEpisodes }) => {
+  const animWidth = useSharedValue(0);
+  animWidth.value = ((width - 20) / numberOfEpisodes) * episodesWatched;
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      width: withSpring(animWidth.value),
+      // width: withTiming(animWidth.value, { duration: 4000 }),
+      backgroundColor: "#abcabcaa",
+      position: "absolute",
+      height: 15,
+      bottom: 0,
+      left: -10,
+      borderTopRightRadius: 15,
+      borderWidth: StyleSheet.hairlineWidth,
+      borderLeftWidth: 0,
+    };
+  });
+  return (
+    <View style={{ flexDirection: "row", marginLeft: 10, paddingBottom: 10 }}>
+      <Animated.View style={[animatedStyle]} />
+      <Text>Episodes Watched: </Text>
+      <Text>{`${episodesWatched} of ${numberOfEpisodes}`}</Text>
+    </View>
+  );
+};
 
 type Props = {
   headerDetail: {
@@ -32,17 +57,7 @@ const SeasonHeader = ({ headerDetail }: Props) => {
   } = headerDetail;
 
   const x = useSharedValue(0);
-  const animationState = useAnimationState({
-    from: {
-      backgroundColor: "black",
-    },
-    to: {
-      backgroundColor: "white",
-    },
-    active: {
-      backgroundColor: "#8cf382",
-    },
-  });
+
   const animatedStyle = useAnimatedStyle(() => {
     return {
       transform: [
@@ -79,9 +94,10 @@ const SeasonHeader = ({ headerDetail }: Props) => {
         <Animated.View style={[styles.seasonName, animatedStyle]}>
           <View style={{ flexDirection: "column" }}>
             <Text style={styles.seasonText}>{seasonTitle}</Text>
-            <Text
-              style={[{ fontSize: 14, marginLeft: 5 }]}
-            >{`${episodesWatched} of ${numberOfEpisodes}`}</Text>
+            <EpisodesWatched
+              episodesWatched={episodesWatched}
+              numberOfEpisodes={numberOfEpisodes}
+            />
           </View>
           {/* <MotiView
             style={{

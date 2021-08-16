@@ -119,4 +119,4 @@ const styles = StyleSheet.create({
     padding: 5,
   },
 });
-export default React.memo(DetailSeason);
+export default DetailSeason;
