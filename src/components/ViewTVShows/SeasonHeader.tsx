@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet, Pressable, Dimensions } from "react-native";
-import { MotiView, useAnimationState } from "moti";
+import { MotiView, useAnimationState, MotiText } from "moti";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -8,30 +8,44 @@ import Animated, {
   withTiming,
   withSequence,
 } from "react-native-reanimated";
+import { useOState, useOActions } from "../../store/overmind";
+import { colors } from "../../globalStyles";
 
 const { width, height } = Dimensions.get("window");
 const EpisodesWatched = ({ episodesWatched, numberOfEpisodes }) => {
   const animWidth = useSharedValue(0);
-  animWidth.value = ((width - 20) / numberOfEpisodes) * episodesWatched;
+  const yVal = useSharedValue(10);
+
+  animWidth.value = ((width - 20) / numberOfEpisodes) * episodesWatched || 0;
+
+  React.useEffect(() => {
+    yVal.value = withSequence(withTiming(10), withTiming(0));
+  }, [episodesWatched]);
   const animatedStyle = useAnimatedStyle(() => {
     return {
       width: withSpring(animWidth.value),
       // width: withTiming(animWidth.value, { duration: 4000 }),
       backgroundColor: "#abcabcaa",
       position: "absolute",
-      height: 15,
+      height: 20,
       bottom: 0,
       left: -10,
-      borderTopRightRadius: 15,
+      // borderTopRightRadius: 15,
       borderWidth: StyleSheet.hairlineWidth,
       borderLeftWidth: 0,
     };
   });
+  const yStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ translateY: yVal.value }],
+    };
+  });
   return (
-    <View style={{ flexDirection: "row", marginLeft: 10, paddingBottom: 10 }}>
+    <View style={{ flexDirection: "row", marginLeft: 10, paddingBottom: 5 }}>
       <Animated.View style={[animatedStyle]} />
       <Text>Episodes Watched: </Text>
-      <Text>{`${episodesWatched} of ${numberOfEpisodes}`}</Text>
+      {/* <Text>{`${episodesWatched} of ${numberOfEpisodes}`}</Text> */}
+      <Animated.Text style={[yStyle]}>{episodesWatched}</Animated.Text>
     </View>
   );
 };
@@ -46,16 +60,13 @@ type Props = {
     toggleSeasonState: () => void;
   };
 };
-const SeasonHeader = ({ headerDetail }: Props) => {
-  const {
-    seasonTitle,
-    seasonNumber,
-    seasonState,
-    numberOfEpisodes,
-    episodesWatched,
-    toggleSeasonState,
-  } = headerDetail;
-
+const SeasonHeader = ({ tvShowId, seasonNumber, seasonName, numberOfEpisodes }) => {
+  //const { seasonState, toggleSeasonState } = headerDetail;
+  // const toggleSeasonState = () => {};
+  const state = useOState();
+  const action = useOActions();
+  const { toggleSeasonState } = action.oSaved;
+  const seasonState = state.oSaved.getTVShowSeasonState(tvShowId, seasonNumber); //state.oSaved.tempSeasonsState[tvShowId][]
   const x = useSharedValue(0);
 
   const animatedStyle = useAnimatedStyle(() => {
@@ -68,6 +79,12 @@ const SeasonHeader = ({ headerDetail }: Props) => {
     };
   });
 
+  const episodesWatched = state.oSaved.getWathedEpisodes(tvShowId, seasonNumber);
+  const seasonTitle =
+    seasonName === `Season ${seasonNumber}` || seasonNumber === 0
+      ? seasonName
+      : `Season ${seasonNumber} - ${seasonName}`;
+
   return (
     <View key={seasonNumber}>
       <Pressable
@@ -78,19 +95,9 @@ const SeasonHeader = ({ headerDetail }: Props) => {
           } else {
             x.value = withSequence(withTiming(70), withTiming(0));
           }
-          // if (animationState.current === "active") {
-          //   animationState.transitionTo("to");
-          // } else {
-          //   animationState.transitionTo("active");
-          // }
-          toggleSeasonState();
+          toggleSeasonState({ tvShowId, seasonNumber });
         }}
       >
-        {/* <MotiView
-          state={animationState}
-          style={styles.seasonName}
-          transition={{ type: "timing", duration: 500 }}
-        > */}
         <Animated.View style={[styles.seasonName, animatedStyle]}>
           <View style={{ flexDirection: "column" }}>
             <Text style={styles.seasonText}>{seasonTitle}</Text>
@@ -99,18 +106,6 @@ const SeasonHeader = ({ headerDetail }: Props) => {
               numberOfEpisodes={numberOfEpisodes}
             />
           </View>
-          {/* <MotiView
-            style={{
-              justifyContent: "center",
-              alignItems: "center",
-              marginRight: 3,
-              borderRadius: 5,
-            }}
-            animate={{ backgroundColor: seasonState ? "#15be48" : "#245240aa" }}
-            transition={{ type: "timing", duration: 1000 }}
-          >
-            <OpenButton isOpen={seasonState} toggleFunction={toggleSeasonState} />
-          </MotiView> */}
         </Animated.View>
       </Pressable>
     </View>
@@ -123,14 +118,15 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#aaa123",
+    // borderColor: "#aaa123",
     // padding: 5,
     marginBottom: 5,
-    backgroundColor: "white",
+    backgroundColor: colors.listBackground,
   },
   seasonText: {
     fontSize: 18,
     padding: 5,
+    color: colors.darkText,
   },
 });
 

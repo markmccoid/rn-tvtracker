@@ -40,6 +40,7 @@ export type SectionListTitle = {
     seasonName: string;
     seasonNumber: number;
     numberOfEpisodes: number;
+    seasonState: boolean;
   };
 };
 
@@ -57,15 +58,26 @@ export type Separators = {
   unhighlight: () => void;
   updateProps: (select: "leading" | "trailing", newProps: any) => void;
 };
+//* -----------------------------
+//* takes the seasonDetail and tvShowId and
+//* returns data formatted for SectionList component
+//* -----------------------------
 const formatForSectionList = (
   tvShowId: number,
   seasonDetails: TVShowSeasonDetails[]
 ): SectionListType[] => {
+  // return the initial seasonState array.
+  // if only 1 season, then make it open by default
+  const seasonStates = seasonDetails.reduce((final, season, index, array) => {
+    return { ...final, [season.seasonNumber]: array.length > 1 ? false : true };
+  }, {});
   const sectionArray = seasonDetails.map((season) => {
     const title = {
+      tvShowId: tvShowId,
       seasonName: season.name,
       seasonNumber: season.seasonNumber,
       numberOfEpisodes: season.episodes.length,
+      seasonState: seasonStates[season.seasonNumber],
     };
     const episodes = season.episodes.map((episode) => {
       return {
@@ -175,7 +187,7 @@ const SeasonsScreen = ({ navigation, route }: SeasonsScreenProps) => {
         )}
       </View>
       {/* only show "Header" is calling route is ViewStackSeasons */}
-      {routeName === "ViewStackSeasons" && <Header />}
+      {/* {routeName === "ViewStackSeasons" && <Header />} */}
 
       <SectionList
         style={{ width: "100%" }}
@@ -183,6 +195,7 @@ const SeasonsScreen = ({ navigation, route }: SeasonsScreenProps) => {
         keyExtractor={(item, index) => item.tvShowId.toString() + index}
         renderItem={sectionData}
         renderSectionHeader={sectionHeader}
+        extraData={[state.oSaved.tempSeasonsState, state.oSaved.tempSeasonsData]}
       />
       {/* 
       

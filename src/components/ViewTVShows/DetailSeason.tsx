@@ -55,7 +55,7 @@ const DetailSeason = ({
   };
   return (
     <View key={seasonNumber}>
-      <SeasonHeader headerDetail={headerDetail} />
+      {/* <SeasonHeader headerDetail={headerDetail} /> */}
 
       <AnimatePresence>
         {seasonState && (

@@ -5,7 +5,12 @@ import * as internalActions from "./internalActions";
 import { loadFromAsyncStorage, removeFromAsyncStorage } from "../../storage/asyncStorage";
 import * as defaultConstants from "./defaultContants";
 import { Context } from "../overmind";
-import { EpisodeRunTimeGroup, SavedTVShowsDoc, TempSeasonsData } from "./state";
+import {
+  EpisodeRunTimeGroup,
+  SavedTVShowsDoc,
+  TempSeasonsData,
+  TempSeasonsState,
+} from "./state";
 import {
   TVShowDetails as TMDBTVShowDetails,
   DateObject,
@@ -733,14 +738,36 @@ export const getTVShowSeasonData = async (
     // Exclude any "special" season (seasonNumber === 0)
     const regularSeasons = seasonData.filter((season) => season.seasonNumber !== 0);
     const specialSeason = seasonData.filter((season) => season.seasonNumber === 0);
+    const finalSeasons = [...regularSeasons, ...specialSeason];
 
     state.oSaved.tempSeasonsData = {
       ...state.oSaved.tempSeasonsData,
-      [tvShowId]: [...regularSeasons, ...specialSeason],
+      [tvShowId]: finalSeasons, //[...regularSeasons, ...specialSeason],
+    };
+
+    //-- Create the seasonStates for use in determining if a
+    //-- season should be expanded or collapsed
+    const seasonStates: { [seasonNumber: number]: boolean } = finalSeasons.reduce(
+      (final, season, index, array) => {
+        return { ...final, [season.seasonNumber]: array.length > 1 ? false : true };
+      },
+      {}
+    );
+    state.oSaved.tempSeasonsState = {
+      ...state.oSaved.tempSeasonsState,
+      [tvShowId]: seasonStates,
     };
   }
 };
 
+export const toggleSeasonState = ({ state }: Context, payload) => {
+  const { tvShowId, seasonNumber } = payload;
+  const tvShowStateObject = state.oSaved.tempSeasonsState[tvShowId];
+  state.oSaved.tempSeasonsState[tvShowId] = {
+    ...state.oSaved.tempSeasonsState[tvShowId],
+    [seasonNumber]: !tvShowStateObject[seasonNumber],
+  };
+};
 /** clearTempSeasonData
  *
  */

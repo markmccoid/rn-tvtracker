@@ -43,6 +43,7 @@ export type SavedEpisodeState = Record<number, WatchedSeasonEpisodes>;
 //   episodes: TempSeasonDataEpisode[];
 // }
 export type TempSeasonsData = Record<number, TVShowSeasonDetails[]>;
+export type TempSeasonsState = Record<number, { [seasonNumber: number]: boolean }>;
 
 export type Settings = {
   defaultFilter: string;
@@ -112,6 +113,7 @@ export type State = {
     watchProviders: string[];
   };
   tempSeasonsData: TempSeasonsData;
+  tempSeasonsState: TempSeasonsState;
   // --- GETTERS ---
   getFilteredTVShows: SavedTVShowsDoc[];
   //! Type needs to change since I'm not sure exactly what will be returned by
@@ -119,6 +121,7 @@ export type State = {
   getTVShowDetails: (tvShowId: number) => SavedTVShowsDoc;
   getTVShowSeasonDetails: (tvShowId: number) => TVShowSeasonDetails[];
   getTVShowSeasons: (tvShowId: number) => Omit<TVShowSeasonDetails, "episodes">[];
+  getTVShowSeasonState: (tvShowId: number, seasonNumber: number) => boolean;
   getTVShowEpisodes: (tvShowId: number, seasonNumber: number) => Episode[];
   getTVShowEpisode: (tvShowId: number, seasonNumber: number, episodeNumber) => Episode;
   getTVShowEpisodeState: (tvShowId: number, seasonNumber: number, episodeNumber) => boolean;
@@ -246,6 +249,10 @@ export const state: State = {
       delete newSeason.episodes;
       return newSeason;
     });
+  }),
+  //* ------
+  getTVShowSeasonState: derived((state: State) => (tvShowId: number, seasonNumber: number) => {
+    return state.tempSeasonsState[tvShowId][seasonNumber];
   }),
   //* ------
   getTVShowEpisodes: derived((state: State) => (tvShowId: number, seasonNumber: number) => {

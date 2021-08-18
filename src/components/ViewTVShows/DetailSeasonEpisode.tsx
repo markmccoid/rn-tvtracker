@@ -1,5 +1,5 @@
 import { TVShowSeasonDetails, Episode } from "@markmccoid/tmdb_api";
-import { MotiView } from "moti";
+import { AnimatePresence, MotiView } from "moti";
 import React, { useEffect, useState } from "react";
 import {
   View,
@@ -14,7 +14,7 @@ import {
 } from "react-native";
 import { useOActions, useOState } from "../../store/overmind";
 
-import { EyeEmptyIcon, EyeFilledIcon } from "../common/Icons";
+import { EyeEmptyIcon, EyeFilledIcon, ViewTVShowIcon } from "../common/Icons";
 
 type Props = {
   tvShowId: number;
@@ -99,9 +99,22 @@ const DetailSeasonEpisode = ({ tvShowId, episode, episodeState }: Props) => {
         }}
       >
         {episodeState ? (
-          <EyeFilledIcon color={"green"} size={25} />
+          <View style={{ justifyContent: "center", alignItems: "center" }}>
+            <MotiView
+              from={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              style={{ position: "absolute", bottom: 3.5 }}
+            >
+              <EyeFilledIcon
+                color={"green"}
+                size={15}
+                // style={{ position: "absolute", bottom: 3.5 }}
+              />
+            </MotiView>
+            <ViewTVShowIcon color={"green"} size={25} />
+          </View>
         ) : (
-          <EyeEmptyIcon size={25} />
+          <ViewTVShowIcon size={25} color={"gray"} />
         )}
       </TouchableOpacity>
     </View>

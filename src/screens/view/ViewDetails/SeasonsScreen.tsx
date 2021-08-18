@@ -20,7 +20,6 @@ import { SeasonsScreenProps } from "../viewTypes";
 
 import { useOActions, useOState } from "../../../store/overmind";
 import { colors } from "../../../globalStyles";
-import { PrivateValueStore } from "@react-navigation/native";
 import { ScrollView } from "react-native-gesture-handler";
 import { TVShowSeasonDetails } from "@markmccoid/tmdb_api";
 
