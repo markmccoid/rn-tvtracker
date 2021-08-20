@@ -164,36 +164,81 @@
 			},
 			"id": "46d611e6-0be5-4ea7-9de4-5d89c2f44b00",
 			"type": "media"
+		},
+		{
+			"blockId": "8cd77bb6-8447-4ba0-a228-705c1d8b5bea",
+			"data": {
+				"contents": "const SeasonsScreen = ({ navigation, route }: SeasonsScreenProps) => {\n  const tvShowId = route.params?.tvShowId;\n  let seasonNumbers = route.params?.seasonNumbers;\n  const logo = route.params?.logo;\n  const actions = useOActions();\n  const state = useOState();\n\n",
+				"file": "src/screens/view/ViewDetails/SeasonScreen.tsx",
+				"range": {
+					"end": {
+						"character": 2147483647,
+						"line": 100
+					},
+					"start": {
+						"character": 0,
+						"line": 94
+					}
+				},
+				"scm": {
+					"authors": [
+						{
+							"email": "markmccoid@gmail.com"
+						}
+					],
+					"branch": "master",
+					"file": "src/screens/view/ViewDetails/SeasonScreen.tsx",
+					"remotes": [
+						{
+							"name": "origin",
+							"url": "github.com/markmccoid/rn-tvtracker"
+						}
+					],
+					"repoName": "tvtracker",
+					"revision": "60bf0103d5ef1a0ba881c25455854fc70a564d6f",
+					"sameRepo": true
+				}
+			},
+			"id": "8cd77bb6-8447-4ba0-a228-705c1d8b5bea",
+			"type": "code",
+			"version": 1
 		}
 	],
 	"graphViewMetadata": {
 		"edges": [
 			{
-				"id": "985caee3-2799-48bc-b888-c5b16a2747ef_top_44bc4b9a-f671-4636-8431-24e86c3a553b_bottom_R__anFR3Soetrb783DSDrw",
+				"id": "985caee3-2799-48bc-b888-c5b16a2747ef_top_44bc4b9a-f671-4636-8431-24e86c3a553b_bottom_FEeQ1Y9iTIOv51vfpvGGOA",
 				"source": "985caee3-2799-48bc-b888-c5b16a2747ef",
 				"sourceHandle": "top",
 				"target": "44bc4b9a-f671-4636-8431-24e86c3a553b",
 				"targetHandle": "bottom"
 			},
 			{
-				"id": "44bc4b9a-f671-4636-8431-24e86c3a553b_right_38cf9a32-3947-4ac5-aaa1-43699e5f9988_left_Vjs_Kb1HS267j3HNYBm6pQ",
+				"id": "44bc4b9a-f671-4636-8431-24e86c3a553b_right_38cf9a32-3947-4ac5-aaa1-43699e5f9988_left__zlIa2ilSlqRKL57nBYfmw",
 				"source": "44bc4b9a-f671-4636-8431-24e86c3a553b",
 				"sourceHandle": "right",
 				"target": "38cf9a32-3947-4ac5-aaa1-43699e5f9988",
 				"targetHandle": "left"
 			},
 			{
-				"id": "44bc4b9a-f671-4636-8431-24e86c3a553b_bottom_f2f685c7-dcfc-4bea-acb2-8ae665654de2_top_KpShk5ilS_Srp1NIkD10OQ",
+				"id": "44bc4b9a-f671-4636-8431-24e86c3a553b_bottom_f2f685c7-dcfc-4bea-acb2-8ae665654de2_top_g8hj7SNuTVeaO6zuCBxNAg",
 				"source": "44bc4b9a-f671-4636-8431-24e86c3a553b",
 				"sourceHandle": "bottom",
 				"target": "f2f685c7-dcfc-4bea-acb2-8ae665654de2",
+				"targetHandle": "top"
+			},
+			{
+				"id": "6a2454e6-55c5-49fb-b5ed-204ac0704ad3_right_8cd77bb6-8447-4ba0-a228-705c1d8b5bea_top_zm7fv2RuR4-npBWqR2O7qg",
+				"source": "6a2454e6-55c5-49fb-b5ed-204ac0704ad3",
+				"sourceHandle": "right",
+				"target": "8cd77bb6-8447-4ba0-a228-705c1d8b5bea",
 				"targetHandle": "top"
 			}
 		],
 		"graph": {
 			"position": [
-				-913.3064203139547,
-				191.63011300110122
+				-1456.3064203139547,
+				177.63011300110122
 			],
 			"zoom": 1.0266895457200005
 		},
@@ -274,6 +319,16 @@
 				"position": {
 					"x": 1200,
 					"y": -45
+				}
+			},
+			{
+				"blockId": "8cd77bb6-8447-4ba0-a228-705c1d8b5bea",
+				"dimensions": {
+				},
+				"id": "dndnode_9",
+				"position": {
+					"x": 1695,
+					"y": 30.000000000000007
 				}
 			}
 		]

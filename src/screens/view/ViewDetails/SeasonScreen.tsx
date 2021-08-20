@@ -93,7 +93,6 @@ const formatForSectionList = (
   return sectionArray;
 };
 const SeasonsScreen = ({ navigation, route }: SeasonsScreenProps) => {
-  const routeName = route.name;
   const tvShowId = route.params?.tvShowId;
   let seasonNumbers = route.params?.seasonNumbers;
   const logo = route.params?.logo;
@@ -157,26 +156,6 @@ const SeasonsScreen = ({ navigation, route }: SeasonsScreenProps) => {
       <Text>Optional Header</Text>
     </View>
   );
-  // //* RENDER ITEM function
-  // const renderItem = ({ item }) => {
-  //   if (!item) return null;
-
-  //   return (
-  //     <DetailSeason
-  //       key={item.seasonNumber}
-  //       seasonNumber={item.seasonNumber}
-  //       seasonName={item.name}
-  //       tvShowId={tvShowId}
-  //       seasonState={seasonState[item.seasonNumber]}
-  //       toggleSeasonState={() =>
-  //         setSeasonState((prev) => ({
-  //           ...prev,
-  //           [item.seasonNumber]: !prev[item.seasonNumber],
-  //         }))
-  //       }
-  //     />
-  //   );
-  // };
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.background }}>
@@ -198,25 +177,6 @@ const SeasonsScreen = ({ navigation, route }: SeasonsScreenProps) => {
         renderSectionHeader={sectionHeader}
         extraData={[state.oSaved.tempSeasonsState, state.oSaved.tempSeasonsData]}
       />
-      {/* 
-      
-        {seasonData.map((item, idx, dataArray) => {
-          return (
-            <DetailSeason
-              key={item.seasonNumber}
-              seasonNumber={item.seasonNumber}
-              seasonName={item.name}
-              tvShowId={tvShowId}
-              seasonState={seasonState[item.seasonNumber]}
-              toggleSeasonState={() =>
-                setSeasonState((prev) => ({
-                  ...prev,
-                  [item.seasonNumber]: !prev[item.seasonNumber],
-                }))
-              }
-            />
-          );
-        })} */}
     </View>
   );
 };
