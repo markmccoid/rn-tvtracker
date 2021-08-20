@@ -24,10 +24,19 @@ export const colors = {
 };
 
 export const fonts = {
-  s: 16,
-  m: 18,
-  l: 22,
+  sizes: {
+    s: 16,
+    m: 18,
+    l: 20,
+    xl: 22,
+  },
+  family: {
+    primary: "Arial",
+    seasons: "Optima",
+    episodes: "Optima",
+  },
 };
+
 export const styleHelpers = {
   debugBorders: {
     borderWidth: 1,

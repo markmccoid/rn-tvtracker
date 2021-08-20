@@ -6,7 +6,7 @@ import { MenuIcon } from "../../components/common/Icons";
 import SearchScreen from "./SearchScreen";
 import ViewDetails from "../view/ViewDetails/ViewDetails";
 import DetailPerson from "../view/ViewDetails/DetailPerson";
-import SeasonsScreen from "../view/ViewDetails/SeasonsScreen";
+import SeasonsScreen from "../view/ViewDetails/SeasonScreen";
 import { colors } from "../../globalStyles";
 
 const SearchStack = createStackNavigator();

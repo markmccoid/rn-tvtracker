@@ -1,0 +1,44 @@
+{
+	"6c95d261-f346-48f2-9b31-261fa2430bc4": {
+		"filePath": ".grok/6c95d261-f346-48f2-9b31-261fa2430bc4.grok.json",
+		"id": "6c95d261-f346-48f2-9b31-261fa2430bc4",
+		"lastModifiedCommitHash": "f5c8f22d95dffbc5950347e6d53b6bf657b4a337",
+		"markers": [
+			{
+				"branch": "master",
+				"commitHash": "27aa64cf774d83f77a4b7bbe117288564b55deb9",
+				"file": "src/screens/view/ViewStack.tsx",
+				"location": [
+					23,
+					58
+				],
+				"repo": "tvtracker"
+			},
+			{
+				"branch": "master",
+				"commitHash": "27aa64cf774d83f77a4b7bbe117288564b55deb9",
+				"file": "src/screens/view/ViewStack.tsx",
+				"location": [
+					214,
+					223
+				],
+				"repo": "tvtracker"
+			},
+			{
+				"branch": "master",
+				"commitHash": "c5c46d9fb6246b7f275549b6ac0fbde59426d069",
+				"file": "src/screens/search/SearchStack.js",
+				"location": [
+					41,
+					46
+				],
+				"repo": "tvtracker"
+			}
+		],
+		"modifiedAt": 1629430969157,
+		"originalAuthor": "Mark",
+		"text": "This documents the navigation to the Seasons/Episodes list.",
+		"title": "Season/Episode Flow",
+		"version": 1
+	}
+}

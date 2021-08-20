@@ -13,7 +13,7 @@ import ViewTVShowsScreen from "./ViewTVShows/ViewTVShowsScreen";
 import ViewTVShowsFilterScreen from "./ViewTVShows/ViewTVShowsFilterScreen";
 import ViewDetails from "./ViewDetails/ViewDetails";
 import DetailPerson from "./ViewDetails/DetailPerson";
-import SeasonsScreen from "./ViewDetails/SeasonScreenSection";
+import SeasonsScreen from "./ViewDetails/SeasonScreen";
 import { colors } from "../../globalStyles";
 // @types imports
 import { ViewTVStackParamList, ViewTVShowsParamList } from "./viewTypes";

@@ -22,7 +22,7 @@ import {
   SectionListDataItem,
   SectionListTitle,
   Separators,
-} from "../../screens/view/ViewDetails/SeasonScreenSection";
+} from "../../screens/view/ViewDetails/SeasonScreen";
 import SeasonHeader from "./SeasonHeader";
 import { AnimatePresence, MotiView } from "moti";
 
@@ -46,6 +46,7 @@ export const sectionHeader = ({ section }: SectionHeaderProps) => {
         seasonNumber={title.seasonNumber}
         seasonName={title.seasonName}
         numberOfEpisodes={title.numberOfEpisodes}
+        isShowSaved={title.isShowSaved}
       />
     </View>
   );
@@ -63,16 +64,21 @@ type SectionDataProps = {
 //* --------------------------------------
 export const sectionData = ({ item, index, section, separators }: SectionDataProps) => {
   const itemData: SectionListDataItem = item;
+  const isShowSaved = section.title.isShowSaved;
 
   return (
     <>
-      <EpisodeRow tvShowId={itemData.tvShowId} episode={itemData.episode} />
+      <EpisodeRow
+        tvShowId={itemData.tvShowId}
+        episode={itemData.episode}
+        isShowSaved={isShowSaved}
+      />
     </>
   );
 };
 
 // Needed a component to be able to access overmind state
-const EpisodeRow = ({ tvShowId, episode }) => {
+const EpisodeRow = ({ tvShowId, episode, isShowSaved }) => {
   const state = useOState();
   const episodeState = state.oSaved.getTVShowEpisodeState(
     tvShowId,
@@ -80,30 +86,25 @@ const EpisodeRow = ({ tvShowId, episode }) => {
     episode.episodeNumber
   );
   const seasonState = state.oSaved.getTVShowSeasonState(tvShowId, episode.seasonNumber);
-  // if (!seasonState) {
-  //   return <View style={{ height: 0 }} />;
-  // }
+  if (!seasonState) {
+    // return <MotiView from={{ height: 20 }} animate={{ height: 0 }} />;
+    return <View style={{ height: 0 }} />;
+  }
   return (
-    <AnimatePresence exitBeforeEnter>
-      {seasonState && (
-        <MotiView
-          key="visible"
-          from={{ translateX: -400 }}
-          animate={{ translateX: 0 }}
-          exit={{ translateX: -400 }}
-          exitTransition={{ type: "timing", duration: 100 }}
-          transition={{ type: "spring" }}
-        >
-          <DetailSeasonEpisode
-            tvShowId={tvShowId}
-            episode={episode}
-            episodeState={episodeState}
-          />
-        </MotiView>
-      )}
-      {!seasonState && (
-        <MotiView animate={{ height: 0 }} style={{ backgroundColor: "yellow" }} />
-      )}
-    </AnimatePresence>
+    <>
+      <MotiView
+        key="visible"
+        from={{ opacity: 0.5, translateX: -400 }}
+        animate={{ opacity: 1.0, translateX: 0 }}
+        transition={{ type: "spring" }}
+      >
+        <DetailSeasonEpisode
+          tvShowId={tvShowId}
+          episode={episode}
+          episodeState={episodeState}
+          isShowSaved={isShowSaved}
+        />
+      </MotiView>
+    </>
   );
 };

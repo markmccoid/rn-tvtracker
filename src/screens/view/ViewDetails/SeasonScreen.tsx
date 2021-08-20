@@ -12,7 +12,7 @@ import {
   TouchableOpacity,
   SafeAreaView,
 } from "react-native";
-import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
+import _ from "lodash";
 
 import DetailSeason from "../../../components/ViewTVShows/DetailSeason";
 //@types
@@ -20,10 +20,7 @@ import { SeasonsScreenProps } from "../viewTypes";
 
 import { useOActions, useOState } from "../../../store/overmind";
 import { colors } from "../../../globalStyles";
-import { PrivateValueStore } from "@react-navigation/native";
-import { ScrollView } from "react-native-gesture-handler";
 import { Episode, TVShowSeasonDetails } from "@markmccoid/tmdb_api";
-import TagItem from "../../../components/Tags/TagItem";
 
 import {
   sectionData,
@@ -41,6 +38,7 @@ export type SectionListTitle = {
     seasonNumber: number;
     numberOfEpisodes: number;
     seasonState: boolean;
+    isShowSaved: boolean;
   };
 };
 
@@ -64,7 +62,8 @@ export type Separators = {
 //* -----------------------------
 const formatForSectionList = (
   tvShowId: number,
-  seasonDetails: TVShowSeasonDetails[]
+  seasonDetails: TVShowSeasonDetails[],
+  isShowSaved: boolean
 ): SectionListType[] => {
   // return the initial seasonState array.
   // if only 1 season, then make it open by default
@@ -78,6 +77,7 @@ const formatForSectionList = (
       seasonNumber: season.seasonNumber,
       numberOfEpisodes: season.episodes.length,
       seasonState: seasonStates[season.seasonNumber],
+      isShowSaved,
     };
     const episodes = season.episodes.map((episode) => {
       return {
@@ -97,7 +97,6 @@ const SeasonsScreen = ({ navigation, route }: SeasonsScreenProps) => {
   const tvShowId = route.params?.tvShowId;
   let seasonNumbers = route.params?.seasonNumbers;
   const logo = route.params?.logo;
-
   const actions = useOActions();
   const state = useOState();
 
@@ -109,6 +108,8 @@ const SeasonsScreen = ({ navigation, route }: SeasonsScreenProps) => {
 
   const getSeasonData = async () => {
     setLoading(true);
+    // Find out if show is saved yet
+    const isShowSaved = _.some(state.oSaved.savedTVShows, ["id", tvShowId]);
     // Season numbers will be passed if coming from the Details screen
     if (!seasonNumbers) {
       const show = await apiGetTVShowDetails(tvShowId);
@@ -117,7 +118,7 @@ const SeasonsScreen = ({ navigation, route }: SeasonsScreenProps) => {
     await getTVShowSeasonData({ tvShowId, seasonNumbers });
     const seasonDets = getTVShowSeasonDetails(tvShowId);
 
-    setSeasonData(formatForSectionList(tvShowId, seasonDets));
+    setSeasonData(formatForSectionList(tvShowId, seasonDets, isShowSaved));
     //* Below for determining if we should expand first season (if only 1 season for show)
     const tempSeasonStates = seasonDets.reduce<SeasonState>(
       (final: SeasonState, season): SeasonState => {
@@ -156,29 +157,29 @@ const SeasonsScreen = ({ navigation, route }: SeasonsScreenProps) => {
       <Text>Optional Header</Text>
     </View>
   );
-  //* RENDER ITEM function
-  const renderItem = ({ item }) => {
-    if (!item) return null;
+  // //* RENDER ITEM function
+  // const renderItem = ({ item }) => {
+  //   if (!item) return null;
 
-    return (
-      <DetailSeason
-        key={item.seasonNumber}
-        seasonNumber={item.seasonNumber}
-        seasonName={item.name}
-        tvShowId={tvShowId}
-        seasonState={seasonState[item.seasonNumber]}
-        toggleSeasonState={() =>
-          setSeasonState((prev) => ({
-            ...prev,
-            [item.seasonNumber]: !prev[item.seasonNumber],
-          }))
-        }
-      />
-    );
-  };
+  //   return (
+  //     <DetailSeason
+  //       key={item.seasonNumber}
+  //       seasonNumber={item.seasonNumber}
+  //       seasonName={item.name}
+  //       tvShowId={tvShowId}
+  //       seasonState={seasonState[item.seasonNumber]}
+  //       toggleSeasonState={() =>
+  //         setSeasonState((prev) => ({
+  //           ...prev,
+  //           [item.seasonNumber]: !prev[item.seasonNumber],
+  //         }))
+  //       }
+  //     />
+  //   );
+  // };
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, backgroundColor: colors.background }}>
       <View style={styles.logoContainer}>
         {!logo.logoURL ? (
           <Text style={styles.showName}>{logo.showName}</Text>
