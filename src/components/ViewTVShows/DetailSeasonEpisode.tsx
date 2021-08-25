@@ -12,14 +12,18 @@ import {
   Linking,
   TouchableOpacity,
 } from "react-native";
+
 import { useOActions, useOState } from "../../store/overmind";
 
-import { EyeEmptyIcon, EyeFilledIcon, ViewTVShowIcon } from "../common/Icons";
+import { EyeFilledIcon, ViewTVShowIcon } from "../common/Icons";
 import { fonts, colors } from "../../globalStyles";
+
+//@types
+import { SectionListDataItem } from "../../screens/view/ViewDetails/SeasonScreen";
 
 type Props = {
   tvShowId: number;
-  episode: Episode;
+  episode: SectionListDataItem;
   episodeState: boolean;
   isShowSaved: boolean;
 };
@@ -32,22 +36,11 @@ const DetailSeasonEpisode = ({ tvShowId, episode, episodeState, isShowSaved }: P
   // const episode = state.oSaved.getTVShowEpisode(tvShowId, seasonNumber, episodeNumber);
   // const [episodeState, setEpisodeState] = React.useState(false);
   const [askToMark, setAskToMark] = React.useState(false);
-  //!! Hopefully delete
-  // const episodeState = state.oSaved.getTVShowEpisodeState(
-  //   tvShowId,
-  //   episode.seasonNumber,
-  //   episode.episodeNumber
-  // );
-  //!!
-  // const episodeState = state.oSaved.getTVShowEpisodeState(tvShowId,seasonNumber, episodeNumber);
-  // React.useEffect(() => {
-  //   setEpisodeState(state.oSaved.getTVShowEpisodeState(tvShowId, seasonNumber, episodeNumber));
-  // }, []);
 
   // Was trying to use the episodeState to control the UI changes, but then when I added
   // the functionality to update episode state (mark all previous as watched) the UI
   // wouldn't be updated until coming back in.  THUS, this use effect was born.
-  // Should be a better way, but for now, this is it.
+  // Should be a better way, but for now, this is it
   React.useEffect(() => {
     if (askToMark) {
       Alert.alert("Mark Previous", "Mark all previous?", [
@@ -75,15 +68,15 @@ const DetailSeasonEpisode = ({ tvShowId, episode, episodeState, isShowSaved }: P
         </View>
         <View style={{ flexDirection: "column", overflow: "hidden", width: width / 1.5 }}>
           <Text style={styles.epName}>{episode.name}</Text>
-          <Text>{`${episode.airDate?.formatted || "Unknown"}`}</Text>
+          <Text>{`${episode.airDate || "Unknown"}`}</Text>
         </View>
       </View>
+
       {isShowSaved && (
         <TouchableOpacity
           style={{ justifyContent: "center", padding: 10 }}
           activeOpacity={0.75}
           onPress={async () => {
-            // setEpisodeState((prev) => !prev);
             const toggleResult = await toggleTVShowEpisodeState({
               tvShowId,
               seasonNumber: episode.seasonNumber,
@@ -94,17 +87,13 @@ const DetailSeasonEpisode = ({ tvShowId, episode, episodeState, isShowSaved }: P
         >
           {episodeState ? (
             <View style={{ justifyContent: "center", alignItems: "center" }}>
-              <MotiView
-                from={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                style={{ position: "absolute", bottom: 3.5 }}
-              >
+              <View style={{ position: "absolute", bottom: 3.5 }}>
                 <EyeFilledIcon
                   color={"green"}
                   size={15}
                   // style={{ position: "absolute", bottom: 3.5 }}
                 />
-              </MotiView>
+              </View>
               <ViewTVShowIcon color={"green"} size={25} />
             </View>
           ) : (
@@ -126,6 +115,7 @@ const styles = StyleSheet.create({
     // marginBottom: 5,
     marginLeft: 10,
     justifyContent: "space-between",
+    height: 55,
   },
   epNumber: {
     fontSize: 18,

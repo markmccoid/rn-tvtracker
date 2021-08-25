@@ -38,7 +38,7 @@ const DetailSeason = ({
 }: Props) => {
   const state = useOState();
   const episodes = state.oSaved.getTVShowEpisodes(tvShowId, seasonNumber);
-  const episodesWatched = state.oSaved.getWathedEpisodes(tvShowId, seasonNumber);
+  const episodesWatched = state.oSaved.getWatchedEpisodes(tvShowId, seasonNumber);
   const [{ height }, onLayout] = useLayout();
   const seasonTitle =
     seasonName === `Season ${seasonNumber}` || seasonNumber === 0

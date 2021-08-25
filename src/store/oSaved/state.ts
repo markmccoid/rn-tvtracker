@@ -125,7 +125,7 @@ export type State = {
   getTVShowEpisodes: (tvShowId: number, seasonNumber: number) => Episode[];
   getTVShowEpisode: (tvShowId: number, seasonNumber: number, episodeNumber) => Episode;
   getTVShowEpisodeState: (tvShowId: number, seasonNumber: number, episodeNumber) => boolean;
-  getWathedEpisodes: (tvShowId: number, seasonNumber: number) => number;
+  getWatchedEpisodes: (tvShowId: number, seasonNumber: number) => number;
   isTVShowSaved: (tvShowId: number) => boolean;
   getCurrentImageUrls: (tvShowId: number) => {
     currentPosterURL: string;
@@ -280,7 +280,7 @@ export const state: State = {
       return !!state.tempEpisodeState?.[tvShowId]?.[`${seasonNumber}-${episodeNumber}`];
     }
   ),
-  getWathedEpisodes: derived((state: State) => (tvShowId, seasonNumber) => {
+  getWatchedEpisodes: derived((state: State) => (tvShowId, seasonNumber) => {
     if (!state.tempEpisodeState?.[tvShowId]) {
       return 0;
     }

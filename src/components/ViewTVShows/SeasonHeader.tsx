@@ -80,21 +80,8 @@ const SeasonHeader = ({
   // const toggleSeasonState = () => {};
   const state = useOState();
   const action = useOActions();
-  const { toggleSeasonState } = action.oSaved;
-  const seasonState = state.oSaved.getTVShowSeasonState(tvShowId, seasonNumber); //state.oSaved.tempSeasonsState[tvShowId][]
-  const x = useSharedValue(0);
-  const bgColor = useSharedValue(0);
-  const animatedStyle = useAnimatedStyle(() => {
-    return {
-      transform: [
-        {
-          translateX: x.value,
-        },
-      ],
-    };
-  });
 
-  const episodesWatched = state.oSaved.getWathedEpisodes(tvShowId, seasonNumber);
+  const episodesWatched = state.oSaved.getWatchedEpisodes(tvShowId, seasonNumber);
   const seasonTitle =
     seasonName === `Season ${seasonNumber}` || seasonNumber === 0
       ? seasonName
@@ -102,29 +89,17 @@ const SeasonHeader = ({
 
   return (
     <View key={seasonNumber}>
-      <Pressable
-        onPress={() => {
-          // If seasonState is true (showing episodes)
-          if (seasonState) {
-            x.value = withSequence(withTiming(-70), withTiming(0));
-          } else {
-            x.value = withSequence(withTiming(70), withTiming(0));
-          }
-          toggleSeasonState({ tvShowId, seasonNumber });
-        }}
-      >
-        <Animated.View style={[styles.seasonName, animatedStyle]}>
-          <View style={{ flexDirection: "column" }}>
-            <Text style={styles.seasonText}>{seasonTitle}</Text>
-            {isShowSaved && (
-              <EpisodesWatched
-                episodesWatched={episodesWatched}
-                numberOfEpisodes={numberOfEpisodes}
-              />
-            )}
-          </View>
-        </Animated.View>
-      </Pressable>
+      <View style={[styles.seasonName]}>
+        <View style={{ flexDirection: "column" }}>
+          <Text style={styles.seasonText}>{seasonTitle}</Text>
+          {isShowSaved && (
+            <EpisodesWatched
+              episodesWatched={episodesWatched}
+              numberOfEpisodes={numberOfEpisodes}
+            />
+          )}
+        </View>
+      </View>
     </View>
   );
 };
@@ -135,6 +110,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     borderWidth: 1,
+    height: 60,
     // borderColor: "#aaa123",
     // padding: 5,
     // marginBottom: 5,
@@ -151,7 +127,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SeasonHeader;
-function sequence(arg0: number, arg1: number): number {
-  throw new Error("Function not implemented.");
-}
+export default React.memo(SeasonHeader);

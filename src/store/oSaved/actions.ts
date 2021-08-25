@@ -760,20 +760,15 @@ export const getTVShowSeasonData = async (
   }
 };
 
-export const toggleSeasonState = ({ state }: Context, payload) => {
-  const { tvShowId, seasonNumber } = payload;
-  const tvShowStateObject = state.oSaved.tempSeasonsState[tvShowId];
-  state.oSaved.tempSeasonsState[tvShowId] = {
-    ...state.oSaved.tempSeasonsState[tvShowId],
-    [seasonNumber]: !tvShowStateObject[seasonNumber],
-  };
-};
-/** clearTempSeasonData
- *
- */
-export const clearTempSeasonData = ({ state }: Context) => {
-  state.oSaved.tempSeasonsData = [];
-};
+// //-- Toggles whether season should be expanded or not
+// export const toggleSeasonState = ({ state }: Context, payload) => {
+//   const { tvShowId, seasonNumber } = payload;
+//   const tvShowStateObject = state.oSaved.tempSeasonsState[tvShowId];
+//   state.oSaved.tempSeasonsState[tvShowId] = {
+//     ...state.oSaved.tempSeasonsState[tvShowId],
+//     [seasonNumber]: !tvShowStateObject[seasonNumber],
+//   };
+// };
 
 //*==================================
 //- EPISODE STATE

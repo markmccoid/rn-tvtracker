@@ -11,45 +11,51 @@ import {
   Linking,
   TouchableOpacity,
   SafeAreaView,
+  ScrollView,
 } from "react-native";
 import _ from "lodash";
 
-import DetailSeason from "../../../components/ViewTVShows/DetailSeason";
-//@types
-import { SeasonsScreenProps } from "../viewTypes";
-
-import { useOActions, useOState } from "../../../store/overmind";
-import { colors } from "../../../globalStyles";
-import { Episode, TVShowSeasonDetails } from "@markmccoid/tmdb_api";
+import sectionListGetItemLayout from "react-native-section-list-get-item-layout";
 
 import {
   sectionData,
   sectionHeader,
 } from "../../../components/ViewTVShows/SeasonSectionListItems";
 
+//@types
+import { SeasonsScreenProps } from "../viewTypes";
+
+import { useOActions, useOState } from "../../../store/overmind";
+import { colors } from "../../../globalStyles";
+import { TVShowSeasonDetails } from "@markmccoid/tmdb_api";
+
 type SeasonState = { [seasonNumber: number]: boolean } & {
   seasonCount: number;
 };
 
-export type SectionListTitle = {
-  title: {
-    tvShowId: number;
-    seasonName: string;
-    seasonNumber: number;
-    numberOfEpisodes: number;
-    seasonState: boolean;
-    isShowSaved: boolean;
-  };
+export type SectionListTitleObj = {
+  tvShowId: number;
+  seasonName: string;
+  seasonNumber: number;
+  numberOfEpisodes: number;
+  seasonState: boolean;
+  isShowSaved: boolean;
 };
 
 export type SectionListDataItem = {
-  tvShowId: number;
-  episode: Episode;
+  id: number;
+  name: string;
+  episodeNumber: number;
+  airDate: string;
+  seasonNumber: number;
 };
-type SectionListData = {
+
+// type SectionListType = { title: SectionListTitle; data: SectionListDataItem[] };
+
+type SectionListType = {
+  title: SectionListTitleObj;
   data: SectionListDataItem[];
 };
-type SectionListType = SectionListTitle & SectionListData;
 
 export type Separators = {
   highlight: () => void;
@@ -81,8 +87,11 @@ const formatForSectionList = (
     };
     const episodes = season.episodes.map((episode) => {
       return {
-        tvShowId,
-        episode,
+        id: episode.id,
+        name: episode.name,
+        episodeNumber: episode.episodeNumber,
+        airDate: episode.airDate?.formatted,
+        seasonNumber: episode.seasonNumber,
       };
     });
     return {
@@ -90,26 +99,52 @@ const formatForSectionList = (
       data: episodes,
     };
   });
+
   return sectionArray;
 };
+
+type SeasonPicker = {
+  seasonNumber: number;
+  seasonText: string;
+  episodesWatched: number;
+};
+const prepareSeasonPicker = (
+  tvShowId: number,
+  seasons: number[],
+  getWatchedEpisodes
+): SeasonPicker[] => {
+  return seasons.map((season) => {
+    return {
+      seasonNumber: season,
+      seasonText: `Season ${season}`,
+      episodesWatched: getWatchedEpisodes(tvShowId, season),
+    };
+  });
+};
+/**
+//* SeasonsScreen Component
+*/
 const SeasonsScreen = ({ navigation, route }: SeasonsScreenProps) => {
   const tvShowId = route.params?.tvShowId;
   let seasonNumbers = route.params?.seasonNumbers;
   const logo = route.params?.logo;
   const actions = useOActions();
   const state = useOState();
+  const sectionRef = React.useRef<SectionList<any> | undefined>();
 
   const [loading, setLoading] = React.useState(false);
   const [seasonData, setSeasonData] = React.useState<SectionListType[]>([]);
+  const [seasonPicker, setSeasonPicker] = React.useState<number[]>([]);
   const [seasonState, setSeasonState] = React.useState<SeasonState>(undefined);
   const { getTVShowSeasonData, apiGetTVShowDetails } = actions.oSaved;
-  const { getTVShowSeasonDetails } = state.oSaved;
+  const { getTVShowSeasonDetails, getWatchedEpisodes } = state.oSaved;
 
   const getSeasonData = async () => {
     setLoading(true);
     // Find out if show is saved yet
     const isShowSaved = _.some(state.oSaved.savedTVShows, ["id", tvShowId]);
     // Season numbers will be passed if coming from the Details screen
+    // but won't be if coming from long press on show in main screen
     if (!seasonNumbers) {
       const show = await apiGetTVShowDetails(tvShowId);
       seasonNumbers = show.data.seasons.map((season) => season.seasonNumber);
@@ -117,22 +152,13 @@ const SeasonsScreen = ({ navigation, route }: SeasonsScreenProps) => {
     await getTVShowSeasonData({ tvShowId, seasonNumbers });
     const seasonDets = getTVShowSeasonDetails(tvShowId);
 
+    //prepareSeasonPicker(tvShowId, seasonNumbers, state.oSaved.getWatchedEpisodes)
+    setSeasonPicker(seasonNumbers);
     setSeasonData(formatForSectionList(tvShowId, seasonDets, isShowSaved));
-    //* Below for determining if we should expand first season (if only 1 season for show)
-    const tempSeasonStates = seasonDets.reduce<SeasonState>(
-      (final: SeasonState, season): SeasonState => {
-        const seasonCount = final?.seasonCount ? final.seasonCount + 1 : 1;
-        final = { ...final, [season.seasonNumber]: false, seasonCount };
-        return final;
-      },
-      {}
-    );
-    if (tempSeasonStates.seasonCount === 1) {
-      tempSeasonStates[1] = true;
-    }
-    setSeasonState(tempSeasonStates);
+
     setLoading(false);
   };
+  //-- USE EFFECTS
   React.useEffect(() => {
     navigation.setOptions({
       title: "",
@@ -141,6 +167,12 @@ const SeasonsScreen = ({ navigation, route }: SeasonsScreenProps) => {
   React.useEffect(() => {
     getSeasonData();
   }, [tvShowId]);
+
+  //----------------------
+  const sectionGetItemLayout = sectionListGetItemLayout({
+    // The height of the row with rowData at the given sectionIndex and rowIndex
+    getItemHeight: (rowData, sectionIndex, rowIndex) => (sectionIndex === 0 ? 62 : 55),
+  });
 
   if (loading || !seasonData) {
     return (
@@ -168,14 +200,62 @@ const SeasonsScreen = ({ navigation, route }: SeasonsScreenProps) => {
       </View>
       {/* only show "Header" is calling route is ViewStackSeasons */}
       {/* {routeName === "ViewStackSeasons" && <Header />} */}
-
+      {/* <ScrollView
+        horizontal
+        contentContainerStyle={{ height: 20, borderWidth: 1 }}
+        style={{ height: 25, borderWidth: 1 }}
+      >
+        <Text>Hi</Text>
+      </ScrollView> */}
+      <View>
+        <ScrollView horizontal>
+          {seasonPicker.map((season) => {
+            if (season === 0) return;
+            return (
+              <TouchableOpacity
+                key={season}
+                style={{
+                  margin: 5,
+                  padding: 5,
+                  borderWidth: 1,
+                  borderRadius: 10,
+                  backgroundColor: colors.darkbg,
+                }}
+                onPress={() =>
+                  sectionRef.current?.scrollToLocation({
+                    sectionIndex: season - 1,
+                    itemIndex: 0,
+                    viewPosition: 0,
+                    animated: true,
+                  })
+                }
+              >
+                <Text
+                  style={{
+                    color: colors.darkfg,
+                  }}
+                >
+                  {`Season ${season}`}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+        </ScrollView>
+      </View>
       <SectionList
+        ref={sectionRef}
         style={{ width: "100%" }}
+        contentContainerStyle={{ paddingBottom: 55 }}
         sections={seasonData}
-        keyExtractor={(item, index) => item.tvShowId.toString() + index}
+        keyExtractor={(item: SectionListDataItem, index: number) =>
+          item.seasonNumber.toString() + item.episodeNumber.toString()
+        }
         renderItem={sectionData}
         renderSectionHeader={sectionHeader}
-        extraData={[state.oSaved.tempSeasonsState, state.oSaved.tempSeasonsData]}
+        // onScroll={(event) => {
+        //   console.log(event.nativeEvent.contentOffset.y);
+        // }}
+        getItemLayout={sectionGetItemLayout}
       />
     </View>
   );
