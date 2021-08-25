@@ -154,18 +154,6 @@
 			"type": "markdown"
 		},
 		{
-			"blockId": "46d611e6-0be5-4ea7-9de4-5d89c2f44b00",
-			"data": {
-				"attachedFileName": "611f1437ce9d6d001fc91a3f/611f1437ce9d6d001fc91a3e/fpKNKABc7Z66FMpaBKi9JV4sAhwCRu47.png",
-				"fileName": "image.png",
-				"fileSize": 149888,
-				"teamId": "611f1437ce9d6d001fc91a3e",
-				"type": "image"
-			},
-			"id": "46d611e6-0be5-4ea7-9de4-5d89c2f44b00",
-			"type": "media"
-		},
-		{
 			"blockId": "8cd77bb6-8447-4ba0-a228-705c1d8b5bea",
 			"data": {
 				"contents": "const SeasonsScreen = ({ navigation, route }: SeasonsScreenProps) => {\n  const tvShowId = route.params?.tvShowId;\n  let seasonNumbers = route.params?.seasonNumbers;\n  const logo = route.params?.logo;\n  const actions = useOActions();\n  const state = useOState();\n\n",
@@ -207,28 +195,28 @@
 	"graphViewMetadata": {
 		"edges": [
 			{
-				"id": "985caee3-2799-48bc-b888-c5b16a2747ef_top_44bc4b9a-f671-4636-8431-24e86c3a553b_bottom_FEeQ1Y9iTIOv51vfpvGGOA",
+				"id": "985caee3-2799-48bc-b888-c5b16a2747ef_top_44bc4b9a-f671-4636-8431-24e86c3a553b_bottom_Ku1QxraQR7qfeae558vUxQ",
 				"source": "985caee3-2799-48bc-b888-c5b16a2747ef",
 				"sourceHandle": "top",
 				"target": "44bc4b9a-f671-4636-8431-24e86c3a553b",
 				"targetHandle": "bottom"
 			},
 			{
-				"id": "44bc4b9a-f671-4636-8431-24e86c3a553b_right_38cf9a32-3947-4ac5-aaa1-43699e5f9988_left__zlIa2ilSlqRKL57nBYfmw",
+				"id": "44bc4b9a-f671-4636-8431-24e86c3a553b_right_38cf9a32-3947-4ac5-aaa1-43699e5f9988_left_yb16A_KMQ2uZ8rWfv-I9Kw",
 				"source": "44bc4b9a-f671-4636-8431-24e86c3a553b",
 				"sourceHandle": "right",
 				"target": "38cf9a32-3947-4ac5-aaa1-43699e5f9988",
 				"targetHandle": "left"
 			},
 			{
-				"id": "44bc4b9a-f671-4636-8431-24e86c3a553b_bottom_f2f685c7-dcfc-4bea-acb2-8ae665654de2_top_g8hj7SNuTVeaO6zuCBxNAg",
+				"id": "44bc4b9a-f671-4636-8431-24e86c3a553b_bottom_f2f685c7-dcfc-4bea-acb2-8ae665654de2_top_sa5ckJu4SvyS5u8Ow6Dusg",
 				"source": "44bc4b9a-f671-4636-8431-24e86c3a553b",
 				"sourceHandle": "bottom",
 				"target": "f2f685c7-dcfc-4bea-acb2-8ae665654de2",
 				"targetHandle": "top"
 			},
 			{
-				"id": "6a2454e6-55c5-49fb-b5ed-204ac0704ad3_right_8cd77bb6-8447-4ba0-a228-705c1d8b5bea_top_zm7fv2RuR4-npBWqR2O7qg",
+				"id": "6a2454e6-55c5-49fb-b5ed-204ac0704ad3_right_8cd77bb6-8447-4ba0-a228-705c1d8b5bea_top_qdGIxNHoRq-yqeVp13BTEQ",
 				"source": "6a2454e6-55c5-49fb-b5ed-204ac0704ad3",
 				"sourceHandle": "right",
 				"target": "8cd77bb6-8447-4ba0-a228-705c1d8b5bea",
@@ -237,10 +225,10 @@
 		],
 		"graph": {
 			"position": [
-				-1456.3064203139547,
-				177.63011300110122
+				-234.87783896856604,
+				70.46019736271136
 			],
-			"zoom": 1.0266895457200005
+			"zoom": 0.6470728272414281
 		},
 		"nodes": [
 			{
@@ -249,7 +237,7 @@
 					"height": 190,
 					"width": 300
 				},
-				"id": "dndnode_0",
+				"id": "44bc4b9a-f671-4636-8431-24e86c3a553b",
 				"position": {
 					"x": 240,
 					"y": -105
@@ -259,7 +247,7 @@
 				"blockId": "985caee3-2799-48bc-b888-c5b16a2747ef",
 				"dimensions": {
 				},
-				"id": "dndnode_1",
+				"id": "985caee3-2799-48bc-b888-c5b16a2747ef",
 				"position": {
 					"x": -210,
 					"y": 195
@@ -269,7 +257,7 @@
 				"blockId": "f2f685c7-dcfc-4bea-acb2-8ae665654de2",
 				"dimensions": {
 				},
-				"id": "dndnode_2",
+				"id": "f2f685c7-dcfc-4bea-acb2-8ae665654de2",
 				"position": {
 					"x": 255,
 					"y": 255
@@ -279,7 +267,7 @@
 				"blockId": "38cf9a32-3947-4ac5-aaa1-43699e5f9988",
 				"dimensions": {
 				},
-				"id": "dndnode_3",
+				"id": "38cf9a32-3947-4ac5-aaa1-43699e5f9988",
 				"position": {
 					"x": 675,
 					"y": 30
@@ -291,7 +279,7 @@
 					"height": 274,
 					"width": 384
 				},
-				"id": "dndnode_4",
+				"id": "21380d48-6b99-4f94-9084-6802864734bb",
 				"position": {
 					"x": -195,
 					"y": -195
@@ -303,29 +291,17 @@
 					"height": 130,
 					"width": 448
 				},
-				"id": "dndnode_6",
+				"id": "6a2454e6-55c5-49fb-b5ed-204ac0704ad3",
 				"position": {
 					"x": 1200,
 					"y": -210
 				}
 			},
 			{
-				"blockId": "46d611e6-0be5-4ea7-9de4-5d89c2f44b00",
-				"dimensions": {
-					"height": 699,
-					"width": 325
-				},
-				"id": "dndnode_8",
-				"position": {
-					"x": 1200,
-					"y": -45
-				}
-			},
-			{
 				"blockId": "8cd77bb6-8447-4ba0-a228-705c1d8b5bea",
 				"dimensions": {
 				},
-				"id": "dndnode_9",
+				"id": "8cd77bb6-8447-4ba0-a228-705c1d8b5bea",
 				"position": {
 					"x": 1695,
 					"y": 30.000000000000007

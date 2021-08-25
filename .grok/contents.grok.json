@@ -1,8 +1,110 @@
 {
+	"1f794966-0ac3-40bd-9b7e-f9f5cf58f8f2": {
+		"filePath": ".grok/1f794966-0ac3-40bd-9b7e-f9f5cf58f8f2.grok.json",
+		"id": "1f794966-0ac3-40bd-9b7e-f9f5cf58f8f2",
+		"lastModifiedCommitHash": "b610224b2b369557d3e45abdd39ddc5e933d5d3b",
+		"markers": [
+			{
+				"branch": "master",
+				"commitHash": "27aa64cf774d83f77a4b7bbe117288564b55deb9",
+				"file": "src/screens/view/ViewStack.tsx",
+				"location": [
+					23,
+					58
+				],
+				"repo": "tvtracker"
+			},
+			{
+				"branch": "master",
+				"commitHash": "27aa64cf774d83f77a4b7bbe117288564b55deb9",
+				"file": "src/screens/view/ViewStack.tsx",
+				"location": [
+					214,
+					223
+				],
+				"repo": "tvtracker"
+			},
+			{
+				"branch": "master",
+				"commitHash": "c5c46d9fb6246b7f275549b6ac0fbde59426d069",
+				"file": "src/screens/search/SearchStack.js",
+				"location": [
+					41,
+					46
+				],
+				"repo": "tvtracker"
+			},
+			{
+				"branch": "master",
+				"commitHash": "60bf0103d5ef1a0ba881c25455854fc70a564d6f",
+				"file": "src/screens/view/ViewDetails/SeasonScreen.tsx",
+				"location": [
+					94,
+					100
+				],
+				"repo": "tvtracker"
+			},
+			{
+				"branch": "master",
+				"commitHash": "b610224b2b369557d3e45abdd39ddc5e933d5d3b",
+				"file": "src/screens/view/ViewDetails/SeasonScreen.tsx",
+				"location": [
+					222,
+					233
+				],
+				"repo": "tvtracker"
+			},
+			{
+				"branch": "master",
+				"commitHash": "b610224b2b369557d3e45abdd39ddc5e933d5d3b",
+				"file": "src/screens/view/ViewDetails/SeasonScreen.tsx",
+				"location": [
+					201,
+					221
+				],
+				"repo": "tvtracker"
+			},
+			{
+				"branch": "master",
+				"commitHash": "60bf0103d5ef1a0ba881c25455854fc70a564d6f",
+				"file": "src/components/ViewTVShows/SeasonSectionListItems.tsx",
+				"location": [
+					35,
+					73
+				],
+				"repo": "tvtracker"
+			},
+			{
+				"branch": "master",
+				"commitHash": "60bf0103d5ef1a0ba881c25455854fc70a564d6f",
+				"file": "src/components/ViewTVShows/SeasonHeader.tsx",
+				"location": [
+					71,
+					77
+				],
+				"repo": "tvtracker"
+			},
+			{
+				"branch": "master",
+				"commitHash": "60bf0103d5ef1a0ba881c25455854fc70a564d6f",
+				"file": "src/components/ViewTVShows/DetailSeasonEpisode.tsx",
+				"location": [
+					29,
+					32
+				],
+				"repo": "tvtracker"
+			}
+		],
+		"modifiedAt": 1629863835517,
+		"originalAuthor": "Mark",
+		"text": "This documents the navigation to the Seasons/Episodes list.",
+		"title": "Season/Episode Flow",
+		"version": 1
+	},
 	"6c95d261-f346-48f2-9b31-261fa2430bc4": {
 		"filePath": ".grok/6c95d261-f346-48f2-9b31-261fa2430bc4.grok.json",
 		"id": "6c95d261-f346-48f2-9b31-261fa2430bc4",
-		"lastModifiedCommitHash": "60bf0103d5ef1a0ba881c25455854fc70a564d6f",
+		"lastModifiedCommitHash": "b610224b2b369557d3e45abdd39ddc5e933d5d3b",
 		"markers": [
 			{
 				"branch": "master",
@@ -45,7 +147,7 @@
 				"repo": "tvtracker"
 			}
 		],
-		"modifiedAt": 1629431117237,
+		"modifiedAt": 1629604889320,
 		"originalAuthor": "Mark",
 		"text": "This documents the navigation to the Seasons/Episodes list.",
 		"title": "Season/Episode Flow",

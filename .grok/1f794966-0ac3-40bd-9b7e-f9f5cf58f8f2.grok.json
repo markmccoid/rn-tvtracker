@@ -1,0 +1,593 @@
+{
+	"cells": [
+		{
+			"blockId": "44bc4b9a-f671-4636-8431-24e86c3a553b",
+			"data": {
+				"formatCode": false,
+				"isPreviewing": true,
+				"text": "**Three Routes that point to the Season Screen**  <div><span style=\"color: var(--text-color); font-family: var(--font-family); font-size: var(--font-size); font-weight: var(--font-weight);\">- ViewStackSeasons</span><div>- DetailsSeasons</div><div>- DetailsFromSearchSeasons</div></div>"
+			},
+			"id": "44bc4b9a-f671-4636-8431-24e86c3a553b",
+			"type": "markdown"
+		},
+		{
+			"blockId": "985caee3-2799-48bc-b888-c5b16a2747ef",
+			"data": {
+				"contents": "const ViewTVShowsStack = () => {\n  return (\n    <ViewTVShowsStackNav.Navigator\n      initialRouteName=\"TVShowsScreen\"\n      screenOptions={{\n        stackAnimation: \"default\",\n        stackPresentation: \"modal\",\n      }}\n      // mode=\"modal\"\n      // headerMode=\"none\"\n      // params=\"TVShowsScreen\"\n    >\n      <ViewTVShowsStackNav.Screen\n        name=\"TVShowsScreen\"\n        component={ViewTVShowsScreen}\n        options={{\n          headerShown: false,\n        }}\n      />\n      <ViewTVShowsStackNav.Screen\n        name=\"Filter\"\n        component={ViewTVShowsFilterScreen}\n        options={{\n          headerShown: false,\n        }}\n      />\n      <ViewTVShowsStackNav.Screen\n        name=\"ViewStackSeasons\"\n        component={SeasonsScreen}\n        options={{\n          headerShown: false,\n        }}\n      />\n    </ViewTVShowsStackNav.Navigator>\n  );\n};\n",
+				"file": "src/screens/view/ViewStack.tsx",
+				"range": {
+					"end": {
+						"character": 2147483647,
+						"line": 58
+					},
+					"start": {
+						"character": 0,
+						"line": 23
+					}
+				},
+				"scm": {
+					"authors": [
+						{
+							"email": "markmccoid@gmail.com"
+						},
+						{
+							"email": "markmccoid@gmail.com"
+						}
+					],
+					"branch": "master",
+					"file": "src/screens/view/ViewStack.tsx",
+					"remotes": [
+						{
+							"name": "origin",
+							"url": "github.com/markmccoid/rn-tvtracker"
+						}
+					],
+					"repoName": "tvtracker",
+					"revision": "27aa64cf774d83f77a4b7bbe117288564b55deb9",
+					"sameRepo": true
+				}
+			},
+			"id": "985caee3-2799-48bc-b888-c5b16a2747ef",
+			"type": "code",
+			"version": 1
+		},
+		{
+			"blockId": "f2f685c7-dcfc-4bea-acb2-8ae665654de2",
+			"data": {
+				"contents": "      <ViewStack.Screen\n        name=\"DetailsSeasons\"\n        options={{\n          headerTintColor: \"#274315\",\n          title: \"\",\n          // , headerBackTitle: \"Back\"\n        }}\n        component={SeasonsScreen}\n      />\n    </ViewStack.Navigator>\n",
+				"file": "src/screens/view/ViewStack.tsx",
+				"range": {
+					"end": {
+						"character": 2147483647,
+						"line": 223
+					},
+					"start": {
+						"character": 0,
+						"line": 214
+					}
+				},
+				"scm": {
+					"authors": [
+						{
+							"email": "markmccoid@gmail.com"
+						},
+						{
+							"email": "markmccoid@gmail.com"
+						}
+					],
+					"branch": "master",
+					"file": "src/screens/view/ViewStack.tsx",
+					"remotes": [
+						{
+							"name": "origin",
+							"url": "github.com/markmccoid/rn-tvtracker"
+						}
+					],
+					"repoName": "tvtracker",
+					"revision": "27aa64cf774d83f77a4b7bbe117288564b55deb9",
+					"sameRepo": true
+				}
+			},
+			"id": "f2f685c7-dcfc-4bea-acb2-8ae665654de2",
+			"type": "code",
+			"version": 1
+		},
+		{
+			"blockId": "38cf9a32-3947-4ac5-aaa1-43699e5f9988",
+			"data": {
+				"contents": "      <SearchStack.Screen\n        name=\"DetailsFromSearchSeasons\"\n        options={{ headerTintColor: \"#274315\", title: \"\" }}\n        component={SeasonsScreen}\n      />\n    </SearchStack.Navigator>\n",
+				"file": "src/screens/search/SearchStack.js",
+				"range": {
+					"end": {
+						"character": 2147483647,
+						"line": 46
+					},
+					"start": {
+						"character": 0,
+						"line": 41
+					}
+				},
+				"scm": {
+					"authors": [
+						{
+							"email": "markmccoid@gmail.com"
+						},
+						{
+							"email": "markmccoid@gmail.com"
+						}
+					],
+					"branch": "master",
+					"file": "src/screens/search/SearchStack.js",
+					"remotes": [
+						{
+							"name": "origin",
+							"url": "github.com/markmccoid/rn-tvtracker"
+						}
+					],
+					"repoName": "tvtracker",
+					"revision": "c5c46d9fb6246b7f275549b6ac0fbde59426d069",
+					"sameRepo": true
+				}
+			},
+			"id": "38cf9a32-3947-4ac5-aaa1-43699e5f9988",
+			"type": "code",
+			"version": 1
+		},
+		{
+			"blockId": "21380d48-6b99-4f94-9084-6802864734bb",
+			"data": {
+				"formatCode": false,
+				"isPreviewing": true,
+				"text": "<div>### Params For Routes</div><div><br></div>```{<div>  tvShowId: number;</div><div>//**seasonNumbers ONLY for DetailSeasons</div><div>  seasonNumbers: number[]; </div><div>  logo?: { logoURL?: string; </div><div>           aspectRatio?: number; </div><div>           showName?: string }</div><div>};```</div><div><br></div>"
+			},
+			"id": "21380d48-6b99-4f94-9084-6802864734bb",
+			"type": "markdown"
+		},
+		{
+			"blockId": "6a2454e6-55c5-49fb-b5ed-204ac0704ad3",
+			"data": {
+				"formatCode": false,
+				"isPreviewing": true,
+				"text": "## Rendering of Seasons/Episodes"
+			},
+			"id": "6a2454e6-55c5-49fb-b5ed-204ac0704ad3",
+			"type": "markdown"
+		},
+		{
+			"blockId": "8cd77bb6-8447-4ba0-a228-705c1d8b5bea",
+			"caption": "File that shows the Seasons/Episdes",
+			"data": {
+				"contents": "const SeasonsScreen = ({ navigation, route }: SeasonsScreenProps) => {\n  const tvShowId = route.params?.tvShowId;\n  let seasonNumbers = route.params?.seasonNumbers;\n  const logo = route.params?.logo;\n  const actions = useOActions();\n  const state = useOState();\n\n",
+				"file": "src/screens/view/ViewDetails/SeasonScreen.tsx",
+				"range": {
+					"end": {
+						"character": 2147483647,
+						"line": 100
+					},
+					"start": {
+						"character": 0,
+						"line": 94
+					}
+				},
+				"scm": {
+					"authors": [
+						{
+							"email": "markmccoid@gmail.com"
+						}
+					],
+					"branch": "master",
+					"file": "src/screens/view/ViewDetails/SeasonScreen.tsx",
+					"remotes": [
+						{
+							"name": "origin",
+							"url": "github.com/markmccoid/rn-tvtracker"
+						}
+					],
+					"repoName": "tvtracker",
+					"revision": "60bf0103d5ef1a0ba881c25455854fc70a564d6f",
+					"sameRepo": true
+				}
+			},
+			"id": "8cd77bb6-8447-4ba0-a228-705c1d8b5bea",
+			"type": "code",
+			"version": 1
+		},
+		{
+			"blockId": "811fb9c9-e1b3-403c-9daf-38d289ec43db",
+			"caption": "SectionList allows scrolling through Seasons and Episodes",
+			"data": {
+				"contents": "      <SectionList\n        ref={sectionRef}\n        style={{ width: \"100%\" }}\n        sections={seasonData}\n        keyExtractor={(item, index) => item.toString() + index} //item.tvShowId.toString() + index}\n        renderItem={sectionData}\n        renderSectionHeader={sectionHeader}\n        onScroll={(event) => {\n          console.log(event.nativeEvent.contentOffset.y);\n        }}\n        getItemLayout={sectionGetItemLayout}\n      />\n",
+				"file": "src/screens/view/ViewDetails/SeasonScreen.tsx",
+				"range": {
+					"end": {
+						"character": 2147483647,
+						"line": 233
+					},
+					"start": {
+						"character": 0,
+						"line": 222
+					}
+				},
+				"scm": {
+					"authors": [
+						{
+							"email": "markmccoid@gmail.com"
+						}
+					],
+					"branch": "master",
+					"file": "src/screens/view/ViewDetails/SeasonScreen.tsx",
+					"remotes": [
+						{
+							"name": "origin",
+							"url": "github.com/markmccoid/rn-tvtracker"
+						}
+					],
+					"repoName": "tvtracker",
+					"revision": "b610224b2b369557d3e45abdd39ddc5e933d5d3b",
+					"sameRepo": true
+				}
+			},
+			"id": "811fb9c9-e1b3-403c-9daf-38d289ec43db",
+			"type": "code",
+			"version": 1
+		},
+		{
+			"blockId": "40ca53c6-fcd3-4a19-af3d-ad82fcecdd8f",
+			"caption": "ABOVE ScrollView There is a season picker (Horizontal ScrollView{",
+			"data": {
+				"contents": "      <View>\n        <ScrollView horizontal>\n          {seasonPicker.map((season) => {\n            return (\n              <TouchableOpacity\n                style={{ margin: 5, padding: 5, borderWidth: 1, borderRadius: 5 }}\n                onPress={() =>\n                  sectionRef.current?.scrollToLocation({\n                    sectionIndex: season - 1,\n                    itemIndex: 0,\n                    viewPosition: 0,\n                    animated: true,\n                  })\n                }\n              >\n                <Text>Season {season}</Text>\n              </TouchableOpacity>\n            );\n          })}\n        </ScrollView>\n      </View>\n",
+				"file": "src/screens/view/ViewDetails/SeasonScreen.tsx",
+				"range": {
+					"end": {
+						"character": 2147483647,
+						"line": 221
+					},
+					"start": {
+						"character": 0,
+						"line": 201
+					}
+				},
+				"scm": {
+					"authors": [
+					],
+					"branch": "master",
+					"file": "src/screens/view/ViewDetails/SeasonScreen.tsx",
+					"remotes": [
+						{
+							"name": "origin",
+							"url": "github.com/markmccoid/rn-tvtracker"
+						}
+					],
+					"repoName": "tvtracker",
+					"revision": "b610224b2b369557d3e45abdd39ddc5e933d5d3b",
+					"sameRepo": true
+				}
+			},
+			"id": "40ca53c6-fcd3-4a19-af3d-ad82fcecdd8f",
+			"type": "code",
+			"version": 1
+		},
+		{
+			"blockId": "77ae09ba-bd35-4927-9cc5-bab42240c44d",
+			"caption": "SectionList Render Functions exist here",
+			"data": {
+				"contents": "export const sectionHeader = ({ section }: SectionHeaderProps) => {\n  const { title } = section;\n  // const { data } = section;\n  return (\n    <SeasonHeader\n      tvShowId={title.tvShowId}\n      seasonNumber={title.seasonNumber}\n      seasonName={title.seasonName}\n      numberOfEpisodes={title.numberOfEpisodes}\n      isShowSaved={title.isShowSaved}\n    />\n  );\n};\n\ntype SectionDataProps = {\n  item: SectionListDataItem;\n  index: number;\n  section: { title: SectionListTitleObj };\n  separators: Separators;\n};\n\n//* --------------------------------------\n//* - This is the episode rendering\n//* --------------------------------------\nexport const sectionData = ({ item, index, section, separators }: SectionDataProps) => {\n  const itemData: SectionListDataItem = item;\n  const isShowSaved = section.title.isShowSaved;\n  // console.log(\"item episode\", itemData.episode.seasonNumber, itemData.episode.episodeNumber);\n\n  return (\n    <>\n      <EpisodeRow\n        tvShowId={section.title.tvShowId}\n        episode={itemData}\n        isShowSaved={isShowSaved}\n      />\n    </>\n  );\n};\n",
+				"file": "src/components/ViewTVShows/SeasonSectionListItems.tsx",
+				"range": {
+					"end": {
+						"character": 2147483647,
+						"line": 73
+					},
+					"start": {
+						"character": 0,
+						"line": 35
+					}
+				},
+				"scm": {
+					"authors": [
+						{
+							"email": "markmccoid@gmail.com"
+						}
+					],
+					"branch": "master",
+					"file": "src/components/ViewTVShows/SeasonSectionListItems.tsx",
+					"remotes": [
+						{
+							"name": "origin",
+							"url": "github.com/markmccoid/rn-tvtracker"
+						}
+					],
+					"repoName": "tvtracker",
+					"revision": "60bf0103d5ef1a0ba881c25455854fc70a564d6f",
+					"sameRepo": true
+				}
+			},
+			"id": "77ae09ba-bd35-4927-9cc5-bab42240c44d",
+			"type": "code",
+			"version": 1
+		},
+		{
+			"blockId": "ef7c93c5-8a30-4f42-8ceb-3a2abfdce4fe",
+			"caption": "Builds The Season Headers",
+			"data": {
+				"contents": "const SeasonHeader = ({\n  tvShowId,\n  seasonNumber,\n  seasonName,\n  numberOfEpisodes,\n  isShowSaved,\n}) => {\n",
+				"file": "src/components/ViewTVShows/SeasonHeader.tsx",
+				"range": {
+					"end": {
+						"character": 2147483647,
+						"line": 77
+					},
+					"start": {
+						"character": 0,
+						"line": 71
+					}
+				},
+				"scm": {
+					"authors": [
+						{
+							"email": "markmccoid@gmail.com"
+						}
+					],
+					"branch": "master",
+					"file": "src/components/ViewTVShows/SeasonHeader.tsx",
+					"remotes": [
+						{
+							"name": "origin",
+							"url": "github.com/markmccoid/rn-tvtracker"
+						}
+					],
+					"repoName": "tvtracker",
+					"revision": "60bf0103d5ef1a0ba881c25455854fc70a564d6f",
+					"sameRepo": true
+				}
+			},
+			"id": "ef7c93c5-8a30-4f42-8ceb-3a2abfdce4fe",
+			"type": "code",
+			"version": 1
+		},
+		{
+			"blockId": "66ab2491-f7b8-423e-901b-e4747e6f240e",
+			"caption": "Builds The Episode Rows",
+			"data": {
+				"contents": "const DetailSeasonEpisode = ({ tvShowId, episode, episodeState, isShowSaved }: Props) => {\n  const state = useOState();\n  const actions = useOActions();\n  const { toggleTVShowEpisodeState } = actions.oSaved;\n",
+				"file": "src/components/ViewTVShows/DetailSeasonEpisode.tsx",
+				"range": {
+					"end": {
+						"character": 2147483647,
+						"line": 32
+					},
+					"start": {
+						"character": 0,
+						"line": 29
+					}
+				},
+				"scm": {
+					"authors": [
+						{
+							"email": "markmccoid@gmail.com"
+						}
+					],
+					"branch": "master",
+					"file": "src/components/ViewTVShows/DetailSeasonEpisode.tsx",
+					"remotes": [
+						{
+							"name": "origin",
+							"url": "github.com/markmccoid/rn-tvtracker"
+						}
+					],
+					"repoName": "tvtracker",
+					"revision": "60bf0103d5ef1a0ba881c25455854fc70a564d6f",
+					"sameRepo": true
+				}
+			},
+			"id": "66ab2491-f7b8-423e-901b-e4747e6f240e",
+			"type": "code",
+			"version": 1
+		}
+	],
+	"graphViewMetadata": {
+		"edges": [
+			{
+				"id": "985caee3-2799-48bc-b888-c5b16a2747ef_top_44bc4b9a-f671-4636-8431-24e86c3a553b_bottom_7CvEUWsKQrGQBpwQAFHQsg",
+				"source": "985caee3-2799-48bc-b888-c5b16a2747ef",
+				"sourceHandle": "top",
+				"target": "44bc4b9a-f671-4636-8431-24e86c3a553b",
+				"targetHandle": "bottom"
+			},
+			{
+				"id": "44bc4b9a-f671-4636-8431-24e86c3a553b_right_38cf9a32-3947-4ac5-aaa1-43699e5f9988_left_KaOGF51XQ82B7RVKQtv1tg",
+				"source": "44bc4b9a-f671-4636-8431-24e86c3a553b",
+				"sourceHandle": "right",
+				"target": "38cf9a32-3947-4ac5-aaa1-43699e5f9988",
+				"targetHandle": "left"
+			},
+			{
+				"id": "44bc4b9a-f671-4636-8431-24e86c3a553b_bottom_f2f685c7-dcfc-4bea-acb2-8ae665654de2_top_ecYmd6joS66Tb-VBKCu08g",
+				"source": "44bc4b9a-f671-4636-8431-24e86c3a553b",
+				"sourceHandle": "bottom",
+				"target": "f2f685c7-dcfc-4bea-acb2-8ae665654de2",
+				"targetHandle": "top"
+			},
+			{
+				"id": "6a2454e6-55c5-49fb-b5ed-204ac0704ad3_right_8cd77bb6-8447-4ba0-a228-705c1d8b5bea_top_BGeLJp8xTVWV_CbJHGakiQ",
+				"source": "6a2454e6-55c5-49fb-b5ed-204ac0704ad3",
+				"sourceHandle": "right",
+				"target": "8cd77bb6-8447-4ba0-a228-705c1d8b5bea",
+				"targetHandle": "top"
+			},
+			{
+				"id": "8cd77bb6-8447-4ba0-a228-705c1d8b5bea_bottom_40ca53c6-fcd3-4a19-af3d-ad82fcecdd8f_top_cXJbxA9yT76TirlYiZzK6w",
+				"source": "8cd77bb6-8447-4ba0-a228-705c1d8b5bea",
+				"sourceHandle": "bottom",
+				"target": "40ca53c6-fcd3-4a19-af3d-ad82fcecdd8f",
+				"targetHandle": "top"
+			},
+			{
+				"id": "40ca53c6-fcd3-4a19-af3d-ad82fcecdd8f_bottom_811fb9c9-e1b3-403c-9daf-38d289ec43db_top_-tEHjKvVQNy-eQajOJvZ7w",
+				"source": "40ca53c6-fcd3-4a19-af3d-ad82fcecdd8f",
+				"sourceHandle": "bottom",
+				"target": "811fb9c9-e1b3-403c-9daf-38d289ec43db",
+				"targetHandle": "top"
+			},
+			{
+				"id": "811fb9c9-e1b3-403c-9daf-38d289ec43db_right_77ae09ba-bd35-4927-9cc5-bab42240c44d_left_f8-w3w8fRiyKBNybC2moaA",
+				"source": "811fb9c9-e1b3-403c-9daf-38d289ec43db",
+				"sourceHandle": "right",
+				"target": "77ae09ba-bd35-4927-9cc5-bab42240c44d",
+				"targetHandle": "left"
+			},
+			{
+				"id": "77ae09ba-bd35-4927-9cc5-bab42240c44d_bottom_ef7c93c5-8a30-4f42-8ceb-3a2abfdce4fe_left_CiZi-TMaTS-uavvDQDHCaw",
+				"source": "77ae09ba-bd35-4927-9cc5-bab42240c44d",
+				"sourceHandle": "bottom",
+				"target": "ef7c93c5-8a30-4f42-8ceb-3a2abfdce4fe",
+				"targetHandle": "left"
+			},
+			{
+				"id": "77ae09ba-bd35-4927-9cc5-bab42240c44d_right_66ab2491-f7b8-423e-901b-e4747e6f240e_left_Od32E8QbRIeprmQCRRMwiw",
+				"source": "77ae09ba-bd35-4927-9cc5-bab42240c44d",
+				"sourceHandle": "right",
+				"target": "66ab2491-f7b8-423e-901b-e4747e6f240e",
+				"targetHandle": "left"
+			}
+		],
+		"graph": {
+			"position": [
+				-1273.198973740871,
+				-88.09072174240464
+			],
+			"zoom": 0.8561882845464595
+		},
+		"nodes": [
+			{
+				"blockId": "44bc4b9a-f671-4636-8431-24e86c3a553b",
+				"dimensions": {
+					"height": 190,
+					"width": 300
+				},
+				"id": "44bc4b9a-f671-4636-8431-24e86c3a553b",
+				"position": {
+					"x": 240,
+					"y": -105
+				}
+			},
+			{
+				"blockId": "985caee3-2799-48bc-b888-c5b16a2747ef",
+				"dimensions": {
+				},
+				"id": "985caee3-2799-48bc-b888-c5b16a2747ef",
+				"position": {
+					"x": -210,
+					"y": 195
+				}
+			},
+			{
+				"blockId": "f2f685c7-dcfc-4bea-acb2-8ae665654de2",
+				"dimensions": {
+				},
+				"id": "f2f685c7-dcfc-4bea-acb2-8ae665654de2",
+				"position": {
+					"x": 255,
+					"y": 255
+				}
+			},
+			{
+				"blockId": "38cf9a32-3947-4ac5-aaa1-43699e5f9988",
+				"dimensions": {
+				},
+				"id": "38cf9a32-3947-4ac5-aaa1-43699e5f9988",
+				"position": {
+					"x": 675,
+					"y": 30
+				}
+			},
+			{
+				"blockId": "21380d48-6b99-4f94-9084-6802864734bb",
+				"dimensions": {
+					"height": 274,
+					"width": 384
+				},
+				"id": "21380d48-6b99-4f94-9084-6802864734bb",
+				"position": {
+					"x": -195,
+					"y": -195
+				}
+			},
+			{
+				"blockId": "6a2454e6-55c5-49fb-b5ed-204ac0704ad3",
+				"dimensions": {
+					"height": 130,
+					"width": 448
+				},
+				"id": "6a2454e6-55c5-49fb-b5ed-204ac0704ad3",
+				"position": {
+					"x": 1200,
+					"y": -210
+				}
+			},
+			{
+				"blockId": "8cd77bb6-8447-4ba0-a228-705c1d8b5bea",
+				"dimensions": {
+				},
+				"id": "8cd77bb6-8447-4ba0-a228-705c1d8b5bea",
+				"position": {
+					"x": 1695,
+					"y": 30
+				}
+			},
+			{
+				"blockId": "811fb9c9-e1b3-403c-9daf-38d289ec43db",
+				"dimensions": {
+				},
+				"id": "dndnode_8",
+				"position": {
+					"x": 1695.0000000000002,
+					"y": 615
+				}
+			},
+			{
+				"blockId": "40ca53c6-fcd3-4a19-af3d-ad82fcecdd8f",
+				"dimensions": {
+				},
+				"id": "dndnode_9",
+				"position": {
+					"x": 1695,
+					"y": 420
+				}
+			},
+			{
+				"blockId": "77ae09ba-bd35-4927-9cc5-bab42240c44d",
+				"dimensions": {
+				},
+				"id": "dndnode_10",
+				"position": {
+					"x": 2220,
+					"y": 390
+				}
+			},
+			{
+				"blockId": "ef7c93c5-8a30-4f42-8ceb-3a2abfdce4fe",
+				"dimensions": {
+				},
+				"id": "dndnode_11",
+				"position": {
+					"x": 2505,
+					"y": 555
+				}
+			},
+			{
+				"blockId": "66ab2491-f7b8-423e-901b-e4747e6f240e",
+				"dimensions": {
+				},
+				"id": "dndnode_12",
+				"position": {
+					"x": 2745,
+					"y": 195
+				}
+			}
+		]
+	},
+	"text": "This documents the navigation to the Seasons/Episodes list.",
+	"title": "Season/Episode Flow",
+	"version": 1
+}
