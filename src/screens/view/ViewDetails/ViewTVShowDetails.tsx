@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { View, Animated, StyleSheet, TouchableOpacity, Dimensions, Text } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { MotiView, AnimatePresence } from "moti";
+import * as Linking from "expo-linking";
 
 import { useOState, useOActions } from "../../../store/overmind";
 import { useDimensions } from "@react-native-community/hooks";
@@ -112,28 +113,59 @@ const ViewTVShowDetails = ({ tvShow, isInSavedTVShows }: Props) => {
         ------------------------------------------- */}
       <View
         style={{
-          borderWidth: 1,
-          borderRadius: 10,
-          margin: 5,
-          width: width / 2,
-          backgroundColor: colors.primary,
+          flexDirection: "row",
+          justifyContent: "space-between",
+          marginHorizontal: 15,
+          marginVertical: 5,
         }}
       >
+        <View
+          style={{
+            borderWidth: 1,
+            borderRadius: 10,
+            width: width / 2.2,
+            backgroundColor: colors.primary,
+          }}
+        >
+          <TouchableOpacity
+            style={{ padding: 5, alignItems: "center" }}
+            onPress={() => {
+              navigation.navigate(`${route.name}Seasons`, {
+                tvShowId: tvShow.id,
+                seasonNumbers: tvShow?.seasons.map((show) => show.seasonNumber),
+                logo: { showName: tvShow.name },
+              });
+            }}
+          >
+            <Text style={{ color: "white" }}>{`View ${
+              tvShow?.seasons.filter((s) => s.seasonNumber !== 0).length
+            } Seasons`}</Text>
+          </TouchableOpacity>
+        </View>
         <TouchableOpacity
-          style={{ padding: 5, alignItems: "center" }}
+          style={{
+            borderWidth: 1,
+            borderRadius: 10,
+            width: width / 3,
+            backgroundColor: "#f6c418",
+            padding: 5,
+            alignItems: "center",
+          }}
           onPress={() => {
-            navigation.navigate(`${route.name}Seasons`, {
-              tvShowId: tvShow.id,
-              seasonNumbers: tvShow?.seasons.map((show) => show.seasonNumber),
-              logo: { showName: tvShow.name },
+            const imdbId = tvShow?.imdbId;
+            const imdbLink = `imdb:///title/${imdbId}/episodes`;
+
+            Linking.openURL(imdbLink).catch((err) => {
+              Linking.openURL(
+                "https://apps.apple.com/us/app/imdb-movies-tv-shows/id342792525"
+              );
             });
           }}
         >
-          <Text style={{ color: "white" }}>{`View ${
-            tvShow?.seasons.filter((s) => s.seasonNumber !== 0).length
-          } Seasons`}</Text>
+          <Text style={{ fontWeight: "600" }}>IMDB Seasons</Text>
         </TouchableOpacity>
       </View>
+
       {isInSavedTVShows && (
         <View>
           <Transitioning.View ref={ref} transition={transition2}>

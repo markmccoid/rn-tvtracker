@@ -32,6 +32,7 @@ import {
   TVShowDetailsBase,
   tvGetShowSeasonDetails,
   tvGetImages,
+  tvGetShowEpisodeExternalIds,
   TVShowSeasonDetails,
 } from "@markmccoid/tmdb_api";
 
@@ -124,6 +125,18 @@ export const getTVShowDetails = async (tvShowId: number): Promise<TVShowDetailsB
   };
 };
 
+//*=================================
+//*- Get Episode IMDB URL from TMDB Api
+//*=================================
+export const getEpisodeIMDBURL = async (
+  tvShowId: number,
+  seasonNumber: number,
+  episodeNumber: number
+) => {
+  const results = await tvGetShowEpisodeExternalIds(tvShowId, seasonNumber, episodeNumber);
+  console.log("results", results.data.imdbId === null, results.data.imdbId);
+  return results.data;
+};
 //*=================================
 //*- Get TV Show Season Details from TMDB Api
 //*=================================

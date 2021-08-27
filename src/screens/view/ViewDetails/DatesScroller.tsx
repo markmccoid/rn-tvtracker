@@ -58,27 +58,29 @@ const DatesScroller = ({ lastAirDate, nextAirDate, firstAirDate }) => {
           showsHorizontalScrollIndicator={false}
           scrollEventThrottle={16}
         >
-          <MotiView
-            state={dateAnimation}
-            transition={{
-              // default settings for all style values
-              type: "timing",
-              duration: 350,
-              delay: 0,
-              // set a custom transition for scale
-              scale: {
-                type: "spring",
-                delay: 100,
-              },
-            }}
-          >
-            <DateFormatted
-              dateLabel="Next Episode"
-              dateText={showDayOfWeek ? nextAirDateDOW : nextAirDate?.formatted}
-              bgColor="#5657D6"
-              onPress={toggleDateFormat}
-            />
-          </MotiView>
+          {nextAirDate?.formatted && (
+            <MotiView
+              state={dateAnimation}
+              transition={{
+                // default settings for all style values
+                type: "timing",
+                duration: 350,
+                delay: 0,
+                // set a custom transition for scale
+                scale: {
+                  type: "spring",
+                  delay: 100,
+                },
+              }}
+            >
+              <DateFormatted
+                dateLabel="Next Episode"
+                dateText={showDayOfWeek ? nextAirDateDOW : nextAirDate?.formatted}
+                bgColor="#5657D6"
+                onPress={toggleDateFormat}
+              />
+            </MotiView>
+          )}
           <MotiView
             state={dateAnimation}
             transition={{

@@ -4,6 +4,7 @@ import {
   Feather,
   FontAwesome,
   FontAwesome5,
+  Fontisto,
   MaterialIcons,
   MaterialCommunityIcons,
   Ionicons,
@@ -44,6 +45,10 @@ export const UnTagIcon = ({ size, color, style }) => {
 
 export const ShareIcon = ({ size, color, style }) => {
   return <Entypo name="share-alternative" size={size} color={color} style={style} />;
+};
+
+export const IMDBIcon = ({ size, color, style }) => {
+  return <Fontisto name="imdb" size={size} color={color} style={style} />;
 };
 export const FilterIcon = ({ size, color, style }) => {
   return (

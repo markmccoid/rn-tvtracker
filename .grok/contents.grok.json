@@ -101,6 +101,48 @@
 		"title": "Season/Episode Flow",
 		"version": 1
 	},
+	"390dabed-5963-4f98-a74f-059e9ab60571": {
+		"filePath": ".grok/390dabed-5963-4f98-a74f-059e9ab60571.grok.json",
+		"id": "390dabed-5963-4f98-a74f-059e9ab60571",
+		"lastModifiedCommitHash": "c98485cc7748f0c26d213ea06892ee97c5727823",
+		"markers": [
+			{
+				"branch": "master",
+				"commitHash": "c98485cc7748f0c26d213ea06892ee97c5727823",
+				"file": "src/store/oSaved/actions.ts",
+				"location": [
+					982,
+					1046
+				],
+				"repo": "tvtracker"
+			},
+			{
+				"branch": "master",
+				"commitHash": "c98485cc7748f0c26d213ea06892ee97c5727823",
+				"file": "src/store/oSaved/actions.ts",
+				"location": [
+					91,
+					103
+				],
+				"repo": "tvtracker"
+			},
+			{
+				"branch": "master",
+				"commitHash": "c98485cc7748f0c26d213ea06892ee97c5727823",
+				"file": "src/store/oSaved/actions.ts",
+				"location": [
+					1011,
+					1022
+				],
+				"repo": "tvtracker"
+			}
+		],
+		"modifiedAt": 1630000962547,
+		"originalAuthor": "Mark",
+		"text": "",
+		"title": "Auto Update TV Show Data",
+		"version": 1
+	},
 	"6c95d261-f346-48f2-9b31-261fa2430bc4": {
 		"filePath": ".grok/6c95d261-f346-48f2-9b31-261fa2430bc4.grok.json",
 		"id": "6c95d261-f346-48f2-9b31-261fa2430bc4",

@@ -3,7 +3,7 @@ import uuidv4 from "uuid/v4";
 import { pipe, debounce, mutate, filter } from "overmind";
 import * as internalActions from "./internalActions";
 import { loadFromAsyncStorage, removeFromAsyncStorage } from "../../storage/asyncStorage";
-import * as defaultConstants from "./defaultContants";
+import * as defaultConstants from "./defaultConstants";
 import { Context } from "../overmind";
 import {
   EpisodeRunTimeGroup,
@@ -89,7 +89,7 @@ export const hydrateStore = async (
   // Get movie genres from savedTVShows objects
   state.oSaved.generated.genres = getGenresFromTVShows(state.oSaved.savedTVShows);
 
-  //! TEST Implemententation
+  //! Auto Update TV Shows Implemententation
   // Find shows that need updating and update them
   const showUpdateList = createUpdateList(state.oSaved.savedTVShows);
   // console.log("update list", showUpdateList);
@@ -865,6 +865,16 @@ export const markAllPreviousEpisodes = async (
   };
   await effects.oSaved.localMergeTVShows(state.oAdmin.uid, mergeObj);
 };
+
+export const getEpisodeExternalIds = async ({ state, effects }: Context, payload) => {
+  const { tvShowId, seasonNumber, episodeNumber } = payload;
+  const externalIdData = await effects.oSaved.getEpisodeIMDBURL(
+    tvShowId,
+    seasonNumber,
+    episodeNumber
+  );
+  return externalIdData;
+};
 //*==============================================
 //*- ACTION HELPERS
 //*==============================================
@@ -979,6 +989,8 @@ function createUpdateList(tvShows: SavedTVShowsDoc[]): number[] {
       return tvShowIds;
     }
     // create date-fns date objects and helper object
+    // REMEMBER, we are looking at the STORED data. So we are checking whether we need
+    // to hit the API to get the next interation of data.
     const showDates = {
       nextAirDate: tvShow.nextAirDate?.epoch && fromUnixTime(tvShow.nextAirDate.epoch),
       lastAirDate: tvShow.lastAirDate?.epoch && fromUnixTime(tvShow.lastAirDate.epoch),
@@ -991,14 +1003,21 @@ function createUpdateList(tvShows: SavedTVShowsDoc[]): number[] {
       daysSinceLastAirDate: differenceInDays(new Date(), showDates.lastAirDate),
       daysSinceLastUpdate: differenceInDays(new Date(), showDates.lastUpdateDate) || 0,
     };
-
+    // console.log(
+    //   "Compare Dates",
+    //   tvShow.name,
+    //   tvShow.nextAirDate?.formatted,
+    //   dateComparisons.nextAirLessEqualToday
+    // );
     // nextAirDate exists and is less than or equal to todays date
     // Which means this date has passed an a new next air date should be available
     // unless this was last episode
     if (
       tvShow.nextAirDate &&
-      dateComparisons.nextAirLessEqualToday &&
-      dateComparisons.daysSinceLastUpdate > 1
+      dateComparisons.nextAirLessEqualToday
+      //! Not sure if this is causing issues.  It shouldn't be, but can try adding
+      //! back in when get notifications set up.
+      // && dateComparisons.daysSinceLastUpdate > 1
     ) {
       return [...tvShowIds, tvShow.id];
     }
@@ -1022,6 +1041,7 @@ function createUpdateList(tvShows: SavedTVShowsDoc[]): number[] {
       return [...tvShowIds, tvShow.id];
     }
     // Must return existing array if nothing matches.
+    // console.log("Update List", tvShowIds);
     return tvShowIds;
   }, []);
 }
