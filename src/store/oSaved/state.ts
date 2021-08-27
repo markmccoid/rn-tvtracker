@@ -1,7 +1,7 @@
 import { derived } from "overmind";
 import _, { memoize } from "lodash";
 import * as helpers from "./stateHelpers";
-import * as defaultConstants from "./defaultContants";
+import * as defaultConstants from "./defaultConstants";
 
 import { DateObject, SortTypes, Operators } from "../../types";
 import { TVShowSeasonDetails, Episode } from "@markmccoid/tmdb_api";
@@ -203,15 +203,26 @@ export const state: State = {
       .filter((sort) => sort.active)
       .reduce(
         (finalObj, sort) => {
+          let sortIteratee;
+          if (sort?.subSortField) {
+            sortIteratee = (item) => {
+              const sortThing = item?.[sort.sortField]?.[sort.subSortField];
+              return sortThing ? sortThing : "";
+            };
+          } else {
+            sortIteratee = (item) => {
+              return item[sort.sortField];
+            };
+          }
           if (sort.active) {
-            finalObj.sortFields = [...finalObj.sortFields, sort.sortField];
+            finalObj.sortFields = [...finalObj.sortFields, sortIteratee];
+            // finalObj.sortFields = [...finalObj.sortFields, sort.sortField];
             finalObj.sortDirections = [...finalObj.sortDirections, sort.sortDirection];
           }
           return finalObj;
         },
         { sortFields: [], sortDirections: [] }
       );
-
     //Determine if any filter criteria is set, if not do not call filterMovies helper.
     if (
       state.filterData?.tags.length > 0 ||
@@ -221,7 +232,7 @@ export const state: State = {
     ) {
       tvShowList = helpers.filterTVShows(state.savedTVShows, state.filterData);
     }
-
+    // console.log("sortFields", sortFields);
     tvShowList = _.orderBy(tvShowList, sortFields, sortDirections);
 
     // return direction === "asc" ? tvShowList : tvShowList.reverse();

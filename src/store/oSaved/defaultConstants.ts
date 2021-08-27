@@ -8,7 +8,7 @@ export type SortObjectItem = {
 };
 
 export type SortDefinitions = {
-  [key: number]: { sortField: string; title: string; type: SortTypes };
+  [key: number]: { sortField: string; subSortField?: string; title: string; type: SortTypes };
 };
 
 export const sortDefinitions: SortDefinitions = {
@@ -23,7 +23,8 @@ export const sortDefinitions: SortDefinitions = {
     type: "alpha",
   },
   2: {
-    sortField: "lastAirDate.epoch",
+    sortField: "lastAirDate",
+    subSortField: "epoch",
     title: "Last Aired",
     type: "date",
   },
@@ -33,7 +34,8 @@ export const sortDefinitions: SortDefinitions = {
     type: "date",
   },
   4: {
-    sortField: "nextAirDate.epoch",
+    sortField: "nextAirDate",
+    subSortField: "epoch",
     title: "Next Airing",
     type: "date",
   },
@@ -43,6 +45,7 @@ export const sortDefinitions: SortDefinitions = {
     type: "num",
   },
 };
+
 export const defaultSort: SortObjectItem[] = [
   {
     // title: "User Rating",
