@@ -1515,7 +1515,15 @@
     nanoid "^3.1.20"
     react-native-redash "^16.0.10"
 
-"@gorhom/portal@^1.0.3", "@gorhom/portal@^1.0.4":
+"@gorhom/portal@^1.0.3":
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/@gorhom/portal/-/portal-1.0.8.tgz#1582f7f2ce288e4622382c19ca4a5dff9f56c11a"
+  integrity sha512-APBRdSEPzxK5lOHU5zFoc9y938ACWBzkNBSDajubvtw5XGIWsxggCSyateDnIVs94LTuw1hWyYvM4OsYeepBQw==
+  dependencies:
+    immer "^9.0.3"
+    nanoid "^3.1.23"
+
+"@gorhom/portal@^1.0.4":
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/@gorhom/portal/-/portal-1.0.4.tgz#643c7baaffee223819cdd99dad748c3d9dc6bd73"
   integrity sha512-KalM9E6Op1TCzi00YKhczBz86EV0yYpWuRuTt5J4VS09O2gGbGAEEJwUKb/Rvr3XadtinpLjePj0tZ6lFVPp+g==
@@ -4010,6 +4018,11 @@ immer@^8.0.1:
   resolved "https://registry.yarnpkg.com/immer/-/immer-8.0.4.tgz#3a21605a4e2dded852fb2afd208ad50969737b7a"
   integrity sha512-jMfL18P+/6P6epANRvRk6q8t+3gGhqsJ9EuJ25AXE+9bNTYtssvzeYbEd0mXRYWCmmXSIbnlpz6vd6iJlmGGGQ==
 
+immer@^9.0.3:
+  version "9.0.6"
+  resolved "https://registry.yarnpkg.com/immer/-/immer-9.0.6.tgz#7a96bf2674d06c8143e327cbf73539388ddf1a73"
+  integrity sha512-G95ivKpy+EvVAnAab4fVa4YGYn24J1SpEktnJX7JJ45Bd7xqME/SCplFzYFmTbrkwZbQ4xJK1xMTUYBkN6pWsQ==
+
 import-fresh@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/import-fresh/-/import-fresh-2.0.0.tgz#d81355c15612d386c61f9ddd3922d4304822a546"
@@ -5045,10 +5058,15 @@ nano-time@1.0.0:
   dependencies:
     big-integer "^1.6.16"
 
-nanoid@^3.1.15, nanoid@^3.1.20:
+nanoid@^3.1.15:
   version "3.1.22"
   resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.1.22.tgz#b35f8fb7d151990a8aebd5aa5015c03cf726f844"
   integrity sha512-/2ZUaJX2ANuLtTvqTlgqBQNJoQO398KyJgZloL0PZkC0dpysjncRUPsFe3DUPzz/y3h+u7C46np8RMuvF3jsSQ==
+
+nanoid@^3.1.20, nanoid@^3.1.23:
+  version "3.1.25"
+  resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.1.25.tgz#09ca32747c0e543f0e1814b7d3793477f9c8e152"
+  integrity sha512-rdwtIXaXCLFAQbnfqDRnI6jaRHp9fTcYBjtFKE8eezcZ7LuLjhUaQGNeMXf1HmRoCH32CLz6XwX0TtxEOS/A3Q==
 
 nanomatch@^1.2.9:
   version "1.2.13"
@@ -5705,10 +5723,10 @@ react-native-gesture-handler@~1.10.2:
     invariant "^2.2.4"
     prop-types "^15.7.2"
 
-react-native-hold-menu@^0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/react-native-hold-menu/-/react-native-hold-menu-0.1.0.tgz#64eee9579c2a553695c897d96a94f3da7cee1721"
-  integrity sha512-dUuX3Wb5DTs+G3PhUxR2iTE41yrMQQ0RH6ds0ueLNT9RRxt3S1P5jGH3srVHn5K+1yOLO2uiydNRMeSiBqBx3w==
+react-native-hold-menu@^0.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/react-native-hold-menu/-/react-native-hold-menu-0.1.1.tgz#b846d97406b902c26e2d8392fcadfb0cae76fadd"
+  integrity sha512-Axde9P8F5xJKQVP1tJ+OEcqVpjFH2Zw4fHltmQ8guTpW2a7R08/z4DVyl65r8kSRRTY6OjAap25lVul6joBWKw==
   dependencies:
     "@gorhom/portal" "^1.0.3"
     expo-blur "^9.0.0"

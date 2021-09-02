@@ -63,7 +63,7 @@ const RedirectToMain = ({ navigation }) => {
   useFocusEffect(() => {
     navigation.navigate("ViewTVShowsTab", {
       screen: "ViewTVShows",
-      params: { screen: "Filter", forgotParam: "shit" },
+      params: { screen: "Filter" },
     });
   });
 
