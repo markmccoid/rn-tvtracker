@@ -3,6 +3,7 @@ import { View, Alert, TouchableOpacity, ActivityIndicator, StyleSheet } from "re
 import { HoldItem } from "react-native-hold-menu";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Linking from "expo-linking";
+import { useNavigation } from "@react-navigation/native";
 
 import { nativeShareItem } from "../../../utils/nativeShareItem";
 
@@ -13,47 +14,59 @@ const showRefreshAlert = (msg) => {
 const DetailMainInfoHoldMenu = ({
   tvShow,
   navigateToRoute,
+  routeName,
   isInSavedTVShows,
   refreshTVShow,
   children,
 }) => {
   const [isRefreshing, setisRefreshing] = useState(false);
-  // //-----------------------------------
-  // //-- COMMENTED OUT UNTIL HOLD MENU BUG IS FIXED
-  // // Setup hold-menu items for use in the hold menu
-  // const menuItemTitle = { text: "Actions", icon: "home", isTitle: true, onPress: () => {} };
-  // const menuItemUpdateMovie = {
-  //   text: `Update Movie-${tvShow.id}`,
-  //   onPress: async () => {
-  //     let msg = await refreshTVShow(tvShow.id);
-  //     showRefreshAlert(msg);
-  //     navigateToRoute();
-  //   },
-  // };
-  // const menuItemShareMovie = {
-  //   text: "Share Movie",
-  //   withSeperator: false,
-  //   icon: "share",
-  //   onPress() {
-  //     nativeShareItem({
-  //       message: `Open & Search in Movie Tracker -> \n${Linking.createURL(
-  //         `/search/${movie.title}`
-  //       )}\n Or view in IMDB\n`, //`${movie.title}\n`,
-  //       url: movie.imdbURL ? movie.imdbURL : movie.posterURL,
-  //     });
-  //   },
-  // };
-  // return (
-  //   <HoldItem
-  //     items={[
-  //       menuItemTitle,
-  //       isInSavedTVShows ? menuItemUpdateMovie : undefined,
-  //       menuItemShareMovie,
-  //     ].filter((el) => el)}
-  //   >
-  //     {children}
-  //   </HoldItem>
-  // );
+  const navigation = useNavigation();
+  const onPressShare = () => {
+    nativeShareItem({
+      message: `Open & Search in TV Tracker -> \n${Linking.createURL(
+        `/search/${tvShow.name}`
+      )}\n Or view in IMDB\n`, //`${movie.title}\n`,
+      url: tvShow.imdbURL ? tvShow.imdbURL : tvShow.posterURL,
+    });
+  };
+  //-----------------------------------
+  //-- COMMENTED OUT UNTIL HOLD MENU BUG IS FIXED
+  // Setup hold-menu items for use in the hold menu
+  const menuItemTitle = { text: "Actions", icon: "home", isTitle: true, onPress: () => {} };
+  const menuItemUpdateMovie = {
+    text: `Update TV Show`,
+    onPress: async () => {
+      let msg = await refreshTVShow(tvShow.id);
+      showRefreshAlert(msg);
+      navigateToRoute();
+    },
+  };
+  const menuItemShareMovie = {
+    text: "Share TV Show",
+    withSeperator: false,
+    icon: "share",
+    onPress: onPressShare,
+  };
+  const menuItemPickImage = {
+    text: "Change Image",
+    withSeperator: true,
+    onPress: () => {
+      navigation.navigate(`${routeName}PickImage`, { tvShowId: tvShow.id });
+    },
+  };
+
+  return (
+    <HoldItem
+      items={[
+        menuItemTitle,
+        isInSavedTVShows ? menuItemUpdateMovie : undefined,
+        isInSavedTVShows ? menuItemPickImage : undefined,
+        menuItemShareMovie,
+      ].filter((el) => el)}
+    >
+      {children}
+    </HoldItem>
+  );
   //--------------------------------------
 
   return (

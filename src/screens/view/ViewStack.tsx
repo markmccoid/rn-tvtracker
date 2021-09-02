@@ -17,11 +17,13 @@ import SeasonsScreen from "./ViewDetails/SeasonScreen";
 import { colors } from "../../globalStyles";
 // @types imports
 import { ViewTVStackParamList, ViewTVShowsParamList } from "./viewTypes";
+import AnimatedPickImage from "./ViewDetails/AnimatedPickImage";
 
 const ViewStack = createNativeStackNavigator<ViewTVStackParamList>();
 const ViewTVShowsStackNav = createNativeStackNavigator<ViewTVShowsParamList>();
+const ViewTVDetailsStackNav = createNativeStackNavigator();
 
-const ViewTVShowsStack = () => {
+const ViewTVShowsModalStack = () => {
   return (
     <ViewTVShowsStackNav.Navigator
       initialRouteName="TVShowsScreen"
@@ -58,6 +60,42 @@ const ViewTVShowsStack = () => {
   );
 };
 
+const ViewTVDetailsStack = () => {
+  return (
+    <ViewTVDetailsStackNav.Navigator
+      initialRouteName="Details"
+      screenOptions={{
+        stackAnimation: "default",
+        stackPresentation: "modal",
+      }}
+      // mode="modal"
+      // headerMode="none"
+      // params="Details"
+    >
+      <ViewTVDetailsStackNav.Screen
+        name="Details"
+        component={ViewDetails}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <ViewTVDetailsStackNav.Screen
+        name="DetailsSeasons"
+        component={SeasonsScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <ViewTVDetailsStackNav.Screen
+        name="DetailsPickImage"
+        component={AnimatedPickImage}
+        options={{
+          headerShown: false,
+        }}
+      />
+    </ViewTVDetailsStackNav.Navigator>
+  );
+};
 const ViewStackScreen = () => {
   const state = useOState();
   const actions = useOActions();
@@ -72,7 +110,7 @@ const ViewStackScreen = () => {
     <ViewStack.Navigator>
       <ViewStack.Screen
         name="ViewTVShows"
-        component={ViewTVShowsStack}
+        component={ViewTVShowsModalStack}
         options={({ navigation, route }) => {
           // If the focused route is not found, we need to assume it's the initial screen
           // This can happen during if there hasn't been any navigation inside the screen
@@ -187,8 +225,8 @@ const ViewStackScreen = () => {
         }}
       />
       <ViewStack.Screen
-        name="Details"
-        component={ViewDetails}
+        name="TVDetailsStack"
+        component={ViewTVDetailsStack}
         options={({ navigation, route }) => {
           return {
             title: "",
@@ -212,7 +250,7 @@ const ViewStackScreen = () => {
         options={{ headerTintColor: "#274315", title: "" }}
         component={DetailPerson}
       />
-      <ViewStack.Screen
+      {/* <ViewStack.Screen
         name="DetailsSeasons"
         options={{
           headerTintColor: "#274315",
@@ -220,7 +258,7 @@ const ViewStackScreen = () => {
           // , headerBackTitle: "Back"
         }}
         component={SeasonsScreen}
-      />
+      /> */}
     </ViewStack.Navigator>
   );
 };

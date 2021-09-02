@@ -7,10 +7,46 @@ import SearchScreen from "./SearchScreen";
 import ViewDetails from "../view/ViewDetails/ViewDetails";
 import DetailPerson from "../view/ViewDetails/DetailPerson";
 import SeasonsScreen from "../view/ViewDetails/SeasonScreen";
+import AnimatedPickImage from "../view/ViewDetails/AnimatedPickImage";
+
 import { colors } from "../../globalStyles";
+import { createNativeStackNavigator } from "react-native-screens/native-stack";
 
-const SearchStack = createStackNavigator();
-
+const SearchStack = createNativeStackNavigator();
+const ModalStack = createNativeStackNavigator();
+const SearchDetailsModalStack = () => {
+  return (
+    <ModalStack.Navigator
+      initialRouteName="DetailsFromSearch"
+      screenOptions={{
+        stackAnimation: "default",
+        stackPresentation: "modal",
+      }}
+    >
+      <ModalStack.Screen
+        name="DetailsFromSearch"
+        component={ViewDetails}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <ModalStack.Screen
+        name="DetailsFromSearchSeasons"
+        component={SeasonsScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <ModalStack.Screen
+        name="DetailsFromSearchPickImage"
+        component={AnimatedPickImage}
+        options={{
+          headerShown: false,
+        }}
+      />
+    </ModalStack.Navigator>
+  );
+};
 const SearchStackScreen = () => {
   return (
     <SearchStack.Navigator
@@ -23,6 +59,7 @@ const SearchStackScreen = () => {
         component={SearchScreen}
         options={({ navigation, route }) => {
           return {
+            title: "Search",
             headerTintColor: colors.darkText,
             headerStyle: {
               backgroundColor: colors.navHeaderColor,
@@ -37,13 +74,25 @@ const SearchStackScreen = () => {
           };
         }}
       />
-      <SearchStack.Screen name="DetailsFromSearch" component={ViewDetails} />
-      <SearchStack.Screen name="DetailsFromSearchPerson" component={DetailPerson} />
+      {/* Seasons modal goes here -- create a stack here!! */}
       <SearchStack.Screen
+        name="DetailsFromSearchModal"
+        component={SearchDetailsModalStack}
+        options={({ navigation, route }) => {
+          return {
+            title: "",
+            headerBackTitle: "Back",
+            headerTintColor: "#274315",
+          };
+        }}
+      />
+      {/* <SearchStack.Screen name="DetailsFromSearch" component={ViewDetails} /> */}
+      <SearchStack.Screen name="DetailsFromSearchPerson" component={DetailPerson} />
+      {/* <SearchStack.Screen
         name="DetailsFromSearchSeasons"
         options={{ headerTintColor: "#274315", title: "" }}
         component={SeasonsScreen}
-      />
+      /> */}
     </SearchStack.Navigator>
   );
 };

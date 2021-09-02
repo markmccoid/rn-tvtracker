@@ -42,7 +42,6 @@ const { width, height } = Dimensions.get("window");
 //*
 //*
 const ViewDetails = ({ navigation, route }: DetailsScreenProps) => {
-  // console.log(" IN VIEW DETAIL ", route.name);
   const [tvShowData, setTVShowData] = useState<TVShowDetails>(undefined);
   const [isInSavedTVShows, setIsInSavedTVShows] = useState<boolean>();
   const [isLoading, setIsLoading] = useState<boolean>(false);

@@ -111,6 +111,7 @@ const DetailMainInfo: React.FC<Props> = ({
           <DetailMainInfoHoldMenu
             tvShow={tvShow}
             navigateToRoute={navigateToRoute}
+            routeName={route.name}
             isInSavedTVShows={isInSavedTVShows}
             refreshTVShow={refreshTVShow}
           >

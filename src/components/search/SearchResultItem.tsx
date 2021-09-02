@@ -13,7 +13,11 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { CheckIcon, AddIcon } from "../common/Icons";
 //@types
-import { DetailsScreenNavigation } from "../../screens/view/viewTypes";
+import {
+  DetailsScreenNavigation,
+  DetailsSearchScreenNavigation,
+} from "../../screens/view/viewTypes";
+import { NativeStackNavigationProp } from "react-native-screens/lib/typescript/native-stack";
 
 const { width, height } = Dimensions.get("window");
 const imageWidth = width / 3 - 20;
@@ -27,7 +31,7 @@ const SearchResultItem = ({
   setOnDetailsPage,
   navigateToScreen,
 }) => {
-  const { navigate, push } = useNavigation<DetailsScreenNavigation>();
+  const { navigate, push } = useNavigation<DetailsSearchScreenNavigation>();
   // If tv show exists in library, then we display it in details page differently
   // The DetailsFromSearch screen is in the SearchStack.js file, but points to
   // the same component as the the details screen from the ViewStack.js screen.
@@ -38,14 +42,10 @@ const SearchResultItem = ({
   // NOTE: using push instead of navigate so that each screen is pushed onto stack
   const navigateToDetails = () => {
     setOnDetailsPage(true);
-    if (tvShow.existsInSaved) {
-      push(navigateToScreen, {
-        tvShowId: tvShow.id,
-        notSaved: false,
-      });
-    } else {
-      push(navigateToScreen, { tvShowId: tvShow.id, notSaved: true });
-    }
+    push("DetailsFromSearchModal", {
+      screen: navigateToScreen,
+      params: { tvShowId: tvShow.id, notSaved: !tvShow.existsInSaved },
+    });
   };
 
   return (

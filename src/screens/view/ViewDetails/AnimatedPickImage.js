@@ -8,12 +8,12 @@ import {
   ScrollView,
   TouchableOpacity,
 } from "react-native";
+import { useRoute } from "@react-navigation/native";
 
 import PosterImage from "../../../components/common/PosterImage";
 import { useOState, useOActions } from "../../../store/overmind";
 import { useImageDims } from "../../../hooks/useImageDims";
 import { tvGetImages } from "@markmccoid/tmdb_api";
-
 const getImages = async (tvShowId) => {
   const posterImages = await tvGetImages(tvShowId, "posters");
   return posterImages.data;
@@ -24,13 +24,14 @@ const AnimatedPickImage = ({ tvShowId, setPosterHeight }) => {
   const [largeImage, setLargeImage] = React.useState(undefined);
   const [posterWidth, posterHeight] = useImageDims("m");
   const [posterWidthLarge, posterHeightLarge] = useImageDims("l");
-
+  const route = useRoute();
   // Get Overmind store data
   const state = useOState();
   const actions = useOActions();
   const { getCurrentImageUrls } = state.oSaved;
   const { updateTVShowPosterImage } = actions.oSaved;
 
+  tvShowId = tvShowId ? tvShowId : route.params?.tvShowId;
   const heightOfView = posterData.length > 2 ? 2.25 : 1.25;
 
   // Called once on mount with array of posterURLs and when new poster is selected
@@ -57,8 +58,10 @@ const AnimatedPickImage = ({ tvShowId, setPosterHeight }) => {
   };
 
   React.useEffect(() => {
+    console.log("in pick image useeffect");
     const currentPoster = getCurrentImageUrls(tvShowId).currentPosterURL;
     getImages(tvShowId).then((data) => updatePosterData(data, currentPoster));
+    return () => console.log("exiting pick image useeffect");
   }, []);
 
   if (largeImage) {

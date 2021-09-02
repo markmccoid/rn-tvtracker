@@ -101,6 +101,7 @@ const SearchScreen = ({ navigation, route }) => {
               deleteMovie={deleteMovie}
               setOnDetailsPage={setOnDetailsPage}
               navigateToScreen="DetailsFromSearch"
+              // navigateToScreen="DetailsFromSearch"
             />
           );
         }}
