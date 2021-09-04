@@ -12,7 +12,7 @@ const ViewTVShowsListItem = ({ posterURL, tvShow, setTVShowEditingId }) => {
   //Bool letting us know if we are in edit mode for this movieId
   const { navigate } = useNavigation();
   const navigateToDetails = () => {
-    navigate("TVDetailsStack", {
+    navigate("DetailsModal", {
       screen: "Details",
       params: { tvShowId: tvShow.id },
     });

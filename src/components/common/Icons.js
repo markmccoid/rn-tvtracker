@@ -123,6 +123,10 @@ export const LessIcon = ({ size, color, style }) => {
   return <AntDesign name="upcircleo" size={size} color={color} style={style} />;
 };
 
+//# BACK button icon for headers in screens
+export const BackIcon = ({ size, color, style }) => {
+  return <AntDesign name="back" size={size} color={color} style={style} />;
+};
 //----------------
 //- Drawer Icons
 //----------------

@@ -42,7 +42,7 @@ const SearchResultItem = ({
   // NOTE: using push instead of navigate so that each screen is pushed onto stack
   const navigateToDetails = () => {
     setOnDetailsPage(true);
-    push("DetailsFromSearchModal", {
+    push(`${navigateToScreen}Modal`, {
       screen: navigateToScreen,
       params: { tvShowId: tvShow.id, notSaved: !tvShow.existsInSaved },
     });

@@ -75,8 +75,15 @@ const ViewTVDetailsStack = () => {
       <ViewTVDetailsStackNav.Screen
         name="Details"
         component={ViewDetails}
-        options={{
-          headerShown: false,
+        options={({ navigation }) => {
+          return {
+            headerShown: true,
+            headerBackTitle: "Back",
+            headerTintColor: colors.darkText,
+            headerRight: () => {
+              return null;
+            },
+          };
         }}
       />
       <ViewTVDetailsStackNav.Screen
@@ -138,7 +145,7 @@ const ViewStackScreen = () => {
               if (currentScreenName === "TVShowsScreen") {
                 return (
                   <TouchableOpacity onPress={() => navigation.openDrawer()}>
-                    <MenuIcon size={30} color={colors.darkText} style={{ marginLeft: 10 }} />
+                    <MenuIcon size={30} color={colors.darkText} style={{ marginLeft: -10 }} />
                   </TouchableOpacity>
                 );
               }
@@ -225,16 +232,17 @@ const ViewStackScreen = () => {
         }}
       />
       <ViewStack.Screen
-        name="TVDetailsStack"
+        name="DetailsModal"
         component={ViewTVDetailsStack}
         options={({ navigation, route }) => {
           return {
-            title: "",
-            headerBackTitle: "Back",
-            headerTintColor: "#274315",
-            headerRight: () => {
-              return null;
-            },
+            // title: "",
+            headerShown: false,
+            // headerBackTitle: "Back",
+            // headerTintColor: "#274315",
+            // headerRight: () => {
+            //   return null;
+            // },
             // headerLeft: () => {
             //   return (
             //     <TouchableOpacity onPress={() => navigation.openDrawer()}>

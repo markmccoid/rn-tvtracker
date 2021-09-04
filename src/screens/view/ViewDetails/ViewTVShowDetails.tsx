@@ -87,7 +87,6 @@ const ViewTVShowDetails = ({ tvShow, isInSavedTVShows }: Props) => {
   // const personNavigation = useNavigation<DetailPersonScreenNavigation>();
   const route = useRoute<DetailsScreenRouteProp>();
   const personRoute = useRoute<DetailPersonScreenRouteProp>();
-  console.log("viewtvshowdetails route.name", route.name);
   const Rotate = (toValue) => {
     Animated.timing(iconAnim, {
       toValue,

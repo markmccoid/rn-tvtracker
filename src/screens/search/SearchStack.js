@@ -20,14 +20,14 @@ const SearchDetailsModalStack = () => {
       initialRouteName="DetailsFromSearch"
       screenOptions={{
         stackAnimation: "default",
-        stackPresentation: "modal",
+        // stackPresentation: "modal",
       }}
     >
       <ModalStack.Screen
         name="DetailsFromSearch"
         component={ViewDetails}
         options={{
-          headerShown: false,
+          headerShown: true,
         }}
       />
       <ModalStack.Screen
@@ -35,6 +35,7 @@ const SearchDetailsModalStack = () => {
         component={SeasonsScreen}
         options={{
           headerShown: false,
+          stackPresentation: "modal",
         }}
       />
       <ModalStack.Screen
@@ -42,6 +43,7 @@ const SearchDetailsModalStack = () => {
         component={AnimatedPickImage}
         options={{
           headerShown: false,
+          stackPresentation: "modal",
         }}
       />
     </ModalStack.Navigator>
@@ -67,7 +69,7 @@ const SearchStackScreen = () => {
             headerLeft: () => {
               return (
                 <TouchableOpacity onPress={() => navigation.openDrawer()}>
-                  <MenuIcon size={30} color={colors.darkText} style={{ marginLeft: 10 }} />
+                  <MenuIcon size={30} color={colors.darkText} style={{ marginLeft: -10 }} />
                 </TouchableOpacity>
               );
             },
@@ -80,9 +82,8 @@ const SearchStackScreen = () => {
         component={SearchDetailsModalStack}
         options={({ navigation, route }) => {
           return {
-            title: "",
-            headerBackTitle: "Back",
-            headerTintColor: "#274315",
+            // title: "",
+            headerShown: false,
           };
         }}
       />

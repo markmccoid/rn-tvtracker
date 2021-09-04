@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { ActivityIndicator, ScrollView, View, Image, Dimensions } from "react-native";
-import { AddIcon, DeleteIcon } from "../../../components/common/Icons";
+import { ActivityIndicator, ScrollView, View, Image, Dimensions, Text } from "react-native";
+import { AddIcon, BackIcon, DeleteIcon } from "../../../components/common/Icons";
+import IOSBack from "../../../svg/IOSBack";
 import { useOState, useOActions } from "../../../store/overmind";
 import { colors } from "../../../globalStyles";
 //@types
@@ -10,6 +11,7 @@ import { TVShowDetails } from "../../../store/oSaved/actions";
 import ViewTVShowDetails from "./ViewTVShowDetails";
 
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { checkPropTypes } from "prop-types";
 
 const { width, height } = Dimensions.get("window");
 /**
@@ -87,6 +89,31 @@ const ViewDetails = ({ navigation, route }: DetailsScreenProps) => {
       headerStyle: {
         backgroundColor: colors.navHeaderColor,
       },
+      headerLeft: () => {
+        return (
+          <TouchableOpacity
+            style={{ marginLeft: -10 }}
+            onPress={() => {
+              navigation.goBack();
+            }}
+          >
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              {/* <BackIcon size={25} color={colors.darkText} /> */}
+              <IOSBack strokeColor={colors.darkText} />
+              <Text
+                style={{
+                  fontSize: 18,
+                  alignSelf: "flex-end",
+                  color: colors.darkText,
+                  paddingLeft: 8,
+                }}
+              >
+                {route.name.includes("Search") ? "Search" : "Back"}
+              </Text>
+            </View>
+          </TouchableOpacity>
+        );
+      },
       headerRight: () => {
         if (isLoading) {
           return <ActivityIndicator style={{ marginRight: 20 }} />;
@@ -94,7 +121,7 @@ const ViewDetails = ({ navigation, route }: DetailsScreenProps) => {
         if (!isInSavedTVShows) {
           return (
             <TouchableOpacity
-              style={{ marginRight: 15 }}
+              style={{ marginRight: 0 }}
               onPress={async () => {
                 setIsLoading(true);
                 await saveTVShow(tvShowData.id);
@@ -112,12 +139,12 @@ const ViewDetails = ({ navigation, route }: DetailsScreenProps) => {
         } else {
           return (
             <TouchableOpacity
-              style={{ marginRight: 15 }}
+              style={{ marginRight: 0 }}
               onPress={async () => {
                 setIsLoading(true);
+                navigation.goBack();
                 await deleteTVShow(tvShowData.id);
                 setIsLoading(false);
-                navigation.goBack();
               }}
             >
               <DeleteIcon size={25} />

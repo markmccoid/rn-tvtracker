@@ -9,7 +9,7 @@ import {
 export type ViewTVStackParamList = {
   ViewTVShows: undefined;
   // Details: { tvShowId: number; notSaved: boolean };
-  TVDetailsStack:
+  DetailsModal:
     | {
         screen: "Details";
         params: { tvShowId: number; notSaved: boolean };

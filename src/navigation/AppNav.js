@@ -71,6 +71,7 @@ const RedirectToMain = ({ navigation }) => {
 };
 //-- Main application Bottom Tabs ----------
 const AppTabs = createBottomTabNavigator();
+
 const AppTabsScreen = () => {
   return (
     <AppTabs.Navigator
