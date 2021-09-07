@@ -194,5 +194,37 @@
 		"text": "This documents the navigation to the Seasons/Episodes list.",
 		"title": "Season/Episode Flow",
 		"version": 1
+	},
+	"c019328a-4e40-4a39-980c-a59ab59d294b": {
+		"filePath": ".grok/c019328a-4e40-4a39-980c-a59ab59d294b.grok.json",
+		"id": "c019328a-4e40-4a39-980c-a59ab59d294b",
+		"lastModifiedCommitHash": "17037ce6c042fbd87e2bb0e416c6cfd8e99e728e",
+		"markers": [
+			{
+				"branch": "master",
+				"commitHash": "17037ce6c042fbd87e2bb0e416c6cfd8e99e728e",
+				"file": "src/utils/getPermissions.js",
+				"location": [
+					5,
+					16
+				],
+				"repo": "tvtracker"
+			},
+			{
+				"branch": "master",
+				"commitHash": "43c0cefac85d29d8fdac2e4e6e6f417341bc040b",
+				"file": "src/store/oSaved/onInitialize.js",
+				"location": [
+					56,
+					82
+				],
+				"repo": "tvtracker"
+			}
+		],
+		"modifiedAt": 1630899233932,
+		"originalAuthor": "Mark",
+		"text": "Notifications for when the next episode of a TV show is going to be released.\nNotify once when we get the info on the next date a show will play AND \nthen Notify on the actual day it is playing.  \nTime is 9am",
+		"title": "Notifications Flow",
+		"version": 1
 	}
 }

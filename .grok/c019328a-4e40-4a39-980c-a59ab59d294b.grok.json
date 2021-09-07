@@ -1,0 +1,173 @@
+{
+	"cells": [
+		{
+			"blockId": "f63706f4-e2ef-4c3a-95f7-cab87361645e",
+			"caption": "Ask for Permission to send Notifications",
+			"data": {
+				"contents": "export const askNotificationPermissions = async () => {\n  const { status: existingStatus } = await Notifications.getPermissionsAsync();\n  let finalStatus = existingStatus;\n  if (existingStatus !== \"granted\") {\n    const { status } = await Notifications.requestPermissionsAsync();\n    finalStatus = status;\n  }\n  if (finalStatus !== \"granted\") {\n    return false;\n  }\n  return true;\n};\n",
+				"file": "src/utils/getPermissions.js",
+				"range": {
+					"end": {
+						"character": 2147483647,
+						"line": 16
+					},
+					"start": {
+						"character": 0,
+						"line": 5
+					}
+				},
+				"scm": {
+					"authors": [
+						{
+							"email": "markmccoid@gmail.com"
+						}
+					],
+					"branch": "master",
+					"file": "src/utils/getPermissions.js",
+					"remotes": [
+						{
+							"name": "origin",
+							"url": "github.com/markmccoid/rn-tvtracker"
+						}
+					],
+					"repoName": "tvtracker",
+					"revision": "17037ce6c042fbd87e2bb0e416c6cfd8e99e728e",
+					"sameRepo": true
+				}
+			},
+			"id": "f63706f4-e2ef-4c3a-95f7-cab87361645e",
+			"type": "code",
+			"version": 1
+		},
+		{
+			"blockId": "b62401f6-c12e-4fb9-92c9-7224beab9906",
+			"data": {
+				"formatCode": false,
+				"isPreviewing": true,
+				"text": "**Ask of Permissions** only happens **Once**.  If user denies, they will have to either delete app and reinstall or just go to Settings/Notifications for iOS and change notifications settings.<div>### Called from `onInitialize.js`</div>"
+			},
+			"id": "b62401f6-c12e-4fb9-92c9-7224beab9906",
+			"type": "markdown"
+		},
+		{
+			"blockId": "33229fb2-9683-4b3f-b199-f8d8921a9b19",
+			"caption": "Set Up Notifications",
+			"data": {
+				"contents": "const setupNotifications = async () => {\r\n  // const lastNotificationResponse = await Notifications.getLastNotificationResponseAsync();\r\n  // if (\r\n  //   lastNotificationResponse &&\r\n  //   lastNotificationResponse.notification.request.content.data.url &&\r\n  //   lastNotificationResponse.actionIdentifier === Notifications.DEFAULT_ACTION_IDENTIFIER\r\n  // ) {\r\n  //   Linking.openURL(lastNotificationResponse.notification.request.content.data.url);\r\n  //   console.log(\r\n  //     \"lastNotificationreposnse\",\r\n  //     lastNotificationResponse.notification.request.content.data.url\r\n  //   );\r\n  // }\r\n  Notifications.setNotificationHandler({\r\n    handleNotification: async () => ({\r\n      shouldShowAlert: true,\r\n      shouldPlaySound: true,\r\n      shouldSetBadge: false,\r\n    }),\r\n    handleSuccess: (notificationId) => {\r\n      console.log(\"Notification came in\", notificationId);\r\n    },\r\n    handleError: () => {\r\n      console.log(\"ERROR in notif handler\");\r\n    },\r\n  });\r\n};\r\n",
+				"file": "src/store/oSaved/onInitialize.js",
+				"range": {
+					"end": {
+						"character": 2147483647,
+						"line": 82
+					},
+					"start": {
+						"character": 0,
+						"line": 56
+					}
+				},
+				"scm": {
+					"authors": [
+					],
+					"branch": "master",
+					"file": "src/store/oSaved/onInitialize.js",
+					"remotes": [
+						{
+							"name": "origin",
+							"url": "github.com/markmccoid/rn-tvtracker"
+						}
+					],
+					"repoName": "tvtracker",
+					"revision": "43c0cefac85d29d8fdac2e4e6e6f417341bc040b",
+					"sameRepo": true
+				}
+			},
+			"id": "33229fb2-9683-4b3f-b199-f8d8921a9b19",
+			"type": "code",
+			"version": 1
+		},
+		{
+			"blockId": "38259b31-65f8-4668-9f75-d7a2bcea44df",
+			"data": {
+				"formatCode": false,
+				"isPreviewing": true,
+				"text": "**Setup Notifications** function.  <div>Sets some defaults for how notifications are handled.</div><div>### Called from `onInitialize.js`</div>"
+			},
+			"id": "38259b31-65f8-4668-9f75-d7a2bcea44df",
+			"type": "markdown"
+		}
+	],
+	"graphViewMetadata": {
+		"edges": [
+			{
+				"id": "b62401f6-c12e-4fb9-92c9-7224beab9906_bottom_f63706f4-e2ef-4c3a-95f7-cab87361645e_top_bqnJ8xb4R5Cuc5auxVN78A",
+				"source": "b62401f6-c12e-4fb9-92c9-7224beab9906",
+				"sourceHandle": "bottom",
+				"target": "f63706f4-e2ef-4c3a-95f7-cab87361645e",
+				"targetHandle": "top"
+			},
+			{
+				"id": "38259b31-65f8-4668-9f75-d7a2bcea44df_bottom_33229fb2-9683-4b3f-b199-f8d8921a9b19_top_GaW5wql2R7inub8BDr5Kww",
+				"source": "38259b31-65f8-4668-9f75-d7a2bcea44df",
+				"sourceHandle": "bottom",
+				"target": "33229fb2-9683-4b3f-b199-f8d8921a9b19",
+				"targetHandle": "top"
+			}
+		],
+		"graph": {
+			"position": [
+				-1445.347439186285,
+				496.21334974221463
+			],
+			"zoom": 0.9176398823113653
+		},
+		"nodes": [
+			{
+				"blockId": "f63706f4-e2ef-4c3a-95f7-cab87361645e",
+				"dimensions": {
+				},
+				"id": "dndnode_0",
+				"position": {
+					"x": 1590,
+					"y": -195
+				}
+			},
+			{
+				"blockId": "b62401f6-c12e-4fb9-92c9-7224beab9906",
+				"dimensions": {
+					"height": 159,
+					"width": 463
+				},
+				"id": "dndnode_1",
+				"position": {
+					"x": 1575,
+					"y": -420
+				}
+			},
+			{
+				"blockId": "33229fb2-9683-4b3f-b199-f8d8921a9b19",
+				"dimensions": {
+				},
+				"id": "dndnode_2",
+				"position": {
+					"x": 2160,
+					"y": -135
+				}
+			},
+			{
+				"blockId": "38259b31-65f8-4668-9f75-d7a2bcea44df",
+				"dimensions": {
+					"height": 182,
+					"width": 452
+				},
+				"id": "dndnode_3",
+				"position": {
+					"x": 2085,
+					"y": -420
+				}
+			}
+		]
+	},
+	"text": "Notifications for when the next episode of a TV show is going to be released.\nNotify once when we get the info on the next date a show will play AND \nthen Notify on the actual day it is playing.  \nTime is 9am",
+	"title": "Notifications Flow",
+	"version": 1
+}
