@@ -2,10 +2,12 @@ import React, { useEffect, useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { Provider } from "overmind-react";
 import { HoldMenuProvider } from "react-native-hold-menu";
+import * as Notifications from "expo-notifications";
 import FeatherIcon from "react-native-vector-icons/Feather";
 
 import * as Linking from "expo-linking";
 
+import { askNotificationPermissions } from "./src/utils/getPermissions";
 import { overmind } from "./src/store/overmind";
 import { initTMDB } from "@markmccoid/tmdb_api";
 import { LogBox } from "react-native";
@@ -38,40 +40,86 @@ const App = () => {
                   },
                 },
                 Tags: "tags",
+                ViewTVShowsTab: {
+                  screens: {
+                    DetailsModal: {
+                      screens: {
+                        Details: {
+                          path: "details/:tvShowId",
+                        },
+                      },
+                    },
+                  },
+                },
               },
             },
           },
         },
       },
     },
+    async getInitialURL() {
+      // First, you may want to do the default deep link handling
+      // Check if app was opened from a deep link
+      let url = await Linking.getInitialURL();
+
+      if (url != null) {
+        return url;
+      }
+
+      // Handle URL from expo push notifications
+      const response = await Notifications.getLastNotificationResponseAsync();
+      url = response?.notification.request.content.data.url;
+      return url;
+    },
+    subscribe(listener) {
+      const onReceiveURL = ({ url }) => listener(url);
+
+      // Listen to incoming links from deep linking
+      Linking.addEventListener("url", onReceiveURL);
+
+      // Listen to expo push notifications
+      const subscription = Notifications.addNotificationResponseReceivedListener(
+        (response) => {
+          const url = response.notification.request.content.data.url;
+
+          // Any custom logic to see whether the URL needs to be handled
+          //...
+          Linking.openURL(url);
+          // Let React Navigation handle the URL
+          listener(url);
+        }
+      );
+
+      return () => {
+        // Clean up the event listeners
+        Linking.removeEventListener("url", onReceiveURL);
+        subscription.remove();
+      };
+    },
   };
   LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 
-  // const handleDeepLink = (event) => {
-  //   setData(Linking.parse(event.url));
-  //   // console.log("event", Linking.parse(event.url));
-  // };
-  // useEffect(() => {
-  //   async function getInitialURL() {
-  //     const initialURL = await Linking.getInitialURL();
-  //     if (initialURL) {
-  //       setData(Linking.parse(initialURL));
-  //       // console.log("INITIAL", Linking.parse(initialURL));
-  //     }
+  // const lastNotificationResponse = Notifications.useLastNotificationResponse();
+  // React.useEffect(() => {
+  //   if (
+  //     lastNotificationResponse &&
+  //     lastNotificationResponse.notification.request.content.data.url &&
+  //     lastNotificationResponse.actionIdentifier === Notifications.DEFAULT_ACTION_IDENTIFIER
+  //   ) {
+  //     Linking.openURL(lastNotificationResponse.notification.request.content.data.url);
+  //     console.log(
+  //       "lastNotificationreposnse",
+  //       lastNotificationResponse.notification.request.content.data.url
+  //     );
   //   }
+  // }, [lastNotificationResponse]);
 
-  //   Linking.addEventListener("url", handleDeepLink);
-  //   if (!data) {
-  //     getInitialURL();
-  //   }
-  //   return () => {
-  //     Linking.removeEventListener("url");
-  //   };
+  // useEffect(() => {
+  //   askNotificationPermissions();
   // }, []);
 
-  // initTMDB(envData.tmdbId);
-  // const overmind = createOvermind(config, { devtools: "192.168.1.7:3031" });
-  // const overmind = createOvermind(config);
+  // initTMDB(envData.tmdbId); // Now in Overmind's onInitialize.js
+
   return (
     <Provider value={overmind}>
       <HoldMenuProvider iconComponent={FeatherIcon} theme="light">

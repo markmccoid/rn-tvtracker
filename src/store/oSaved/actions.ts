@@ -5,6 +5,8 @@ import * as internalActions from "./internalActions";
 import { loadFromAsyncStorage, removeFromAsyncStorage } from "../../storage/asyncStorage";
 import * as defaultConstants from "./defaultConstants";
 import { Context } from "../overmind";
+import { scheduleLocalNotification } from "../../utils/notificationHelpers";
+
 import {
   EpisodeRunTimeGroup,
   SavedTVShowsDoc,
@@ -96,7 +98,7 @@ export const hydrateStore = async (
   //
   //map will return array of promises
   let updates = await showUpdateList.map(async (tvShowId) => {
-    return await actions.oSaved.refreshTVShow(tvShowId);
+    return await actions.oSaved.refreshTVShow({ tvShowId, isAutoUpdate: true });
   });
 
   await Promise.all(updates);
@@ -134,7 +136,7 @@ export const resetOSaved = async ({ state, effects, actions }: Context) => {
  */
 export const refreshTVShow = async (
   { state, effects, actions }: Context,
-  tvShowId: number
+  { tvShowId, isAutoUpdate = false }: { tvShowId: number; isAutoUpdate?: boolean }
 ) => {
   // Get the lastest data from the API for the passed tvShowId
   // get more movie details from tmdbapi
@@ -158,6 +160,28 @@ export const refreshTVShow = async (
     dateLastUpdated: getCurrentDate().epoch,
   };
 
+  //* -- Refresh being called automatically because something in createUpdateList() function
+  if (isAutoUpdate) {
+    const currNextAirDate = state.oSaved.getTVShowDetails(tvShowId).nextAirDate?.epoch;
+    const newNextAirDate = latesTVShowDetails.nextEpisodeToAir?.airDate?.epoch;
+    // We should only see this condition once when the next air date changes.
+    if (newNextAirDate > currNextAirDate) {
+      const showName = state.oSaved.getTVShowDetails(tvShowId).name;
+      const nextAirDateFormatted = latesTVShowDetails.nextEpisodeToAir?.airDate?.formatted;
+      const notificationData = {
+        title: `${showName} New Episode`,
+        body: `New Episode of ${showName} on ${nextAirDateFormatted}`,
+        triggerDate: new Date(newNextAirDate * 1000),
+      };
+      scheduleLocalNotification(
+        notificationData.title,
+        notificationData.body,
+        tvShowId,
+        notificationData.triggerDate,
+        9
+      );
+    }
+  }
   // Get current saved movie
   const updatedTVShowDetails = {
     ...state.oSaved.getTVShowDetails(tvShowId),
@@ -1007,7 +1031,7 @@ function createUpdateList(tvShows: SavedTVShowsDoc[]): number[] {
     //   "Compare Dates",
     //   tvShow.name,
     //   tvShow.nextAirDate?.formatted,
-    //   dateComparisons.nextAirLessEqualToday
+    4; //   dateComparisons.nextAirLessEqualToday
     // );
     // nextAirDate exists and is less than or equal to todays date
     // Which means this date has passed an a new next air date should be available
