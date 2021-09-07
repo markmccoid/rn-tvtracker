@@ -58,10 +58,8 @@ const AnimatedPickImage = ({ tvShowId, setPosterHeight }) => {
   };
 
   React.useEffect(() => {
-    console.log("in pick image useeffect");
     const currentPoster = getCurrentImageUrls(tvShowId).currentPosterURL;
     getImages(tvShowId).then((data) => updatePosterData(data, currentPoster));
-    return () => console.log("exiting pick image useeffect");
   }, []);
 
   if (largeImage) {

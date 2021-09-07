@@ -4,11 +4,35 @@ import { HoldItem } from "react-native-hold-menu";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Linking from "expo-linking";
 import { useNavigation } from "@react-navigation/native";
-
+import * as Notifications from "expo-notifications";
 import { nativeShareItem } from "../../../utils/nativeShareItem";
+import { scheduleLocalNotification } from "../../../utils/notificationHelpers";
 
 const showRefreshAlert = (msg) => {
   Alert.alert("TV Show Refresh", msg);
+};
+
+const sendNotificationImmediately = async (tvShowName, tvShowId) => {
+  await scheduleLocalNotification(
+    `${tvShowName}-${tvShowId}`,
+    `New Episode for ${tvShowName}`,
+    tvShowId,
+    new Date(),
+    22
+  );
+  // const url = Linking.createURL(`/details/${tvShowId}`);
+  // let notificationId = await Notifications.scheduleNotificationAsync({
+  //   content: {
+  //     title: `${tvShowName}-${tvShowId}`,
+  //     body: `New Episode for ${tvShowName}`,
+  //     data: { url },
+  //   },
+  //   trigger: {
+  //     seconds: 5,
+  //   },
+  // });
+
+  //console.log(notificationId); // can be saved in AsyncStorage or send to server
 };
 
 const DetailMainInfoHoldMenu = ({
@@ -36,7 +60,7 @@ const DetailMainInfoHoldMenu = ({
   const menuItemUpdateMovie = {
     text: `Update TV Show`,
     onPress: async () => {
-      let msg = await refreshTVShow(tvShow.id);
+      let msg = await refreshTVShow({ tvShowId: tvShow.id });
       showRefreshAlert(msg);
       navigateToRoute();
     },
@@ -50,7 +74,7 @@ const DetailMainInfoHoldMenu = ({
   const menuItemPickImage = {
     text: "Change Image",
     withSeperator: true,
-    onPress: () => {
+    onPress: async () => {
       navigation.navigate(`${routeName}PickImage`, { tvShowId: tvShow.id });
     },
   };

@@ -115,6 +115,7 @@ export type State = {
   tempSeasonsData: TempSeasonsData;
   tempSeasonsState: TempSeasonsState;
   // --- GETTERS ---
+  getFilteredTVShowIds: number[];
   getFilteredTVShows: SavedTVShowsDoc[];
   //! Type needs to change since I'm not sure exactly what will be returned by
   //! the tmdb call the populated with return.  Should be able to get type from tmdb_api
@@ -188,6 +189,9 @@ export const state: State = {
   },
   tempSeasonsData: [],
   //------- Getters -----------//
+  getFilteredTVShowIds: derived((state: State) => {
+    return state.getFilteredTVShows.map((tvShow) => tvShow.id);
+  }),
   getFilteredTVShows: derived((state: State) => {
     let tvShowList = state.savedTVShows;
     // Define the sortFields and sortDirections that we will pass to the
