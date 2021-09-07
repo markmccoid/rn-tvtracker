@@ -19,7 +19,7 @@ const SearchScreen = ({ navigation, route }) => {
   //Lets us know if we are returning from details page
   //if so, don't clear old search results
   const [onDetailsPage, setOnDetailsPage] = React.useState(false);
-  const deepLinkTitle = route?.params?.title;
+  const deepLinkTitle = route?.params?.name;
   const flatListRef = React.useRef();
   const state = useOState();
   const actions = useOActions();
