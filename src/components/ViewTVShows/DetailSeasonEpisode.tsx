@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     width: width - 11,
     justifyContent: "space-around",
-    height: 55,
+    height: 60,
   },
   epNumber: {
     fontSize: 18,

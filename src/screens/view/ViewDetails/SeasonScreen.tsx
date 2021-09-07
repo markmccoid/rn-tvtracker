@@ -3,17 +3,15 @@ import {
   View,
   ActivityIndicator,
   Text,
-  Dimensions,
   Image,
   SectionList,
-  FlatList,
   StyleSheet,
-  Linking,
   TouchableOpacity,
-  SafeAreaView,
   ScrollView,
 } from "react-native";
 import _ from "lodash";
+
+import { CloseIcon } from "../../../components/common/Icons";
 
 import sectionListGetItemLayout from "react-native-section-list-get-item-layout";
 
@@ -197,6 +195,12 @@ const SeasonsScreen = ({ navigation, route }: SeasonsScreenProps) => {
         ) : (
           <Image source={{ uri: logo.logoURL }} style={{ width: 171, height: 50 }} />
         )}
+        <TouchableOpacity
+          style={{ position: "absolute", right: 10, top: 5 }}
+          onPress={() => navigation.goBack()}
+        >
+          <CloseIcon color={"white"} size={25} />
+        </TouchableOpacity>
       </View>
       {/* only show "Header" is calling route is ViewStackSeasons */}
       {/* {routeName === "ViewStackSeasons" && <Header />} */}
