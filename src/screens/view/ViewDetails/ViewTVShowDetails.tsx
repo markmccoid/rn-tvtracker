@@ -168,22 +168,59 @@ const ViewTVShowDetails = ({ tvShow, isInSavedTVShows }: Props) => {
       {isInSavedTVShows && (
         <View>
           <Transitioning.View ref={ref} transition={transition2}>
-            <DetailSelectTags
-              viewTags={viewTags}
-              tags={tags}
-              onSelectTag={(tagObj) =>
-                addTagToTVShow({ tvShowId: tvShow.id, tagId: tagObj.tagId })
-              }
-              removeTagFromTVShow={(tagObj) =>
-                removeTagFromTVShow({
-                  tvShowId: tvShow.id,
-                  tagId: tagObj.tagId,
-                })
-              }
-            />
+            <View
+              style={{
+                marginLeft: 5,
+                flexDirection: "row",
+                alignItems: "center",
+              }}
+            >
+              {/* <Text
+                style={{
+                  fontSize: 18,
+                  fontWeight: "bold",
+                  marginRight: 5,
+                }}
+              >
+                Tags:
+              </Text> */}
+              {viewTags ? (
+                <View
+                  style={{
+                    flex: 1,
+                    flexDirection: "row",
+                    flexWrap: "wrap",
+                  }}
+                >
+                  <DetailSelectTags
+                    viewTags={viewTags}
+                    tags={tags}
+                    onSelectTag={(tagObj) =>
+                      addTagToTVShow({ tvShowId: tvShow.id, tagId: tagObj.tagId })
+                    }
+                    removeTagFromTVShow={(tagObj) =>
+                      removeTagFromTVShow({
+                        tvShowId: tvShow.id,
+                        tagId: tagObj.tagId,
+                      })
+                    }
+                  />
+                </View>
+              ) : (
+                <View
+                  style={{
+                    flex: 1,
+                    flexDirection: "row",
+                    flexWrap: "wrap",
+                  }}
+                >
+                  {assignedTags.map((tagObj) => {
+                    return <Text style={styles.tagItem}>{tagObj.tagName}</Text>;
+                  })}
+                </View>
+              )}
 
-            <HidableView visible={!viewTags}>
-              <TagCloud>
+              {/* <TagCloud>
                 {assignedTags.map((tagObj) => {
                   return (
                     <TagItem
@@ -192,17 +229,12 @@ const ViewTVShowDetails = ({ tvShow, isInSavedTVShows }: Props) => {
                       tagName={tagObj.tagName}
                       isSelected={tagObj.isSelected}
                       size="s"
-                      onDeSelectTag={() =>
-                        removeTagFromTVShow({
-                          tvShowId: tvShow.id,
-                          tagId: tagObj.tagId,
-                        })
-                      }
+                      isViewOnly
                     />
                   );
                 })}
-              </TagCloud>
-            </HidableView>
+              </TagCloud> */}
+            </View>
           </Transitioning.View>
         </View>
       )}
@@ -297,6 +329,18 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
     marginBottom: 5,
     backgroundColor: "#ffffff85",
+  },
+  tagItem: {
+    borderWidth: 1,
+    borderColor: colors.listBorder,
+    borderRadius: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 5,
+    paddingVertical: 2,
+    marginRight: 5,
+    marginBottom: 4,
+    backgroundColor: `${colors.includeGreen}55`,
   },
 });
 //`imdb:///find?q=${movie.title}`

@@ -4,7 +4,7 @@ import { colors } from "../../globalStyles";
 export const TagContainer = styled.View`
   flex-direction: row;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: ${(props) => props.alignment};
 `;
 
 export const Tag = styled.TouchableOpacity`
@@ -28,6 +28,11 @@ export const Tag = styled.TouchableOpacity`
   align-self: center;
 `;
 
+export const TagReadOnly = styled(Tag)`
+  background-color: ${colors.includeGreen};
+  opacity: 0.8;
+  border: 1px solid red;
+`;
 export const TagIcon = styled.View`
   flex-direction: row;
   align-items: center;

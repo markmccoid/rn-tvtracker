@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { AntDesign } from "@expo/vector-icons";
-import { TagContainer, Tag, TagIcon, TagText } from "./TagCloudStyles";
+import { TagContainer, Tag, TagReadOnly, TagIcon, TagText } from "./TagCloudStyles";
 
 export const TagItem = ({
   tagId,
@@ -10,11 +10,35 @@ export const TagItem = ({
   onDeSelectTag,
   tagName,
   size = "m",
+  isViewOnly = false,
 }) => {
+  // Read only view of the tags.
+  if (isViewOnly) {
+    return (
+      <TagReadOnly
+        key={tagId}
+        size={size}
+        activeOpacity={0.8}
+        onPress={undefined}
+        isSelected={isSelected} //used in styled components
+        isViewOnly
+      >
+        <TagIcon>
+          <AntDesign
+            style={{ paddingRight: 5 }}
+            name={isSelected ? "tag" : "tago"}
+            size={size === "s" ? 15 : 20}
+          />
+          <TagText size={size}>{tagName}</TagText>
+        </TagIcon>
+      </TagReadOnly>
+    );
+  }
   return (
     <Tag
       key={tagId}
       size={size}
+      activeOpacity={0.7}
       onPress={() => (isSelected ? onDeSelectTag(tagId) : onSelectTag(tagId))}
       isSelected={isSelected} //used in styled components
     >
@@ -30,8 +54,8 @@ export const TagItem = ({
   );
 };
 
-const TagCloud = ({ children }) => {
-  return <TagContainer>{children}</TagContainer>;
+const TagCloud = ({ children, alignment = "center" }) => {
+  return <TagContainer alignment={alignment}>{children}</TagContainer>;
 };
 
 TagItem.propTypes = {
