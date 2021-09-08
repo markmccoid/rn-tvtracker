@@ -17,7 +17,7 @@ const SavedFiltersItem = ({ savedFilter }) => {
   return (
     <View style={styles.container}>
       <View style={styles.nameContainer}>
-        <Text key={savedFilter.id} style={styles.filterTitle}>
+        <Text maxFontSizeMultiplier={1.1} key={savedFilter.id} style={styles.filterTitle}>
           {savedFilter.name}
         </Text>
       </View>

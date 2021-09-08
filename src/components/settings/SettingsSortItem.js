@@ -71,7 +71,12 @@ const SettingsSortItem = ({
   return (
     <View style={styles.container}>
       <View style={[styles.rowContainer, disabledStyle]}>
-        <Text style={[styles.title, !active ? { color: "#555" } : {}]}>{title}</Text>
+        <Text
+          maxFontSizeMultiplier={1.1}
+          style={[styles.title, !active ? { color: "#555" } : {}]}
+        >
+          {title}
+        </Text>
         <View style={styles.buttonDragContainer}>
           <Switch value={active} onChange={toggleActive} />
           <ButtonGroup

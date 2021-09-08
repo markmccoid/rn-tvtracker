@@ -72,7 +72,7 @@ const DetailSeasonEpisode = ({ tvShowId, episode, episodeState, isShowSaved }: P
           }}
         >
           <Text style={styles.epName}>{episode.name}</Text>
-          <Text>{`${episode.airDate || "Unknown"}`}</Text>
+          <Text allowFontScaling={false}>{`${episode.airDate || "Unknown"}`}</Text>
         </View>
       </View>
 
