@@ -30,49 +30,10 @@ const POSTER_HEIGHT = POSTER_WIDTH * 1.5; // Height is 1.5 times the width
 const MARGIN = 5;
 const ITEM_SIZE = POSTER_HEIGHT + MARGIN * 2;
 
-//----------------------------
-// Based on Finite States Machines, this was a test to
-// make things easier to deal with when the filter status
-// changed.
-// Currently, the ONLY status we get on filter changing is when
-// navigating back to the "TVShowsScreen" route.  There is a param called
-// "filterModified" that is either true or undefined.
-// This filterMachineConfig and filterMachine are used in the ViewTVShowsScreen component
-// useReducer function, which changes the "filterState" variable.
-// There are two useEffect functions that are needed
-// One to monitor the "filterModified" route param
-// and another to monitor the filterState variable.
-// -----
-// Maybe better option would be to have a state variable in Overmind that is set whenever a
-// filter is changed and applied.
-//----------------------------
-const filterMachineConfig = {
-  initial: "idle",
-  states: {
-    idle: {
-      on: {
-        MODIFIED: "filterModified",
-      },
-    },
-    filterModified: {
-      on: {
-        SCROLLDONE: "idle",
-      },
-    },
-  },
-};
-
-const filterMachine = (state, event) => {
-  return filterMachineConfig.states[state]?.on?.[event.type] || state;
-};
-
 //---------------
 const ViewTVShowsScreen = ({ navigation, route }) => {
-  const [filterState, dispatch] = React.useReducer(filterMachine, filterMachineConfig.initial);
-  const [tvShowDetails, setTVShowDetails] = React.useState(undefined);
   const [showSearch, setShowSearch] = useState(false);
-  // Used to be in oAdmin.appState, but don't think we need it there, just making local state.
-  const [tvShowEditingId, setTVShowEditingId] = useState(undefined);
+
   const flatListRef = React.useRef();
   const state = useOState();
   const { hydrating } = state.oAdmin.appState;
@@ -135,73 +96,29 @@ const ViewTVShowsScreen = ({ navigation, route }) => {
           ...animStyle,
         }}
       >
-        <ViewTVShowsListItem
-          posterURL={pURL}
-          tvShow={item}
-          setTVShowEditingId={setTVShowEditingId}
-        />
+        <ViewTVShowsListItem posterURL={pURL} tvShow={item} />
       </Animated.View>
     );
   }, []);
 
   //NOTE-- posterURL images are 300 x 450
 
-  //Next two useEffects are for determining if a filter was modified and if so, then scroll to top
-  //Looking at the filterModified param (true or undefined) coming from the Movies route
-  //!! Commented out so DONE button on filter screen acts the same as a pull down dismiss
-  //!! This was code that would scroll to top whenever a filter was applied
-  // useEffect(() => {
-  //   if (!route.params?.filterModified) return;
-  //   let dispatchType = route.params?.filterModified ? "MODIFIED" : "SCROLLDONE";
-
-  //   dispatch({ type: dispatchType });
-  //   // if (route.params?.filterModified) {
-  //   //   route.params.filterModified = undefined;
-  //   // }
-  // }, [route.params?.filterModified]);
-
-  // useEffect(() => {
-  //   if (filterState === "filterModified" && getFilteredTVShows().length > 0) {
-  //     flatListRef.current.scrollToIndex({ animated: true, index: 0 });
-  //     dispatch({ type: "SCROLLDONE" });
-  //     route.params.filterModified = undefined;
-  //   }
-  // }, [filterState]);
-  //---------------------------------------------------
-
-  //Trying to use this to clear editingId when returning from filter screen.
-  //Have to set the "returning" param on both the DONE button in the filter screen component
-  //and the header "X"(Close).
-  //Not sure if setting the param that we are checking in dependancies is good or bad.
-  // useEffect(() => {
-  //   if (route.params?.returning) {
-  //     setTVShowEditingId();
-  //     navigation.setParams({ returning: false });
-  //   }
-  // }, [route.params?.returning]);
-
-  // effect runs whenever getFilteredTVShows is dirty
+  // effect runs whenever getFilteredTVShows returns a different
+  // number of shows
   // this causes the flatlist to scroll to top
-  //! this will trigger whenever a movie is updated.
-  //! it will scroll to top.  OPTIONS:
-  //! 1. remove tags from oSaved.savedMovies
-  //! 2. add dirtyMovieList indicator in overmind that we will use to determine when to scroll to top.
+  //! Reason for this is because I don't want it to scroll to top when
+  //! changes are made to a show, ONLY when the filter is changed
+  //! Downside: it won't scroll to top when a different filter returns the same number of shows
+  //! 1. Option would be to use the route.params.filterModified flag, BUT this won't trigger if
+  //!    if filter modal is pulled down.
+  //! 2. add dirtyTVShowList indicator in overmind that we will use to determine when to scroll to top.
   //!    won't set dirty indicator to true if just a tag change.
   //!    need dirty indicator because we will still pass new data to flatlist, but DON'T WANT to scroll to top
   useEffect(() => {
-    // console.log("getFilteredTVShows RERENDER");
     if (flatListRef) {
       flatListRef.current.scrollToOffset({ offset: 0 });
     }
-  }, [getFilteredTVShows]);
-
-  // Get movie details when movie is selected/edit mode
-  // probably should move whole overlay section to a separate file
-  useEffect(() => {
-    if (tvShowEditingId) {
-      setTVShowDetails(getTVShowDetails(tvShowEditingId));
-    }
-  }, [tvShowEditingId]);
+  }, [getFilteredTVShows.length]);
 
   return (
     <View style={styles.containerForPortrait}>
@@ -225,13 +142,6 @@ const ViewTVShowsScreen = ({ navigation, route }) => {
         maxToRenderPerBatch={30}
       />
 
-      {/* Only show when editing a tv show - this happens on a long press on tv show */}
-      <ViewTVShowOverlay
-        tvShowId={tvShowEditingId}
-        setTVShowEditingId={setTVShowEditingId}
-        isVisible={!!tvShowEditingId}
-        tvShowDetails={tvShowDetails}
-      />
       {/* If there are NO movies after the filters are applied then show a message and Filter button  */}
       {getFilteredTVShows.length === 0 && state.oSaved.savedTVShows.length !== 0 && (
         <View style={[styles.noItemsShownPosition, { alignItems: "center" }]}>

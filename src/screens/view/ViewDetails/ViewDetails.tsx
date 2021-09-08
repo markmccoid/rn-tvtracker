@@ -143,8 +143,8 @@ const ViewDetails = ({ navigation, route }: DetailsScreenProps) => {
               onPress={async () => {
                 setIsLoading(true);
                 navigation.goBack();
-                await deleteTVShow(tvShowData.id);
                 setIsLoading(false);
+                await deleteTVShow(tvShowData.id);
               }}
             >
               <DeleteIcon size={25} />
