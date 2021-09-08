@@ -171,8 +171,9 @@ export const refreshTVShow = async (
       const notificationData = {
         title: `${showName} New Episode`,
         body: `New Episode of ${showName} on ${nextAirDateFormatted}`,
-        triggerDate: new Date(newNextAirDate * 1000),
+        triggerDate: new Date(newNextAirDate * 1000), //Need to mult by 1000 because we are storing epoch seconds
       };
+      //Notification will run on the nextAirDate at 9am
       scheduleLocalNotification(
         notificationData.title,
         notificationData.body,
