@@ -166,19 +166,30 @@ export const refreshTVShow = async (
     const newNextAirDate = latesTVShowDetails.nextEpisodeToAir?.airDate?.epoch;
     // We should only see this condition once when the next air date changes.
     if (newNextAirDate > currNextAirDate) {
+      const currentDate = new Date();
       const showName = state.oSaved.getTVShowDetails(tvShowId).name;
       const nextAirDateFormatted = latesTVShowDetails.nextEpisodeToAir?.airDate?.formatted;
       const notificationData = {
         title: `${showName} New Episode`,
         body: `New Episode of ${showName} on ${nextAirDateFormatted}`,
         triggerDate: new Date(newNextAirDate * 1000), //Need to mult by 1000 because we are storing epoch seconds
+        triggerDate2: new Date(currentDate.setMinutes(currentDate.getMinutes() + 10)),
       };
       //Notification will run on the nextAirDate at 9am
-      scheduleLocalNotification(
+      await scheduleLocalNotification(
         notificationData.title,
         notificationData.body,
         tvShowId,
         notificationData.triggerDate,
+        9
+      );
+      //! Notification scheduled for 10 minutes after this is run
+      //! May not keep this notification
+      await scheduleLocalNotification(
+        notificationData.title,
+        notificationData.body,
+        tvShowId,
+        notificationData.triggerDate2,
         9
       );
     }
