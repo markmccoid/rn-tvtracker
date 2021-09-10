@@ -175,33 +175,6 @@ const DetailMainInfo: React.FC<Props> = ({
             <ShowStatusBlock status={tvShow.status} />
             <AverageEpisodeTimeBlock avgEpisodeRunTime={avgEpisodeRunTime} />
           </View>
-          {isInSavedTVShows && (
-            <View
-              style={{
-                justifyContent: "flex-end",
-                alignItems: "center",
-                marginVertical: 10,
-                flexGrow: 1,
-              }}
-            >
-              <Button
-                onPress={() => {
-                  if (transitionRef.current) {
-                    transitionRef.current.animateNextTransition();
-                  }
-                  setViewTags((prev) => !prev);
-                }}
-                title={viewTags ? "Hide Tags" : "Show Tags"}
-                bgOpacity="ff"
-                bgColor={colors.primary}
-                small
-                // width={100}
-                wrapperStyle={{ borderRadius: 10, paddingLeft: 10, paddingRight: 10 }}
-                color="#fff"
-                noBorder
-              />
-            </View>
-          )}
         </View>
         <GenresBlock genres={tvShow.genres} />
       </View>

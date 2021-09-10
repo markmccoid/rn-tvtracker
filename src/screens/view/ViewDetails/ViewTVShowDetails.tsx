@@ -1,5 +1,13 @@
 import React, { useEffect } from "react";
-import { View, Animated, StyleSheet, TouchableOpacity, Dimensions, Text } from "react-native";
+import {
+  View,
+  Animated,
+  StyleSheet,
+  TouchableOpacity,
+  Dimensions,
+  Text,
+  ScrollView,
+} from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { MotiView, AnimatePresence } from "moti";
 import * as Linking from "expo-linking";
@@ -23,6 +31,7 @@ import AnimatedPickImage from "./AnimatedPickImage";
 import HiddenContainer from "../../../components/HiddenContainer/HiddenContainer";
 import DetailSelectTags from "./DetailSelectTags";
 import DetailButtonBar from "./DetailButtonBar";
+import DetailToggleTags from "./DetailToggleTags";
 
 //@types
 import {
@@ -166,77 +175,98 @@ const ViewTVShowDetails = ({ tvShow, isInSavedTVShows }: Props) => {
       </View>
 
       {isInSavedTVShows && (
-        <View>
-          <Transitioning.View ref={ref} transition={transition2}>
-            <View
-              style={{
-                marginLeft: 5,
-                flexDirection: "row",
-                alignItems: "center",
-              }}
-            >
-              {/* <Text
-                style={{
-                  fontSize: 18,
-                  fontWeight: "bold",
-                  marginRight: 5,
-                }}
-              >
-                Tags:
-              </Text> */}
-              {viewTags ? (
-                <View
-                  style={{
-                    flex: 1,
-                    flexDirection: "row",
-                    flexWrap: "wrap",
-                  }}
-                >
-                  <DetailSelectTags
-                    viewTags={viewTags}
-                    tags={tags}
-                    onSelectTag={(tagObj) =>
-                      addTagToTVShow({ tvShowId: tvShow.id, tagId: tagObj.tagId })
-                    }
-                    removeTagFromTVShow={(tagObj) =>
-                      removeTagFromTVShow({
-                        tvShowId: tvShow.id,
-                        tagId: tagObj.tagId,
-                      })
-                    }
-                  />
-                </View>
-              ) : (
-                <View
-                  style={{
-                    flex: 1,
-                    flexDirection: "row",
-                    flexWrap: "wrap",
-                  }}
-                >
-                  {assignedTags.map((tagObj) => {
-                    return <Text style={styles.tagItem}>{tagObj.tagName}</Text>;
-                  })}
-                </View>
-              )}
+        <DetailToggleTags tvShowId={tvShow.id} />
+        // <View>
+        //   <Transitioning.View ref={ref} transition={transition2}>
+        //     <View
+        //       style={{
+        //         marginLeft: 5,
+        //         flexDirection: "row",
+        //         alignItems: "center",
+        //       }}
+        //     >
+        //       {/* <Text
+        //         style={{
+        //           fontSize: 18,
+        //           fontWeight: "bold",
+        //           marginRight: 5,
+        //         }}
+        //       >
+        //         Tags:
+        //       </Text> */}
+        //       {viewTags ? (
+        //         <View
+        //           style={{
+        //             flex: 1,
+        //             flexDirection: "row",
+        //             flexWrap: "wrap",
+        //           }}
+        //         >
+        //           <DetailSelectTags
+        //             viewTags={viewTags}
+        //             tags={tags}
+        //             onSelectTag={(tagObj) =>
+        //               addTagToTVShow({ tvShowId: tvShow.id, tagId: tagObj.tagId })
+        //             }
+        //             removeTagFromTVShow={(tagObj) =>
+        //               removeTagFromTVShow({
+        //                 tvShowId: tvShow.id,
+        //                 tagId: tagObj.tagId,
+        //               })
+        //             }
+        //           />
+        //         </View>
+        //       ) : (
+        //         <View style={{ flexDirection: "row", alignItems: "center" }}>
+        //           <TouchableOpacity
+        //             onPress={() => {
+        //               if (ref.current) {
+        //                 ref.current.animateNextTransition();
+        //               }
+        //               setViewTags((prev) => !prev);
+        //             }}
+        //           >
+        //             <Text style={[styles.tagItem, styles.tagEdit]}>Edit</Text>
+        //           </TouchableOpacity>
+        //           <ScrollView
+        //             horizontal
+        //             style={{ width }}
+        //             // contentContainerStyle={{ width: width + 100 }}
+        //             // style={{
+        //             //   flex: 1,
+        //             //   flexDirection: "row",
+        //             //   flexWrap: "wrap",
+        //             // }}
+        //           >
+        //             {assignedTags.map((tagObj) => {
+        //               return (
+        //                 <Text key={tagObj.tagId} style={styles.tagItem}>
+        //                   {tagObj.tagName}
+        //                 </Text>
+        //               );
+        //             })}
+        //             <Text style={{ width: 10 }}></Text>
+        //           </ScrollView>
+        //         </View>
+        //       )}
 
-              {/* <TagCloud>
-                {assignedTags.map((tagObj) => {
-                  return (
-                    <TagItem
-                      key={tagObj.tagId}
-                      tagId={tagObj.tagId}
-                      tagName={tagObj.tagName}
-                      isSelected={tagObj.isSelected}
-                      size="s"
-                      isViewOnly
-                    />
-                  );
-                })}
-              </TagCloud> */}
-            </View>
-          </Transitioning.View>
-        </View>
+        //       {/* <TagCloud>
+        //         {assignedTags.map((tagObj) => {
+        //           return (
+        //             <TagItem
+        //               key={tagObj.tagId}
+        //               tagId={tagObj.tagId}
+        //               tagName={tagObj.tagName}
+        //               isSelected={tagObj.isSelected}
+        //               size="s"
+        //               isViewOnly
+        //             />
+        //           );
+        //         })}
+        //       </TagCloud> */}
+        //     </View>
+        //   </Transitioning.View>
+        // </View>
       )}
       <DetailButtonBar
         viewPickImage={viewPickImage}
@@ -341,6 +371,11 @@ const styles = StyleSheet.create({
     marginRight: 5,
     marginBottom: 4,
     backgroundColor: `${colors.includeGreen}55`,
+  },
+  tagEdit: {
+    backgroundColor: colors.includeGreen,
+    borderRadius: 3,
+    fontWeight: "bold",
   },
 });
 //`imdb:///find?q=${movie.title}`
