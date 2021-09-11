@@ -9,8 +9,42 @@ import { useOState, useOActions } from "../../../store/overmind";
 import { useDimensions } from "@react-native-community/hooks";
 import { EditIcon, CloseIcon, AddIcon } from "../../../components/common/Icons";
 
-// ------------
-const AddTagButton = ({ noTags }) => {
+//-- Animation props ------------
+const animTags = {
+  from: {
+    opacity: 0,
+    scale: 0.5,
+  },
+  animate: {
+    opacity: 1,
+    scale: 1,
+  },
+  exit: {
+    opacity: 0,
+    scale: 0.1,
+    height: 0,
+  },
+};
+
+const animIcon = {
+  from: {
+    opacity: 0,
+    rotate: "180deg",
+  },
+  animate: {
+    opacity: 1,
+    rotate: "0deg",
+  },
+  transition: {
+    delay: 100,
+  },
+};
+//-- Animation props ------------
+
+// ------------------------
+// Add Or Edit Tag Button
+// ------------------------
+const AddEditTagButton = ({ noTags, onPress }) => {
   const styles = StyleSheet.create({
     wrapper: {
       flexDirection: "row",
@@ -27,19 +61,45 @@ const AddTagButton = ({ noTags }) => {
     },
   });
   return (
-    <View style={styles.wrapper}>
-      {noTags ? (
-        <>
-          <AddIcon size={25} color={colors.buttonPrimaryText} />
-          <Text style={styles.text}>Add Tags</Text>
-        </>
-      ) : (
-        <EditIcon size={20} color={"black"} style={{ marginTop: -5 }} />
-      )}
-    </View>
+    <Pressable
+      style={({ pressed }) => {
+        return {
+          backgroundColor: pressed ? "#ffffff66" : "transparent",
+          transform: [{ translateX: pressed ? 2 : 0 }],
+          paddingRight: 10,
+        };
+      }}
+      onPress={onPress}
+    >
+      <MotiView {...animIcon} style={styles.wrapper}>
+        {noTags ? (
+          <MotiView
+            style={{ flexDirection: "row", alignItems: "center" }}
+            from={{
+              scale: 0.6,
+            }}
+            animate={{
+              scale: 1,
+            }}
+            transition={{
+              type: "timing",
+              duration: 1000,
+              delay: 200,
+            }}
+          >
+            <AddIcon size={25} color={colors.buttonPrimaryText} />
+            <Text style={styles.text}>Add Tags</Text>
+          </MotiView>
+        ) : (
+          <EditIcon size={20} color={"black"} style={{ marginTop: -5 }} />
+        )}
+      </MotiView>
+    </Pressable>
   );
 };
 
+// --------------------
+// MAIN Component Code
 // --------------------
 const DetailToggleTags = ({ tvShowId }) => {
   const [viewTags, setViewTags] = React.useState(false);
@@ -50,36 +110,6 @@ const DetailToggleTags = ({ tvShowId }) => {
   let assignedTags = state.oSaved.getTVShowTags(tvShowId);
   let { removeTagFromTVShow, addTagToTVShow } = actions.oSaved;
   const { width, height } = useDimensions().window;
-  //-- Animation props ------------
-  const animTags = {
-    from: {
-      opacity: 0,
-      scale: 0.5,
-    },
-    animate: {
-      opacity: 1,
-      scale: 1,
-    },
-    exit: {
-      opacity: 0,
-      scale: 0.1,
-      height: 0,
-    },
-  };
-  const animIcon = {
-    from: {
-      opacity: 0,
-      rotate: "180deg",
-    },
-    animate: {
-      opacity: 1,
-      rotate: "0deg",
-    },
-    transition: {
-      delay: 100,
-    },
-  };
-  //-- Animation props ------------
 
   return (
     <View style={styles.wrapper}>
@@ -134,33 +164,42 @@ const DetailToggleTags = ({ tvShowId }) => {
       </AnimatePresence>
       <AnimatePresence>
         {!viewTags && (
-          <MotiView style={{ flexDirection: "row", alignItems: "center" }}>
-            <MotiView {...animIcon}>
-              <Pressable
-                style={({ pressed }) => {
-                  return {
-                    backgroundColor: pressed ? "#ffffff66" : "transparent",
-                    transform: [{ translateX: pressed ? 2 : 0 }],
-                    paddingRight: 10,
-                  };
-                }}
-                onPress={() => setViewTags((prev) => !prev)}
-              >
-                <AddTagButton noTags={assignedTags.length === 0} />
-              </Pressable>
-            </MotiView>
+          <MotiView
+            from={{
+              opacity: 0,
+              scale: 0.5,
+              // height: 0,
+            }}
+            animate={{
+              opacity: 1,
+              scale: 1,
+            }}
+            exit={{
+              opacity: 0,
+              translateY: -110,
+            }}
+            exitTransition={{
+              type: "timing",
+              duration: 300,
+            }}
+            style={{ flexDirection: "row", alignItems: "center" }}
+          >
+            <AddEditTagButton
+              onPress={() => setViewTags((prev) => !prev)}
+              noTags={assignedTags.length === 0}
+            />
+            {/* Scrollview items are animated to delay longer based on their index */}
             <ScrollView horizontal style={{ width }}>
               {assignedTags.map((tagObj, index) => {
                 return (
                   <MotiView
+                    key={tagObj.tagId}
                     from={{ opacity: 0, scale: 0.5 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ type: "timing", delay: index * 100 }}
                   >
                     <Pressable key={tagObj.tagId} onPress={() => setViewTags((prev) => !prev)}>
-                      <Text key={tagObj.tagId} style={styles.tagItem}>
-                        {tagObj.tagName}
-                      </Text>
+                      <Text style={styles.tagItem}>{tagObj.tagName}</Text>
                     </Pressable>
                   </MotiView>
                 );
