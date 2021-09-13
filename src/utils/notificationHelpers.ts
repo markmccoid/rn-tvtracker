@@ -24,11 +24,13 @@ export const scheduleLocalNotification = async (
   body: string,
   tvShowId: number,
   triggerDate: Date,
-  hourToSend: number = 9
+  hourToSend?: number
 ) => {
   const url = Linking.createURL(`/details/${tvShowId}`);
-  triggerDate.setHours(hourToSend);
-
+  if (hourToSend) {
+    triggerDate.setHours(hourToSend);
+  }
+  console.log("setting schedule", tvShowId, triggerDate);
   let notificationId = await Notifications.scheduleNotificationAsync({
     content: {
       title,
@@ -38,5 +40,5 @@ export const scheduleLocalNotification = async (
     trigger: triggerDate,
   });
 
-  // console.log(notificationId); // can be saved in AsyncStorage or send to server
+  console.log(notificationId); // can be saved in AsyncStorage or send to server
 };
