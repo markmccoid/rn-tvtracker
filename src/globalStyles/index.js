@@ -3,11 +3,13 @@ export const colors = {
   splashGreenLight: "#84ee4b",
   splashGreenDark: "#578e2c",
   primary: "#59922D", //"#4285ec",
-  buttonPrimary: "#578e2c",
+  buttonPrimary: "#7d9c66", //"#578e2c",
   buttonPrimaryText: "white",
   buttonPrimaryBorder: "#777",
+  buttonTextDark: "#212121",
   background: "#d7ebdb", //"#ebf4ff", //#dee9f7",
   navHeaderColor: "#E4EBE9",
+  imdbYellow: "#f6c418",
   // background: "#f2f2f2",
   darkbg: "#59922D", //"#037aff", //"#005fcc", //"#2f6eb5", // Background used for buttons, etc
   darkfg: "white", // Foreground color to be used with darkbg
@@ -51,6 +53,17 @@ export const styleHelpers = {
     shadowOpacity: 0.5,
     shadowRadius: 5,
     elevation: 1,
+  },
+  buttonShadow: {
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.23,
+    shadowRadius: 2.62,
+
+    elevation: 4,
   },
 };
 

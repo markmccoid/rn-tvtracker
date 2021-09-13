@@ -26,6 +26,7 @@ import { SeasonsScreenProps } from "../viewTypes";
 import { useOActions, useOState } from "../../../store/overmind";
 import { colors } from "../../../globalStyles";
 import { TVShowSeasonDetails } from "@markmccoid/tmdb_api";
+import PressableButton from "../../../components/common/PressableButton";
 
 type SeasonState = { [seasonNumber: number]: boolean } & {
   seasonCount: number;
@@ -216,15 +217,8 @@ const SeasonsScreen = ({ navigation, route }: SeasonsScreenProps) => {
           {seasonPicker.map((season) => {
             if (season === 0) return;
             return (
-              <TouchableOpacity
+              <PressableButton
                 key={season}
-                style={{
-                  margin: 5,
-                  padding: 5,
-                  borderWidth: 1,
-                  borderRadius: 10,
-                  backgroundColor: colors.darkbg,
-                }}
                 onPress={() =>
                   sectionRef.current?.scrollToLocation({
                     sectionIndex: season - 1,
@@ -233,15 +227,61 @@ const SeasonsScreen = ({ navigation, route }: SeasonsScreenProps) => {
                     animated: true,
                   })
                 }
+                style={{
+                  borderRadius: 14,
+                  // width: width / 2.5,
+                  margin: 5,
+                  paddingVertical: 5,
+                  paddingHorizontal: 15,
+                  backgroundColor: colors.buttonPrimary,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  shadowColor: "#000",
+                  shadowOffset: {
+                    width: 0,
+                    height: 2,
+                  },
+                  shadowOpacity: 0.23,
+                  shadowRadius: 2.62,
+
+                  elevation: 4,
+                }}
               >
                 <Text
                   style={{
-                    color: colors.darkfg,
+                    color: colors.buttonTextDark,
+                    fontSize: 12,
                   }}
                 >
                   {`Season ${season}`}
                 </Text>
-              </TouchableOpacity>
+              </PressableButton>
+              // <TouchableOpacity
+              //   key={season}
+              //   style={{
+              //     margin: 5,
+              //     padding: 5,
+              //     borderWidth: 1,
+              //     borderRadius: 10,
+              //     backgroundColor: colors.darkbg,
+              //   }}
+              //   onPress={() =>
+              //     sectionRef.current?.scrollToLocation({
+              //       sectionIndex: season - 1,
+              //       itemIndex: 0,
+              //       viewPosition: 0,
+              //       animated: true,
+              //     })
+              //   }
+              // >
+              //   <Text
+              //     style={{
+              //       color: colors.darkfg,
+              //     }}
+              //   >
+              //     {`Season ${season}`}
+              //   </Text>
+              // </TouchableOpacity>
             );
           })}
         </ScrollView>

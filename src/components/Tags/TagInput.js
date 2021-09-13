@@ -1,10 +1,11 @@
 import React from "react";
-import { View, TextInput, StyleSheet, Alert } from "react-native";
+import { View, TextInput, StyleSheet, Text } from "react-native";
 // import { Input, Button, ListItem } from "react-native-elements";
 import { Button } from "../common/Buttons";
+import PressableButton from "../common/PressableButton";
 import { useOActions } from "../../store/overmind";
 
-import { colors } from "../../globalStyles";
+import { colors, styleHelpers } from "../../globalStyles";
 
 const TagInput = () => {
   const [tagValue, setTagValue] = React.useState("");
@@ -23,7 +24,19 @@ const TagInput = () => {
         />
       </View>
       <View style={styles.tagButton}>
-        <Button
+        <PressableButton
+          style={styles.button}
+          onPress={() => {
+            if (tagValue.trim().length === 0) {
+              return;
+            }
+            addNewTag(tagValue);
+            setTagValue("");
+          }}
+        >
+          <Text style={{ color: "white" }}>Add</Text>
+        </PressableButton>
+        {/* <Button
           title="Add"
           bgColor={colors.primary}
           bgOpacity="ee"
@@ -37,7 +50,7 @@ const TagInput = () => {
             addNewTag(tagValue);
             setTagValue("");
           }}
-        />
+        /> */}
       </View>
     </View>
   );
@@ -64,6 +77,15 @@ let styles = StyleSheet.create({
   tagButton: {
     flex: 1,
     marginLeft: 10,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  button: {
+    backgroundColor: colors.buttonPrimary,
+    ...styleHelpers.buttonShadow,
+    paddingVertical: 5,
+    paddingHorizontal: 20,
+    borderRadius: 15,
   },
 });
 export default TagInput;

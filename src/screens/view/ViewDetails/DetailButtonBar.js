@@ -1,111 +1,98 @@
 import React from "react";
-import { StyleSheet, Animated, TouchableWithoutFeedback, View } from "react-native";
+import { StyleSheet, Text, View, Dimensions, Image } from "react-native";
 import * as WebBrowser from "expo-web-browser";
 import * as Linking from "expo-linking";
+import { colors, styleHelpers } from "../../../globalStyles";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import PressableButton from "../../../components/common/PressableButton";
 
-import { Button } from "../../../components/common/Buttons";
-import { colors } from "../../../globalStyles";
-import { CaretRightIcon, ImagesIcon } from "../../../components/common/Icons";
+const { width } = Dimensions.get("window");
 
-const DetailButtonBar = ({
-  viewPickImage,
-  setPickImage,
-  imdbId,
-  tvShowName,
-  isInSavedTVShows,
-}) => {
-  // Animated Icons
-  const iconAnim = React.useRef(new Animated.Value(0)).current;
-
-  const Rotate = (toValue) => {
-    Animated.timing(iconAnim, {
-      toValue,
-      duration: 500,
-      useNativeDriver: true,
-    }).start();
-  };
-
+const DetailButtonBar = ({ tvShow, isInSavedTVShows }) => {
+  const navigation = useNavigation();
+  const route = useRoute();
   return (
-    <View style={styles.buttonBar}>
-      <Button
-        onPress={() =>
-          Linking.openURL(`imdb:///title/${imdbId}`).catch((err) => {
-            Linking.openURL("https://apps.apple.com/us/app/imdb-movies-tv-shows/id342792525");
-          })
-        }
-        title="Open in IMDB"
-        bgOpacity="ff"
-        bgColor={colors.primary}
-        small
-        // width={150}
-        wrapperStyle={{ borderRadius: 10, paddingLeft: 15, paddingRight: 15 }}
-        color="#fff"
-        noBorder
-      />
-      <Button
-        onPress={async () => {
-          let webURL = `https://google.com/search?query=${tvShowName} tv showg`;
-          webURL = webURL.replace(/\s+/g, "%20");
-          await WebBrowser.openBrowserAsync(webURL);
-        }}
-        title="Google It"
-        bgOpacity="ff"
-        bgColor={colors.primary}
-        small
-        // width={width / 3}
-        wrapperStyle={{
-          borderRadius: 10,
-          paddingLeft: 15,
-          paddingRight: 15,
-        }}
-        color="#fff"
-        noBorder
-      />
-      {/* ONLY Show below if movie has been saved (Image Picker) */}
-      {isInSavedTVShows && (
-        <TouchableWithoutFeedback
+    <View style={styles.wrapper}>
+      <View style={[styles.buttonRow, { marginBottom: 8 }]}>
+        <PressableButton
           onPress={() => {
-            Rotate(viewPickImage); //start icon animation
+            navigation.navigate(`${route.name}Seasons`, {
+              tvShowId: tvShow.id,
+              seasonNumbers: tvShow?.seasons.map((show) => show.seasonNumber),
+              logo: { showName: tvShow.name },
+            });
+          }}
+        >
+          <View style={styles.button}>
+            <Text style={{ color: colors.buttonTextDark }}>{`View ${
+              tvShow?.seasons.filter((s) => s.seasonNumber !== 0).length
+            } Seasons`}</Text>
+          </View>
+        </PressableButton>
 
-            setPickImage((prevValue) => (prevValue === 0 ? 1 : 0));
+        <PressableButton
+          style={[styles.button, { backgroundColor: colors.imdbYellow }]}
+          onPress={() => {
+            const imdbId = imdbId;
+            const imdbLink = `imdb:///title/${imdbId}/episodes`;
+
+            Linking.openURL(imdbLink).catch((err) => {
+              Linking.openURL(
+                "https://apps.apple.com/us/app/imdb-movies-tv-shows/id342792525"
+              );
+            });
+          }}
+        >
+          <Text style={{ fontWeight: "600", color: colors.buttonTextDark }}>IMDB Seasons</Text>
+        </PressableButton>
+      </View>
+
+      <View style={styles.buttonRow}>
+        <PressableButton
+          style={[
+            styles.button,
+            {
+              backgroundColor: "#4285F4",
+              flexDirection: "row",
+              justifyContent: "flex-start",
+              padding: 0,
+            },
+          ]}
+          onPress={async () => {
+            let webURL = `https://google.com/search?query=${tvShow.name} tv show`;
+            webURL = webURL.replace(/\s+/g, "%20");
+            await WebBrowser.openBrowserAsync(webURL);
           }}
         >
           <View
             style={{
+              backgroundColor: "white",
               borderRadius: 10,
-              flexDirection: "row",
               padding: 5,
-              backgroundColor: colors.primary,
-              paddingHorizontal: 15,
-              justifyContent: "center",
+              marginRight: 15,
             }}
           >
-            <Animated.View
-              style={{
-                marginLeft: 5,
-                transform: [
-                  {
-                    rotate: iconAnim.interpolate({
-                      inputRange: [0, 1],
-                      outputRange: ["0deg", "90deg"],
-                    }),
-                  },
-
-                  {
-                    scale: iconAnim.interpolate({
-                      inputRange: [0, 0.5, 1],
-                      outputRange: [1, 1.5, 2],
-                    }),
-                  },
-                ],
-              }}
-            >
-              <CaretRightIcon size={20} color="white" />
-            </Animated.View>
-            <ImagesIcon size={20} color="white" style={{ marginLeft: 20 }} />
+            <Image
+              source={require("../../../../assets/GoogleLogoSmall.png")}
+              style={{ width: 20, height: 20 }}
+            />
           </View>
-        </TouchableWithoutFeedback>
-      )}
+          <Text style={{ fontWeight: "600", color: "#212121" }}>Google It</Text>
+        </PressableButton>
+
+        <PressableButton
+          style={[styles.button, { backgroundColor: colors.imdbYellow }]}
+          onPress={() =>
+            Linking.openURL(`imdb:///title/${tvShow.imdbId}`).catch((err) => {
+              Linking.openURL(
+                "https://apps.apple.com/us/app/imdb-movies-tv-shows/id342792525"
+              );
+            })
+          }
+        >
+          <Text style={{ fontWeight: "600", color: "#212121" }}>Open in IMDB</Text>
+        </PressableButton>
+      </View>
     </View>
   );
 };
@@ -113,9 +100,8 @@ const DetailButtonBar = ({
 export default DetailButtonBar;
 
 const styles = StyleSheet.create({
-  buttonBar: {
-    flexDirection: "row",
-    justifyContent: "space-around",
+  wrapper: {
+    flexDirection: "column",
     borderWidth: 1,
     borderColor: "#ccc",
     borderRadius: 15,
@@ -123,5 +109,20 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
     marginBottom: 5,
     backgroundColor: "#ffffff85",
+  },
+  buttonRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginHorizontal: 10,
+  },
+  button: {
+    // borderWidth: 1,
+    borderRadius: 15,
+    width: width / 2.5,
+    padding: 5,
+    backgroundColor: colors.buttonPrimary,
+    ...styleHelpers.buttonShadow,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });

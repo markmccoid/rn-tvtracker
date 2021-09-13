@@ -117,9 +117,12 @@ const ViewTVShowDetails = ({ tvShow, isInSavedTVShows }: Props) => {
         setViewTags={setViewTags}
         transitionRef={ref}
       />
+
+      {isInSavedTVShows && <DetailToggleTags tvShowId={tvShow.id} />}
+
       {/* Saved Details button Bar and components
         ------------------------------------------- */}
-      <View
+      {/* <View
         style={{
           flexDirection: "row",
           justifyContent: "space-between",
@@ -172,109 +175,9 @@ const ViewTVShowDetails = ({ tvShow, isInSavedTVShows }: Props) => {
         >
           <Text style={{ fontWeight: "600" }}>IMDB Seasons</Text>
         </TouchableOpacity>
-      </View>
+      </View> */}
 
-      {isInSavedTVShows && (
-        <DetailToggleTags tvShowId={tvShow.id} />
-        // <View>
-        //   <Transitioning.View ref={ref} transition={transition2}>
-        //     <View
-        //       style={{
-        //         marginLeft: 5,
-        //         flexDirection: "row",
-        //         alignItems: "center",
-        //       }}
-        //     >
-        //       {/* <Text
-        //         style={{
-        //           fontSize: 18,
-        //           fontWeight: "bold",
-        //           marginRight: 5,
-        //         }}
-        //       >
-        //         Tags:
-        //       </Text> */}
-        //       {viewTags ? (
-        //         <View
-        //           style={{
-        //             flex: 1,
-        //             flexDirection: "row",
-        //             flexWrap: "wrap",
-        //           }}
-        //         >
-        //           <DetailSelectTags
-        //             viewTags={viewTags}
-        //             tags={tags}
-        //             onSelectTag={(tagObj) =>
-        //               addTagToTVShow({ tvShowId: tvShow.id, tagId: tagObj.tagId })
-        //             }
-        //             removeTagFromTVShow={(tagObj) =>
-        //               removeTagFromTVShow({
-        //                 tvShowId: tvShow.id,
-        //                 tagId: tagObj.tagId,
-        //               })
-        //             }
-        //           />
-        //         </View>
-        //       ) : (
-        //         <View style={{ flexDirection: "row", alignItems: "center" }}>
-        //           <TouchableOpacity
-        //             onPress={() => {
-        //               if (ref.current) {
-        //                 ref.current.animateNextTransition();
-        //               }
-        //               setViewTags((prev) => !prev);
-        //             }}
-        //           >
-        //             <Text style={[styles.tagItem, styles.tagEdit]}>Edit</Text>
-        //           </TouchableOpacity>
-        //           <ScrollView
-        //             horizontal
-        //             style={{ width }}
-        //             // contentContainerStyle={{ width: width + 100 }}
-        //             // style={{
-        //             //   flex: 1,
-        //             //   flexDirection: "row",
-        //             //   flexWrap: "wrap",
-        //             // }}
-        //           >
-        //             {assignedTags.map((tagObj) => {
-        //               return (
-        //                 <Text key={tagObj.tagId} style={styles.tagItem}>
-        //                   {tagObj.tagName}
-        //                 </Text>
-        //               );
-        //             })}
-        //             <Text style={{ width: 10 }}></Text>
-        //           </ScrollView>
-        //         </View>
-        //       )}
-
-        //       {/* <TagCloud>
-        //         {assignedTags.map((tagObj) => {
-        //           return (
-        //             <TagItem
-        //               key={tagObj.tagId}
-        //               tagId={tagObj.tagId}
-        //               tagName={tagObj.tagName}
-        //               isSelected={tagObj.isSelected}
-        //               size="s"
-        //               isViewOnly
-        //             />
-        //           );
-        //         })}
-        //       </TagCloud> */}
-        //     </View>
-        //   </Transitioning.View>
-        // </View>
-      )}
-      <DetailButtonBar
-        viewPickImage={viewPickImage}
-        setPickImage={setPickImage}
-        imdbId={tvShow.imdbId}
-        tvShowName={tvShow.name}
-        isInSavedTVShows={isInSavedTVShows}
-      />
+      <DetailButtonBar tvShow={tvShow} isInSavedTVShows={isInSavedTVShows} />
 
       <View style={{ overflow: "visible", zIndex: 10 }}>
         {isInSavedTVShows && (
