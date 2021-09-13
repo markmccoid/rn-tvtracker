@@ -175,7 +175,6 @@ export const refreshTVShow = async (
         triggerDate: new Date(newNextAirDate * 1000), //Need to mult by 1000 because we are storing epoch seconds
         triggerDate2: new Date(currentDate.setMinutes(currentDate.getMinutes() + 10)),
       };
-      console.log("TESTING Schedule", notificationData);
       //Notification will run on the nextAirDate at 9am
       await scheduleLocalNotification(
         notificationData.title,

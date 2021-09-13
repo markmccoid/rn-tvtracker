@@ -30,7 +30,7 @@ export const scheduleLocalNotification = async (
   if (hourToSend) {
     triggerDate.setHours(hourToSend);
   }
-  console.log("setting schedule", tvShowId, triggerDate);
+
   let notificationId = await Notifications.scheduleNotificationAsync({
     content: {
       title,
@@ -40,5 +40,5 @@ export const scheduleLocalNotification = async (
     trigger: triggerDate,
   });
 
-  console.log(notificationId); // can be saved in AsyncStorage or send to server
+  // console.log(notificationId); // can be saved in AsyncStorage or send to server
 };
