@@ -89,8 +89,8 @@ export const TagItemEnhanced = ({
   );
 };
 
-const TagCloudEnhanced = ({ children }) => {
-  return <TagContainer>{children}</TagContainer>;
+const TagCloudEnhanced = ({ children, alignment = "center" }) => {
+  return <TagContainer alignment={alignment}>{children}</TagContainer>;
 };
 
 TagItemEnhanced.propTypes = {
