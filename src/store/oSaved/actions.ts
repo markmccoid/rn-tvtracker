@@ -910,6 +910,41 @@ export const getEpisodeExternalIds = async ({ state, effects }: Context, payload
   );
   return externalIdData;
 };
+
+export const getLastestEpisodeWatched = (
+  { state }: Context,
+  payload: { tvShowId: number }
+) => {
+  // Get the episodeState object for the passed tvShowId
+  const episodeState = state.oSaved.savedTVShows.find(
+    (show) => show.id === payload.tvShowId
+  ).episodeState;
+  if (!episodeState) return [1, 1];
+  // Reduce to find the last Season/Episode watched
+  const largest = Object.entries(episodeState).reduce(
+    (largest, [key, value]) => {
+      // If value==false, then not watched, so bail and continue
+      if (!value) return largest;
+      // Parse out season and episode
+      const season = parseInt(key.slice(0, key.indexOf("-")));
+      const episode = parseInt(key.slice(key.indexOf("-") + 1));
+      // Create special episode value that incorporates seasons so we can check it
+      // while taking into account the season
+      const episodeToCheck = season * 100 + episode;
+      // Since season is baked into episodeToCheck field, we just
+      // need to check it
+      if (episodeToCheck > largest[2]) {
+        largest[0] = season;
+        largest[1] = episode;
+        largest[2] = episodeToCheck;
+      }
+      return largest;
+    },
+    [0, 0, 0]
+  );
+  // Return [Season, Episode]
+  return [largest[0], largest[1]];
+};
 //*==============================================
 //*- ACTION HELPERS
 //*==============================================
@@ -940,6 +975,34 @@ function updateUserRatingOnTVShow(
   return tvShowArray;
 }
 
+function findLastestWatched() {
+  /**
+   * Use this reduce routine in a function that looks at the
+   * oState.savedTVShows.episodeState, but inside the reduce bail
+   * early IF the boolean is true
+   * Also rework to work with an arrya of objects  shouldn't be too hard
+   */
+
+  const watchedKeys = Object.keys(watchedObj);
+  const lastSeasonEp = watchedKeys.reduce(
+    (largest, item) => {
+      const season = parseInt(item.slice(0, item.indexOf("-")));
+      const episode = parseInt(item.slice(item.indexOf("-") + 1));
+      const episodeToCheck = parseInt(season * 10 + episode);
+
+      if (season >= largest[0]) {
+        largest[0] = season;
+      }
+      if (episodeToCheck > largest[2]) {
+        largest[1] = episode;
+        largest[2] = episodeToCheck;
+      }
+      return largest;
+    },
+    [0, 0, 0]
+  );
+  console.log("Last Season / Episode", lastSeasonEp);
+}
 //*=========================
 //- Previous Episode State Marking helpers
 //*=========================
@@ -973,7 +1036,7 @@ function buildEpisodesToMarkObj(
   startingEpisode,
   tempSeasonsData: TVShowSeasonDetails[]
 ) {
-  let watchedObj = {};
+  let watchedObj: { [x: string]: boolean } = {};
   //* Recursive function
   const recurseSeasonsBackwards = (seasonNumber: number, numOfEpisodes: number) => {
     for (let i = 1; i <= numOfEpisodes; i++) {
@@ -988,6 +1051,7 @@ function buildEpisodesToMarkObj(
   };
   //* -----------------
   recurseSeasonsBackwards(startingSeason, startingEpisode);
+
   return watchedObj;
 }
 

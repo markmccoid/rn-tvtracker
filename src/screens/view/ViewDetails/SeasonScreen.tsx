@@ -24,7 +24,7 @@ import {
 import { SeasonsScreenProps } from "../viewTypes";
 
 import { useOActions, useOState } from "../../../store/overmind";
-import { colors } from "../../../globalStyles";
+import { colors, styleHelpers } from "../../../globalStyles";
 import { TVShowSeasonDetails } from "@markmccoid/tmdb_api";
 import PressableButton from "../../../components/common/PressableButton";
 
@@ -135,7 +135,8 @@ const SeasonsScreen = ({ navigation, route }: SeasonsScreenProps) => {
   const [seasonData, setSeasonData] = React.useState<SectionListType[]>([]);
   const [seasonPicker, setSeasonPicker] = React.useState<number[]>([]);
   const [seasonState, setSeasonState] = React.useState<SeasonState>(undefined);
-  const { getTVShowSeasonData, apiGetTVShowDetails } = actions.oSaved;
+  const { getTVShowSeasonData, apiGetTVShowDetails, getLastestEpisodeWatched } =
+    actions.oSaved;
   const { getTVShowSeasonDetails, getWatchedEpisodes } = state.oSaved;
 
   const getSeasonData = async () => {
@@ -167,6 +168,17 @@ const SeasonsScreen = ({ navigation, route }: SeasonsScreenProps) => {
     getSeasonData();
   }, [tvShowId]);
 
+  // React.useEffect(() => {
+  //   if (!sectionRef.current) return;
+  //   const [latestSeason, latestEpisode] = getLastestEpisodeWatched({ tvShowId });
+  //   console.log("latest", latestSeason);
+  // sectionRef.current?.scrollToLocation({
+  //   sectionIndex: 1,
+  //   itemIndex: 0,
+  //   viewPosition: 0,
+  //   animated: true,
+  // });
+  // }, [sectionRef.current]);
   //----------------------
   const sectionGetItemLayout = sectionListGetItemLayout({
     // The height of the row with rowData at the given sectionIndex and rowIndex
@@ -227,28 +239,23 @@ const SeasonsScreen = ({ navigation, route }: SeasonsScreenProps) => {
                     animated: true,
                   })
                 }
-                style={{
-                  borderRadius: 14,
-                  // width: width / 2.5,
-                  margin: 5,
-                  paddingVertical: 5,
-                  paddingHorizontal: 15,
-                  backgroundColor: colors.buttonPrimary,
-                  alignItems: "center",
-                  justifyContent: "center",
-                  shadowColor: "#000",
-                  shadowOffset: {
-                    width: 0,
-                    height: 2,
+                style={[
+                  styleHelpers.buttonShadow,
+                  {
+                    borderRadius: 14,
+                    // width: width / 2.5,
+                    margin: 5,
+                    paddingVertical: 5,
+                    paddingHorizontal: 15,
+                    backgroundColor: colors.buttonPrimary,
+                    alignItems: "center",
+                    justifyContent: "center",
                   },
-                  shadowOpacity: 0.23,
-                  shadowRadius: 2.62,
-
-                  elevation: 4,
-                }}
+                ]}
               >
                 <Text
                   style={{
+                    fontWeight: "600",
                     color: colors.buttonTextDark,
                     fontSize: 12,
                   }}
@@ -288,6 +295,16 @@ const SeasonsScreen = ({ navigation, route }: SeasonsScreenProps) => {
       </View>
       <SectionList
         ref={sectionRef}
+        onLayout={() => {
+          // try and scroll to latest season/episode
+          const [latestSeason, latestEpisode] = getLastestEpisodeWatched({ tvShowId });
+          sectionRef.current?.scrollToLocation({
+            sectionIndex: latestSeason - 1,
+            itemIndex: latestEpisode,
+            viewPosition: 0,
+            animated: true,
+          });
+        }}
         style={{ width: "100%" }}
         contentContainerStyle={{ paddingBottom: 55 }}
         sections={seasonData}
