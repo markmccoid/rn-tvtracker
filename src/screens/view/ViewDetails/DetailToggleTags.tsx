@@ -87,7 +87,17 @@ const AddEditTagButton = ({ noTags, onPress }) => {
               delay: 200,
             }}
           >
-            <AddIcon size={25} color={colors.buttonPrimaryText} />
+            <MotiView
+              from={{ scale: 1 }}
+              animate={{ scale: 1.3 }}
+              transition={{
+                type: "timing",
+                duration: 1000,
+                loop: true,
+              }}
+            >
+              <AddIcon size={25} color={colors.buttonPrimaryText} />
+            </MotiView>
             <Text style={styles.text}>Add Tags</Text>
           </MotiView>
         ) : (

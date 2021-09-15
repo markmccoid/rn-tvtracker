@@ -24,7 +24,7 @@ const DetailButtonBar = ({ tvShow, isInSavedTVShows }) => {
           }}
         >
           <View style={styles.button}>
-            <Text style={{ color: colors.buttonTextDark }}>{`View ${
+            <Text style={{ fontWeight: "600", color: colors.buttonTextDark }}>{`View ${
               tvShow?.seasons.filter((s) => s.seasonNumber !== 0).length
             } Seasons`}</Text>
           </View>

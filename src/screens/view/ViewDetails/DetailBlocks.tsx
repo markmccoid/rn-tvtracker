@@ -43,7 +43,7 @@ export const ShowStatusBlock = ({ status }) => {
   return (
     <View style={styles.textRow}>
       <Text style={styles.textRowLabel}>Status:</Text>
-      <Text style={{ fontSize: 18 }}>{status}</Text>
+      <Text style={[styles[`${status.toLowerCase()}`], { fontSize: 18 }]}>{status}</Text>
     </View>
   );
 };
@@ -76,5 +76,11 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     marginRight: 5,
+  },
+  ended: {
+    color: "#941100",
+  },
+  canceled: {
+    color: "red",
   },
 });
