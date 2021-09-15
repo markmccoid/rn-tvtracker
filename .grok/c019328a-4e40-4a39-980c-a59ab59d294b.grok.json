@@ -94,29 +94,85 @@
 			},
 			"id": "38259b31-65f8-4668-9f75-d7a2bcea44df",
 			"type": "markdown"
+		},
+		{
+			"blockId": "f4dbaed0-4a7f-474f-92de-6f57869460f5",
+			"caption": "Scheduling Notification in refreshTVShow function",
+			"data": {
+				"contents": "  //* -- Refresh being called automatically because something in createUpdateList() function\r\n  if (isAutoUpdate) {\r\n    const currNextAirDate = state.oSaved.getTVShowDetails(tvShowId).nextAirDate?.epoch;\r\n    const newNextAirDate = latesTVShowDetails.nextEpisodeToAir?.airDate?.epoch;\r\n    // We should only see this condition once when the next air date changes.\r\n    if (newNextAirDate > currNextAirDate) {\r\n      const showName = state.oSaved.getTVShowDetails(tvShowId).name;\r\n      const nextAirDateFormatted = latesTVShowDetails.nextEpisodeToAir?.airDate?.formatted;\r\n      const notificationData = {\r\n        title: `${showName} New Episode`,\r\n        body: `New Episode of ${showName} on ${nextAirDateFormatted}`,\r\n        triggerDate: new Date(newNextAirDate * 1000),\r\n      };\r\n      scheduleLocalNotification(\r\n        notificationData.title,\r\n        notificationData.body,\r\n        tvShowId,\r\n        notificationData.triggerDate,\r\n        9\r\n      );\r\n    }\r\n  }\r\n",
+				"file": "src/store/oSaved/actions.ts",
+				"range": {
+					"end": {
+						"character": 2147483647,
+						"line": 183
+					},
+					"start": {
+						"character": 0,
+						"line": 162
+					}
+				},
+				"scm": {
+					"authors": [
+						{
+							"email": "markmccoid@gmail.com"
+						}
+					],
+					"branch": "master",
+					"file": "src/store/oSaved/actions.ts",
+					"remotes": [
+						{
+							"name": "origin",
+							"url": "github.com/markmccoid/rn-tvtracker"
+						}
+					],
+					"repoName": "tvtracker",
+					"revision": "5e439f4fe2918a58b13792bb6cdff73d3cce73cd",
+					"sameRepo": true
+				}
+			},
+			"id": "f4dbaed0-4a7f-474f-92de-6f57869460f5",
+			"type": "code",
+			"version": 1
+		},
+		{
+			"blockId": "08122ca0-3ec3-40b3-b65d-a3aca6b81677",
+			"data": {
+				"formatCode": false,
+				"isPreviewing": true,
+				"text": "### Scheduling of Notification"
+			},
+			"id": "08122ca0-3ec3-40b3-b65d-a3aca6b81677",
+			"type": "markdown"
 		}
 	],
 	"graphViewMetadata": {
 		"edges": [
 			{
-				"id": "b62401f6-c12e-4fb9-92c9-7224beab9906_bottom_f63706f4-e2ef-4c3a-95f7-cab87361645e_top_bqnJ8xb4R5Cuc5auxVN78A",
+				"id": "b62401f6-c12e-4fb9-92c9-7224beab9906_bottom_f63706f4-e2ef-4c3a-95f7-cab87361645e_top_Khhn_XrnR4a_8qh-7z2GjQ",
 				"source": "b62401f6-c12e-4fb9-92c9-7224beab9906",
 				"sourceHandle": "bottom",
 				"target": "f63706f4-e2ef-4c3a-95f7-cab87361645e",
 				"targetHandle": "top"
 			},
 			{
-				"id": "38259b31-65f8-4668-9f75-d7a2bcea44df_bottom_33229fb2-9683-4b3f-b199-f8d8921a9b19_top_GaW5wql2R7inub8BDr5Kww",
+				"id": "38259b31-65f8-4668-9f75-d7a2bcea44df_bottom_33229fb2-9683-4b3f-b199-f8d8921a9b19_top_kv4wurQqT5yWTPhCHT832g",
 				"source": "38259b31-65f8-4668-9f75-d7a2bcea44df",
 				"sourceHandle": "bottom",
 				"target": "33229fb2-9683-4b3f-b199-f8d8921a9b19",
+				"targetHandle": "top"
+			},
+			{
+				"id": "08122ca0-3ec3-40b3-b65d-a3aca6b81677_bottom_f4dbaed0-4a7f-474f-92de-6f57869460f5_top_o6JXz42vRvijl4ueZvKsGw",
+				"source": "08122ca0-3ec3-40b3-b65d-a3aca6b81677",
+				"sourceHandle": "bottom",
+				"target": "f4dbaed0-4a7f-474f-92de-6f57869460f5",
 				"targetHandle": "top"
 			}
 		],
 		"graph": {
 			"position": [
-				-1445.347439186285,
-				496.21334974221463
+				-2125.3474391862856,
+				521.2133497422146
 			],
 			"zoom": 0.9176398823113653
 		},
@@ -124,8 +180,10 @@
 			{
 				"blockId": "f63706f4-e2ef-4c3a-95f7-cab87361645e",
 				"dimensions": {
+					"height": 380.76214599609375,
+					"width": 546
 				},
-				"id": "dndnode_0",
+				"id": "f63706f4-e2ef-4c3a-95f7-cab87361645e",
 				"position": {
 					"x": 1590,
 					"y": -195
@@ -137,7 +195,7 @@
 					"height": 159,
 					"width": 463
 				},
-				"id": "dndnode_1",
+				"id": "b62401f6-c12e-4fb9-92c9-7224beab9906",
 				"position": {
 					"x": 1575,
 					"y": -420
@@ -147,7 +205,7 @@
 				"blockId": "33229fb2-9683-4b3f-b199-f8d8921a9b19",
 				"dimensions": {
 				},
-				"id": "dndnode_2",
+				"id": "33229fb2-9683-4b3f-b199-f8d8921a9b19",
 				"position": {
 					"x": 2160,
 					"y": -135
@@ -159,10 +217,32 @@
 					"height": 182,
 					"width": 452
 				},
-				"id": "dndnode_3",
+				"id": "38259b31-65f8-4668-9f75-d7a2bcea44df",
 				"position": {
 					"x": 2085,
 					"y": -420
+				}
+			},
+			{
+				"blockId": "f4dbaed0-4a7f-474f-92de-6f57869460f5",
+				"dimensions": {
+				},
+				"id": "dndnode_4",
+				"position": {
+					"x": 2625,
+					"y": -390
+				}
+			},
+			{
+				"blockId": "08122ca0-3ec3-40b3-b65d-a3aca6b81677",
+				"dimensions": {
+					"height": 130,
+					"width": 464
+				},
+				"id": "dndnode_5",
+				"position": {
+					"x": 2595,
+					"y": -555
 				}
 			}
 		]
