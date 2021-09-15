@@ -182,7 +182,7 @@ const SeasonsScreen = ({ navigation, route }: SeasonsScreenProps) => {
   //----------------------
   const sectionGetItemLayout = sectionListGetItemLayout({
     // The height of the row with rowData at the given sectionIndex and rowIndex
-    getItemHeight: (rowData, sectionIndex, rowIndex) => (sectionIndex === 0 ? 62 : 55),
+    getItemHeight: (rowData, sectionIndex, rowIndex) => (sectionIndex === 0 ? 62 : 62),
   });
 
   if (loading || !seasonData) {
@@ -231,14 +231,24 @@ const SeasonsScreen = ({ navigation, route }: SeasonsScreenProps) => {
             return (
               <PressableButton
                 key={season}
-                onPress={() =>
+                onPress={() => {
                   sectionRef.current?.scrollToLocation({
                     sectionIndex: season - 1,
                     itemIndex: 0,
                     viewPosition: 0,
                     animated: true,
-                  })
-                }
+                  });
+                  setTimeout(
+                    () =>
+                      sectionRef.current?.scrollToLocation({
+                        sectionIndex: season - 1,
+                        itemIndex: 0,
+                        viewPosition: 0,
+                        animated: true,
+                      }),
+                    500
+                  );
+                }}
                 style={[
                   styleHelpers.buttonShadow,
                   {
@@ -263,32 +273,6 @@ const SeasonsScreen = ({ navigation, route }: SeasonsScreenProps) => {
                   {`Season ${season}`}
                 </Text>
               </PressableButton>
-              // <TouchableOpacity
-              //   key={season}
-              //   style={{
-              //     margin: 5,
-              //     padding: 5,
-              //     borderWidth: 1,
-              //     borderRadius: 10,
-              //     backgroundColor: colors.darkbg,
-              //   }}
-              //   onPress={() =>
-              //     sectionRef.current?.scrollToLocation({
-              //       sectionIndex: season - 1,
-              //       itemIndex: 0,
-              //       viewPosition: 0,
-              //       animated: true,
-              //     })
-              //   }
-              // >
-              //   <Text
-              //     style={{
-              //       color: colors.darkfg,
-              //     }}
-              //   >
-              //     {`Season ${season}`}
-              //   </Text>
-              // </TouchableOpacity>
             );
           })}
         </ScrollView>
@@ -297,13 +281,23 @@ const SeasonsScreen = ({ navigation, route }: SeasonsScreenProps) => {
         ref={sectionRef}
         onLayout={() => {
           // try and scroll to latest season/episode
-          const [latestSeason, latestEpisode] = getLastestEpisodeWatched({ tvShowId });
+          const [latestSeason, latestEpisode] = getLastestEpisodeWatched(tvShowId);
           sectionRef.current?.scrollToLocation({
             sectionIndex: latestSeason - 1,
-            itemIndex: latestEpisode,
+            itemIndex: 0,
             viewPosition: 0,
-            animated: true,
+            animated: false,
           });
+          setTimeout(
+            () =>
+              sectionRef.current?.scrollToLocation({
+                sectionIndex: latestSeason - 1,
+                itemIndex: latestEpisode,
+                viewPosition: 0,
+                animated: true,
+              }),
+            500
+          );
         }}
         style={{ width: "100%" }}
         contentContainerStyle={{ paddingBottom: 55 }}

@@ -12,6 +12,7 @@ import {
   SavedTVShowsDoc,
   TempSeasonsData,
   TempSeasonsState,
+  WatchedSeasonEpisodes,
 } from "./state";
 import {
   TVShowDetails as TMDBTVShowDetails,
@@ -164,6 +165,10 @@ export const refreshTVShow = async (
   if (isAutoUpdate) {
     const currNextAirDate = state.oSaved.getTVShowDetails(tvShowId).nextAirDate?.epoch;
     const newNextAirDate = latesTVShowDetails.nextEpisodeToAir?.airDate?.epoch;
+    const today = new Date();
+    const compareNextAirDate = new Date(newNextAirDate * 1000);
+    today.setHours(0, 0, 0, 0);
+    compareNextAirDate.setHours(0, 0, 0, 0);
     // We should only see this condition once when the next air date changes.
     if (newNextAirDate > currNextAirDate) {
       const currentDate = new Date();
@@ -176,13 +181,15 @@ export const refreshTVShow = async (
         triggerDate2: new Date(currentDate.setMinutes(currentDate.getMinutes() + 10)),
       };
       //Notification will run on the nextAirDate at 9am
-      await scheduleLocalNotification(
-        notificationData.title,
-        notificationData.body,
-        tvShowId,
-        notificationData.triggerDate,
-        9
-      );
+      if (today > compareNextAirDate) {
+        await scheduleLocalNotification(
+          notificationData.title,
+          notificationData.body,
+          tvShowId,
+          notificationData.triggerDate,
+          9
+        );
+      }
       //! Notification scheduled for 10 minutes after this is run
       //! May not keep this notification
       await scheduleLocalNotification(
@@ -911,39 +918,19 @@ export const getEpisodeExternalIds = async ({ state, effects }: Context, payload
   return externalIdData;
 };
 
-export const getLastestEpisodeWatched = (
-  { state }: Context,
-  payload: { tvShowId: number }
-) => {
+/**
+ * Returns the latest season/episode that is marked as watched for the passed tvShowId
+ */
+export const getLastestEpisodeWatched = ({ state }: Context, tvShowId: number) => {
   // Get the episodeState object for the passed tvShowId
+  // will return undefined if either show is not saved yet or no episodes have bee
+  // marked as watched.
   const episodeState = state.oSaved.savedTVShows.find(
-    (show) => show.id === payload.tvShowId
-  ).episodeState;
+    (show) => show.id === tvShowId
+  )?.episodeState;
+
   if (!episodeState) return [1, 1];
-  // Reduce to find the last Season/Episode watched
-  const largest = Object.entries(episodeState).reduce(
-    (largest, [key, value]) => {
-      // If value==false, then not watched, so bail and continue
-      if (!value) return largest;
-      // Parse out season and episode
-      const season = parseInt(key.slice(0, key.indexOf("-")));
-      const episode = parseInt(key.slice(key.indexOf("-") + 1));
-      // Create special episode value that incorporates seasons so we can check it
-      // while taking into account the season
-      const episodeToCheck = season * 100 + episode;
-      // Since season is baked into episodeToCheck field, we just
-      // need to check it
-      if (episodeToCheck > largest[2]) {
-        largest[0] = season;
-        largest[1] = episode;
-        largest[2] = episodeToCheck;
-      }
-      return largest;
-    },
-    [0, 0, 0]
-  );
-  // Return [Season, Episode]
-  return [largest[0], largest[1]];
+  return findLastestEpisodeWatched(episodeState);
 };
 //*==============================================
 //*- ACTION HELPERS
@@ -975,25 +962,31 @@ function updateUserRatingOnTVShow(
   return tvShowArray;
 }
 
-function findLastestWatched() {
-  /**
-   * Use this reduce routine in a function that looks at the
-   * oState.savedTVShows.episodeState, but inside the reduce bail
-   * early IF the boolean is true
-   * Also rework to work with an arrya of objects  shouldn't be too hard
-   */
-
-  const watchedKeys = Object.keys(watchedObj);
-  const lastSeasonEp = watchedKeys.reduce(
-    (largest, item) => {
-      const season = parseInt(item.slice(0, item.indexOf("-")));
-      const episode = parseInt(item.slice(item.indexOf("-") + 1));
-      const episodeToCheck = parseInt(season * 10 + episode);
-
-      if (season >= largest[0]) {
-        largest[0] = season;
-      }
+/**
+ * Function accepts the Episode State from saved Movies { '1-1': true, ... }
+ * I will iterate through and return a [season, episode] that
+ * corresponds to that last episode marked as watched.
+ *
+ * @param watchedEpisodesState
+ * @returns
+ */
+function findLastestEpisodeWatched(
+  watchedEpisodesState: WatchedSeasonEpisodes
+): [number, number] {
+  const largest = Object.entries(watchedEpisodesState).reduce(
+    (largest, [key, value]) => {
+      // If value==false, then not watched, so bail and continue
+      if (!value) return largest;
+      // Parse out season and episode
+      const season = parseInt(key.slice(0, key.indexOf("-")));
+      const episode = parseInt(key.slice(key.indexOf("-") + 1));
+      // Create special episode value that incorporates seasons so we can check it
+      // while taking into account the season
+      const episodeToCheck = season * 100 + episode;
+      // Since season is baked into episodeToCheck field, we just
+      // need to check it
       if (episodeToCheck > largest[2]) {
+        largest[0] = season;
         largest[1] = episode;
         largest[2] = episodeToCheck;
       }
@@ -1001,7 +994,8 @@ function findLastestWatched() {
     },
     [0, 0, 0]
   );
-  console.log("Last Season / Episode", lastSeasonEp);
+  // Return [Season, Episode]
+  return [largest[0], largest[1]];
 }
 //*=========================
 //- Previous Episode State Marking helpers
@@ -1029,7 +1023,13 @@ function findPreviousEpisodeKey(
 }
 
 /** recurseSeasonsBackwards
- *
+ * return an object that can be merged in with
+ * existing watched data
+ * {
+ *    '1-1': true,
+ *    '1-2': true,
+ *    ...
+ * }
  */
 function buildEpisodesToMarkObj(
   startingSeason,

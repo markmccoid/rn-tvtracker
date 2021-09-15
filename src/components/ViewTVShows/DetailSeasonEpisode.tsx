@@ -84,7 +84,7 @@ const DetailSeasonEpisode = ({ tvShowId, episode, episodeState, isShowSaved }: P
               seasonNumber: episode.seasonNumber,
               episodeNumber: episode.episodeNumber,
             });
-            console.log("imdbId", imdbId);
+
             if (imdbId === null) {
               return null;
             }

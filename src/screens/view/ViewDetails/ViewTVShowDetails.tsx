@@ -84,10 +84,7 @@ const ViewTVShowDetails = ({ tvShow, isInSavedTVShows }: Props) => {
   const castData = useCastData(tvShowId);
   const state = useOState();
   const actions = useOActions();
-  // let movie = state.oSaved.getMovieDetails(tvShowId);
-  let tags = state.oSaved.getAllTVShowTags(tvShowId);
-  let assignedTags = state.oSaved.getTVShowTags(tvShowId);
-  let { removeTagFromTVShow, addTagToTVShow } = actions.oSaved;
+
   const { width, height } = useDimensions().window;
 
   const navigation = useNavigation<
@@ -96,13 +93,6 @@ const ViewTVShowDetails = ({ tvShow, isInSavedTVShows }: Props) => {
   // const personNavigation = useNavigation<DetailPersonScreenNavigation>();
   const route = useRoute<DetailsScreenRouteProp>();
   const personRoute = useRoute<DetailPersonScreenRouteProp>();
-  const Rotate = (toValue) => {
-    Animated.timing(iconAnim, {
-      toValue,
-      duration: 500,
-      useNativeDriver: true,
-    }).start();
-  };
 
   if (!tvShow) {
     return null;
@@ -120,93 +110,8 @@ const ViewTVShowDetails = ({ tvShow, isInSavedTVShows }: Props) => {
 
       {isInSavedTVShows && <DetailToggleTags tvShowId={tvShow.id} />}
 
-      {/* Saved Details button Bar and components
-        ------------------------------------------- */}
-      {/* <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          marginHorizontal: 15,
-          marginVertical: 5,
-        }}
-      >
-        <View
-          style={{
-            borderWidth: 1,
-            borderRadius: 10,
-            width: width / 2.2,
-            backgroundColor: colors.primary,
-          }}
-        >
-          <TouchableOpacity
-            style={{ padding: 5, alignItems: "center" }}
-            onPress={() => {
-              navigation.navigate(`${route.name}Seasons`, {
-                tvShowId: tvShow.id,
-                seasonNumbers: tvShow?.seasons.map((show) => show.seasonNumber),
-                logo: { showName: tvShow.name },
-              });
-            }}
-          >
-            <Text style={{ color: "white" }}>{`View ${
-              tvShow?.seasons.filter((s) => s.seasonNumber !== 0).length
-            } Seasons`}</Text>
-          </TouchableOpacity>
-        </View>
-        <TouchableOpacity
-          style={{
-            borderWidth: 1,
-            borderRadius: 10,
-            width: width / 3,
-            backgroundColor: "#f6c418",
-            padding: 5,
-            alignItems: "center",
-          }}
-          onPress={() => {
-            const imdbId = tvShow?.imdbId;
-            const imdbLink = `imdb:///title/${imdbId}/episodes`;
-
-            Linking.openURL(imdbLink).catch((err) => {
-              Linking.openURL(
-                "https://apps.apple.com/us/app/imdb-movies-tv-shows/id342792525"
-              );
-            });
-          }}
-        >
-          <Text style={{ fontWeight: "600" }}>IMDB Seasons</Text>
-        </TouchableOpacity>
-      </View> */}
-
       <DetailButtonBar tvShow={tvShow} isInSavedTVShows={isInSavedTVShows} />
 
-      <View style={{ overflow: "visible", zIndex: 10 }}>
-        {isInSavedTVShows && (
-          <AnimatePresence>
-            {!!!viewPickImage && (
-              <MotiView
-                from={{
-                  opacity: 0,
-                  height: 0,
-                }}
-                animate={{
-                  opacity: 1,
-                  height: posterHeight,
-                }}
-                transition={{
-                  type: "timing",
-                  duration: 500,
-                }}
-                exit={{
-                  opacity: 0,
-                  height: 0,
-                }}
-              >
-                <AnimatedPickImage tvShowId={tvShow.id} setPosterHeight={setPosterHeight} />
-              </MotiView>
-            )}
-          </AnimatePresence>
-        )}
-      </View>
       {/* ------------------------------------------- 
          END Saved Details button Bar and components 
          ------------------------------------------- */}
