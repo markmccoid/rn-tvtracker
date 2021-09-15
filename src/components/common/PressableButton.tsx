@@ -6,6 +6,7 @@ type Props = {
   onPress: () => void;
   style?: ViewStyle;
 };
+
 const PressableButton: React.FC<Props> = ({ children, onPress, style }) => {
   return (
     <MotiPressable
@@ -22,16 +23,6 @@ const PressableButton: React.FC<Props> = ({ children, onPress, style }) => {
           ],
         };
       }, [])}
-
-      // style={({ pressed }) => [
-      //   {
-      //     // backgroundColor: pressed ? "#ccc" : colors.backgroundColor,
-      //     // padding: 5,
-      //     // borderRadius: 10,
-      //     // marginLeft: 10,
-      //     transform: [{ translateY: pressed ? 2 : 0 }, { translateX: pressed ? 2 : 0 }],
-      //   },
-      // ]}
     >
       {children}
     </MotiPressable>

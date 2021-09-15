@@ -11,6 +11,7 @@
   "dependencies": {
     "@gorhom/bottom-sheet": "v3",
     "@markmccoid/tmdb_api": "^0.2",
+    "@motify/interactions": "^0.14.2",
     "@react-native-async-storage/async-storage": "~1.15.0",
     "@react-native-community/hooks": "^2.6.0",
     "@react-native-community/masked-view": "0.1.10",
@@ -31,7 +32,7 @@
     "expo-web-browser": "~9.2.0",
     "firebase": "8.2.3",
     "lodash": "^4.17.19",
-    "moti": "^0.10.1",
+    "moti": "^0.14.2",
     "overmind": "^25.0.2",
     "overmind-react": "^26.0.2",
     "prop-types": "^15.7.2",

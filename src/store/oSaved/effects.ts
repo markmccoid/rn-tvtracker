@@ -134,7 +134,7 @@ export const getEpisodeIMDBURL = async (
   episodeNumber: number
 ) => {
   const results = await tvGetShowEpisodeExternalIds(tvShowId, seasonNumber, episodeNumber);
-  console.log("results", results.data.imdbId === null, results.data.imdbId);
+
   return results.data;
 };
 //*=================================
