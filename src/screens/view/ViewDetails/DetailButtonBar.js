@@ -34,7 +34,7 @@ const DetailButtonBar = ({ tvShow, isInSavedTVShows }) => {
           style={[styles.button, { backgroundColor: colors.imdbYellow }]}
           onPress={() => {
             const imdbId = imdbId;
-            const imdbLink = `imdb:///title/${imdbId}/episodes`;
+            const imdbLink = `imdb:///title/${tvShow.imdbId}/episodes`;
 
             Linking.openURL(imdbLink).catch((err) => {
               Linking.openURL(
