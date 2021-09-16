@@ -6,7 +6,7 @@ import { useNavigation } from "@react-navigation/native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { useDimensions } from "@react-native-community/hooks";
 import PosterImage from "../common/PosterImage";
-import { colors } from "../../globalStyles";
+import { colors, styleHelpers } from "../../globalStyles";
 import { SavedTVShowsDoc } from "../../store/oSaved/state";
 import { MotiView } from "moti";
 
@@ -22,9 +22,16 @@ const setEpisodeGroupStyles = (group, maxWidth) => {
     case 0:
       return { backgroundColor: colors.episodeLengthGroup0, width: maxWidth / 4 };
     case 1:
-      return { backgroundColor: colors.episodeLengthGroup1, width: maxWidth / 3 };
+      return {
+        backgroundColor: colors.episodeLengthGroup1,
+        width: maxWidth / 2.5,
+        // alignSelf: "flex-start",
+      };
     case 2:
-      return { backgroundColor: colors.episodeLengthGroup2, width: maxWidth / 2 };
+      return {
+        backgroundColor: colors.episodeLengthGroup2,
+        width: maxWidth / 1.2,
+      };
     default:
       return { backgroundColor: colors.episodeLengthGroup3, width: maxWidth / 1.5 };
   }
@@ -57,7 +64,9 @@ const TVShowPortraitLayout = ({ tvShow, setTVShowEditingId, navigateToDetails }:
       shadowOpacity: 0.5,
       shadowRadius: 5,
       elevation: 1,
+      alignItems: "center",
     },
+
     imageBackupText: {
       fontSize: 22,
       fontWeight: "bold",
@@ -68,7 +77,15 @@ const TVShowPortraitLayout = ({ tvShow, setTVShowEditingId, navigateToDetails }:
   const episodeGroupStyles = setEpisodeGroupStyles(tvShow.episodeRunTimeGroup, posterWidth);
   return (
     <View style={styles.movieCard}>
-      <View style={{ marginBottom: 3, height: 6, borderRadius: 3, ...episodeGroupStyles }} />
+      <View
+        style={{
+          ...styleHelpers.buttonShadow,
+          marginBottom: 3,
+          height: 6,
+          borderRadius: 3,
+          ...episodeGroupStyles,
+        }}
+      />
 
       <TouchableOpacity
         onPress={navigateToDetails}
