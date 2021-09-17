@@ -14,7 +14,6 @@ const ListSearchBar = ({ visible, onCancel = () => null }) => {
   } = state.oSaved;
   const { setSearchFilter } = actions.oSaved;
   const navigation = useNavigation();
-  console.log("listbarsearch", visible);
   const setInputData = (e) => {
     setLocalInput(e);
     setSearchFilter(e);

@@ -159,9 +159,21 @@ const ViewDetails = ({ navigation, route }: DetailsScreenProps) => {
   //TODO: probably need a better "message", but we really should only hit this
   //TODO: when deleteing movie from the right header icon
   if (!tvShowData) {
-    return <ActivityIndicator size="large" />;
+    return (
+      <ActivityIndicator
+        size="large"
+        style={{ justifyContent: "center", alignItems: "center" }}
+      />
+    );
   }
 
+  if (tvShowData?.error) {
+    return (
+      <View>
+        <Text>No Network</Text>
+      </View>
+    );
+  }
   return (
     <View style={{ flex: 1, backgroundColor: colors.background }}>
       <Image
