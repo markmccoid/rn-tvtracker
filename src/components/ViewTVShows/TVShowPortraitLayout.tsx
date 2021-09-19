@@ -8,7 +8,9 @@ import { useDimensions } from "@react-native-community/hooks";
 import PosterImage from "../common/PosterImage";
 import { colors, styleHelpers } from "../../globalStyles";
 import { SavedTVShowsDoc } from "../../store/oSaved/state";
+import { useOState } from "../../store/overmind";
 import { MotiView } from "moti";
+import PressableButton from "../common/PressableButton";
 
 type Props = {
   tvShow: SavedTVShowsDoc;
@@ -38,6 +40,8 @@ const setEpisodeGroupStyles = (group, maxWidth) => {
 };
 const TVShowPortraitLayout = ({ tvShow, setTVShowEditingId, navigateToDetails }: Props) => {
   const { width, height } = useDimensions().window;
+  const state = useOState();
+  const { getNotWatchedEpisodeCount } = state.oSaved;
   const navigation = useNavigation();
   //! Should be first air date
   //const movieReleaseDate = tvShow.releaseDate?.formatted || " - ";
@@ -49,6 +53,8 @@ const TVShowPortraitLayout = ({ tvShow, setTVShowEditingId, navigateToDetails }:
   let posterHeight = posterWidth * 1.5;
   const MARGIN = 5;
   const BORDER_RADIUS = 10;
+  const countEpisodesNotWatched = getNotWatchedEpisodeCount(tvShow.id);
+  const episodeGroupStyles = setEpisodeGroupStyles(tvShow.episodeRunTimeGroup, posterWidth);
 
   const styles = StyleSheet.create({
     movieCard: {
@@ -72,9 +78,22 @@ const TVShowPortraitLayout = ({ tvShow, setTVShowEditingId, navigateToDetails }:
       fontWeight: "bold",
       textAlign: "center",
     },
+    episodesLeftPosition: { position: "absolute", bottom: -5, zIndex: 10 },
+    episodesLeftContainer: {
+      backgroundColor:
+        countEpisodesNotWatched === 0 ? colors.excludeRed : colors.buttonPrimary,
+      paddingVertical: 4,
+      paddingHorizontal: 6,
+      borderTopLeftRadius: 8,
+      borderTopRightRadius: 8,
+      borderRadius: 6,
+      borderWidth: 1,
+    },
+    episodesLeftText: {
+      color: countEpisodesNotWatched === 0 ? "white" : "black",
+    },
   });
 
-  const episodeGroupStyles = setEpisodeGroupStyles(tvShow.episodeRunTimeGroup, posterWidth);
   return (
     <View style={styles.movieCard}>
       <View
@@ -99,7 +118,20 @@ const TVShowPortraitLayout = ({ tvShow, setTVShowEditingId, navigateToDetails }:
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         }}
       >
-        <View>
+        <View style={{ alignItems: "center" }}>
+          <View style={styles.episodesLeftPosition}>
+            <PressableButton
+              style={styles.episodesLeftContainer}
+              onPress={() => {
+                navigation.navigate("ViewStackSeasons", {
+                  tvShowId: tvShow.id,
+                  logo: { showName: tvShow.name },
+                });
+              }}
+            >
+              <Text style={styles.episodesLeftText}>{countEpisodesNotWatched}</Text>
+            </PressableButton>
+          </View>
           <PosterImage
             uri={tvShow.posterURL}
             posterWidth={posterWidth}
