@@ -27,6 +27,7 @@ export type SavedTVShowsDoc = {
   userRating: number;
   dateSaved: number; //Unix epoch time
   dateLastUpdated?: number; //Unix epoch time
+  totalEpisodes: number;
 };
 
 // The key will be seasonNum-EpisodeNum -> [1-5]
@@ -127,6 +128,7 @@ export type State = {
   getTVShowEpisode: (tvShowId: number, seasonNumber: number, episodeNumber) => Episode;
   getTVShowEpisodeState: (tvShowId: number, seasonNumber: number, episodeNumber) => boolean;
   getWatchedEpisodes: (tvShowId: number, seasonNumber: number) => number;
+  getNotWatchedEpisodeCount: (tvShowId: number) => number;
   isTVShowSaved: (tvShowId: number) => boolean;
   getCurrentImageUrls: (tvShowId: number) => {
     currentPosterURL: string;
@@ -295,6 +297,7 @@ export const state: State = {
       return !!state.tempEpisodeState?.[tvShowId]?.[`${seasonNumber}-${episodeNumber}`];
     }
   ),
+  //- Simply returns the number of episodes marked as watched for the passed tvShowId and seasonNumber
   getWatchedEpisodes: derived((state: State) => (tvShowId, seasonNumber) => {
     if (!state.tempEpisodeState?.[tvShowId]) {
       return 0;
@@ -341,6 +344,22 @@ export const state: State = {
       return false;
     }
     return state.savedTVShows.filter((tvShow) => tvShow.id === tvShowId).length >= 1;
+  }),
+  /**
+   * For passed tvShowId, return the number of episodes that have NOT been
+   * marked as watched.
+   */
+  getNotWatchedEpisodeCount: derived((state: State) => (tvShowId: number) => {
+    const tvShowDetails = state.getTVShowDetails(tvShowId);
+    const totalEpisodes = tvShowDetails?.totalEpisodes ?? 0;
+    const watchedEpisodeState = tvShowDetails?.episodeState ?? {};
+
+    //Calculate how many episodes marked as watched
+    const watchedEpisodes = Object.entries(watchedEpisodeState).filter(
+      ([key, value]) => value
+    ).length;
+
+    return totalEpisodes - watchedEpisodes;
   }),
   //--------------
   // Get the current posterURL and backgroundURL for the passed movieId

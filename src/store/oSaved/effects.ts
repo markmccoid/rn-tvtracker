@@ -116,9 +116,7 @@ export const localSaveSavedFilters = async (uid, settings) => {
 //*=================================
 //*- Get TV Show Details from TMDB Api
 //*=================================
-export const getTVShowDetails = async (
-  tvShowId: number
-): Promise<TVShowDetailsBase | { data: { error: string } }> => {
+export const getTVShowDetails = async (tvShowId: number): Promise<TVShowDetailsBase> => {
   let results;
 
   try {

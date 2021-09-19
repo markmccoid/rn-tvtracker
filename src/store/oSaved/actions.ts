@@ -19,6 +19,7 @@ import {
   DateObject,
   Episode,
   TVShowSeasonDetails,
+  TVDetail_Seasons,
 } from "@markmccoid/tmdb_api";
 import { getCurrentDate, formatDateObjectForSave } from "../../utils/helperFunctions";
 import { fromUnixTime, differenceInDays, parseISO } from "date-fns";
@@ -45,7 +46,13 @@ export const hydrateStore = async (
 
   let userDocData = await effects.oSaved.initializeStore(uid, forceRefresh);
 
-  state.oSaved.savedTVShows = validateSavedTVShows(userDocData.savedTVShows);
+  //! -- When this test goes out, you can remove the checkandupdateschema line and
+  //! -- uncomment the below line
+  // state.oSaved.savedTVShows = validateSavedTVShows(userDocData.savedTVShows);
+  state.oSaved.savedTVShows = await actions.oSaved.checkAndUpdateSchema(
+    validateSavedTVShows(userDocData.savedTVShows)
+  );
+
   state.oSaved.tagData = userDocData.tagData;
   state.oSaved.savedFilters = userDocData.savedFilters;
   //Update the datasource (loaded from local or cloud(firestore))
@@ -143,6 +150,7 @@ export const refreshTVShow = async (
   // get more movie details from tmdbapi
   const { data: latesTVShowDetails } = await effects.oSaved.getTVShowDetails(tvShowId);
 
+  state.oSaved.getNotWatchedEpisodeCount(tvShowId);
   //! IMPLEMENTATION
   //! Do not update the posterURL as user could have changed
   //! Create Object with only items that will be updated as to leave
@@ -159,9 +167,11 @@ export const refreshTVShow = async (
     status: latesTVShowDetails.status,
     // TV Tracker created items
     dateLastUpdated: getCurrentDate().epoch,
+    totalEpisodes: calcTotalEpisodes(latesTVShowDetails.seasons),
   };
 
   //* -- Refresh being called automatically because something in createUpdateList() function
+  //* -- triggered the auto refresh (usually a new episode dropping)
   if (isAutoUpdate) {
     const currNextAirDate = state.oSaved.getTVShowDetails(tvShowId).nextAirDate?.epoch;
     const newNextAirDate = latesTVShowDetails.nextEpisodeToAir?.airDate?.epoch;
@@ -181,7 +191,9 @@ export const refreshTVShow = async (
         triggerDate2: new Date(currentDate.setMinutes(currentDate.getMinutes() + 10)),
       };
       //Notification will run on the nextAirDate at 9am
-      if (today > compareNextAirDate) {
+      // ONLY run if current date is LESS THAN the new Next air date
+      // You can't run a notification in the past.
+      if (today < compareNextAirDate) {
         await scheduleLocalNotification(
           notificationData.title,
           notificationData.body,
@@ -260,6 +272,7 @@ export const saveTVShow = async ({ state, effects, actions }: Context, tvShowId:
     userRating: 0,
     dateSaved: getCurrentDate().epoch,
     dateLastUpdated: getCurrentDate().epoch,
+    totalEpisodes: calcTotalEpisodes(tvShowDetailsTMDB.data.seasons),
   };
 
   // Store TV Show in overmind state
@@ -963,6 +976,20 @@ function updateUserRatingOnTVShow(
 }
 
 /**
+ * Function accepts the season list from a tvshow and
+ * returns the Total number of episodes in ALL seasons
+ *
+ */
+const calcTotalEpisodes = (seasonsList: TVDetail_Seasons[]): number => {
+  return seasonsList
+    .filter((season) => season.seasonNumber !== 0)
+    .reduce((total, season) => {
+      total += season.episodeCount;
+      return total;
+    }, 0);
+};
+
+/**
  * Function accepts the Episode State from saved Movies { '1-1': true, ... }
  * I will iterate through and return a [season, episode] that
  * corresponds to that last episode marked as watched.
@@ -1063,6 +1090,25 @@ function buildEpisodesToMarkObj(
 // data from getting through
 function validateSavedTVShows(tvShows: SavedTVShowsDoc[]): SavedTVShowsDoc[] {
   return tvShows.filter((show) => show.id);
+}
+
+export async function checkAndUpdateSchema(
+  { state, effects, actions }: Context,
+  tvShows: SavedTVShowsDoc[]
+): Promise<SavedTVShowsDoc[]> {
+  if (tvShows[0]?.totalEpisodes) {
+    return tvShows;
+  }
+  let newShows: SavedTVShowsDoc[] = [];
+  for (const tvShow of tvShows) {
+    if (!tvShow?.totalEpisodes) {
+      const showDets = await actions.oSaved.apiGetTVShowDetails(tvShow.id);
+      newShows.push({ ...tvShow, totalEpisodes: calcTotalEpisodes(showDets.data.seasons) });
+    } else {
+      newShows.push({ ...tvShow });
+    }
+  }
+  return newShows;
 }
 
 function groupAvgRunTime(avgEpisodeRunTime: number): EpisodeRunTimeGroup {
