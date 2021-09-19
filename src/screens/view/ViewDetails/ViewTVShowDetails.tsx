@@ -1,68 +1,30 @@
-import React, { useEffect } from "react";
-import {
-  View,
-  Animated,
-  StyleSheet,
-  TouchableOpacity,
-  Dimensions,
-  Text,
-  ScrollView,
-} from "react-native";
+import React from "react";
+import { View, StyleSheet, TouchableOpacity, Dimensions } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { MotiView, AnimatePresence } from "moti";
-import * as Linking from "expo-linking";
 
 import { useOState, useOActions } from "../../../store/overmind";
 import { useDimensions } from "@react-native-community/hooks";
 import { useCastData } from "../../../hooks/useCastData";
-import { Transitioning, Transition } from "react-native-reanimated";
 
 import { colors } from "../../../globalStyles";
-import TagCloud, { TagItem } from "../../../components/TagCloud/TagCloud";
-import HidableView from "../../../components/common/HidableView";
-import { CaretRightIcon, ImagesIcon } from "../../../components/common/Icons";
 
 import DetailMainInfo from "./DetailMainInfo";
 import DetailCastInfo from "./DetailCastInfo";
 import DetailWatchProviders from "./DetailWatchProviders";
 import DetailRecommendations from "./DetailRecommendations";
 import DetailVideos from "./DetailVideos";
-import AnimatedPickImage from "./AnimatedPickImage";
 import HiddenContainer from "../../../components/HiddenContainer/HiddenContainer";
-import DetailSelectTags from "./DetailSelectTags";
 import DetailButtonBar from "./DetailButtonBar";
 import DetailToggleTags from "./DetailToggleTags";
 
 //@types
 import {
-  DetailSeasonsScreenRouteProp,
   DetailSeasonsScreenNavigation,
-  DetailPersonScreenRouteProp,
   DetailPersonScreenNavigation,
   DetailsScreenRouteProp,
 } from "../viewTypes";
 import { TVShowDetails } from "../../../store/oSaved/actions";
 
-// Need to figure out how to have multiple transition sets for a single transitioning view
-// OR maybe wrap both in their own transitioning view
-const transition = (
-  <Transition.Together>
-    <Transition.In durationMs={400} type="scale" interpolation="linear" />
-    <Transition.Change durationMs={400} interpolation="easeIn" />
-    <Transition.Out durationMs={3000} type="scale" interpolation="linear" />
-  </Transition.Together>
-);
-
-const transition2 = (
-  <Transition.Sequence>
-    <Transition.Out durationMs={100} type="fade" interpolation="linear" />
-    <Transition.Together>
-      <Transition.In durationMs={300} type="fade" interpolation="linear" />
-      <Transition.In durationMs={300} type="scale" interpolation="linear" />
-    </Transition.Together>
-    <Transition.Change durationMs={100} interpolation="easeIn" />
-  </Transition.Sequence>
-);
 type Props = {
   tvShow: TVShowDetails;
   isInSavedTVShows: boolean;
@@ -71,28 +33,16 @@ const ViewTVShowDetails = ({ tvShow, isInSavedTVShows }: Props) => {
   const tvShowId = tvShow?.id;
   const ref = React.useRef(null);
   const [viewTags, setViewTags] = React.useState(false);
-  const [posterHeight, setPosterHeight] = React.useState(500);
-
-  // Also used for toValue in animations
-  // 0 = opened
-  // 1 = closed -- The one is the value it is going TO, and 1 will be open.
-  const [viewPickImage, setPickImage] = React.useState(1);
-
-  // Animated Icons
-  const iconAnim = React.useRef(new Animated.Value(0)).current;
 
   const castData = useCastData(tvShowId);
-  const state = useOState();
-  const actions = useOActions();
 
-  const { width, height } = useDimensions().window;
+  const { width } = useDimensions().window;
 
   const navigation = useNavigation<
     DetailSeasonsScreenNavigation | DetailPersonScreenNavigation
   >();
   // const personNavigation = useNavigation<DetailPersonScreenNavigation>();
   const route = useRoute<DetailsScreenRouteProp>();
-  const personRoute = useRoute<DetailPersonScreenRouteProp>();
 
   if (!tvShow) {
     return null;
@@ -110,7 +60,7 @@ const ViewTVShowDetails = ({ tvShow, isInSavedTVShows }: Props) => {
 
       {isInSavedTVShows && <DetailToggleTags tvShowId={tvShow.id} />}
 
-      <DetailButtonBar tvShow={tvShow} isInSavedTVShows={isInSavedTVShows} />
+      <DetailButtonBar tvShow={tvShow} />
 
       {/* ------------------------------------------- 
          END Saved Details button Bar and components 

@@ -8,7 +8,7 @@ import PressableButton from "../../../components/common/PressableButton";
 
 const { width } = Dimensions.get("window");
 
-const DetailButtonBar = ({ tvShow, isInSavedTVShows }) => {
+const DetailButtonBar = ({ tvShow }) => {
   const navigation = useNavigation();
   const route = useRoute();
   return (
