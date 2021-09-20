@@ -26,33 +26,6 @@ export const onInitialize = async ({ state, effects, actions }) => {
   } else {
     actions.oAdmin.logUserOut(currentUser);
   }
-
-  // unsubscribe = Firebase.auth().onAuthStateChanged(async (user) => {
-  //   console.log("IN oSaved onINIT LISTENER");
-  //   if (user) {
-  //     actions.oAdmin.logUserIn(user);
-  //     actions.oSaved.hydrateStore({ uid: user.uid });
-  //     // Set the allGenres state item
-  //     actions.oSearch.searchSetup();
-  //     // NOT USED - But example of setting up snapshot that would be called
-  //     // whenever data changed in the users collection and uid doc for logged in user.
-  //     // undo = firestore
-  //     //   .collection("users")
-  //     //   .doc(user.uid)
-  //     //   .onSnapshot((doc) => {
-  //     //     console.log("DATA CHANGE", doc.data());
-  //     //   });
-  //   } else {
-  //     actions.oAdmin.logUserOut();
-  //   }
-  // });
-
-  //state.oAdmin.unsubscribe = unsubscribe;
-  // let initData = await effects.oSaved.initializeStore();
-  // //console.log(initData);
-  // state.oSaved.savedTVShows = initData.savedMovies;
-  // state.oSaved.tagData = initData.savedTags;
-  // state.oSaved.userData = initData.savedUserData;
 };
 
 const setupNotifications = async () => {

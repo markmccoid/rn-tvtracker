@@ -1,18 +1,18 @@
 import * as Notifications from "expo-notifications";
 import * as Linking from "expo-linking";
 
-export const sendNotificationImmediately = async (tvShowName) => {
-  const url = Linking.createURL(`/search/${tvShowName}`);
+export const sendNotificationImmediately = async (tvShowId) => {
+  const url = Linking.createURL(`/details/${tvShowId}`);
   // const triggerDate = new Date(Date.now());
   // triggerDate.setMinutes(triggerDate.getMinutes() + 5);
   let notificationId = await Notifications.scheduleNotificationAsync({
     content: {
-      title: `${tvShowName}`,
-      body: `New Episode for ${tvShowName}`,
+      title: `${tvShowId}`,
+      body: `New Episode for ${tvShowId}`,
       data: { url },
     },
     trigger: {
-      seconds: 5,
+      seconds: 15,
     },
   });
 
