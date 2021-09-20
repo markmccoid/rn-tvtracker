@@ -44,6 +44,7 @@ const ListSearchBar = ({ visible, onCancel = () => null }) => {
           />
           <TouchableOpacity
             onPress={() => {
+              setLocalInput("");
               setSearchFilter("");
               //setShowSearch(false);
               onCancel();
