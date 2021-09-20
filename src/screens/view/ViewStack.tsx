@@ -3,6 +3,7 @@ import { View, TouchableOpacity, Text } from "react-native";
 
 import { createNativeStackNavigator } from "react-native-screens/native-stack";
 import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
+import * as Linking from "expo-linking";
 
 import { useOState, useOActions } from "../../store/overmind";
 
@@ -106,12 +107,25 @@ const ViewTVDetailsStack = () => {
 const ViewStackScreen = () => {
   const state = useOState();
   const actions = useOActions();
+  // Check for deep link
   let numGenreFilters = state.oSaved.filterData.genres.length;
   let numMovies = state.oSaved.getFilteredTVShows.length;
   let numIncludeFilters = state.oSaved.filterData.tags.length;
   let numExcludeFilters = state.oSaved.filterData.excludeTags.length;
   const isGenreFiltered = numGenreFilters > 0;
   const { clearFilterScreen } = actions.oSaved;
+
+  //-- will respond to deep links when app was closed
+  //-- Since there is an Auth layer, the intial try to go to
+  //-- route doesn't work.  In app.js, the deep link is stored
+  //-- in overmind.  It is cleared and then navigated to.
+  const deepLink = state.oAdmin.appState?.deepLink;
+  React.useEffect(() => {
+    if (deepLink) {
+      Linking.openURL(deepLink);
+      actions.oAdmin.setDeepLink(undefined);
+    }
+  }, [deepLink]);
 
   return (
     <ViewStack.Navigator>

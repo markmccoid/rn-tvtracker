@@ -1,3 +1,4 @@
+import { mapContext } from "xstate/lib/utils";
 import { Context } from "../overmind";
 
 export const logUserIn = (
@@ -21,4 +22,8 @@ export const logUserOut = async ({ state, effects, actions }: Context) => {
   // When user logs out reset the oSaved state to it's default state
   // Found that could set directly from here, but needed to call action to do it.
   actions.oSaved.resetOSaved();
+};
+
+export const setDeepLink = ({ state, effects, actions }: Context, deepLink) => {
+  state.oAdmin.appState.deepLink = deepLink;
 };

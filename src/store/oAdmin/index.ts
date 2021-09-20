@@ -9,6 +9,7 @@ export type State = {
   appState: {
     dataSource: Datasource;
     hydrating: boolean;
+    deepLink: string;
   };
 };
 
@@ -20,6 +21,7 @@ const state: State = {
   appState: {
     dataSource: undefined,
     hydrating: false,
+    deepLink: undefined,
   },
 };
 export const config = {

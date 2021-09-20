@@ -61,7 +61,6 @@ const App = () => {
       // First, you may want to do the default deep link handling
       // Check if app was opened from a deep link
       let url = await Linking.getInitialURL();
-
       if (url != null) {
         return url;
       }
@@ -69,6 +68,8 @@ const App = () => {
       // Handle URL from expo push notifications
       const response = await Notifications.getLastNotificationResponseAsync();
       url = response?.notification.request.content.data.url;
+      // Store the url in overmind.  Will check it in AppNav
+      overmind.actions.oAdmin.setDeepLink(url);
       return url;
     },
     subscribe(listener) {
@@ -81,9 +82,10 @@ const App = () => {
       const subscription = Notifications.addNotificationResponseReceivedListener(
         (response) => {
           const url = response.notification.request.content.data.url;
-
           // Any custom logic to see whether the URL needs to be handled
           //...
+
+          overmind.actions.oAdmin.setDeepLink(url);
           Linking.openURL(url);
           // Let React Navigation handle the URL
           listener(url);

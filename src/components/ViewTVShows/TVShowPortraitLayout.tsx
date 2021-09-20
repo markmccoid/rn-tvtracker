@@ -11,6 +11,7 @@ import { SavedTVShowsDoc } from "../../store/oSaved/state";
 import { useOState } from "../../store/overmind";
 import { MotiView } from "moti";
 import PressableButton from "../common/PressableButton";
+import { sendNotificationImmediately } from "../../utils/notificationHelpers";
 
 type Props = {
   tvShow: SavedTVShowsDoc;
@@ -123,6 +124,8 @@ const TVShowPortraitLayout = ({ tvShow, setTVShowEditingId, navigateToDetails }:
             <PressableButton
               style={styles.episodesLeftContainer}
               onPress={() => {
+                // console.log("sending notification", tvShow.id);
+                // sendNotificationImmediately(tvShow.id);
                 navigation.navigate("ViewStackSeasons", {
                   tvShowId: tvShow.id,
                   logo: { showName: tvShow.name },
