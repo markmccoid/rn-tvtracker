@@ -1684,19 +1684,27 @@
     date-fns "^2.7.0"
     lodash "^4.17.21"
 
-"@motify/components@^0.10.0":
-  version "0.10.0"
-  resolved "https://registry.yarnpkg.com/@motify/components/-/components-0.10.0.tgz#1c35cb7d5b3a2a0308ddf21a388faf7666b19927"
-  integrity sha512-6kJ/QFQLByeEKf2cqLcr1tC09+Xs/qvxaeuMelDdSEXLqaX2m+1bk4pEHKtDo41UVOYaiQAcTkHeFUia34TM8w==
+"@motify/components@^0.14.2":
+  version "0.14.2"
+  resolved "https://registry.yarnpkg.com/@motify/components/-/components-0.14.2.tgz#e3da8a18ebb7aeb3d4e0337e31560dac9cbac0f1"
+  integrity sha512-VEoZ8r1BC4odkTy+6NWCD6t3hN3+ZzJLQtY4KVK3u6KecpqIwP4xo76INvFftF2NhJz0nI33IBM2+flVYbBR4g==
   dependencies:
-    "@motify/core" "^0.10.0"
+    "@motify/core" "^0.14.2"
 
-"@motify/core@^0.10.0":
-  version "0.10.0"
-  resolved "https://registry.yarnpkg.com/@motify/core/-/core-0.10.0.tgz#3b1be362e9587e1d047beb3f523636cbe8021553"
-  integrity sha512-N+sjYMHYN4QPaVkYJrkIxCcCfvD28co1Tx33+C83cVPJan4KHUgC8QyBmkoBcz8yAmOCapOKCXhx5EkCnzI8lw==
+"@motify/core@^0.14.2":
+  version "0.14.2"
+  resolved "https://registry.yarnpkg.com/@motify/core/-/core-0.14.2.tgz#e048c377ad6a14ccd03750643f32bb2c95615caa"
+  integrity sha512-lL2ZIzRIcCt7+Wx1davI1VOLTTJ1ZEbWj93TPbo80SLqaY++gTZSXzo8N1aHdmLR1XEaq94R6Ip1cPKDNQQmWA==
   dependencies:
     framer-motion "^3.9.1"
+
+"@motify/interactions@^0.14.2":
+  version "0.14.2"
+  resolved "https://registry.yarnpkg.com/@motify/interactions/-/interactions-0.14.2.tgz#a0043ea4d9fc864ad1c6b92ff14d7ce6db912448"
+  integrity sha512-5Q2/X2wt5vgihfHLJg3Pcecfqu6zqZJvh00g3UOCBM2co2T9lQ518PYiJN0GpZYyVFG/maumZFQI+OIYM5Or6g==
+  dependencies:
+    "@motify/components" "^0.14.2"
+    "@motify/core" "^0.14.2"
 
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
@@ -5259,13 +5267,13 @@ mockdate@^3.0.2:
   resolved "https://registry.yarnpkg.com/mockdate/-/mockdate-3.0.5.tgz#789be686deb3149e7df2b663d2bc4392bc3284fb"
   integrity sha512-iniQP4rj1FhBdBYS/+eQv7j1tadJ9lJtdzgOpvsOHng/GbcDh2Fhdeq+ZRldrPYdXvCyfFUmFeEwEGXZB5I/AQ==
 
-moti@^0.10.1:
-  version "0.10.1"
-  resolved "https://registry.yarnpkg.com/moti/-/moti-0.10.1.tgz#141d089d01ae45822be15c042034b384b999c234"
-  integrity sha512-EPCsR44+iuxwpyuN1XzGK1l2AyAyAXC7Ihtr22QcZeZRI2EkelqlqHHmsBZb8pn2Yrz0cPEUopUjjDGQyyrfBA==
+moti@^0.14.2:
+  version "0.14.2"
+  resolved "https://registry.yarnpkg.com/moti/-/moti-0.14.2.tgz#de2eb1df715944b97973a85f0a13e9cb4555bdff"
+  integrity sha512-OKETVo2IoSQc3mKPBZaWlaxZUIuJkBTkwtQiEGFrsOCYGdcN+r9wQ/BvcXNK/tyVcWuGY8iM+KthLlDDGxT3Ig==
   dependencies:
-    "@motify/components" "^0.10.0"
-    "@motify/core" "^0.10.0"
+    "@motify/components" "^0.14.2"
+    "@motify/core" "^0.14.2"
 
 ms@2.0.0:
   version "2.0.0"

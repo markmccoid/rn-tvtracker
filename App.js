@@ -46,6 +46,10 @@ const App = () => {
                       screens: {
                         Details: {
                           path: "details/:tvShowId",
+                          parse: {
+                            //make sure passed value is an integer
+                            tvShowId: (tvShowId) => parseInt(tvShowId),
+                          },
                         },
                       },
                     },
