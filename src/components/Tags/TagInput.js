@@ -25,6 +25,7 @@ const TagInput = () => {
       </View>
       <View style={styles.tagButton}>
         <PressableButton
+          type="primary"
           style={styles.button}
           onPress={() => {
             if (tagValue.trim().length === 0) {
@@ -80,12 +81,12 @@ let styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  button: {
-    backgroundColor: colors.buttonPrimary,
-    ...styleHelpers.buttonShadow,
-    paddingVertical: 5,
-    paddingHorizontal: 20,
-    borderRadius: 15,
-  },
+  // button: {
+  //   backgroundColor: colors.buttonPrimary,
+  //   // ...styleHelpers.buttonShadow,
+  //   // paddingVertical: 5,
+  //   // paddingHorizontal: 20,
+  //   // borderRadius: 15,
+  // },
 });
 export default TagInput;

@@ -14,6 +14,7 @@ export const colors = {
   darkbg: "#59922D", //"#037aff", //"#005fcc", //"#2f6eb5", // Background used for buttons, etc
   darkfg: "white", // Foreground color to be used with darkbg
   excludeRed: "#a61000",
+  mutedRed: "#CB4C4E",
   includeGreen: "#6cb043",
   tagListbg: "#EFF4FB",
   tagListfg: "black",
@@ -54,6 +55,7 @@ export const styleHelpers = {
     shadowRadius: 5,
     elevation: 1,
   },
+  buttonPrimary: {},
   buttonShadow: {
     shadowColor: "#000",
     shadowOffset: {

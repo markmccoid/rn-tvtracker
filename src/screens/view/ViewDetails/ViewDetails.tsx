@@ -55,6 +55,11 @@ const ViewDetails = ({ navigation, route }: DetailsScreenProps) => {
     return tvShowTemp.data;
   };
 
+  console.log(
+    "route params-viewdetails",
+    route.params,
+    state.oSaved.isTVShowSaved(route.params?.tvShowId)
+  );
   // Not sure if this is best way to do this
   // Getting saved data for tvShowId because need to check in useEffect
   // to see if posterURL has changed so that we get new data passed down

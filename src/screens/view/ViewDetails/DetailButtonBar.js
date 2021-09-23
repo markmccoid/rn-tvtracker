@@ -15,6 +15,7 @@ const DetailButtonBar = ({ tvShow }) => {
     <View style={styles.wrapper}>
       <View style={[styles.buttonRow, { marginBottom: 8 }]}>
         <PressableButton
+          type="primary"
           onPress={() => {
             navigation.navigate(`${route.name}Seasons`, {
               tvShowId: tvShow.id,
@@ -23,11 +24,9 @@ const DetailButtonBar = ({ tvShow }) => {
             });
           }}
         >
-          <View style={styles.button}>
-            <Text style={{ fontWeight: "600", color: colors.buttonTextDark }}>{`View ${
-              tvShow?.seasons.filter((s) => s.seasonNumber !== 0).length
-            } Seasons`}</Text>
-          </View>
+          <Text style={{ fontWeight: "600", color: colors.buttonTextDark }}>{`View ${
+            tvShow?.seasons.filter((s) => s.seasonNumber !== 0).length
+          } Seasons`}</Text>
         </PressableButton>
 
         <PressableButton
@@ -68,13 +67,13 @@ const DetailButtonBar = ({ tvShow }) => {
             style={{
               backgroundColor: "white",
               borderRadius: 10,
-              padding: 5,
+              padding: 2,
               marginRight: 15,
             }}
           >
             <Image
               source={require("../../../../assets/GoogleLogoSmall.png")}
-              style={{ width: 20, height: 20 }}
+              style={{ width: 18, height: 18 }}
             />
           </View>
           <Text style={{ fontWeight: "600", color: "#212121" }}>Google It</Text>
@@ -117,11 +116,10 @@ const styles = StyleSheet.create({
   },
   button: {
     // borderWidth: 1,
-    borderRadius: 15,
     width: width / 2.5,
-    padding: 5,
-    backgroundColor: colors.buttonPrimary,
-    ...styleHelpers.buttonShadow,
+    // padding: 5,
+    // backgroundColor: colors.buttonPrimary,
+    // ...styleHelpers.buttonShadow,
     alignItems: "center",
     justifyContent: "center",
   },

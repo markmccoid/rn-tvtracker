@@ -191,7 +191,7 @@ const styles = StyleSheet.create({
   },
   posterWrapper: {
     borderWidth: 1,
-    backgroundColor: "white",
+    backgroundColor: colors.background,
     borderColor: "#ddd",
     borderBottomWidth: 0,
     marginRight: 5,
