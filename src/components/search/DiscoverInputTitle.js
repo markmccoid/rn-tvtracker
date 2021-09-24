@@ -1,33 +1,35 @@
 import React from "react";
 import { View, TextInput, StyleSheet, TouchableOpacity, Keyboard } from "react-native";
 import { CloseIcon } from "../common/Icons";
+import { BottomSheetTextInput, useBottomSheet } from "@gorhom/bottom-sheet";
 
 const DiscoverInputTitle = ({ setSearchString, searchString, sheetFunctions }) => {
   let inputRef = React.useRef(); // Not using right now
 
   const handleSearchString = (searchString) => {
     setSearchString(searchString);
+    sheetFunctions.snapTo(2);
   };
 
   return (
     <View>
       <View style={styles.searchBar}>
-        <TextInput
+        <BottomSheetTextInput
           ref={inputRef}
           placeholder="Search Movie Title"
           onChangeText={handleSearchString}
           value={searchString}
           autoCorrect={false}
           autoCapitalize="none"
-          onFocus={() => {
-            // expand sheet to max height to avoid the keyboard
-            sheetFunctions.snapTo(2);
-          }}
-          onBlur={() => {
-            // dismiss keyboard and collapse sheet.
-            Keyboard.dismiss();
-            // sheetFunctions.collapseSheet();
-          }}
+          // onFocus={() => {
+          //   // expand sheet to height to avoid the keyboard
+          //   sheetFunctions.snapTo(2);
+          // }}
+          // onBlur={() => {
+          //   // dismiss keyboard and collapse sheet.
+          //   Keyboard.dismiss();
+          //   // sheetFunctions.collapseSheet();
+          // }}
         />
         <TouchableOpacity
           onPress={() => handleSearchString("")}

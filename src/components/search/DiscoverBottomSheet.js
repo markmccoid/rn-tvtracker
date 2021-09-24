@@ -1,6 +1,9 @@
-import React, { useEffect } from "react";
-import { View, Text, StyleSheet, useWindowDimensions } from "react-native";
-import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import React, { useEffect, useMemo } from "react";
+import { View, Text, StyleSheet, Keyboard } from "react-native";
+import BottomSheet, {
+  BottomSheetScrollView,
+  useBottomSheetDynamicSnapPoints,
+} from "@gorhom/bottom-sheet";
 import { useMachine } from "@xstate/react";
 import { View as MotiView, AnimatePresence } from "moti";
 import { useHeaderHeight } from "@react-navigation/stack";
@@ -23,6 +26,7 @@ const DiscoverBottomSheet = ({ navigation, deepLinkTitle }) => {
   const [currentSnapPointInfo, setCurrentSnapPointInfo] = React.useState(1);
   const bottomSheetRef = React.useRef(null);
 
+  // console.log("anim", animatedSnapPoints.value);
   // This useEffect is handle a deep link passing of a title
   useEffect(() => {
     if (deepLinkTitle) {
@@ -33,13 +37,16 @@ const DiscoverBottomSheet = ({ navigation, deepLinkTitle }) => {
   const sheetFunctions = {
     expandSheet: () => bottomSheetRef.current.expand(),
     collapseSheet: () => bottomSheetRef.current.collapse(),
-    snapTo: (index) => bottomSheetRef.current.snapTo(index),
+    snapTo: (index) => bottomSheetRef.current.snapToIndex(index),
     snapEnum,
   };
 
   // callbacks
   const handleSheetChanges = React.useCallback((index) => {
     // making currentSnapPointInfo an object, so we can pass other information if needed
+    if (index === 0) {
+      Keyboard.dismiss();
+    }
     setCurrentSnapPointInfo({ currSnapIndex: index });
   }, []);
   //*-------------------------
@@ -109,7 +116,6 @@ const DiscoverBottomSheet = ({ navigation, deepLinkTitle }) => {
           </MotiView>
         )}
       </AnimatePresence>
-
       <View style={{ marginHorizontal: 25 }}>
         <Button
           title={`Activate ${

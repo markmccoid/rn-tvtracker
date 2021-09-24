@@ -24,10 +24,10 @@ export const CustomBackground = ({ animatedIndex, style }) => {
 // This defines the four snap points.
 // Changing here will change the snapEnum and snapPoints
 const snapObj = {
-  hidden: 15,
-  simpleSearch: 150,
-  keyboard: 380,
-  max: "90%",
+  hidden: 25,
+  simpleSearch: "30%",
+  keyboard: "70%",
+  // max: "80%",
 };
 
 // return an object we can use to call the snapTo function with
@@ -41,5 +41,5 @@ export const snapPoints = [
   snapObj.hidden,
   snapObj.simpleSearch,
   snapObj.keyboard,
-  snapObj.max,
+  // snapObj.max,
 ];
