@@ -24,6 +24,7 @@ import {
 import { getCurrentDate, formatDateObjectForSave } from "../../utils/helperFunctions";
 import { fromUnixTime, differenceInDays, parseISO } from "date-fns";
 import { actions } from "xstate";
+import { mapContext } from "xstate/lib/utils";
 
 export const internal = internalActions;
 // export actions for saved filters.
@@ -736,6 +737,9 @@ export const setSearchFilter = pipe(
   })
 );
 
+export const setIgnoreFilterOnSearch = ({ state }: Context, ignoreFilterFlag) => {
+  state.oSaved.filterData.ignoreFilterOnSearch = ignoreFilterFlag;
+};
 //*==============================================
 //*- SORT Actions
 //*==============================================

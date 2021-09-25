@@ -1,5 +1,5 @@
+import { FilterData, State, TagData, TagDataExtended } from "./state";
 import _ from "lodash";
-import { State, TagData, TagDataExtended } from "./state";
 // These functions are used by the getters in the state
 // They help abstract common functionality used by multiple getters
 export const retrieveTagIds = (tagObjArray: TagData[]) => {
@@ -50,7 +50,7 @@ export const buildGenreObjFromArray = (filterGenres, isSelected = true) => {
  * @param {array} savedTVShowsIn - array of all movies saved
  * @param {*} filterData - data fo filter on
  */
-export const filterTVShows = (savedTVShowsIn, filterData) => {
+export const filterTVShows = (savedTVShowsIn, filterData: FilterData) => {
   let {
     tags: filterTags,
     excludeTags: excludeFilterTags,
@@ -70,6 +70,9 @@ export const filterTVShows = (savedTVShowsIn, filterData) => {
       // If the tvShow title doesn't match the search filter, bail on this tvShow
       if (!tvShow.name.toLowerCase().includes(searchFilter)) {
         return false;
+      }
+      if (filterData.ignoreFilterOnSearch) {
+        return true;
       }
     }
     //=========================

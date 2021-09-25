@@ -215,3 +215,7 @@ export const AscOtherIcon = ({ size, color, style }) => {
 export const DescOtherIcon = ({ size, color, style }) => {
   return <FontAwesome name="sort-amount-desc" color={color} size={size} style={style} />;
 };
+
+export const InfinityIcon = ({ size, color, style }) => {
+  return <Ionicons name="ios-infinite" size={size} color={color} style={style} />;
+};

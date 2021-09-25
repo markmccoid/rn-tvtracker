@@ -73,6 +73,7 @@ export type FilterData = {
   genreOperator: Operators;
   genres: string[];
   searchFilter: string;
+  ignoreFilterOnSearch: boolean;
 };
 
 export type TagData = { tagId: string; tagName: string };
@@ -170,6 +171,7 @@ export const state: State = {
     genreOperator: "OR",
     genres: [],
     searchFilter: undefined,
+    ignoreFilterOnSearch: true,
   },
   // saved filters that can be applied
   // will be an array of object {id, name, description, tagOperator, tags: []}
@@ -229,6 +231,7 @@ export const state: State = {
         },
         { sortFields: [], sortDirections: [] }
       );
+
     //Determine if any filter criteria is set, if not do not call filterMovies helper.
     if (
       state.filterData?.tags.length > 0 ||
