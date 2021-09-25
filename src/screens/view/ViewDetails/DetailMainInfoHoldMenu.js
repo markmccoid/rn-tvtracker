@@ -93,7 +93,6 @@ const DetailMainInfoHoldMenu = ({
         menuItemTitle,
         isInSavedTVShows ? menuItemUpdateMovie : undefined,
         isInSavedTVShows ? menuItemPickImage : undefined,
-        isInSavedTVShows ? sendNotification : undefined,
         menuItemShareMovie,
       ].filter((el) => el)}
     >
