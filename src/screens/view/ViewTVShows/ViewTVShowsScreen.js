@@ -8,6 +8,7 @@ import {
   Animated,
   TouchableOpacity,
 } from "react-native";
+
 import { useOState, useOActions } from "../../../store/overmind";
 import ListSearchBar from "./ListSearchBar";
 import { AddIcon, FilterIcon } from "../../../components/common/Icons";
@@ -94,14 +95,15 @@ const ViewTVShowsScreen = ({ navigation, route }) => {
       ],
     };
     return (
-      <Animated.View
-        style={{
-          opacity,
-          ...animStyle,
-        }}
-      >
-        <ViewTVShowsListItem posterURL={pURL} tvShow={item} />
-      </Animated.View>
+      // <Animated.View
+      //   style={{
+      //     opacity,
+      //     ...animStyle,
+      //   }}
+      // >
+
+      <ViewTVShowsListItem posterURL={pURL} tvShow={item} />
+      // </Animated.View>
     );
   }, []);
 
