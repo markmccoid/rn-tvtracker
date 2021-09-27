@@ -16,7 +16,7 @@ const DiscoverInputTitle = ({ setSearchString, searchString, sheetFunctions }) =
       <View style={styles.searchBar}>
         <BottomSheetTextInput
           ref={inputRef}
-          placeholder="Search Movie Title"
+          placeholder="Search TV Show Title"
           onChangeText={handleSearchString}
           value={searchString}
           autoCorrect={false}
