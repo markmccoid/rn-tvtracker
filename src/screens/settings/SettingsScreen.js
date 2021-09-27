@@ -1,5 +1,5 @@
 import React from "react";
-import { SafeAreaView, View, ScrollView, StyleSheet } from "react-native";
+import { SafeAreaView, View, ScrollView, StyleSheet, Text } from "react-native";
 import { useOState } from "../../store/overmind";
 
 import SectionSavedFilters from "./SectionSavedFilters";
@@ -7,6 +7,7 @@ import SectionDefaultFilter from "./SectionDefaultFilter";
 import SectionSort from "./SectionSort";
 
 import { colors } from "../../globalStyles";
+import PressableButton from "../../components/common/PressableButton";
 
 const Settings = ({ navigation }) => {
   const state = useOState();
@@ -26,6 +27,14 @@ const Settings = ({ navigation }) => {
         </View>
         <View style={styles.settingsContainer}>
           <SectionSort />
+        </View>
+        <View>
+          <PressableButton
+            type="primary"
+            onPress={() => navigation.navigate("SettingsAppDebug")}
+          >
+            <Text>DEBUG</Text>
+          </PressableButton>
         </View>
       </ScrollView>
     </SafeAreaView>
