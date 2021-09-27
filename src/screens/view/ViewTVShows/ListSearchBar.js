@@ -38,7 +38,7 @@ const ListSearchBar = ({ visible, onCancel = () => null }) => {
           exit={{
             height: 0,
           }}
-          exitTransition={{ type: "timing", duration: 1000 }}
+          exitTransition={{ type: "timing", duration: 300 }}
           transition={{ type: "timing", duration: 200 }}
           style={styles.container}
         >
