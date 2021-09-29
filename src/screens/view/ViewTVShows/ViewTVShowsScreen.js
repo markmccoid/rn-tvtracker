@@ -29,7 +29,8 @@ const { width, height } = Dimensions.get("window");
 const POSTER_WIDTH = width / 2.2;
 const POSTER_HEIGHT = POSTER_WIDTH * 1.5; // Height is 1.5 times the width
 const MARGIN = 5;
-const ITEM_SIZE = POSTER_HEIGHT + MARGIN * 2;
+// The 9 is from the TVShowPortraitLayout.tsx and it is the Episode Length bar (view) space.
+const ITEM_SIZE = POSTER_HEIGHT + 9 + MARGIN * 2;
 
 //---------------
 const ViewTVShowsScreen = ({ navigation, route }) => {
@@ -95,15 +96,14 @@ const ViewTVShowsScreen = ({ navigation, route }) => {
       ],
     };
     return (
-      // <Animated.View
-      //   style={{
-      //     opacity,
-      //     ...animStyle,
-      //   }}
-      // >
-
-      <ViewTVShowsListItem posterURL={pURL} tvShow={item} />
-      // </Animated.View>
+      <Animated.View
+        style={{
+          opacity,
+          ...animStyle,
+        }}
+      >
+        <ViewTVShowsListItem posterURL={pURL} tvShow={item} />
+      </Animated.View>
     );
   }, []);
 
