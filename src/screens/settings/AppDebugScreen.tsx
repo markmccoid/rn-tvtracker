@@ -7,6 +7,14 @@ import { colors } from "../../globalStyles";
 import PressableButton from "../../components/common/PressableButton";
 
 import * as FileSystem from "expo-file-system";
+import * as Sharing from "expo-sharing";
+
+// Use the Sharing module to let the users save the backup
+// https://www.farhansayshi.com/post/how-to-save-files-to-a-device-folder-using-expo-and-react-native/#demo
+const shareBackup = async (fileLocation) => {
+  const UTI = "public.item";
+  const shareResult = await Sharing.shareAsync(fileLocation, { UTI });
+};
 
 const getDirInfo = async () => {
   const fileInfo = await FileSystem.getInfoAsync(FileSystem.documentDirectory);
@@ -39,6 +47,7 @@ const exportDataTest = async (tvShows) => {
       writeString
     );
     console.log("finished writing file");
+    shareBackup(`${FileSystem.documentDirectory}Mark/test.json`);
   } catch (err) {
     console.log("Error writing file", err);
   }
@@ -86,6 +95,14 @@ const AppDebugScreen: React.FC = (props) => {
       >
         <Text>Dir Info</Text>
       </PressableButton>
+
+      <PressableButton
+        onPress={() => console.log("nothing yet")}
+        style={{ backgroundColor: colors.splashGreenLight }}
+      >
+        <Text>Dropbox Auth</Text>
+      </PressableButton>
+
       <Text style={{ fontSize: 18 }}>AppDebug</Text>
       <ScrollView>
         {sortedTVShows.map((show) => (
