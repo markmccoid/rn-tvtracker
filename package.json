@@ -30,6 +30,7 @@
     "expo-permissions": "~12.1.1",
     "expo-sharing": "~9.2.1",
     "expo-web-browser": "~9.2.0",
+    "file-system": "^2.2.2",
     "firebase": "8.2.3",
     "lodash": "^4.17.19",
     "moti": "^0.14.2",
