@@ -12,11 +12,13 @@ type Props = {
   onPress: () => void;
   type?: "primary" | "alert";
   style?: ViewStyle;
+  disabled?: boolean;
 };
 
-const PressableButton: React.FC<Props> = ({ children, onPress, type, style }) => {
+const PressableButton: React.FC<Props> = ({ children, onPress, type, style, disabled }) => {
   return (
     <MotiPressable
+      disabled={disabled}
       style={[styles.buttonStructure, styles[type], style]}
       onPress={onPress}
       animate={React.useCallback(({ hovered, pressed }) => {
