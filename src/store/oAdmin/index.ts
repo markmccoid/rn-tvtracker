@@ -5,6 +5,7 @@ export type State = {
   username: string;
   email: string;
   uid: string;
+  dropboxToken: string;
   isLoggedIn: boolean;
   appState: {
     dataSource: Datasource;
@@ -17,6 +18,7 @@ const state: State = {
   username: "",
   email: "",
   uid: undefined,
+  dropboxToken: undefined,
   isLoggedIn: undefined,
   appState: {
     dataSource: undefined,

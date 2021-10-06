@@ -25,6 +25,7 @@ import { getCurrentDate, formatDateObjectForSave } from "../../utils/helperFunct
 import { fromUnixTime, differenceInDays, parseISO } from "date-fns";
 import { actions } from "xstate";
 import { mapContext } from "xstate/lib/utils";
+import { UserBackupObject } from "../../types";
 
 export const internal = internalActions;
 // export actions for saved filters.
@@ -40,12 +41,12 @@ export type TVShowDetails = TMDBTVShowDetails & { logoURLS: string[] };
 //*================================================================
 export const hydrateStore = async (
   { state, actions, effects }: Context,
-  { uid, forceRefresh = false }: { uid: string; forceRefresh: boolean }
+  { uid, forceRefresh = false }: { uid: string; forceRefresh?: boolean }
 ) => {
   //Used in View Movies to "know" when loading is complete
   state.oAdmin.appState.hydrating = true;
 
-  let userDocData = await effects.oSaved.initializeStore(uid, forceRefresh);
+  let userDocData = await effects.oSaved.initializeStore(uid);
 
   //! -- When this test goes out, you can remove the checkandupdateschema line and
   //! -- uncomment the below line
@@ -1194,3 +1195,26 @@ function createUpdateList(tvShows: SavedTVShowsDoc[]): number[] {
     return tvShowIds;
   }, []);
 }
+
+//*================================================================
+//* - BACKUP and RESTORE
+//*================================================================
+//-- Generate BACKUP Image
+export const generateBackupObject = async (
+  { state, actions, effects }: Context,
+  payload: void
+) => {
+  let userBackupObject = await effects.oSaved.createBackupObject(state.oAdmin.uid);
+  return userBackupObject;
+};
+
+//-- RESTORE Backup Image
+export const restoreBackupObject = async (
+  { state, actions, effects }: Context,
+  payload: UserBackupObject
+) => {
+  const userBackupData = payload;
+  await effects.oSaved.restoreBackupObject(state.oAdmin.uid, userBackupData);
+  // Think to manually run hydrate?
+  actions.oSaved.hydrateStore({ uid: state.oAdmin.uid });
+};

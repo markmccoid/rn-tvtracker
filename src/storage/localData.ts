@@ -8,7 +8,7 @@ import {
   removeFromAsyncStorage,
 } from "./asyncStorage";
 
-import { UserDocument } from "../types";
+import { UserBackupObject, UserDocument } from "../types";
 import {
   SavedTVShowsDoc,
   SavedFilters,
@@ -33,6 +33,7 @@ function getKey(uid, key) {
     savedFilters: "saved_filters",
     tagged_tvshows: "tagged_tvshows",
     tempEpisodeState: "saved_episode_state",
+    dropboxToken: "dropbox_token",
   };
   return `${uid}-${baseKeys[key]}`;
 }
@@ -82,10 +83,10 @@ export const refreshLocalData = async (uid: string, dataObj: UserDocument) => {
  */
 export const loadLocalData = async (uid: string): Promise<UserDocument> => {
   // Convert object style savedTVShows to Array of Objects that overmind expects
-  let savedTVShowsArray: SavedTVShowsDoc[] =
+  let savedTVShowsArray: Record<number, SavedTVShowsDoc> =
     (await loadFromAsyncStorage(getKey(uid, "savedTVShows"))) || [];
 
-  const savedTVShows = _.map(savedTVShowsArray);
+  const savedTVShows: SavedTVShowsDoc[] = _.map(savedTVShowsArray);
   const tagData = (await loadFromAsyncStorage(getKey(uid, "tagData"))) || [];
   const settings = (await loadFromAsyncStorage(getKey(uid, "settings"))) || {};
   const savedFilters = (await loadFromAsyncStorage(getKey(uid, "savedFilters"))) || [];
@@ -97,6 +98,26 @@ export const loadLocalData = async (uid: string): Promise<UserDocument> => {
     savedFilters,
     tempEpisodeState,
     dataSource: "local",
+  };
+};
+
+export const createBackupData = async (uid: string): Promise<UserBackupObject> => {
+  // Convert object style savedTVShows to Array of Objects that overmind expects
+  let savedTVShowsArray: Record<number, SavedTVShowsDoc> =
+    (await loadFromAsyncStorage(getKey(uid, "savedTVShows"))) || [];
+
+  const savedTVShows: SavedTVShowsDoc[] = _.map(savedTVShowsArray);
+  const tagData = (await loadFromAsyncStorage(getKey(uid, "tagData"))) || [];
+  const settings = (await loadFromAsyncStorage(getKey(uid, "settings"))) || {};
+  const savedFilters = (await loadFromAsyncStorage(getKey(uid, "savedFilters"))) || [];
+  const tempEpisodeState = (await loadFromAsyncStorage(getKey(uid, "tempEpisodeState"))) || {};
+  return {
+    savedTVShows,
+    tagData,
+    settings,
+    savedFilters,
+    tempEpisodeState,
+    dataSource: "backup",
   };
 };
 
@@ -122,6 +143,7 @@ export const loadCurrentUserFromStorage = async (): Promise<User> => {
 //--======================
 //-- Saving Data routines
 //--======================
+
 /**
  * saveUsersToStorage - saves users data to local storage
  *
@@ -136,6 +158,18 @@ export const saveUsersToStorage = async (users: User[]): Promise<void> => {
  */
 export const saveCurrentUserToStorage = async (currentUser: User): Promise<void> => {
   await saveToAsyncStorage("CurrentUser", currentUser);
+};
+
+/**
+ * saveDropboxTokenToStorage - saves users dropbox token to local storage
+ *
+
+ */
+export const saveDropboxTokenToStorage = async (uid: string, token: string): Promise<void> => {
+  await saveToAsyncStorage(getKey(uid, "dropboxToken"), token);
+};
+export const loadDropboxTokenFromStorage = async (uid: string): Promise<string> => {
+  return await loadFromAsyncStorage(getKey(uid, "dropboxToken"));
 };
 
 /**

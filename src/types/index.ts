@@ -1,6 +1,6 @@
 export type Operators = "AND" | "OR";
 export type SortTypes = "alpha" | "num" | "date";
-export type Datasource = "cloud" | "local" | undefined;
+export type Datasource = "cloud" | "local" | "backup" | undefined;
 
 export type DateOptions = {
   epoch: number;

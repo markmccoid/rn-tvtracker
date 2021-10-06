@@ -1,0 +1,47 @@
+Finish with fields in App Debug
+Change header of app debug screen
+sort on saved date desc since that is what we are trying to debug
+show undefined word for undefined and in red
+
+
+https://www.dropbox.com/oauth2/authorize?client_id=tv_tracker&redirect_uri=tvtracker:///&response_type=code
+
+
+
+curl https://api.dropbox.com/oauth2/token \
+    -d code=mkYsNvnsCpAAAAAAAAGm1uT7MZvhCsat9-fTnuYNygk \
+    -d grant_type=authorization_code \
+    -u j7nohmjf4e2o931:60a7ruwn3tj4nt1
+    
+    
+    mkYsNvnsCpAAAAAAAAGm3JCLWDunKRjz4uxg
+    
+    curl -X POST "https://api.dropboxapi.com/2/files/list_folders" \
+    --header "Authorization: Bearer EfOE310JeqkAAAAAAAAAAWH981yvSdaaGLcp6Qa3bOl0LIUYKOlp5JrP1G-kaNAY"
+    
+    
+curl -X POST https://api.dropboxapi.com/2/check/app --header "Authorization: Basic ajdub2htamY0ZTJvOTMxOjYwYTdydXduM3RqNG50MQ=="     --header "Content-Type: application/json" \
+--data "{\"query\": \"foo\"}"
+
+//--Upload file
+curl -X POST https://content.dropboxapi.com/2/files/upload \
+    --header "Authorization: Bearer bOPSAHw7BucAAAAAAAAAAcvFSnlTuxJf0PovGEzFSshBTjxeByiD0_1ODUSR-u86" \
+    --header "Dropbox-API-Arg: {\"path\": \"/Homework/math/Matrices.txt\",\"mode\": \"add\",\"autorename\": true,\"mute\": false,\"strict_conflict\": false}" \
+    --header "Content-Type: application/octet-stream" \
+    --data "this is a test"
+    
+    
+    curl -X POST https://api.dropboxapi.com/2/files/list_folder \
+  --header 'Authorization: Bearer Wfi6iFOTPTsAAAAAAAAAAXInSxd_APcOg1i7hY4P9s6JnLeCsRpg7Jy04-1O8Qlk' \
+  --header 'Content-Type: application/json' \
+  --data '{"path":""}'
+  
+  
+  
+TO DO
+TEST Restore!!!
+Some sort of display when "Backing up" so user knows it is complete.
+Maybe state so that we can display spinner
+InputText for Name of backup to download.
+At Some point read files in directory and display and allow user to click on one they want.
+Let user know which user backup is being applied to

@@ -71,3 +71,8 @@ export interface UserDocument extends UserBaseData {
   //so that it looks like an array.
   savedTVShows: SavedTVShowsDoc[];
 }
+
+export interface UserBackupObject extends UserBaseData {
+  // Yes, same as UserDoc, but wanted to distinguish in case in future want to add stuff
+  savedTVShows: SavedTVShowsDoc[];
+}

@@ -9,6 +9,7 @@ import {
   saveSavedFiltersToLocal,
   saveEpisodeStateToLocal,
   mergeEpisodeStateToLocal,
+  createBackupData,
 } from "../../storage/localData";
 
 import { loadFromAsyncStorage } from "../../storage/asyncStorage";
@@ -24,7 +25,7 @@ import {
   storeSavedFilters,
 } from "../../storage/firestore";
 
-import { UserDocument } from "../../types";
+import { UserBackupObject, UserDocument } from "../../types";
 
 import _ from "lodash";
 import {
@@ -80,12 +81,31 @@ export const cancelDebounced = async () => {
  *  returns a dataObj that actions.oState.hydrateStore can use to initialize the store
  *
  * @param {string} uid - uid of user who is logged in
- * @param {bool} forceRefresh - boolean that will force refresh from firebase
- *  -- default is false coming from hydrateStore
  */
-export const initializeStore = async (uid: string, forceRefresh: boolean) => {
+export const initializeStore = async (uid: string) => {
   const dataObj: UserDocument = await loadLocalData(uid);
   return dataObj;
+};
+
+/**
+ * createBackupObject - returns an object that can be stored and then
+ *  read in at a later time to restore the data..
+ *
+ * @param {string} uid - uid of user who is logged in
+ */
+export const createBackupObject = async (uid: string) => {
+  const backupObj: UserBackupObject = await createBackupData(uid);
+  return backupObj;
+};
+
+export const restoreBackupObject = async (uid: string, backupObj: UserBackupObject) => {
+  //Restore each piece of data to the users local files
+  // THIS IS DESTRUCTIVE!!!
+  localSaveTVShows(uid, backupObj.savedTVShows);
+  localSaveEpisodeState(uid, backupObj.tempEpisodeState);
+  localSaveTags(uid, backupObj.tagData);
+  localSaveSavedFilters(uid, backupObj.savedFilters);
+  localSaveSettings(uid, backupObj.settings);
 };
 
 //*=================================
