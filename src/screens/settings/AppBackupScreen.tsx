@@ -2,7 +2,6 @@ import React from "react";
 import { Alert, View, Text, TextInput, Switch, ScrollView, StyleSheet } from "react-native";
 import _ from "lodash";
 import { useOState, useOActions } from "../../store/overmind";
-import DebugItem from "../../components/debug/DebugItem";
 import { colors } from "../../globalStyles";
 import PressableButton from "../../components/common/PressableButton";
 
@@ -66,20 +65,16 @@ const importDataTest = async (fileName) => {
     console.log("error reading file", err);
   }
 };
-const AppDebugScreen: React.FC = (props) => {
-  const [screen, setScreen] = React.useState("debug");
+const AppBackupScreen: React.FC = (props) => {
+  const [screen, setScreen] = React.useState("dropbox");
   const state = useOState();
   const actions = useOActions();
   const tvShows = state.oSaved.savedTVShows;
-  const sortedTVShows = _.sortBy(tvShows, "dateSaved");
+  const { setDropboxToken } = actions.oAdmin;
+  const { dropboxToken } = state.oAdmin;
+
   const ButtonBar = () => (
-    <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
-      <PressableButton
-        onPress={() => setScreen("debug")}
-        style={{ backgroundColor: colors.mutedRed }}
-      >
-        <Text>Debug</Text>
-      </PressableButton>
+    <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
       <PressableButton
         onPress={() => setScreen("dropbox")}
         style={{ backgroundColor: colors.splashGreenDark }}
@@ -94,25 +89,19 @@ const AppDebugScreen: React.FC = (props) => {
       </PressableButton>
     </View>
   );
-  if (screen === "debug") {
-    return (
-      <View>
-        <ButtonBar />
-        <ScrollView>
-          {sortedTVShows.map((show) => (
-            <DebugItem key={show.id} item={show} />
-          ))}
-          <View style={{ height: 50 }} />
-        </ScrollView>
-      </View>
-    );
-  }
+
   if (screen === "dropbox") {
     return (
       <View>
         <ButtonBar />
-        <DropboxAuth />
-        <DropboxDownload token="bOPSAHw7BucAAAAAAAAAAcvFSnlTuxJf0PovGEzFSshBTjxeByiD0_1ODUSR-u86" />
+        {!dropboxToken && <DropboxAuth setDropboxToken={setDropboxToken} />}
+        <PressableButton
+          onPress={() => setDropboxToken(undefined)}
+          style={{ backgroundColor: colors.buttonPrimary, width: 200 }}
+        >
+          <Text>Reset Dropbox</Text>
+        </PressableButton>
+        {dropboxToken && <DropboxDownload token={dropboxToken} />}
       </View>
     );
   }
@@ -121,4 +110,4 @@ const AppDebugScreen: React.FC = (props) => {
   }
 };
 
-export default AppDebugScreen;
+export default AppBackupScreen;

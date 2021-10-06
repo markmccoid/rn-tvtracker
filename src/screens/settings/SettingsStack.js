@@ -6,6 +6,7 @@ import { MenuIcon, HomeIcon, CloseIcon } from "../../components/common/Icons";
 import SettingsScreen from "./SettingsScreen";
 import CreateSavedFilterScreen from "./CreateSavedFilterScreen";
 import AppDebugScreen from "./AppDebugScreen";
+import AppBackupScreen from "./AppBackupScreen";
 import { colors } from "../../globalStyles";
 
 const SettingsStack = createStackNavigator();
@@ -63,6 +64,7 @@ const SettingsStackScreen = () => {
         }}
       />
       <SettingsStack.Screen name="SettingsAppDebug" component={AppDebugScreen} />
+      <SettingsStack.Screen name="SettingsAppBackup" component={AppBackupScreen} />
     </SettingsStack.Navigator>
   );
 };

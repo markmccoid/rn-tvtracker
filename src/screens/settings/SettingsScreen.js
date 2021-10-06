@@ -31,6 +31,14 @@ const Settings = ({ navigation }) => {
         <View>
           <PressableButton
             type="primary"
+            onPress={() => navigation.navigate("SettingsAppBackup")}
+          >
+            <Text>Backup Data</Text>
+          </PressableButton>
+        </View>
+        <View>
+          <PressableButton
+            type="primary"
             onPress={() => navigation.navigate("SettingsAppDebug")}
           >
             <Text>DEBUG</Text>
