@@ -15,6 +15,7 @@ const DetailButtonBar = ({ tvShow }) => {
     <View style={styles.wrapper}>
       <View style={[styles.buttonRow, { marginBottom: 8 }]}>
         <PressableButton
+          style={[styles.button]}
           type="primary"
           onPress={() => {
             navigation.navigate(`${route.name}Seasons`, {
@@ -54,7 +55,6 @@ const DetailButtonBar = ({ tvShow }) => {
               backgroundColor: "#4285F4",
               flexDirection: "row",
               justifyContent: "flex-start",
-              padding: 0,
             },
           ]}
           onPress={async () => {
@@ -68,12 +68,12 @@ const DetailButtonBar = ({ tvShow }) => {
               backgroundColor: "white",
               borderRadius: 10,
               padding: 2,
-              marginRight: 15,
+              marginRight: 10,
             }}
           >
             <Image
               source={require("../../../../assets/GoogleLogoSmall.png")}
-              style={{ width: 18, height: 18 }}
+              style={{ width: 16, height: 16 }}
             />
           </View>
           <Text style={{ fontWeight: "600", color: "#212121" }}>Google It</Text>

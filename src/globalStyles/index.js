@@ -10,6 +10,7 @@ export const colors = {
   background: "#d7ebdb", //"#ebf4ff", //#dee9f7",
   navHeaderColor: "#E4EBE9",
   imdbYellow: "#f6c418",
+  dropboxBlue: "#0061fd",
   // background: "#f2f2f2",
   darkbg: "#59922D", //"#037aff", //"#005fcc", //"#2f6eb5", // Background used for buttons, etc
   darkfg: "white", // Foreground color to be used with darkbg
