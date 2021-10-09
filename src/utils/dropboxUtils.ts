@@ -44,7 +44,7 @@ export const getAuthToken = async (authKey: string): Promise<AuthToken> => {
     */
   } catch (e) {
     const err = e as AxiosError;
-    console.log("error =", typeof err, err);
+    // console.log("error =", typeof err, err);
     return {
       token: "",
       error: err.message,

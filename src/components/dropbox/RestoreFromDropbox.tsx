@@ -65,26 +65,6 @@ const RestoreFromDropbox = ({ token }) => {
           </PressableButton>
         </View>
       </View>
-
-      {/* <PressableButton
-        style={{ backgroundColor: "purple", width: 200, marginBottom: 10 }}
-        onPress={async () => {
-          const backupImage = await generateBackupObject();
-          console.log("Backupimage", backupImage.tagData);
-          const data = await uploadDropboxFile(
-            token,
-            "/",
-            `${username}-backup.json`,
-            backupImage
-          );
-          if (data?.error) {
-            Alert.alert("Error writing backup image", data?.error);
-          }
-        }}
-      >
-        <Text>Upload to Dropbox</Text>
-      </PressableButton>
-      */}
     </View>
   );
 };

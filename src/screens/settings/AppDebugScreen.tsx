@@ -20,11 +20,11 @@ const shareBackup = async (fileLocation) => {
 
 const getDirInfo = async () => {
   const fileInfo = await FileSystem.getInfoAsync(FileSystem.documentDirectory);
-  console.log("FileInfo", fileInfo);
+  // console.log("FileInfo", fileInfo);
   const contentURI = await FileSystem.getContentUriAsync(
     `${FileSystem.documentDirectory}test.json`
   );
-  console.log("Content URI", contentURI);
+  // console.log("Content URI", contentURI);
 };
 const makeDir = async (dirName) => {
   const fileLocation = `${FileSystem.documentDirectory}${dirName}`;
@@ -48,7 +48,7 @@ const exportDataTest = async (tvShows) => {
       `${FileSystem.documentDirectory}Mark/test.json`,
       writeString
     );
-    console.log("finished writing file");
+    // console.log("finished writing file");
     shareBackup(`${FileSystem.documentDirectory}Mark/test.json`);
   } catch (err) {
     console.log("Error writing file", err);
@@ -61,7 +61,7 @@ const importDataTest = async (fileName) => {
   try {
     output = await FileSystem.readAsStringAsync(fileLocation);
     output = JSON.parse(output);
-    console.log(output.length);
+    // console.log(output.length);
   } catch (err) {
     console.log("error reading file", err);
   }
