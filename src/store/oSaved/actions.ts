@@ -1212,9 +1212,15 @@ export const generateBackupObject = async (
 export const restoreBackupObject = async (
   { state, actions, effects }: Context,
   payload: UserBackupObject
-) => {
+): Promise<{ success: boolean }> => {
   const userBackupData = payload;
+  // Verify backupData is correctly configured
+  // just check for two keys
+  if (!userBackupData?.savedTVShows || !userBackupData?.settings) {
+    return { success: false };
+  }
   await effects.oSaved.restoreBackupObject(state.oAdmin.uid, userBackupData);
   // Think to manually run hydrate?
   actions.oSaved.hydrateStore({ uid: state.oAdmin.uid });
+  return { success: true };
 };

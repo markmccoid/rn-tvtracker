@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import base64 from "react-native-base64";
 
 type AuthToken = {
@@ -42,11 +42,12 @@ export const getAuthToken = async (authKey: string): Promise<AuthToken> => {
         uid: string;
     }
     */
-  } catch (err) {
+  } catch (e) {
+    const err = e as AxiosError;
     console.log("error =", typeof err, err);
     return {
-      token: undefined,
-      error: err,
+      token: "",
+      error: err.message,
     };
   }
 };
@@ -154,4 +155,38 @@ export const listDropboxFiles = async (
   //   status: undefined,
   //   error: err,
   // }));
+};
+
+//* Check token ----------------------
+// Verify if stored token is valid
+type ErrorValues = "No Network" | "Invalid or Missing Token" | "";
+type TokenReturn = {
+  valid: boolean;
+  error?: ErrorValues;
+};
+export const isDropboxTokenValid = async (token: string): Promise<TokenReturn> => {
+  const data = { query: "valid" };
+  try {
+    const resp = await axios.post(
+      "https://api.dropboxapi.com/2/check/user",
+      JSON.stringify(data),
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return { valid: true };
+  } catch (e) {
+    const err = e as AxiosError;
+    let errorMessage: ErrorValues = "";
+    if (err?.response?.data) {
+      errorMessage = "Invalid or Missing Token";
+    } else {
+      errorMessage = "No Network";
+    }
+
+    return { valid: false, error: errorMessage };
+  }
 };

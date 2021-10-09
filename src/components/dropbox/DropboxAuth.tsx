@@ -5,7 +5,8 @@ import * as Linking from "expo-linking";
 import * as WebBrowser from "expo-web-browser";
 import { getAuthToken } from "../../utils/dropboxUtils";
 
-import PressableButton from "../../components/common/PressableButton";
+import PressableButton from "../common/PressableButton";
+import { colors } from "../../globalStyles";
 
 // const getAuthToken = async (authKey) => {
 //   const body = { code: authKey, grant_type: "authorization_code" };
@@ -54,21 +55,32 @@ import PressableButton from "../../components/common/PressableButton";
 //     };
 //   }
 // };
-const DropboxAuth = ({ setDropboxToken }) => {
+const DropboxAuth = ({ setDropboxToken, tokenErrorMessage }) => {
   const [authKey, setAuthKey] = React.useState("");
   return (
     <View>
-      <Text>Dropbox Auth</Text>
-      <PressableButton
-        style={{ backgroundColor: "purple", width: 200, marginBottom: 10 }}
-        onPress={() =>
-          WebBrowser.openBrowserAsync(
-            "https://www.dropbox.com/oauth2/authorize?client_id=j7nohmjf4e2o931&response_type=code"
-          )
-        }
-      >
-        <Text>Authorize Dropbox</Text>
-      </PressableButton>
+      <Text style={{ fontSize: 18, fontWeight: "600" }}>Authorize TV Tracker for Dropbox</Text>
+      <Text>
+        Press on Dropbox button and sign in to your Dropbox account. Allow the TV Tracker app
+        and copy the Authorization code displayed. Paste into input box below and press
+        "Authorize"
+      </Text>
+      <View style={{ alignItems: "center" }}>
+        <PressableButton
+          style={{
+            backgroundColor: colors.dropboxBlue,
+            marginBottom: 10,
+            alignItems: "center",
+          }}
+          onPress={() =>
+            WebBrowser.openBrowserAsync(
+              "https://www.dropbox.com/oauth2/authorize?client_id=j7nohmjf4e2o931&response_type=code"
+            )
+          }
+        >
+          <Text style={{ color: "white" }}>Go To Dropbox</Text>
+        </PressableButton>
+      </View>
       <TextInput
         style={styles.input}
         value={authKey}
@@ -76,16 +88,23 @@ const DropboxAuth = ({ setDropboxToken }) => {
         placeholder="Enter Dropbox Code"
       />
       <PressableButton
+        style={{
+          backgroundColor: `${colors.dropboxBlue}${!!!authKey ? "aa" : ""}`,
+          marginVertical: 10,
+          alignItems: "center",
+        }}
+        disabled={!!!authKey}
         onPress={async () => {
           const token = await getAuthToken(authKey);
+          console.log("Token db auht", token.error);
           if (!token?.error) {
             setDropboxToken(token.token);
           } else {
-            Alert.prompt("ERROR getting Dropbox Token, Try again", token?.error);
+            Alert.alert("ERROR getting Dropbox Token, Try again", token?.error);
           }
         }}
       >
-        <Text>Get Token</Text>
+        <Text style={{ color: "white" }}>Authorize</Text>
       </PressableButton>
     </View>
   );

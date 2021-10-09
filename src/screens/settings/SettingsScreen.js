@@ -1,5 +1,5 @@
 import React from "react";
-import { SafeAreaView, View, ScrollView, StyleSheet, Text } from "react-native";
+import { SafeAreaView, View, ScrollView, StyleSheet, Text, Pressable } from "react-native";
 import { useOState } from "../../store/overmind";
 
 import SectionSavedFilters from "./SectionSavedFilters";
@@ -8,6 +8,7 @@ import SectionSort from "./SectionSort";
 
 import { colors } from "../../globalStyles";
 import PressableButton from "../../components/common/PressableButton";
+import { SyncIcon } from "../../components/common/Icons";
 
 const Settings = ({ navigation }) => {
   const state = useOState();
@@ -25,24 +26,32 @@ const Settings = ({ navigation }) => {
         <View style={[styles.settingsContainer, { zIndex: 100 }]}>
           <SectionDefaultFilter />
         </View>
+        <View style={styles.line} />
         <View style={styles.settingsContainer}>
           <SectionSort />
         </View>
-        <View>
-          <PressableButton
-            type="primary"
-            onPress={() => navigation.navigate("SettingsAppBackup")}
-          >
-            <Text>Backup Data</Text>
-          </PressableButton>
+        <View style={styles.line} />
+        <View style={styles.settingsMenuItem}>
+          <View style={{ justifyContent: "center", alignItems: "flex-start" }}>
+            <PressableButton
+              style={styles.settingsButton}
+              onPress={() => navigation.navigate("SettingsAppBackup")}
+            >
+              <Text style={{ marginRight: 8 }}>Backup Data</Text>
+              <SyncIcon size={20} />
+            </PressableButton>
+          </View>
         </View>
-        <View>
-          <PressableButton
-            type="primary"
-            onPress={() => navigation.navigate("SettingsAppDebug")}
-          >
-            <Text>DEBUG</Text>
-          </PressableButton>
+        <View style={styles.line} />
+        <View style={styles.settingsMenuItem}>
+          <View style={{ justifyContent: "center", alignItems: "flex-start" }}>
+            <PressableButton
+              style={styles.settingsButton}
+              onPress={() => navigation.navigate("SettingsAppDebug")}
+            >
+              <Text>DEBUG</Text>
+            </PressableButton>
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -61,9 +70,26 @@ const styles = StyleSheet.create({
     margin: 5,
     marginTop: 15,
   },
+  settingsMenuItem: {
+    margin: 5,
+  },
   settingsText: {
     fontSize: 18,
     fontWeight: "bold",
+  },
+  settingsButton: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 5,
+    borderWidth: 1,
+    borderColor: colors.buttonPrimaryBorder,
+    borderRadius: 5,
+    backgroundColor: "white",
+  },
+  line: {
+    height: 2,
+    backgroundColor: colors.commonBorder,
   },
 });
 

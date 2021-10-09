@@ -1,5 +1,5 @@
 import React from "react";
-import { Alert, View, Text, TextInput, Switch, ScrollView, StyleSheet } from "react-native";
+import { View, Text, ScrollView, StyleSheet } from "react-native";
 import _ from "lodash";
 import { useOState, useOActions } from "../../store/overmind";
 import DebugItem from "../../components/debug/DebugItem";
@@ -9,8 +9,8 @@ import PressableButton from "../../components/common/PressableButton";
 import * as FileSystem from "expo-file-system";
 import * as Sharing from "expo-sharing";
 
-import DropboxAuth from "./DropboxAuth";
-import DropboxDownload from "./DropboxDownload";
+import DropboxAuth from "../../components/dropbox/DropboxAuth";
+import DropboxDownload from "../../components/dropbox/RestoreFromDropbox";
 // Use the Sharing module to let the users save the backup
 // https://www.farhansayshi.com/post/how-to-save-files-to-a-device-folder-using-expo-and-react-native/#demo
 const shareBackup = async (fileLocation) => {
