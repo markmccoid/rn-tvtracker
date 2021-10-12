@@ -12,7 +12,7 @@ const TagStackScreen = () => {
   return (
     <TagStack.Navigator>
       <TagStack.Screen
-        name="Tags"
+        name="TagsScreen"
         component={TagScreen}
         options={({ navigation, route }) => {
           return {

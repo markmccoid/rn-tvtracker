@@ -1,20 +1,11 @@
 import React, { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  Dimensions,
-  FlatList,
-  StyleSheet,
-  Animated,
-  TouchableOpacity,
-} from "react-native";
+import { View, Text, Dimensions, StyleSheet, Animated, TouchableOpacity } from "react-native";
 
 import { useOState, useOActions } from "../../../store/overmind";
 import ListSearchBar from "./ListSearchBar";
 import { AddIcon, FilterIcon } from "../../../components/common/Icons";
 
 import ViewTVShowsListItem from "../../../components/ViewTVShows/ViewTVShowsListItem";
-import ViewTVShowOverlay from "./ViewTVShowOverlay";
 import { colors } from "../../../globalStyles";
 import {
   getViewRotates,

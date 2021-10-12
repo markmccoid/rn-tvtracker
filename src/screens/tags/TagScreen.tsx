@@ -10,7 +10,11 @@ import { TagsScreenProps } from "./tagTypes";
 const TagScreen = ({ navigation, route }: TagsScreenProps) => {
   //Get tag data from Overmind
   const state = useOState();
-
+  React.useEffect(() => {
+    navigation.setOptions({
+      title: "Tags",
+    });
+  }, []);
   return (
     <View style={styles.wrapper}>
       <TagInput />

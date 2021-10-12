@@ -1,5 +1,6 @@
 import React from "react";
-import { SafeAreaView, View, ScrollView, StyleSheet, Text, Pressable } from "react-native";
+import { View, ScrollView, StyleSheet, Text, Pressable } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useOState } from "../../store/overmind";
 
 import SectionSavedFilters from "./SectionSavedFilters";
@@ -18,7 +19,7 @@ const Settings = ({ navigation }) => {
   //   console.log("saved filters updated", savedFilters.length);
   // }, [savedFilters.length]);
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <ScrollView style={styles.scrollContainer}>
         <View style={styles.settingsContainer}>
           <SectionSavedFilters />
@@ -54,7 +55,7 @@ const Settings = ({ navigation }) => {
           </View>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 

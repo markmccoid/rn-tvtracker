@@ -16,12 +16,15 @@ const SettingsStackScreen = () => {
   // -- if you have some screens you don't want to be model then you will need to embed another Stack within
   // -- i.e. the main "Settings" screen will be a stack.
   return (
-    <SettingsStack.Navigator screenOptions={{ animationEnabled: false }} mode="modal">
+    <SettingsStack.Navigator
+      screenOptions={{ animationEnabled: false, presentation: "modal", headerShown: true }}
+    >
       <SettingsStack.Screen
-        name="Settings"
+        name="SettingsScreen"
         component={SettingsScreen}
         options={({ navigation, route }) => {
           return {
+            title: "Settings",
             headerTintColor: colors.darkText,
             headerStyle: {
               backgroundColor: colors.navHeaderColor,

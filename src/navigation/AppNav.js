@@ -20,6 +20,11 @@ import AppNavDrawerContent from "./AppNavDrawerContent";
 // Create screenoptions function for TabsNavigator
 //----------------------------------------------------------------
 const tabsScreenOptions = ({ route }) => ({
+  headerShown: false,
+  tabBarActiveTintColor: colors.primary,
+  tabBarInactiveTintColor: "gray",
+  backgroundColor: colors.navHeaderColor,
+  tabBarStyle: [{ display: "flex" }, null],
   tabBarIcon: ({ focused, color, size }) => {
     let iconComponent;
     let tagStyle = { marginTop: 5 };
@@ -50,25 +55,25 @@ const Drawer = createDrawerNavigator();
 //- Calls Firebase signout method, then shows activity indicator.
 //- when onAuthStateChanged(store/oSaved/onInitialize.js) "reacts" user will be logged out
 //- this will cause rerender and auth nav path to be displayed.
-const SignOut = ({ navigation }) => {
-  Firebase.auth().signOut();
-  return <ActivityIndicator />;
-};
+// const SignOut = ({ navigation }) => {
+//   Firebase.auth().signOut();
+//   return <ActivityIndicator />;
+// };
 
 //-- Redirect to View Movies screen --
-const RedirectToMain = ({ navigation }) => {
-  // Using the useFocusEffect, the navigation is run
-  // whenever this component gets focus.
-  // Currently this is from the Drawer link "Home"
-  useFocusEffect(() => {
-    navigation.navigate("ViewTVShowsTab", {
-      screen: "ViewTVShows",
-      params: { screen: "Filter" },
-    });
-  });
+// const RedirectToMain = ({ navigation }) => {
+//   // Using the useFocusEffect, the navigation is run
+//   // whenever this component gets focus.
+//   // Currently this is from the Drawer link "Home"
+//   useFocusEffect(() => {
+//     navigation.navigate("ViewTVShowsTab", {
+//       screen: "ViewTVShows",
+//       params: { screen: "Filter" },
+//     });
+//   });
 
-  return null;
-};
+//   return null;
+// };
 //-- Main application Bottom Tabs ----------
 const AppTabs = createBottomTabNavigator();
 
@@ -78,18 +83,6 @@ const AppTabsScreen = () => {
       // lazy={false}
       initialRouteName="ViewTVShowsTab"
       screenOptions={tabsScreenOptions}
-      tabBarOptions={{
-        style: {
-          backgroundColor: colors.navHeaderColor,
-          borderTopWidth: 1,
-          // borderTopColor: "#555",
-        },
-        inactiveTintColor: "gray",
-        // activeBackgroundColor: colors.primary,
-        // inactiveBackgroundColor: colors.background,
-        activeTintColor: colors.primary,
-        // inactiveBackgroundColor: colors.navHeaderColor,
-      }}
     >
       <AppTabs.Screen
         name="ViewTVShowsTab"
@@ -115,6 +108,7 @@ const AppNav = () => {
       drawerType="front"
       drawerStyle={{}}
       drawerContent={(props) => <AppNavDrawerContent {...props} />}
+      screenOptions={{ headerShown: false }}
     >
       <Drawer.Screen name="Home" component={AppTabsScreen} />
       <Drawer.Screen name="Settings" component={SettingsStackScreen} />
