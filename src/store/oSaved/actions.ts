@@ -22,7 +22,7 @@ import {
   TVDetail_Seasons,
 } from "@markmccoid/tmdb_api";
 import { getCurrentDate, formatDateObjectForSave } from "../../utils/helperFunctions";
-import { fromUnixTime, differenceInDays, parseISO } from "date-fns";
+import { fromUnixTime, differenceInDays, format } from "date-fns";
 import { actions } from "xstate";
 import { mapContext } from "xstate/lib/utils";
 import { UserBackupObject } from "../../types";
@@ -59,8 +59,8 @@ export const hydrateStore = async (
   state.oSaved.savedFilters = userDocData.savedFilters;
   //Update the datasource (loaded from local or cloud(firestore))
   state.oAdmin.appState.dataSource = userDocData.dataSource;
-  // Tag data is stored on the movies document.  This function creates the
-  // oSaved.taggedMovies data structure within Overmind
+  // Tag data is stored on the TV shows document.  This function creates the
+  // oSaved.taggedTVShows data structure within Overmind
   actions.oSaved.internal.createTaggedTVShowsObj(userDocData.savedTVShows);
   actions.oSaved.internal.hydrateEpisodeState(userDocData.savedTVShows);
   //------------
@@ -86,10 +86,10 @@ export const hydrateStore = async (
     state.oSaved.settings.defaultFilter = null;
     // Save data to local
     await effects.oSaved.localSaveSettings(uid, state.oSaved.settings);
-    // -- COMMENT OUT FIRESTORE
-    // Save to firestore
-    // await effects.oSaved.saveSettings(state.oSaved.settings);
   }
+
+  // Get movie genres from savedTVShows objects
+  state.oSaved.generated.genres = getGenresFromTVShows(state.oSaved.savedTVShows);
 
   // Apply a default filter, if one has been selected in settings and we are not doing a forced refresh
   const defaultFilterId = state.oSaved.settings?.defaultFilter;
@@ -97,9 +97,6 @@ export const hydrateStore = async (
     //Apply default Filter
     actions.oSaved.applySavedFilter(defaultFilterId);
   }
-
-  // Get movie genres from savedTVShows objects
-  state.oSaved.generated.genres = getGenresFromTVShows(state.oSaved.savedTVShows);
 
   //! Auto Update TV Shows Implemententation
   // Find shows that need updating and update them
@@ -186,9 +183,10 @@ export const refreshTVShow = async (
       const currentDate = new Date();
       const showName = state.oSaved.getTVShowDetails(tvShowId).name;
       const nextAirDateFormatted = latesTVShowDetails.nextEpisodeToAir?.airDate?.formatted;
+      const nextAirDateDOW = format(fromUnixTime(newNextAirDate), "EEEE");
       const notificationData = {
         title: `${showName} New Episode`,
-        body: `New Episode of ${showName} on ${nextAirDateFormatted}`,
+        body: `New Episode of ${showName} on ${nextAirDateDOW}, ${nextAirDateFormatted}`,
         triggerDate: new Date(newNextAirDate * 1000), //Need to mult by 1000 because we are storing epoch seconds
         triggerDate2: new Date(currentDate.setMinutes(currentDate.getMinutes() + 10)),
       };
@@ -197,7 +195,7 @@ export const refreshTVShow = async (
       // You can't run a notification in the past.
       if (today < compareNextAirDate) {
         await scheduleLocalNotification(
-          notificationData.title,
+          `${notificationData.title} Today!`,
           notificationData.body,
           tvShowId,
           notificationData.triggerDate,
@@ -207,7 +205,7 @@ export const refreshTVShow = async (
       //! Notification scheduled for 10 minutes after this is run
       //! May not keep this notification
       await scheduleLocalNotification(
-        notificationData.title,
+        `${notificationData.title} Announced`,
         notificationData.body,
         tvShowId,
         notificationData.triggerDate2
@@ -1101,6 +1099,7 @@ export async function checkAndUpdateSchema(
   { state, effects, actions }: Context,
   tvShows: SavedTVShowsDoc[]
 ): Promise<SavedTVShowsDoc[]> {
+  // if one has totalEpisodes key, assume all have and are up to date
   if (tvShows[0]?.totalEpisodes) {
     return tvShows;
   }
@@ -1219,6 +1218,10 @@ export const restoreBackupObject = async (
   if (!userBackupData?.savedTVShows || !userBackupData?.settings) {
     return { success: false };
   }
+  // Reset overmind store
+  // actions.oSaved.resetOSaved();
+  actions.oSaved.clearFilterScreen();
+  // Restore backup image
   await effects.oSaved.restoreBackupObject(state.oAdmin.uid, userBackupData);
   // Think to manually run hydrate?
   actions.oSaved.hydrateStore({ uid: state.oAdmin.uid });
