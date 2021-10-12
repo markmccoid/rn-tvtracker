@@ -72,7 +72,10 @@ export interface UserDocument extends UserBaseData {
   savedTVShows: SavedTVShowsDoc[];
 }
 
-export interface UserBackupObject extends UserBaseData {
-  // Yes, same as UserDoc, but wanted to distinguish in case in future want to add stuff
+export interface UserBackupObject {
+  savedFilters: SavedFilters[];
+  settings: Settings;
+  tagData: TagData[];
+  dataSource: Datasource;
   savedTVShows: SavedTVShowsDoc[];
 }

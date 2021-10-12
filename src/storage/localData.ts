@@ -105,18 +105,22 @@ export const createBackupData = async (uid: string): Promise<UserBackupObject> =
   // Convert object style savedTVShows to Array of Objects that overmind expects
   let savedTVShowsArray: Record<number, SavedTVShowsDoc> =
     (await loadFromAsyncStorage(getKey(uid, "savedTVShows"))) || [];
-
+  // We store savedTVShows in backup like this because when we "restore" the
+  // backup we call the save function which converts it to an Object that
+  // the above load is expecting
   const savedTVShows: SavedTVShowsDoc[] = _.map(savedTVShowsArray);
   const tagData = (await loadFromAsyncStorage(getKey(uid, "tagData"))) || [];
   const settings = (await loadFromAsyncStorage(getKey(uid, "settings"))) || {};
   const savedFilters = (await loadFromAsyncStorage(getKey(uid, "savedFilters"))) || [];
-  const tempEpisodeState = (await loadFromAsyncStorage(getKey(uid, "tempEpisodeState"))) || {};
+  // don't need tempEpisodeState as it is derived from savedTVShows[].episodeState
+  // const tempEpisodeState = (await loadFromAsyncStorage(getKey(uid, "tempEpisodeState"))) || {};
+
   return {
     savedTVShows,
     tagData,
     settings,
     savedFilters,
-    tempEpisodeState,
+    // tempEpisodeState,
     dataSource: "backup",
   };
 };

@@ -23,8 +23,8 @@ export const createTaggedTVShowsObj = ({ state }: Context, savedTVShows) => {
 
 /**
  * hydrateEpisodeState - the episodeState property is stored on each tvShows document
- * it contains the episode state of the give tvShows seasons/episodes
- * hydrates the oSaved.episodeState object with data from the cloud
+ * it contains the episode state of the given tvShows seasons/episodes
+ * hydrates the oSaved.tempEpisodeState object with data from the TVShows document
  * Called from the hydrateStore action
  * @param {array} savedTVShows
  */
