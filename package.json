@@ -15,10 +15,10 @@
     "@react-native-async-storage/async-storage": "~1.15.0",
     "@react-native-community/hooks": "^2.6.0",
     "@react-native-community/masked-view": "0.1.10",
-    "@react-navigation/bottom-tabs": "^5.9.2",
-    "@react-navigation/drawer": "^5.9.3",
-    "@react-navigation/native": "^5.7.6",
-    "@react-navigation/stack": "^5.9.3",
+    "@react-navigation/bottom-tabs": "^6.0.8",
+    "@react-navigation/drawer": "^6.1.7",
+    "@react-navigation/native": "^6.0.5",
+    "@react-navigation/stack": "^6.0.10",
     "@xstate/react": "^1.2.2",
     "axios": "^0.21.4",
     "date-fns": "^2.16.1",
@@ -55,7 +55,6 @@
     "react-native-svg": "12.1.1",
     "react-native-swipe-list-view": "^3.0.1",
     "react-native-web": "~0.13.12",
-    "react-navigation-hooks": "^1.1.0",
     "react-query": "^3.19.1",
     "styled-components": "^5.0.1",
     "tinycolor2": "^1.4.1",
@@ -65,7 +64,7 @@
     "@babel/core": "~7.9.0",
     "@types/lodash": "^4.14.170",
     "babel-preset-expo": "8.3.0",
-    "typescript": "~4.0.0"
+    "typescript": "~4.1"
   },
   "private": true
 }

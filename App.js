@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { NavigationContainer } from "@react-navigation/native";
+import { LogBox, useColorScheme, StatusBar } from "react-native";
+
+import { NavigationContainer, DefaultTheme, DarkTheme } from "@react-navigation/native";
 import { Provider } from "overmind-react";
 import { HoldMenuProvider } from "react-native-hold-menu";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import * as Notifications from "expo-notifications";
 import FeatherIcon from "react-native-vector-icons/Feather";
 
@@ -10,7 +13,6 @@ import * as Linking from "expo-linking";
 import { askNotificationPermissions } from "./src/utils/getPermissions";
 import { overmind } from "./src/store/overmind";
 import { initTMDB } from "@markmccoid/tmdb_api";
-import { LogBox } from "react-native";
 
 import RootNav from "./src/navigation/RootNav";
 import { colors } from "./src/globalStyles";
@@ -114,7 +116,8 @@ const App = () => {
   //   ) {
   //     Linking.openURL(lastNotificationResponse.notification.request.content.data.url);
   //     console.log(
-  //       "lastNotificationreposnse",
+  //       "lastNotificationreposnse",const scheme = useColorScheme();
+
   //       lastNotificationResponse.notification.request.content.data.url
   //     );
   //   }
@@ -129,9 +132,11 @@ const App = () => {
   return (
     <Provider value={overmind}>
       <HoldMenuProvider iconComponent={FeatherIcon} theme="light">
-        <NavigationContainer linking={linking}>
-          <RootNav />
-        </NavigationContainer>
+        <SafeAreaProvider>
+          <NavigationContainer linking={linking}>
+            <RootNav />
+          </NavigationContainer>
+        </SafeAreaProvider>
       </HoldMenuProvider>
     </Provider>
   );
