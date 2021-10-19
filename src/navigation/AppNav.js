@@ -14,6 +14,7 @@ import { colors } from "../globalStyles";
 
 import SettingsStackScreen from "../screens/settings/SettingsStack";
 import TestCarouselAnim from "../screens/view/ViewTVShows/TestCarouselAnim";
+import TestStatusBar from "../screens/view/ViewTVShows/TestStatusBar";
 import AppNavDrawerContent from "./AppNavDrawerContent";
 
 //----------------------------------------------------------------
@@ -115,7 +116,8 @@ const AppNav = () => {
       <Drawer.Screen
         options={{ unmountOnBlur: true }}
         name="Carousel View"
-        component={TestCarouselAnim}
+        // component={TestCarouselAnim}
+        component={TestStatusBar}
       />
     </Drawer.Navigator>
   );

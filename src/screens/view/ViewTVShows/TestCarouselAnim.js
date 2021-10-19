@@ -8,7 +8,9 @@ import {
   Button,
   Image,
   Dimensions,
+  StatusBar,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import { LinearGradient } from "expo-linear-gradient";
 
@@ -74,7 +76,8 @@ const TestCarouselAnim = ({ navigation }) => {
   const scrollX = React.useRef(new Animated.Value(0)).current;
   const movieList = getFilteredTVShows;
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <StatusBar backgroundColor="#61dafb" />
       {/* <StatusBar hidden /> */}
       <Backdrop movies={movieList} scrollX={scrollX} />
 
@@ -142,7 +145,7 @@ const TestCarouselAnim = ({ navigation }) => {
         }}
       />
       <Button title="home" onPress={() => navigation.navigate("ViewTVShows")} />
-    </View>
+    </SafeAreaView>
   );
 };
 

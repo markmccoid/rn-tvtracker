@@ -1,6 +1,5 @@
 import React from "react";
 import { View, TextInput, Switch, Text, StyleSheet, Dimensions } from "react-native";
-import BouncyCheckbox from "react-native-bouncy-checkbox";
 import { MotiView, AnimatePresence } from "moti";
 import { useNavigation } from "@react-navigation/native";
 import { useOActions, useOState } from "../../../store/overmind";
@@ -44,7 +43,7 @@ const ListSearchBar = ({ visible, onCancel = () => null }) => {
         >
           <TextInput
             style={[styles.searchInput, ignoreFilterOnSearch && styles.ignoreFilterStyle]}
-            placeholder="Search Movie Title"
+            placeholder="Search TV Title"
             onChangeText={(e) => setInputData(e)}
             value={localInput}
             clearButtonMode="while-editing"

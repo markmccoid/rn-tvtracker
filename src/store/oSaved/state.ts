@@ -357,10 +357,10 @@ export const state: State = {
     const totalEpisodes = tvShowDetails?.totalEpisodes ?? 0;
     const watchedEpisodeState = tvShowDetails?.episodeState ?? {};
 
-    //Calculate how many episodes marked as watched
-    const watchedEpisodes = Object.entries(watchedEpisodeState).filter(
-      ([key, value]) => value
-    ).length;
+    //Calculate how many episodes marked as watched. i.e. return only true
+    const watchedEpisodes = Object.entries(watchedEpisodeState)
+      .filter(([key, value]) => value)
+      .filter(([key, value]) => key.slice(0, 1) !== "0").length;
 
     return totalEpisodes - watchedEpisodes;
   }),

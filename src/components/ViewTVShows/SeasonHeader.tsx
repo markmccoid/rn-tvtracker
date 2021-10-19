@@ -82,6 +82,7 @@ const SeasonHeader = ({
   const action = useOActions();
 
   const episodesWatched = state.oSaved.getWatchedEpisodes(tvShowId, seasonNumber);
+  const allEpisodesWatched = !!(episodesWatched === numberOfEpisodes);
   const seasonTitle =
     seasonName === `Season ${seasonNumber}` || seasonNumber === 0
       ? seasonName
@@ -89,9 +90,25 @@ const SeasonHeader = ({
 
   return (
     <View key={seasonNumber}>
-      <View style={[styles.seasonName]}>
+      <View
+        style={[
+          styles.seasonName,
+          {
+            backgroundColor: allEpisodesWatched ? colors.darkbg : colors.listBackground,
+          },
+        ]}
+      >
         <View style={{ flexDirection: "column" }}>
-          <Text style={styles.seasonText}>{seasonTitle}</Text>
+          <Text
+            style={[
+              styles.seasonText,
+              {
+                color: allEpisodesWatched ? colors.darkfg : colors.darkText,
+              },
+            ]}
+          >
+            {seasonTitle}
+          </Text>
           {isShowSaved && (
             <EpisodesWatched
               episodesWatched={episodesWatched}

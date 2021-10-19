@@ -8,10 +8,11 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
+  Alert,
 } from "react-native";
 import _ from "lodash";
 
-import { CloseIcon } from "../../../components/common/Icons";
+import { CheckIcon, CloseIcon } from "../../../components/common/Icons";
 
 import sectionListGetItemLayout from "react-native-section-list-get-item-layout";
 
@@ -102,24 +103,24 @@ const formatForSectionList = (
   return sectionArray;
 };
 
-type SeasonPicker = {
-  seasonNumber: number;
-  seasonText: string;
-  episodesWatched: number;
-};
-const prepareSeasonPicker = (
-  tvShowId: number,
-  seasons: number[],
-  getWatchedEpisodes
-): SeasonPicker[] => {
-  return seasons.map((season) => {
-    return {
-      seasonNumber: season,
-      seasonText: `Season ${season}`,
-      episodesWatched: getWatchedEpisodes(tvShowId, season),
-    };
-  });
-};
+// type SeasonPicker = {
+//   seasonNumber: number;
+//   seasonText: string;
+//   episodesWatched: number;
+// };
+// const prepareSeasonPicker = (
+//   tvShowId: number,
+//   seasons: number[],
+//   getWatchedEpisodes
+// ): SeasonPicker[] => {
+//   return seasons.map((season) => {
+//     return {
+//       seasonNumber: season,
+//       seasonText: `Season ${season}`,
+//       episodesWatched: getWatchedEpisodes(tvShowId, season),
+//     };
+//   });
+// };
 /**
 //* SeasonsScreen Component
 */
@@ -130,6 +131,9 @@ const SeasonsScreen = ({ navigation, route }: SeasonsScreenProps) => {
   const actions = useOActions();
   const state = useOState();
   const sectionRef = React.useRef<SectionList<any> | undefined>();
+  const horizontalRef = React.useRef<ScrollView>(undefined);
+  const seasonButtonWidth = React.useRef<number>(0);
+  const firstOpenRef = React.useRef<boolean>(true);
 
   const [loading, setLoading] = React.useState(false);
   const [seasonData, setSeasonData] = React.useState<SectionListType[]>([]);
@@ -137,7 +141,8 @@ const SeasonsScreen = ({ navigation, route }: SeasonsScreenProps) => {
   const [seasonState, setSeasonState] = React.useState<SeasonState>(undefined);
   const { getTVShowSeasonData, apiGetTVShowDetails, getLastestEpisodeWatched } =
     actions.oSaved;
-  const { getTVShowSeasonDetails, getWatchedEpisodes } = state.oSaved;
+  const { getTVShowSeasonDetails, getWatchedEpisodes, getNotWatchedEpisodeCount } =
+    state.oSaved;
 
   const getSeasonData = async () => {
     setLoading(true);
@@ -167,6 +172,22 @@ const SeasonsScreen = ({ navigation, route }: SeasonsScreenProps) => {
   React.useEffect(() => {
     getSeasonData();
   }, [tvShowId]);
+
+  //* Used to know when all shows thus far have been marked as watched.
+  //* using firstOpenRef so that the Alert doesn't happen if we are already
+  //* at zero watched when seasonScreen is opened.
+  React.useEffect(() => {
+    if (!firstOpenRef.current) {
+      if (getNotWatchedEpisodeCount(tvShowId) === 0) {
+        Alert.alert(
+          "All Watched",
+          "You've watched all episodes that are available!  Update your tags!"
+        );
+      }
+    } else {
+      firstOpenRef.current = false;
+    }
+  }, [getNotWatchedEpisodeCount(tvShowId)]);
 
   // React.useEffect(() => {
   //   if (!sectionRef.current) return;
@@ -225,9 +246,29 @@ const SeasonsScreen = ({ navigation, route }: SeasonsScreenProps) => {
         <Text>Hi</Text>
       </ScrollView> */}
       <View>
-        <ScrollView horizontal>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          ref={horizontalRef}
+          onLayout={() => {
+            // Scroll to the latest season position, dependant upon seasonButtonWidth ref
+            // which is set in the onLayout for the season button inner view
+            const [latestSeason, latestEpisode] = getLastestEpisodeWatched(tvShowId);
+            console.log("latest", latestSeason);
+            const scrollDist =
+              latestSeason === 1 ? 0 : latestSeason * seasonButtonWidth.current;
+            horizontalRef.current?.scrollTo({ x: scrollDist, y: 0, animated: true });
+          }}
+        >
           {seasonPicker.map((season) => {
             if (season === 0) return;
+            //Get episode watched info to style horizontal season menu
+            //all episodes watch gets special styling for season button
+            const episodesWatched = state.oSaved.getWatchedEpisodes(tvShowId, season);
+            const numberOfEpisodes = seasonData.find((el) => el.title.seasonNumber === season)
+              .title.numberOfEpisodes;
+            const allEpisodesWatched = !!!(numberOfEpisodes - episodesWatched);
+
             return (
               <PressableButton
                 key={season}
@@ -253,25 +294,55 @@ const SeasonsScreen = ({ navigation, route }: SeasonsScreenProps) => {
                   styleHelpers.buttonShadow,
                   {
                     borderRadius: 14,
+                    // borderWidth: 2,
+                    // borderColor: "#84EE4A",
+                    // borderColor: allEpisodesWatched ? colors.excludeRed : "#ffffff00",
                     // width: width / 2.5,
                     margin: 5,
                     paddingVertical: 5,
                     paddingHorizontal: 15,
-                    backgroundColor: colors.buttonPrimary,
+                    backgroundColor: allEpisodesWatched ? colors.darkbg : colors.buttonPrimary,
+
                     alignItems: "center",
                     justifyContent: "center",
                   },
                 ]}
               >
-                <Text
+                <View
                   style={{
-                    fontWeight: "600",
-                    color: colors.buttonTextDark,
-                    fontSize: 12,
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                  onLayout={(e) => {
+                    seasonButtonWidth.current = e.nativeEvent.layout.width;
+                    // console.log(
+                    //   "containerHeight",
+                    //   e.nativeEvent.layout.height,
+                    //   e.nativeEvent.layout.width,
+                    //   e.nativeEvent.layout.x
+                    // );
                   }}
                 >
-                  {`Season ${season}`}
-                </Text>
+                  <Text
+                    style={{
+                      fontWeight: "600",
+                      color: allEpisodesWatched ? "white" : colors.buttonTextDark,
+                      fontSize: 12,
+                      paddingRight: allEpisodesWatched ? 5 : 10,
+                      paddingLeft: allEpisodesWatched ? 0 : 10,
+                    }}
+                  >
+                    {`Season ${season}`}
+                  </Text>
+
+                  {allEpisodesWatched && (
+                    <CheckIcon
+                      size={15}
+                      color={allEpisodesWatched ? "white" : colors.buttonPrimary}
+                    />
+                  )}
+                </View>
               </PressableButton>
             );
           })}

@@ -60,8 +60,8 @@ function AppNavDrawerContent(props) {
             }
           />
         </View>
-        {/* 
-        <View style={styles.menuItemStyle}>
+
+        {/* <View style={styles.menuItemStyle}>
           <DrawerItem
             label="Carousel View"
             icon={({ focused, color, size }) => <CarouselIcon size={size} />}

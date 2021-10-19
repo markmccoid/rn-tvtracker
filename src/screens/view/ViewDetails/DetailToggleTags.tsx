@@ -200,21 +200,24 @@ const DetailToggleTags = ({ tvShowId }) => {
             />
             {/* Scrollview items are animated to delay longer based on their index */}
             <ScrollView horizontal style={{ width }}>
-              {assignedTags.map((tagObj, index) => {
-                return (
-                  <MotiView
-                    key={tagObj.tagId}
-                    from={{ opacity: 0, scale: 0.5 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ type: "timing", delay: index * 100 }}
-                  >
-                    <Pressable key={tagObj.tagId} onPress={() => setViewTags((prev) => !prev)}>
+              <Pressable
+                style={{ flexDirection: "row" }}
+                onPress={() => setViewTags((prev) => !prev)}
+              >
+                {assignedTags.map((tagObj, index) => {
+                  return (
+                    <MotiView
+                      key={tagObj.tagId}
+                      from={{ opacity: 0, scale: 0.5 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ type: "timing", delay: index * 100 }}
+                    >
                       <Text style={styles.tagItem}>{tagObj.tagName}</Text>
-                    </Pressable>
-                  </MotiView>
-                );
-              })}
-              <Text style={{ width: 10 }}></Text>
+                    </MotiView>
+                  );
+                })}
+                <Text style={{ width: 10 }}></Text>
+              </Pressable>
             </ScrollView>
           </MotiView>
         )}
@@ -239,7 +242,7 @@ const styles = StyleSheet.create({
   tagItem: {
     borderWidth: 1,
     borderColor: colors.listBorder,
-    borderRadius: 10,
+    borderRadius: 8,
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 5,

@@ -1672,6 +1672,17 @@
     "@types/yargs" "^15.0.0"
     chalk "^4.0.0"
 
+"@markmccoid/react-native-hold-menu@^0.1.1":
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/@markmccoid/react-native-hold-menu/-/react-native-hold-menu-0.1.1.tgz#59e0309381c6334f946aec383685cb05ffe72583"
+  integrity sha512-cZJpqGHfz6EWfHUqgFakrrs54VV22z+rnIVUvh+c54rxz4BMiCeHl/iJE43L/V8R91vXfCBWdsu84i6G1k5FGg==
+  dependencies:
+    "@gorhom/portal" "^1.0.3"
+    expo-blur "^9.0.0"
+    expo-haptics "^9.0.0"
+    lodash.isequal "^4.5.0"
+    nanoid "^3.1.20"
+
 "@markmccoid/tmdb_api@^0.2":
   version "0.2.9"
   resolved "https://registry.yarnpkg.com/@markmccoid/tmdb_api/-/tmdb_api-0.2.9.tgz#8f523c99641d4c545734ffd7906edb4f23988c7e"
