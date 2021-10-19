@@ -1,5 +1,5 @@
 import React from "react";
-import { View, ScrollView, StyleSheet, Text, Pressable } from "react-native";
+import { View, ScrollView, StyleSheet, Text, Dimensions } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useOState } from "../../store/overmind";
 
@@ -11,6 +11,8 @@ import { colors } from "../../globalStyles";
 import PressableButton from "../../components/common/PressableButton";
 import { SyncIcon } from "../../components/common/Icons";
 
+const { width, height } = Dimensions.get("window");
+
 const Settings = ({ navigation }) => {
   const state = useOState();
   //# When savedFilters gets updated in the drag component, it isn't updated here
@@ -19,43 +21,41 @@ const Settings = ({ navigation }) => {
   //   console.log("saved filters updated", savedFilters.length);
   // }, [savedFilters.length]);
   return (
-    <View style={styles.container}>
-      <ScrollView style={styles.scrollContainer}>
-        <View style={styles.settingsContainer}>
-          <SectionSavedFilters />
+    <ScrollView style={styles.scrollContainer} showsVerticalScrollIndicator={false}>
+      <View style={styles.settingsContainer}>
+        <SectionSavedFilters />
+      </View>
+      <View style={[styles.settingsContainer, { zIndex: 100 }]}>
+        <SectionDefaultFilter />
+      </View>
+      <View style={styles.line} />
+      <View style={styles.settingsContainer}>
+        <SectionSort />
+      </View>
+      <View style={styles.line} />
+      <View style={styles.settingsMenuItem}>
+        <View style={{ justifyContent: "center", alignItems: "flex-start" }}>
+          <PressableButton
+            style={styles.settingsButton}
+            onPress={() => navigation.navigate("SettingsAppBackup")}
+          >
+            <Text style={{ marginRight: 8 }}>Backup Data</Text>
+            <SyncIcon size={20} />
+          </PressableButton>
         </View>
-        <View style={[styles.settingsContainer, { zIndex: 100 }]}>
-          <SectionDefaultFilter />
+      </View>
+      <View style={styles.line} />
+      <View style={[styles.settingsMenuItem, { paddingBottom: 50 }]}>
+        <View style={{ justifyContent: "center", alignItems: "flex-start" }}>
+          <PressableButton
+            style={styles.settingsButton}
+            onPress={() => navigation.navigate("SettingsAppDebug")}
+          >
+            <Text>DEBUG</Text>
+          </PressableButton>
         </View>
-        <View style={styles.line} />
-        <View style={styles.settingsContainer}>
-          <SectionSort />
-        </View>
-        <View style={styles.line} />
-        <View style={styles.settingsMenuItem}>
-          <View style={{ justifyContent: "center", alignItems: "flex-start" }}>
-            <PressableButton
-              style={styles.settingsButton}
-              onPress={() => navigation.navigate("SettingsAppBackup")}
-            >
-              <Text style={{ marginRight: 8 }}>Backup Data</Text>
-              <SyncIcon size={20} />
-            </PressableButton>
-          </View>
-        </View>
-        <View style={styles.line} />
-        <View style={styles.settingsMenuItem}>
-          <View style={{ justifyContent: "center", alignItems: "flex-start" }}>
-            <PressableButton
-              style={styles.settingsButton}
-              onPress={() => navigation.navigate("SettingsAppDebug")}
-            >
-              <Text>DEBUG</Text>
-            </PressableButton>
-          </View>
-        </View>
-      </ScrollView>
-    </View>
+      </View>
+    </ScrollView>
   );
 };
 
@@ -65,7 +65,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
   },
   scrollContainer: {
-    marginHorizontal: 10,
+    paddingHorizontal: 10,
+    backgroundColor: colors.background,
+    //width: width - 20,
   },
   settingsContainer: {
     margin: 5,
