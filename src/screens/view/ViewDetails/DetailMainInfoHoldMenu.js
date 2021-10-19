@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, Alert, TouchableOpacity, ActivityIndicator, StyleSheet } from "react-native";
-import { HoldItem } from "react-native-hold-menu";
+import { HoldItem } from "@markmccoid/react-native-hold-menu";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Linking from "expo-linking";
 import { useNavigation } from "@react-navigation/native";
