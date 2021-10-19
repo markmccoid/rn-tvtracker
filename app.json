@@ -7,7 +7,7 @@
     "platforms": [
       "ios"
     ],
-    "version": "0.1.1",
+    "version": "0.1.2",
     "orientation": "portrait",
     "icon": "./assets/TVTrackerIcon.png",
     "splash": {
@@ -24,9 +24,9 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.mccoidco.tvtracker",
-      "buildNumber": "0.1.1",
+      "buildNumber": "0.1.2",
       "infoPlist": {
-        "RCTAsyncStorageExcludeFromBackup": false,
+        "RCTAsyncStorageExcludeFromBackup": false
       }
     }
   }

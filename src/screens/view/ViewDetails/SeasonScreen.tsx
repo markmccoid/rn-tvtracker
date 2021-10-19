@@ -254,7 +254,7 @@ const SeasonsScreen = ({ navigation, route }: SeasonsScreenProps) => {
             // Scroll to the latest season position, dependant upon seasonButtonWidth ref
             // which is set in the onLayout for the season button inner view
             const [latestSeason, latestEpisode] = getLastestEpisodeWatched(tvShowId);
-            console.log("latest", latestSeason);
+
             const scrollDist =
               latestSeason === 1 ? 0 : latestSeason * seasonButtonWidth.current;
             horizontalRef.current?.scrollTo({ x: scrollDist, y: 0, animated: true });
