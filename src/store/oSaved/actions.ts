@@ -9,9 +9,9 @@ import { scheduleLocalNotification } from "../../utils/notificationHelpers";
 
 import {
   EpisodeRunTimeGroup,
+  SavedEpisodeState,
   SavedTVShowsDoc,
   TempSeasonsData,
-  TempSeasonsState,
   WatchedSeasonEpisodes,
 } from "./state";
 import {
@@ -802,31 +802,8 @@ export const getTVShowSeasonData = async (
       ...state.oSaved.tempSeasonsData,
       [tvShowId]: finalSeasons, //[...regularSeasons, ...specialSeason],
     };
-
-    //-- Create the seasonStates for use in determining if a
-    //-- season should be expanded or collapsed
-    const seasonStates: { [seasonNumber: number]: boolean } = finalSeasons.reduce(
-      (final, season, index, array) => {
-        return { ...final, [season.seasonNumber]: array.length > 1 ? false : true };
-      },
-      {}
-    );
-    state.oSaved.tempSeasonsState = {
-      ...state.oSaved.tempSeasonsState,
-      [tvShowId]: seasonStates,
-    };
   }
 };
-
-// //-- Toggles whether season should be expanded or not
-// export const toggleSeasonState = ({ state }: Context, payload) => {
-//   const { tvShowId, seasonNumber } = payload;
-//   const tvShowStateObject = state.oSaved.tempSeasonsState[tvShowId];
-//   state.oSaved.tempSeasonsState[tvShowId] = {
-//     ...state.oSaved.tempSeasonsState[tvShowId],
-//     [seasonNumber]: !tvShowStateObject[seasonNumber],
-//   };
-// };
 
 //*==================================
 //- EPISODE STATE
@@ -888,6 +865,37 @@ export const toggleTVShowEpisodeState = async (
   // If previous episode is NOT watched AND next state IS watched, then return true
   // assumes UI will ask if users wants to mark all as watched
   return previousKey && !prevKeyState && isNextStateWatched;
+};
+
+/**markAllSeasonsEpisodes
+ *
+ */
+export const markAllSeasonsEpisodes = async (
+  { state, actions, effects }: Context,
+  payload: { tvShowId: number; seasonNumber: number; watchedState: boolean }
+): Promise<void> => {
+  const { tvShowId, seasonNumber, watchedState } = payload;
+
+  const seasonData = state.oSaved.tempSeasonsData[tvShowId].find(
+    (season) => season.seasonNumber === seasonNumber
+  );
+  let watchedObj: { [x: string]: boolean } = {};
+
+  const episodesToMarkObj = seasonData.episodes.reduce((final, ep) => {
+    return (final = { ...final, [`${ep.seasonNumber}-${ep.episodeNumber}`]: watchedState });
+  }, {});
+
+  // Merge with tempEpisodeState data
+  mergeEpisodeStateData(episodesToMarkObj, tvShowId, state.oSaved.tempEpisodeState);
+
+  // update the savedTVShow array with any episode state that has changed for this tvShow
+  actions.oSaved.internal.updateEpisodeStateOnTVShow(tvShowId);
+
+  // save to async storage
+  const mergeObj = {
+    [tvShowId]: { episodeState: { ...state.oSaved.tempEpisodeState?.[tvShowId] } },
+  };
+  await effects.oSaved.localMergeTVShows(state.oAdmin.uid, mergeObj);
 };
 
 /**markAllPreviousEpisodes
@@ -992,6 +1000,23 @@ const calcTotalEpisodes = (seasonsList: TVDetail_Seasons[]): number => {
     }, 0);
 };
 
+/**
+ * Function accepts the episodeStateData (new watched data) and merges it with
+ * the tempEpisodeState object.
+ *
+ */
+function mergeEpisodeStateData(
+  episodeStateData: { [x: string]: boolean },
+  tvShowId: number,
+  tempEpisodeState: SavedEpisodeState
+): void {
+  // Merge with tempEpisodeState data
+  Object.entries(episodeStateData).forEach(([key, value]: [key: string, value: boolean]) => {
+    // if (!tempEpisodeState[tvShowId]?.[key]) {
+    tempEpisodeState[tvShowId][key] = value;
+    // }
+  });
+}
 /**
  * Function accepts the Episode State from saved Movies { '1-1': true, ... }
  * I will iterate through and return a [season, episode] that

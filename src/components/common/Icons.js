@@ -127,6 +127,17 @@ export const LessIcon = ({ size, color, style }) => {
   return <AntDesign name="upcircleo" size={size} color={color} style={style} />;
 };
 
+export const CheckedBox = ({ size, color, style }) => {
+  // return <FontAwesome5 name="sync-alt" size={size} color={color} style={style} />;
+  return <MaterialIcons name="check-box" size={size} color={color} style={style} />;
+};
+
+export const UnCheckedBox = ({ size, color, style }) => {
+  // return <FontAwesome5 name="sync-alt" size={size} color={color} style={style} />;
+  return (
+    <MaterialIcons name="check-box-outline-blank" size={size} color={color} style={style} />
+  );
+};
 //# BACK button icon for headers in screens
 export const BackIcon = ({ size, color, style }) => {
   return <AntDesign name="back" size={size} color={color} style={style} />;

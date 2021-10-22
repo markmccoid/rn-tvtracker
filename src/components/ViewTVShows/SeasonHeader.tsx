@@ -10,6 +10,8 @@ import Animated, {
 } from "react-native-reanimated";
 import { useOState, useOActions } from "../../store/overmind";
 import { colors, fonts } from "../../globalStyles";
+import PressableButton from "../common/PressableButton";
+import { UnCheckedBox, CheckedBox } from "../common/Icons";
 
 const { width, height } = Dimensions.get("window");
 
@@ -79,9 +81,11 @@ const SeasonHeader = ({
   //const { seasonState, toggleSeasonState } = headerDetail;
   // const toggleSeasonState = () => {};
   const state = useOState();
-  const action = useOActions();
+  const actions = useOActions();
 
   const episodesWatched = state.oSaved.getWatchedEpisodes(tvShowId, seasonNumber);
+  const { markAllSeasonsEpisodes } = actions.oSaved;
+
   const allEpisodesWatched = !!(episodesWatched === numberOfEpisodes);
   const seasonTitle =
     seasonName === `Season ${seasonNumber}` || seasonNumber === 0
@@ -115,6 +119,26 @@ const SeasonHeader = ({
               numberOfEpisodes={numberOfEpisodes}
             />
           )}
+        </View>
+        <View>
+          <Pressable
+            disabled={allEpisodesWatched}
+            onPress={() =>
+              markAllSeasonsEpisodes({ tvShowId, seasonNumber, watchedState: true })
+            }
+          >
+            <CheckedBox
+              size={25}
+              color={allEpisodesWatched ? colors.darkbg : colors.includeGreen}
+            />
+          </Pressable>
+          <Pressable
+            onPress={() =>
+              markAllSeasonsEpisodes({ tvShowId, seasonNumber, watchedState: false })
+            }
+          >
+            <UnCheckedBox size={25} color={colors.includeGreen} />
+          </Pressable>
         </View>
       </View>
     </View>
