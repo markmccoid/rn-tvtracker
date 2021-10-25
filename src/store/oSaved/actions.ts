@@ -16,6 +16,7 @@ import {
 } from "./state";
 import {
   TVShowDetails as TMDBTVShowDetails,
+  TVShowEpisodeDetails,
   DateObject,
   Episode,
   TVShowSeasonDetails,
@@ -306,6 +307,27 @@ export const apiGetTVShowDetails = async (
   // movieDetails.data.lastAirDate = formatDateObjectForSave(movieDetails.data.lastAirDate);
 
   return { ...tvShowDetails, data: { ...tvShowDetails.data, logoURLS: tvShowLogoURLs.data } };
+};
+
+export const apiGetTVShowEpisodeDetails = async (
+  { state, effects, actions }: Context,
+  {
+    tvShowId,
+    seasonNumber,
+    episodeNumber,
+  }: { tvShowId: number; seasonNumber: number; episodeNumber: number }
+): Promise<{ data: TVShowEpisodeDetails; apiCall: string }> => {
+  // get more tvShow details from tmdbapi
+  const tvShowEpisodeInfo = await effects.oSaved.getTVShowEpisodeDetails(
+    tvShowId,
+    seasonNumber,
+    episodeNumber,
+    "credits"
+  );
+
+  const episodeData = tvShowEpisodeInfo.data;
+
+  return { apiCall: tvShowEpisodeInfo.apiCall, data: { ...tvShowEpisodeInfo.data } };
 };
 /**
  *

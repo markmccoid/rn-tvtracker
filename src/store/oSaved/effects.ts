@@ -35,6 +35,8 @@ import {
   tvGetImages,
   tvGetShowEpisodeExternalIds,
   TVShowSeasonDetails,
+  tvGetShowEpisodeDetails,
+  TVShowEpisodeDetailsBase,
 } from "@markmccoid/tmdb_api";
 
 import { SavedTVShowsDoc } from "./state";
@@ -141,6 +143,33 @@ export const getTVShowDetails = async (tvShowId: number): Promise<TVShowDetailsB
 
   try {
     results = await tvGetShowDetails(tvShowId);
+  } catch (err) {
+    return { data: { error: err.error } };
+  }
+  return results;
+  return {
+    data: { ...results.data },
+    apiCall: results.apiCall,
+  };
+};
+//*=================================
+//*- Get TV Show Episode from TMDB Api
+//*=================================
+export const getTVShowEpisodeDetails = async (
+  tvShowId: number,
+  seasonNumber: number,
+  episodeNumber: number,
+  appendParam?: "credits"
+): Promise<TVShowEpisodeDetailsBase> => {
+  let results;
+
+  try {
+    results = await tvGetShowEpisodeDetails(
+      tvShowId,
+      seasonNumber,
+      episodeNumber,
+      appendParam
+    );
   } catch (err) {
     return { data: { error: err.error } };
   }
