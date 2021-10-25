@@ -19,10 +19,39 @@ import { colors } from "../../globalStyles";
 // @types imports
 import { ViewTVStackParamList, ViewTVShowsParamList } from "./viewTypes";
 import AnimatedPickImage from "./ViewDetails/AnimatedPickImage";
+import EpisodeScreen from "./ViewDetails/EpisodeScreen";
 
 const ViewStack = createNativeStackNavigator<ViewTVStackParamList>();
 const ViewTVShowsStackNav = createNativeStackNavigator<ViewTVShowsParamList>();
 const ViewTVDetailsStackNav = createNativeStackNavigator();
+const ViewSeasonDetailsStackNav = createNativeStackNavigator();
+
+const ViewSeasonDetailsStack = () => {
+  return (
+    <ViewSeasonDetailsStackNav.Navigator
+      initialRouteName="DetailsSeasons"
+      screenOptions={{
+        stackAnimation: "default",
+        stackPresentation: "modal",
+      }}
+    >
+      <ViewSeasonDetailsStackNav.Screen
+        name="DetailsSeasons"
+        component={SeasonsScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <ViewSeasonDetailsStackNav.Screen
+        name="DetailsSeasonsEpisode"
+        component={EpisodeScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+    </ViewSeasonDetailsStackNav.Navigator>
+  );
+};
 
 const ViewTVShowsModalStack = () => {
   return (
@@ -53,6 +82,13 @@ const ViewTVShowsModalStack = () => {
       <ViewTVShowsStackNav.Screen
         name="ViewStackSeasons"
         component={SeasonsScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <ViewTVShowsStackNav.Screen
+        name="ViewStackSeasonsEpisode"
+        component={EpisodeScreen}
         options={{
           headerShown: false,
         }}
@@ -88,8 +124,8 @@ const ViewTVDetailsStack = () => {
         }}
       />
       <ViewTVDetailsStackNav.Screen
-        name="DetailsSeasons"
-        component={SeasonsScreen}
+        name="DetailsSeasonsMain"
+        component={ViewSeasonDetailsStack}
         options={{
           headerShown: false,
         }}

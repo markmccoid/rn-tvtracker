@@ -18,8 +18,11 @@ import { TVSearchResult, TVSearchItem } from "../../types";
 const SearchScreen = ({ navigation, route }) => {
   //Lets us know if we are returning from details page
   //if so, don't clear old search results
+
   const [onDetailsPage, setOnDetailsPage] = React.useState(false);
   const deepLinkTitle = route?.params?.name;
+  // const [deepLinkTitle, setDeepLinkTitle] = React.useState();
+
   const flatListRef = React.useRef();
   const state = useOState();
   const actions = useOActions();
@@ -52,6 +55,11 @@ const SearchScreen = ({ navigation, route }) => {
       setOnDetailsPage(false);
     }
   });
+
+  // React.useEffect(() => {
+  //   console.log("searchScreen set deeplink", deepLinkParam);
+  //   setDeepLinkTitle(deepLinkParam);
+  // }, [deepLinkParam]);
   // Write this up ----------------------------------------------------------------
   // Had to use the useFocusEffect in conjunction with useIsFocued hook to
   // know when to clear data NOPE -- Just use useEffect and trigger when isfocused changes

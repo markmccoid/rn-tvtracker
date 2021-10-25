@@ -2,6 +2,7 @@ import { TVShowSeasonDetails, Episode } from "@markmccoid/tmdb_api";
 import { AnimatePresence, MotiView } from "moti";
 import React, { useEffect, useState } from "react";
 import { View, Text, Dimensions, Alert, StyleSheet, TouchableOpacity } from "react-native";
+import { useNavigation, useRoute } from "@react-navigation/core";
 
 import * as Linking from "expo-linking";
 
@@ -29,6 +30,8 @@ const DetailSeasonEpisode = ({ tvShowId, episode, episodeState, isShowSaved }: P
   // const [episodeState, setEpisodeState] = React.useState(false);
   const [askToMark, setAskToMark] = React.useState(false);
 
+  const navigation = useNavigation();
+  const route = useRoute();
   // Was trying to use the episodeState to control the UI changes, but then when I added
   // the functionality to update episode state (mark all previous as watched) the UI
   // wouldn't be updated until coming back in.  THUS, this use effect was born.
@@ -52,6 +55,7 @@ const DetailSeasonEpisode = ({ tvShowId, episode, episodeState, isShowSaved }: P
   }, [askToMark]);
 
   // console.log("episode render", episode.seasonNumber, episode.episodeNumber);
+  // console.log("route", `${route.name}Episode`);
   return (
     <View style={styles.episodeContainer}>
       <View
@@ -63,17 +67,27 @@ const DetailSeasonEpisode = ({ tvShowId, episode, episodeState, isShowSaved }: P
         <View style={{ justifyContent: "center", paddingRight: 15 }}>
           <Text style={styles.epNumber}>{`${episode.episodeNumber}`}</Text>
         </View>
-        <View
-          style={{
-            flexDirection: "column",
-            overflow: "hidden",
-            marginRight: 4,
-            width: width / 1.5,
-          }}
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate(`${route.name}Episode`, {
+              tvShowId: tvShowId,
+              seasonNumber: episode.seasonNumber,
+              episodeNumber: episode.episodeNumber,
+            })
+          }
         >
-          <Text style={styles.epName}>{episode.name}</Text>
-          <Text allowFontScaling={false}>{`${episode.airDate || "Unknown"}`}</Text>
-        </View>
+          <View
+            style={{
+              flexDirection: "column",
+              overflow: "hidden",
+              marginRight: 4,
+              width: width / 1.5,
+            }}
+          >
+            <Text style={styles.epName}>{episode.name}</Text>
+            <Text allowFontScaling={false}>{`${episode.airDate || "Unknown"}`}</Text>
+          </View>
+        </TouchableOpacity>
       </View>
 
       <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
@@ -97,13 +111,23 @@ const DetailSeasonEpisode = ({ tvShowId, episode, episodeState, isShowSaved }: P
         >
           <View
             style={{
-              backgroundColor: "black",
+              // backgroundColor: colors.imdbYellow,
               borderRadius: 10,
               borderWidth: 1,
               borderColor: "#f6c418",
               marginRight: 10,
+              width: 27,
             }}
           >
+            <View
+              style={{
+                position: "absolute",
+                backgroundColor: "black",
+                width: 22,
+                height: 20,
+                top: 2,
+              }}
+            />
             <IMDBIcon size={25} color="#f6c418" />
           </View>
         </TouchableOpacity>

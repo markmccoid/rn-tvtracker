@@ -67,7 +67,9 @@ const App = () => {
       // First, you may want to do the default deep link handling
       // Check if app was opened from a deep link
       let url = await Linking.getInitialURL();
+      // This URL will be populated if app is open when link clicked
       if (url != null) {
+        overmind.actions.oAdmin.setDeepLink(url);
         return url;
       }
 
@@ -90,7 +92,7 @@ const App = () => {
           const url = response.notification.request.content.data.url;
           // Any custom logic to see whether the URL needs to be handled
           //...
-
+          console.log("in listener URL", url);
           overmind.actions.oAdmin.setDeepLink(url);
           Linking.openURL(url);
           // Let React Navigation handle the URL

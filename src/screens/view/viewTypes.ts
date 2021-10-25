@@ -80,6 +80,11 @@ export type ViewTVShowsParamList = {
     // width / aspect = height
     logo?: { logoURL?: string; aspectRatio?: number; showName?: string };
   };
+  ViewStackSeasonsEpisode: {
+    tvShowId: number;
+    seasonNumber: number;
+    episodeNumber: number;
+  };
 };
 
 //* Create Props to be used by each of the screens

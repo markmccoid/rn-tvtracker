@@ -18,12 +18,22 @@ const DetailButtonBar = ({ tvShow }) => {
           style={[styles.button]}
           type="primary"
           onPress={() => {
-            navigation.navigate(`${route.name}Seasons`, {
-              tvShowId: tvShow.id,
-              seasonNumbers: tvShow?.seasons.map((show) => show.seasonNumber),
-              logo: { showName: tvShow.name },
+            navigation.navigate(`${route.name}SeasonsMain`, {
+              screen: `${route.name}Seasons`,
+              params: {
+                tvShowId: tvShow.id,
+                seasonNumbers: tvShow?.seasons.map((show) => show.seasonNumber),
+                logo: { showName: tvShow.name },
+              },
             });
           }}
+          // onPress={() => {
+          //   navigation.navigate(`${route.name}Seasons`, {
+          //     tvShowId: tvShow.id,
+          //     seasonNumbers: tvShow?.seasons.map((show) => show.seasonNumber),
+          //     logo: { showName: tvShow.name },
+          //   });
+          // }}
         >
           <Text style={{ fontWeight: "600", color: colors.buttonTextDark }}>{`View ${
             tvShow?.seasons.filter((s) => s.seasonNumber !== 0).length

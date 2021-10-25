@@ -9,18 +9,47 @@ import DetailPerson from "../view/ViewDetails/DetailPerson";
 import SeasonsScreen from "../view/ViewDetails/SeasonScreen";
 import AnimatedPickImage from "../view/ViewDetails/AnimatedPickImage";
 
-import { colors } from "../../globalStyles";
 import { createNativeStackNavigator } from "react-native-screens/native-stack";
+import { colors } from "../../globalStyles";
+import EpisodeScreen from "../view/ViewDetails/EpisodeScreen";
 
 const SearchStack = createNativeStackNavigator();
 const ModalStack = createNativeStackNavigator();
+const DetailsFromSearchSeasonsNav = createNativeStackNavigator();
+
+const DetailsFromSearchSeasonsStack = () => {
+  return (
+    <DetailsFromSearchSeasonsNav.Navigator
+      initialRouteName="DetailsFromSearchSeasons"
+      screenOptions={{
+        stackAnimation: "default",
+        stackPresentation: "modal",
+      }}
+    >
+      <DetailsFromSearchSeasonsNav.Screen
+        name="DetailsFromSearchSeasons"
+        component={SeasonsScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <DetailsFromSearchSeasonsNav.Screen
+        name="DetailsFromSearchSeasonsEpisode"
+        component={EpisodeScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+    </DetailsFromSearchSeasonsNav.Navigator>
+  );
+};
 const SearchDetailsModalStack = () => {
   return (
     <ModalStack.Navigator
       initialRouteName="DetailsFromSearch"
       screenOptions={{
         stackAnimation: "default",
-        // stackPresentation: "modal",
+        stackPresentation: "modal",
       }}
     >
       <ModalStack.Screen
@@ -31,11 +60,11 @@ const SearchDetailsModalStack = () => {
         }}
       />
       <ModalStack.Screen
-        name="DetailsFromSearchSeasons"
-        component={SeasonsScreen}
+        name="DetailsFromSearchSeasonsMain"
+        component={DetailsFromSearchSeasonsStack}
         options={{
           headerShown: false,
-          stackPresentation: "modal",
+          // stackPresentation: "modal",
         }}
       />
       <ModalStack.Screen
