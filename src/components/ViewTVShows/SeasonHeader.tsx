@@ -15,7 +15,13 @@ import { UnCheckedBox, CheckedBox } from "../common/Icons";
 
 const { width, height } = Dimensions.get("window");
 
-const EpisodesWatched = ({ episodesWatched, numberOfEpisodes }) => {
+const EpisodesWatched = ({
+  episodesWatched,
+  numberOfEpisodes,
+  markAllSeasonsEpisodes,
+  tvShowId,
+  seasonNumber,
+}) => {
   const yVal = useSharedValue(0);
 
   React.useEffect(() => {
@@ -45,9 +51,33 @@ const EpisodesWatched = ({ episodesWatched, numberOfEpisodes }) => {
       transform: [{ translateY: yVal.value }],
     };
   });
+
+  const allWatched = !!(episodesWatched === numberOfEpisodes);
+  const allUnwatched = !!(episodesWatched === 0);
+
   const styles = StyleSheet.create({
     textStyle: {
       fontFamily: fonts.family.seasons,
+    },
+    watchAll: {
+      backgroundColor: allWatched ? "#E7E7E7" : colors.includeGreen,
+    },
+    unwatchAll: {
+      backgroundColor: allUnwatched ? "#E7E7E7" : colors.excludeRed,
+    },
+    markButtons: {
+      paddingVertical: 1,
+      paddingHorizontal: 3,
+
+      alignItems: "center",
+      borderRadius: 6,
+      borderWidth: 1,
+      borderColor: colors.buttonPrimaryBorder,
+    },
+    markButtonsText: {
+      fontSize: 12,
+      fontFamily: fonts.family.seasons,
+      color: colors.darkText,
     },
   });
   return (
@@ -57,6 +87,25 @@ const EpisodesWatched = ({ episodesWatched, numberOfEpisodes }) => {
       {/* <Text>{`${episodesWatched} of ${numberOfEpisodes}`}</Text> */}
       <Animated.Text style={[yStyle, styles.textStyle]}>{episodesWatched}</Animated.Text>
       <Text style={styles.textStyle}>{` of ${numberOfEpisodes}`}</Text>
+      <View style={{ width: 10 }} />
+      <PressableButton
+        disabled={episodesWatched === numberOfEpisodes}
+        style={[styles.markButtons, styles.watchAll, { marginBottom: 3 }]}
+        onPress={() => markAllSeasonsEpisodes({ tvShowId, seasonNumber, watchedState: true })}
+      >
+        <Text style={[styles.markButtonsText, { color: colors.darkText }]}>Watch All</Text>
+      </PressableButton>
+      <PressableButton
+        disabled={episodesWatched === 0}
+        style={[styles.markButtons, styles.unwatchAll, { marginBottom: 3, marginLeft: 3 }]}
+        onPress={() => markAllSeasonsEpisodes({ tvShowId, seasonNumber, watchedState: false })}
+      >
+        <Text
+          style={[styles.markButtonsText, { color: allUnwatched ? colors.darkText : "white" }]}
+        >
+          Unwatch All
+        </Text>
+      </PressableButton>
     </View>
   );
 };
@@ -71,6 +120,7 @@ type Props = {
     toggleSeasonState: () => void;
   };
 };
+
 const SeasonHeader = ({
   tvShowId,
   seasonNumber,
@@ -87,6 +137,8 @@ const SeasonHeader = ({
   const { markAllSeasonsEpisodes } = actions.oSaved;
 
   const allEpisodesWatched = !!(episodesWatched === numberOfEpisodes);
+  const noEpisodesWatched = !!(episodesWatched === 0);
+
   const seasonTitle =
     seasonName === `Season ${seasonNumber}` || seasonNumber === 0
       ? seasonName
@@ -117,28 +169,11 @@ const SeasonHeader = ({
             <EpisodesWatched
               episodesWatched={episodesWatched}
               numberOfEpisodes={numberOfEpisodes}
+              markAllSeasonsEpisodes={markAllSeasonsEpisodes}
+              tvShowId={tvShowId}
+              seasonNumber={seasonNumber}
             />
           )}
-        </View>
-        <View>
-          <Pressable
-            disabled={allEpisodesWatched}
-            onPress={() =>
-              markAllSeasonsEpisodes({ tvShowId, seasonNumber, watchedState: true })
-            }
-          >
-            <CheckedBox
-              size={25}
-              color={allEpisodesWatched ? colors.darkbg : colors.includeGreen}
-            />
-          </Pressable>
-          <Pressable
-            onPress={() =>
-              markAllSeasonsEpisodes({ tvShowId, seasonNumber, watchedState: false })
-            }
-          >
-            <UnCheckedBox size={25} color={colors.includeGreen} />
-          </Pressable>
         </View>
       </View>
     </View>
@@ -165,6 +200,19 @@ const styles = StyleSheet.create({
     padding: 5,
     color: colors.darkText,
     fontFamily: fonts.family.seasons,
+  },
+  markButtons: {
+    backgroundColor: "#E7E7E7",
+    paddingVertical: 3,
+    paddingHorizontal: 1,
+
+    alignItems: "center",
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: colors.buttonPrimaryBorder,
+  },
+  markButtonsText: {
+    fontSize: 12,
   },
 });
 
