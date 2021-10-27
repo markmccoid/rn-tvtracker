@@ -49,6 +49,13 @@ const ViewSeasonDetailsStack = () => {
           headerShown: false,
         }}
       />
+      <ViewSeasonDetailsStackNav.Screen
+        name="DetailsSeasonsEpisodePerson"
+        component={DetailPerson}
+        options={{
+          headerShown: false,
+        }}
+      />
     </ViewSeasonDetailsStackNav.Navigator>
   );
 };
@@ -89,6 +96,13 @@ const ViewTVShowsModalStack = () => {
       <ViewTVShowsStackNav.Screen
         name="ViewStackSeasonsEpisode"
         component={EpisodeScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <ViewTVShowsStackNav.Screen
+        name="ViewStackSeasonsEpisodePerson"
+        component={DetailPerson}
         options={{
           headerShown: false,
         }}

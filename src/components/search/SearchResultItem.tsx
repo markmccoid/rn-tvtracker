@@ -5,10 +5,11 @@ import {
   TouchableOpacity,
   StyleSheet,
   Image,
-  ActivityIndicator,
+  Alert,
   Dimensions,
 } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
+import * as Linking from "expo-linking";
 
 import { MaterialIcons } from "@expo/vector-icons";
 import { CheckIcon, AddIcon } from "../common/Icons";
@@ -18,6 +19,7 @@ import {
   DetailsSearchScreenNavigation,
 } from "../../screens/view/viewTypes";
 import { NativeStackNavigationProp } from "react-native-screens/lib/typescript/native-stack";
+import { rawTVGetExternalIds } from "@markmccoid/tmdb_api";
 
 const { width, height } = Dimensions.get("window");
 const imageWidth = width / 3 - 20;
@@ -31,7 +33,7 @@ const SearchResultItem = ({
   setOnDetailsPage,
   navigateToScreen,
 }) => {
-  const { navigate, push } = useNavigation<DetailsSearchScreenNavigation>();
+  const { popToTop, goBack, navigate, push } = useNavigation<DetailsSearchScreenNavigation>();
   // If tv show exists in library, then we display it in details page differently
   // The DetailsFromSearch screen is in the SearchStack.js file, but points to
   // the same component as the the details screen from the ViewStack.js screen.
@@ -40,17 +42,36 @@ const SearchResultItem = ({
   // OR "Details" from the ViewStack.js.  This is determined if the starting point was "My Movies"(ViewStack)
   // OR "Add tvShow"(SearchStack)
   // NOTE: using push instead of navigate so that each screen is pushed onto stack
-  const navigateToDetails = () => {
-    setOnDetailsPage(true);
-    push(`${navigateToScreen}Modal`, {
-      screen: navigateToScreen,
-      params: { tvShowId: tvShow.id, notSaved: !tvShow.existsInSaved },
-    });
-  };
+  const navigateToDetails = async () => {
+    if (navigateToScreen === "MODAL") {
+      try {
+        const externalIds = await rawTVGetExternalIds(tvShow.id);
+        const imdbId = externalIds.data.imdb_id;
+        if (!imdbId) throw new Error("Null imdb id");
 
+        Linking.openURL(`imdb:///title/${imdbId}`).catch((err) => {
+          Linking.openURL("https://apps.apple.com/us/app/imdb-movies-tv-shows/id342792525");
+        });
+      } catch (err) {
+        Alert.alert("Error", "Unable to find Link for IMDB");
+      }
+    } else {
+      setOnDetailsPage(true);
+      push(`${navigateToScreen}Modal`, {
+        screen: navigateToScreen,
+        params: { tvShowId: tvShow.id, notSaved: !tvShow.existsInSaved },
+      });
+    }
+  };
+  // If navigateToScreen == 'MODAL', then it is coming from Episode Details modal screen
+  // and I don't want to be able to dig any deeper, so disable
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={navigateToDetails} activeOpacity={0.8}>
+      <TouchableOpacity
+        // disabled={navigateToScreen === "MODAL"}
+        onPress={navigateToDetails}
+        activeOpacity={0.8}
+      >
         {tvShow?.posterURL ? (
           <View
             style={{

@@ -18,12 +18,15 @@ import PosterImage from "../../../components/common/PosterImage";
 import { colors, styleHelpers } from "../../../globalStyles";
 import DetailCastInfo from "./DetailCastInfo";
 import { color } from "react-native-reanimated";
+import { CloseIcon } from "../../../components/common/Icons";
 
 const { width, height } = Dimensions.get("window");
 const MARGIN = 5;
 
 const EpisodeScreen = ({ navigation, route }) => {
-  console.log("Route parms, episodescreen", route.params);
+  // console.log("Route parms, episodescreen", route.params);
+  // console.log("Route", route.name);
+
   const { tvShowId, seasonNumber, episodeNumber } = route.params;
   const [episodeDetails, setEpisodeDetails] = React.useState<TVShowEpisodeDetails>();
 
@@ -34,7 +37,6 @@ const EpisodeScreen = ({ navigation, route }) => {
   const getEpisodeDetails = async () => {
     const dets = await apiGetTVShowEpisodeDetails({ tvShowId, seasonNumber, episodeNumber });
     setEpisodeDetails(dets.data);
-    console.log("episode", dets.data);
   };
   React.useEffect(() => {
     getEpisodeDetails();
@@ -56,6 +58,12 @@ const EpisodeScreen = ({ navigation, route }) => {
       <View style={styles.headerTextContainer}>
         <Text style={styles.headerText}>{episodeDetails.name}</Text>
         <Text style={styles.headerText}>{`S${seasonNumber} E${episodeNumber}`}</Text>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={{ alignItems: "flex-end" }}
+        >
+          <CloseIcon size={20} color="black" />
+        </TouchableOpacity>
       </View>
       <View
         style={{
@@ -86,7 +94,23 @@ const EpisodeScreen = ({ navigation, route }) => {
                   //NEED TO FIX THIS
                   navigation.push(`${route.name}Person`, {
                     personId: person.personId,
-                    fromRouteName: route.name,
+                    // fromRouteName: route.name,
+                    fromRouteName: "MODAL",
+                  });
+                }}
+              >
+                <DetailCastInfo person={person} screenWidth={width} key={person.personId} />
+              </TouchableOpacity>
+            ))}
+          {episodeDetails?.guestStars &&
+            episodeDetails.guestStars.map((person, idx) => (
+              <TouchableOpacity
+                key={person.personId + idx.toString()}
+                onPress={() => {
+                  //NEED TO FIX THIS
+                  navigation.push(`${route.name}Person`, {
+                    personId: person.personId,
+                    fromRouteName: "MODAL",
                   });
                 }}
               >

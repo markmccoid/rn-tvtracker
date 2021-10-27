@@ -40,6 +40,13 @@ const DetailsFromSearchSeasonsStack = () => {
           headerShown: false,
         }}
       />
+      <DetailsFromSearchSeasonsNav.Screen
+        name="DetailsFromSearchSeasonsEpisodePerson"
+        component={DetailPerson}
+        options={{
+          headerShown: false,
+        }}
+      />
     </DetailsFromSearchSeasonsNav.Navigator>
   );
 };

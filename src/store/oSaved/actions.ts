@@ -1139,6 +1139,12 @@ function buildEpisodesToMarkObj(
 // Currently only called from the Hydrate function to help prevent bad
 // data from getting through
 function validateSavedTVShows(tvShows: SavedTVShowsDoc[]): SavedTVShowsDoc[] {
+  tvShows = tvShows.map((show) => {
+    if (!show.dateSaved) {
+      show = { ...show, dateSaved: getCurrentDate().epoch };
+    }
+    return show;
+  });
   return tvShows.filter((show) => show.id);
 }
 

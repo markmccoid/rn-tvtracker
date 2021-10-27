@@ -1,0 +1,27 @@
+     <View style={{ marginRight: 8 }}>
+          <PressableButton
+            disabled={allEpisodesWatched}
+            style={[
+              styles.markButtons,
+              { marginBottom: 3, backgroundColor: colors.includeGreen },
+            ]}
+            onPress={() =>
+              markAllSeasonsEpisodes({ tvShowId, seasonNumber, watchedState: true })
+            }
+          >
+            {/* <CheckedBox
+              size={25}
+              color={allEpisodesWatched ? colors.darkbg : colors.includeGreen}
+            /> */}
+            <Text style={[styles.markButtonsText, { color: "white" }]}>Watch All</Text>
+          </PressableButton>
+          <PressableButton
+            onPress={() =>
+              markAllSeasonsEpisodes({ tvShowId, seasonNumber, watchedState: false })
+            }
+            style={[styles.markButtons, { marginTop: 3 }]}
+          >
+            {/* <UnCheckedBox size={25} color={colors.includeGreen} />*/}
+            <Text style={styles.markButtonsText}>Unwatch All</Text>
+          </PressableButton>
+        </View>

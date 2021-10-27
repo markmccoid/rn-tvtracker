@@ -85,6 +85,10 @@ export type ViewTVShowsParamList = {
     seasonNumber: number;
     episodeNumber: number;
   };
+  ViewStackSeasonsEpisodePerson: {
+    personId: number;
+    fromRouteName: string;
+  };
 };
 
 //* Create Props to be used by each of the screens
