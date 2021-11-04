@@ -38,6 +38,7 @@ const EpisodeScreen = ({ navigation, route }) => {
     const dets = await apiGetTVShowEpisodeDetails({ tvShowId, seasonNumber, episodeNumber });
     setEpisodeDetails(dets.data);
   };
+  // When show/season/episode change, query API for episode details.
   React.useEffect(() => {
     getEpisodeDetails();
   }, [tvShowId, seasonNumber, episodeNumber]);
@@ -55,22 +56,29 @@ const EpisodeScreen = ({ navigation, route }) => {
   const stillHeight = stillWidth * 0.5634;
   return (
     <View style={styles.container}>
-      <View style={styles.headerTextContainer}>
-        <Text style={styles.headerText}>{episodeDetails.name}</Text>
-        <Text style={styles.headerText}>{`S${seasonNumber} E${episodeNumber}`}</Text>
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          style={{ alignItems: "flex-end" }}
-        >
+      <View
+        style={{
+          position: "absolute",
+          top: 0,
+          right: 0,
+          zIndex: 100,
+          borderWidth: StyleSheet.hairlineWidth,
+          borderBottomLeftRadius: 5,
+          backgroundColor: `${colors.background}77`,
+        }}
+      >
+        <TouchableOpacity onPress={() => navigation.goBack()} style={{ padding: 5 }}>
           <CloseIcon size={20} color="black" />
         </TouchableOpacity>
       </View>
       <View
         style={{
-          shadowColor: "#000",
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: 0.8,
-          shadowRadius: 2,
+          borderBottomColor: colors.commonBorder,
+          borderBottomWidth: 1,
+          // shadowColor: "#000",
+          // shadowOffset: { width: 0, height: 2 },
+          // shadowOpacity: 0.8,
+          // shadowRadius: 2,
         }}
       >
         <PosterImage
@@ -80,11 +88,46 @@ const EpisodeScreen = ({ navigation, route }) => {
           posterHeight={stillHeight}
         />
       </View>
-      <ScrollView>
-        <View style={{ paddingHorizontal: 10, paddingVertical: 5 }}>
-          <Text>{episodeDetails.overview}</Text>
-          <Text>{episodeDetails.airDate.formatted}</Text>
+      {/* Episode Title Panel */}
+      <View style={{ backgroundColor: colors.background }}>
+        <View
+          style={{
+            flexDirection: "column",
+            justifyContent: "flex-start",
+            backgroundColor: colors.buttonPrimary,
+            padding: 5,
+            borderWidth: 1,
+            borderColor: colors.listBorder,
+            borderBottomLeftRadius: 5,
+            borderBottomRightRadius: 5,
+            marginHorizontal: 10,
+          }}
+        >
+          <Text style={{ fontWeight: "600", fontSize: 18, textAlign: "center" }}>
+            {episodeDetails.name}
+          </Text>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "center",
+            }}
+          >
+            <Text style={{ fontWeight: "600", paddingRight: 10 }}>Air Date:</Text>
+            <Text>{episodeDetails.airDate.formatted}</Text>
+          </View>
         </View>
+      </View>
+      <ScrollView>
+        <View
+          style={{
+            paddingHorizontal: 10,
+            paddingVertical: 5,
+            backgroundColor: colors.background,
+          }}
+        >
+          <Text style={{ fontSize: 16 }}>{episodeDetails.overview}</Text>
+        </View>
+
         <View style={styles.castInfo}>
           {episodeDetails?.cast &&
             episodeDetails.cast.map((person, idx) => (
@@ -128,12 +171,13 @@ const styles = StyleSheet.create({
     flex: 1,
     borderWidth: 1,
     borderColor: colors.commonBorder,
+    backgroundColor: colors.background,
     // marginHorizontal: 5,
   },
   headerTextContainer: {
     flexDirection: "row",
-    justifyContent: "space-around",
-    paddingHorizontal: 15,
+    justifyContent: "space-between",
+    paddingHorizontal: 10,
     paddingVertical: 10,
     backgroundColor: colors.darkbg,
     shadowColor: "#000",
