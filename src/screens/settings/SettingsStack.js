@@ -53,12 +53,39 @@ const SettingsStackScreen = () => {
           return {
             animationEnabled: true,
             title: "Create Saved Filter",
+            headerTintColor: colors.darkText,
+            headerStyle: {
+              backgroundColor: colors.buttonPrimary,
+              height: 40,
+              borderWidth: 1,
+              borderColor: colors.commonBorder,
+            },
             headerLeft: () => {
               return null;
             },
             headerRight: () => {
               return (
-                <TouchableOpacity onPress={() => navigation.navigate("Settings")}>
+                <TouchableOpacity onPress={() => navigation.goBack()}>
+                  <CloseIcon color="black" size={30} style={{ marginRight: 15 }} />
+                </TouchableOpacity>
+              );
+            },
+          };
+        }}
+      />
+      <SettingsStack.Screen
+        name="SettingsAppBackup"
+        component={AppBackupScreen}
+        options={({ navigation, route }) => {
+          return {
+            animationEnabled: true,
+            title: "App Backups",
+            headerLeft: () => {
+              return null;
+            },
+            headerRight: () => {
+              return (
+                <TouchableOpacity onPress={() => navigation.goBack()}>
                   <CloseIcon color="black" size={30} style={{ marginRight: 15 }} />
                 </TouchableOpacity>
               );
@@ -67,7 +94,6 @@ const SettingsStackScreen = () => {
         }}
       />
       <SettingsStack.Screen name="SettingsAppDebug" component={AppDebugScreen} />
-      <SettingsStack.Screen name="SettingsAppBackup" component={AppBackupScreen} />
     </SettingsStack.Navigator>
   );
 };

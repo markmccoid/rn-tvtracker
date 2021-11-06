@@ -106,6 +106,10 @@ const CreateSavedFilterScreen = ({ navigation, route }) => {
   React.useEffect(() => {
     // Get the filterId of the filter being edited
     if (filterId) {
+      navigation.setOptions({
+        title: "Edit Saved Filter",
+      });
+
       const filterObj = state.oSaved.getSavedFilter(filterId);
       const filterGenres = filterObj?.genres || [];
 

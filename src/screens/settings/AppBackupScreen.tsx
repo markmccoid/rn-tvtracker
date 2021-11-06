@@ -90,7 +90,10 @@ const AppBackupScreen: React.FC = ({ navigation }) => {
       title: "App Backup",
       headerTintColor: colors.darkText,
       headerStyle: {
-        backgroundColor: colors.navHeaderColor,
+        backgroundColor: colors.buttonPrimary,
+        height: 40,
+        borderWidth: 1,
+        borderColor: colors.commonBorder,
       },
     });
   }, []);

@@ -46,14 +46,14 @@ const Settings = ({ navigation }) => {
       </View>
       <View style={styles.line} />
       <View style={[styles.settingsMenuItem, { paddingBottom: 50 }]}>
-        <View style={{ justifyContent: "center", alignItems: "flex-start" }}>
+        {/* <View style={{ justifyContent: "center", alignItems: "flex-start" }}>
           <PressableButton
             style={styles.settingsButton}
             onPress={() => navigation.navigate("SettingsAppDebug")}
           >
             <Text>DEBUG</Text>
           </PressableButton>
-        </View>
+        </View> */}
       </View>
     </ScrollView>
   );
