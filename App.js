@@ -92,7 +92,7 @@ const App = () => {
           const url = response.notification.request.content.data.url;
           // Any custom logic to see whether the URL needs to be handled
           //...
-          console.log("in listener URL", url);
+          // console.log("in listener URL", url);
           overmind.actions.oAdmin.setDeepLink(url);
           Linking.openURL(url);
           // Let React Navigation handle the URL
