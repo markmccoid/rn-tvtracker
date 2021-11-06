@@ -11,8 +11,6 @@ export const updateSavedFilterOrder = ({ state, actions, effects }, savedFilterA
 
   // Save data to local
   effects.oSaved.localSaveSavedFilters(state.oAdmin.uid, state.oSaved.savedFilters);
-  // Save to Firebase
-  effects.oSaved.saveSavedFilters(state.oSaved.savedFilters);
 };
 
 /**
@@ -56,7 +54,7 @@ export const addSavedFilter = ({ state, actions, effects }, savedFilterObj) => {
   // Save data to local
   effects.oSaved.localSaveSavedFilters(state.oAdmin.uid, state.oSaved.savedFilters);
   // Save to Firebase
-  effects.oSaved.saveSavedFilters(state.oSaved.savedFilters);
+  // effects.oSaved.saveSavedFilters(state.oSaved.savedFilters);
 };
 
 /**
@@ -79,8 +77,6 @@ export const deleteSavedFilter = ({ state, actions, effects }, filterIdToDelete)
 
   // Save data to local
   effects.oSaved.localSaveSavedFilters(state.oAdmin.uid, state.oSaved.savedFilters);
-  // Save to Firebase
-  effects.oSaved.saveSavedFilters(state.oSaved.savedFilters);
 };
 
 //================================================================
@@ -141,6 +137,4 @@ export const setDefaultFilter = ({ state, actions, effects }, defaultFilter) => 
 
   // Save data to local
   effects.oSaved.localSaveSettings(state.oAdmin.uid, state.oSaved.settings);
-  // Save to firestore
-  effects.oSaved.saveSettings(state.oSaved.settings);
 };
