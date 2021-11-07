@@ -8,7 +8,6 @@ import { Context } from "../overmind";
 import { scheduleLocalNotification } from "../../utils/notificationHelpers";
 
 import {
-  EpisodeRunTimeGroup,
   SavedEpisodeState,
   SavedTVShowsDoc,
   TempSeasonsData,
@@ -163,7 +162,7 @@ export const refreshTVShow = async (
     nextAirDate: formatDateObjectForSave(latesTVShowDetails?.nextEpisodeToAir?.airDate),
     genres: latesTVShowDetails.genres,
     avgEpisodeRunTime: latesTVShowDetails.avgEpisodeRunTime,
-    episodeRunTimeGroup: groupAvgRunTime(latesTVShowDetails.avgEpisodeRunTime),
+    // episodeRunTimeGroup: getAvgRunTimeGroup(latesTVShowDetails.avgEpisodeRunTime),
     status: latesTVShowDetails.status,
     // TV Tracker created items
     dateLastUpdated: getCurrentDate().epoch,
@@ -267,7 +266,7 @@ export const saveTVShow = async ({ state, effects, actions }: Context, tvShowId:
     posterURL: tvShowDetailsTMDB.data.posterURL,
     genres: tvShowDetailsTMDB.data.genres,
     avgEpisodeRunTime: tvShowDetailsTMDB.data.avgEpisodeRunTime,
-    episodeRunTimeGroup: groupAvgRunTime(tvShowDetailsTMDB.data.avgEpisodeRunTime),
+    // episodeRunTimeGroup: getAvgRunTimeGroup(tvShowDetailsTMDB.data.avgEpisodeRunTime),
     status: tvShowDetailsTMDB.data.status,
     // TV Tracker created items
     userRating: 0,
@@ -1168,17 +1167,17 @@ export async function checkAndUpdateSchema(
   return newShows;
 }
 
-function groupAvgRunTime(avgEpisodeRunTime: number): EpisodeRunTimeGroup {
-  // Creates 4 groups
-  // 0 - 0 to 15 minutes
-  // 1 - 16 to 30 minutes
-  // 2 - 31 to 60 minutes
-  // 3 - Over 60 minutes or undefined
-  if (avgEpisodeRunTime <= 15) return 0;
-  if (avgEpisodeRunTime <= 30) return 1;
-  if (avgEpisodeRunTime <= 60) return 2;
-  return 3;
-}
+// function getAvgRunTimeGroup(avgEpisodeRunTime: number): EpisodeRunTimeGroup {
+//   // Creates 4 groups
+//   // 0 - 0 to 15 minutes
+//   // 1 - 16 to 35 minutes
+//   // 2 - 36 to 60 minutes
+//   // 3 - Over 60 minutes or undefined
+//   if (avgEpisodeRunTime <= 15) return 0;
+//   if (avgEpisodeRunTime <= 35) return 1;
+//   if (avgEpisodeRunTime <= 60) return 2;
+//   return 3;
+// }
 
 //*==========================
 

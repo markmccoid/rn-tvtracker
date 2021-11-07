@@ -4,6 +4,7 @@ import { fromUnixTime, format } from "date-fns";
 
 import { SavedTVShowsDoc } from "../../store/oSaved/state";
 import { colors } from "../../globalStyles";
+import { getEpisodeRunTimeGroup } from "../../utils/helperFunctions";
 
 const formatUnixDate = (unixDate: number) => {
   let formattedDate = "";
@@ -45,7 +46,7 @@ const DebugItem = ({ item }: Props) => {
         <View style={styles.group}>
           <Text style={styles.label}>Run Time -- Group:</Text>
           <Text style={styles.data}>
-            {item.avgEpisodeRunTime}--{item.episodeRunTimeGroup}
+            {item.avgEpisodeRunTime}--{getEpisodeRunTimeGroup(item.avgEpisodeRunTime)}
           </Text>
         </View>
       </View>

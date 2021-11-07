@@ -12,6 +12,7 @@ import { useOState } from "../../store/overmind";
 import { MotiView } from "moti";
 import PressableButton from "../common/PressableButton";
 import { sendNotificationImmediately } from "../../utils/notificationHelpers";
+import { getEpisodeRunTimeGroup } from "../../utils/helperFunctions";
 
 type Props = {
   tvShow: SavedTVShowsDoc;
@@ -19,24 +20,36 @@ type Props = {
   navigateToDetails: () => void;
 };
 
-const setEpisodeGroupStyles = (group, maxWidth) => {
+const setEpisodeGroupStyles = (group: number, maxWidth: number): [Object, number] => {
   //0 < 15, 1 < 30, 2 < 60, 3/undefined everything else
   switch (group) {
     case 0:
-      return { backgroundColor: colors.episodeLengthGroup0, width: maxWidth / 4 };
+      return [
+        { backgroundColor: colors.episodeLengthGroup0, width: maxWidth / 4 },
+        maxWidth / 4,
+      ];
     case 1:
-      return {
-        backgroundColor: colors.episodeLengthGroup1,
-        width: maxWidth / 2.5,
-        // alignSelf: "flex-start",
-      };
+      return [
+        {
+          backgroundColor: colors.episodeLengthGroup1,
+          width: maxWidth / 2.5,
+          // alignSelf: "flex-start",
+        },
+        maxWidth / 2.5,
+      ];
     case 2:
-      return {
-        backgroundColor: colors.episodeLengthGroup2,
-        width: maxWidth / 1.2,
-      };
+      return [
+        {
+          backgroundColor: colors.episodeLengthGroup2,
+          width: maxWidth / 1.2,
+        },
+        maxWidth / 1.2,
+      ];
     default:
-      return { backgroundColor: colors.episodeLengthGroup3, width: maxWidth / 1.5 };
+      return [
+        { backgroundColor: colors.episodeLengthGroup3, width: maxWidth / 1.5 },
+        maxWidth / 1.5,
+      ];
   }
 };
 const TVShowPortraitLayout = ({ tvShow, setTVShowEditingId, navigateToDetails }: Props) => {
@@ -55,7 +68,10 @@ const TVShowPortraitLayout = ({ tvShow, setTVShowEditingId, navigateToDetails }:
   const MARGIN = 5;
   const BORDER_RADIUS = 10;
   const countEpisodesNotWatched = getNotWatchedEpisodeCount(tvShow.id);
-  const episodeGroupStyles = setEpisodeGroupStyles(tvShow.episodeRunTimeGroup, posterWidth);
+  const [episodeGroupStyles, groupWidthOffset] = setEpisodeGroupStyles(
+    getEpisodeRunTimeGroup(tvShow.avgEpisodeRunTime),
+    posterWidth
+  );
 
   const styles = StyleSheet.create({
     movieCard: {
@@ -99,6 +115,7 @@ const TVShowPortraitLayout = ({ tvShow, setTVShowEditingId, navigateToDetails }:
     <View style={styles.movieCard}>
       <View
         style={{
+          marginLeft: groupWidthOffset - posterWidth,
           ...styleHelpers.buttonShadow,
           marginBottom: 3,
           height: 6,

@@ -53,3 +53,17 @@ export function getCurrentDate(): CurrentDate {
     formatted: format(new Date(), "MM-dd-yyyy"),
   };
 }
+// 0 = 0 to 15 minutes, 1 = 16 to 35 minutes,
+// 2 = 36 to 60 minutes, 3 = Over 60 minutes or undefined
+type EpisodeRunTimeGroup = 0 | 1 | 2 | 3;
+export function getEpisodeRunTimeGroup(avgEpisodeRunTime: number): EpisodeRunTimeGroup {
+  // Creates 4 groups
+  // 0 - 0 to 15 minutes
+  // 1 - 16 to 35 minutes
+  // 2 - 36 to 60 minutes
+  // 3 - Over 60 minutes or undefined
+  if (avgEpisodeRunTime <= 15) return 0;
+  if (avgEpisodeRunTime <= 35) return 1;
+  if (avgEpisodeRunTime <= 60) return 2;
+  return 3;
+}

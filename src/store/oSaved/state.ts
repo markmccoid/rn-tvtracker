@@ -5,10 +5,11 @@ import * as defaultConstants from "./defaultConstants";
 
 import { DateObject, SortTypes, Operators } from "../../types";
 import { TVShowSeasonDetails, Episode } from "@markmccoid/tmdb_api";
+import { getEpisodeRunTimeGroup } from "../../utils/helperFunctions";
 
 // 0 = 0 to 15 minutes, 1 = 16 to 30 minutes,
 // 2 = 31 to 60 minutes, 3 = Over 60 minutes or undefined
-export type EpisodeRunTimeGroup = 0 | 1 | 2 | 3;
+// export type EpisodeRunTimeGroup = 0 | 1 | 2 | 3;
 
 export type SavedTVShowsDoc = {
   id: number;
@@ -19,7 +20,7 @@ export type SavedTVShowsDoc = {
   posterURL: string;
   genres: string[];
   avgEpisodeRunTime: number;
-  episodeRunTimeGroup: EpisodeRunTimeGroup;
+  // episodeRunTimeGroup: EpisodeRunTimeGroup;
   status: string;
   // TV Tracker created items
   taggedWith?: string[];
@@ -206,19 +207,28 @@ export const state: State = {
       ...sortItem,
       ...defaultConstants.sortDefinitions[sortItem.id],
     }));
-
+    // For sortFields, we are giving lodash an array of functions
+    // lodash will call the function passing a SavedTVShowDoc item
+    // the function will return a value (for that sort item) that lodash will sort on
     const { sortFields, sortDirections } = fullCurrentSort
       .filter((sort) => sort.active)
       .reduce(
         (finalObj, sort) => {
           let sortIteratee;
           if (sort?.subSortField) {
-            sortIteratee = (item) => {
+            sortIteratee = (item: SavedTVShowsDoc) => {
               const sortThing = item?.[sort.sortField]?.[sort.subSortField];
+              // Must take into account if TV Show doesn't have a value for the subSort field
+              // which is usually a date field.  We will return a blank so lodash will sort appropriately.
               return sortThing ? sortThing : "";
             };
           } else {
-            sortIteratee = (item) => {
+            sortIteratee = (item: SavedTVShowsDoc) => {
+              // Special case when sortField is episodeRunTimeGroup.
+              // This is a derived value, so we must convert it before returning.
+              if (sort.sortField === "episodeRunTimeGroup") {
+                return getEpisodeRunTimeGroup(item["avgEpisodeRunTime"]);
+              }
               return item[sort.sortField];
             };
           }
