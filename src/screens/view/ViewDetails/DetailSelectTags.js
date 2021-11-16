@@ -9,7 +9,7 @@ const DetailSelectTags = ({ viewTags, tags, onSelectTag, removeTagFromTVShow }) 
     return null;
   }
   return (
-    <TagCloud alignment="flex-start">
+    <TagCloud alignment="center">
       {tags.map((tagObj) => {
         return (
           <TagItem

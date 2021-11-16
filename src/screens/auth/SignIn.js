@@ -14,7 +14,6 @@ import {
 } from "react-native";
 import uuidv4 from "uuid/v4";
 import DragDropEntry, { sortArray } from "@markmccoid/react-native-drag-and-order";
-// import DragDropEntry, { sortArray } from "../../components/DragAndSort";
 
 import {
   loadUsersFromStorage,
