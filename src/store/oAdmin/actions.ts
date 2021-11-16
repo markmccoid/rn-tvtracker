@@ -19,14 +19,14 @@ export const logUserIn = async (
 };
 
 export const logUserOut = async ({ state, effects, actions }: Context) => {
+  // When user logs out reset the oSaved state to it's default state
+  // Found that could set directly from here, but needed to call action to do it.
+  actions.oSaved.resetOSaved();
   //Before reset, see if we have any debounced functions to flush
   // await effects.oSaved.flushDebounced();
   state.oAdmin.isLoggedIn = false;
   state.oAdmin.username = "";
   state.oAdmin.uid = "";
-  // When user logs out reset the oSaved state to it's default state
-  // Found that could set directly from here, but needed to call action to do it.
-  actions.oSaved.resetOSaved();
 };
 
 export const setDeepLink = ({ state, effects, actions }: Context, deepLink) => {

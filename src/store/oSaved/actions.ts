@@ -356,7 +356,7 @@ export const deleteTVShow = async ({ state, effects, actions }: Context, tvShowI
   //----------------------------
 
   // Cancel any debounced functions
-  effects.oSaved.cancelDebounced();
+  // effects.oSaved.cancelDebounced();
 
   // Clear any items associated with movie that might be saved in Async storage
   removeFromAsyncStorage(`castdata-${tvShowId}`);
