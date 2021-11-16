@@ -36,6 +36,9 @@ interface Props {
     | React.ReactElement<{ id: number | string }>[]
     | React.ReactElement<{ id: number | string }>;
 }
+//!! Context Test
+// export const PositionsObjContext = React.createContext();
+import PositionsProvider from "./DragSortContext";
 
 const DragDropEntryChildren = ({
   updatePositions,
@@ -52,7 +55,17 @@ const DragDropEntryChildren = ({
 }: Props) => {
   //*Scrollview animated ref
   const scrollViewRef = useAnimatedRef<Animated.ScrollView>();
-  const positions = useSharedValue<Positions>({});
+  // const positions = useSharedValue<Positions>({});
+  //
+  const positions = useSharedValue<Positions>(
+    Object.assign(
+      {},
+      ...React.Children.map(children, (child, idx) => ({
+        [`${child.props.id}`]: idx,
+      }))
+    )
+  );
+
   const scrollY = useSharedValue(0);
   const [containerHeight, setContainerHeight] = React.useState(0);
   const handleScroll = useAnimatedScrollHandler((event) => {
@@ -60,14 +73,14 @@ const DragDropEntryChildren = ({
   });
 
   const numberOfItems = React.useMemo(() => React.Children.count(children), [children]);
-  const prevNumberOfItems = React.useRef(numberOfItems);
-
   positions.value = Object.assign(
     {},
     ...React.Children.map(children, (child, idx) => ({
       [`${child.props.id}`]: idx,
     }))
   );
+
+  const prevNumberOfItems = React.useRef(numberOfItems);
 
   // Assign scroll functions
   React.useEffect(() => {
@@ -103,6 +116,8 @@ const DragDropEntryChildren = ({
   // }, [numberOfItems]);
 
   // Wrap each child item in the MoveableItem component.
+
+  // Could issue be because the function passed to map stores positions.value in a closure????
   const moveableItems = React.Children.map(children, (child) => {
     const id = child.props.id;
     return (
@@ -113,7 +128,6 @@ const DragDropEntryChildren = ({
         scrollViewRef={scrollViewRef}
         numberOfItems={numberOfItems}
         itemHeight={itemHeight}
-        positions={positions}
         containerHeight={containerHeight}
         updatePositions={updatePositions}
         handle={handle}
@@ -129,20 +143,22 @@ const DragDropEntryChildren = ({
   });
 
   return (
-    <Animated.ScrollView
-      ref={scrollViewRef}
-      onScroll={handleScroll}
-      scrollEventThrottle={16}
-      style={scrollStyles}
-      onLayout={(e) => {
-        setContainerHeight(e.nativeEvent.layout.height);
-      }}
-      contentContainerStyle={{
-        height: numberOfItems * itemHeight,
-      }}
-    >
-      {moveableItems}
-    </Animated.ScrollView>
+    <PositionsProvider positions={positions}>
+      <Animated.ScrollView
+        ref={scrollViewRef}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
+        style={scrollStyles}
+        onLayout={(e) => {
+          setContainerHeight(e.nativeEvent.layout.height);
+        }}
+        contentContainerStyle={{
+          height: numberOfItems * itemHeight,
+        }}
+      >
+        {moveableItems}
+      </Animated.ScrollView>
+    </PositionsProvider>
   );
 };
 

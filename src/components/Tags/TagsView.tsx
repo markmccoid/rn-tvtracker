@@ -5,11 +5,7 @@ import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 
 import { MaterialIcons } from "@expo/vector-icons";
 
-import DragDropEntry, {
-  sortArray,
-  TScrollFunctions,
-  DefaultDragIndicator,
-} from "../DragAndSort";
+import DragDropEntry, { sortArray } from "@markmccoid/react-native-drag-and-order";
 import TagRowEditOverlay from "./TagRowEditOverlay";
 import { colors } from "../../globalStyles";
 import TagItem from "./TagItem";
@@ -64,7 +60,6 @@ export default function TagsView() {
         handlePosition="left"
         handle={MyHandle}
         enableDragIndicator
-        dragIndicator={DefaultDragIndicator}
         dragIndicatorConfig={{ translateXDistance: 100 }}
       >
         {tagData.map((item, idx) => {
@@ -97,25 +92,18 @@ const MyHandle: React.FC = () => (
   <View
     style={{
       height: 50,
-      // width: 50,
       alignItems: "center",
       justifyContent: "center",
     }}
   >
     <View
       style={{
-        // borderRightWidth: 1,
-        // borderRightColor: "#aaa",
-        // borderBottomWidth: 0.5,
-        // borderBottomColor: "#aaa",
-        // borderTopWidth: 0.5,
-        // borderTopColor: "#aaa",
         borderWidth: 1,
         borderColor: "#aaa",
         borderRadius: 10,
+        backgroundColor: "white",
         marginLeft: 4,
         height: 45,
-        backgroundColor: "white",
         justifyContent: "center",
         alignItems: "center",
         paddingHorizontal: 5,

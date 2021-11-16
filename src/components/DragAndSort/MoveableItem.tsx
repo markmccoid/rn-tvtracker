@@ -22,6 +22,7 @@ import * as Haptics from "expo-haptics";
 import { DragIndicatorProps, DragIndicatorConfig } from "./DefaultDragIndicator";
 
 import { Positions } from "./helperFunctions";
+import { usePositions } from "./DragSortContext";
 
 interface Props {
   id: number | string;
@@ -29,7 +30,7 @@ interface Props {
   scrollViewRef: React.RefObject<Animated.ScrollView>;
   numberOfItems: number;
   handlePosition: "left" | "right";
-  positions: Animated.SharedValue<Positions>;
+  // positions: Animated.SharedValue<Positions>;
   containerHeight: number;
   handle: React.FC;
   enableHapticFeedback: boolean;
@@ -71,7 +72,6 @@ const MoveableItem = ({
   scrollViewRef,
   numberOfItems,
   handlePosition,
-  positions,
   containerHeight,
   updatePositions,
   children,
@@ -82,6 +82,8 @@ const MoveableItem = ({
   dragIndicatorConfig,
   enableHapticFeedback,
 }: Props) => {
+  // Getting position object from context
+  const positions = usePositions();
   const Handle = handle;
   const DragIndicator = dragIndicator;
   const moving = useSharedValue(false);
@@ -96,7 +98,6 @@ const MoveableItem = ({
   const initialRender = useSharedValue(true);
   const contentHeight = React.useMemo(() => numberOfItems * itemHeight, [numberOfItems]);
   const boundY = numberOfItems * itemHeight - itemHeight;
-
   // Whenever the positions.value changes, this reaction will run
   // Thus, whenever we update the position (swap two items) this
   // hook will run the second function, passing to it, the

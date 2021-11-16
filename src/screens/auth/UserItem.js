@@ -5,7 +5,7 @@ import { DeleteIcon } from "../../components/common/Icons";
 const { width } = Dimensions.get("screen");
 const UserItem = ({ user, itemHeight, onDeleteUser, onSelectUser }) => {
   return (
-    <View style={[styles.userContainer, { itemHeight }]}>
+    <View style={[styles.userContainer, { height: itemHeight }]}>
       <Text>{user.username}</Text>
       <TouchableOpacity onPress={() => onDeleteUser(user.uid)}>
         <DeleteIcon size={20} />

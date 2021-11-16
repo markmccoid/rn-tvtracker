@@ -13,7 +13,8 @@ import {
   ActivityIndicator,
 } from "react-native";
 import uuidv4 from "uuid/v4";
-import DragDropEntry, { sortArray } from "../../components/DragAndSort";
+import DragDropEntry, { sortArray } from "@markmccoid/react-native-drag-and-order";
+// import DragDropEntry, { sortArray } from "../../components/DragAndSort";
 
 import {
   loadUsersFromStorage,
@@ -51,7 +52,8 @@ const SignIn = ({ navigation, route }) => {
     // Need the isMounted to handle "cancellation" of async
     // if onInitialize finds a "currentUser" and runs the login function
     let isMounted = true;
-    const loadUsers = async () => {
+    const loadUsers = async (loggedIn) => {
+      if (loggedIn) return;
       setIsLoading(true);
       const loadedUsers = await loadUsersFromStorage();
       if (isMounted) {
@@ -59,9 +61,7 @@ const SignIn = ({ navigation, route }) => {
         setIsLoading(false);
       }
     };
-    if (!isLoggedIn) {
-      loadUsers();
-    }
+    loadUsers(isLoggedIn);
     return () => (isMounted = false);
   }, []);
   //---------------------------------
@@ -142,7 +142,7 @@ const SignIn = ({ navigation, route }) => {
     );
   };
 
-  if (isLoading || isLoggedIn === undefined) {
+  if (isLoading || isLoggedIn || allUsers === undefined) {
     return (
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
         <ActivityIndicator size="large" />
@@ -167,12 +167,13 @@ const SignIn = ({ navigation, route }) => {
                 }}
               >
                 <DragDropEntry
-                  //scrollStyles={{ width: 300, borderWidth: 1, borderColor: "red" }}
+                  // scrollStyles={{ width: 300, borderWidth: 1, borderColor: "red" }}
                   updatePositions={(positions) =>
                     updateUsers(sortArray(positions, allUsers, { idField: "uid" }))
                   }
                   itemHeight={ITEM_HEIGHT}
                   enableDragIndicator
+                  dragIndicatorConfig={{ translateXDistance: 50 }}
                 >
                   {allUsers.map((user) => {
                     return (

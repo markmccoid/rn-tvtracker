@@ -8,8 +8,7 @@ import { colors, commonStyles } from "../../globalStyles";
 
 import SavedFiltersItem from "../../components/settings/SavedFiltersItem";
 
-import DragDropEntry, { sortArray } from "../../components/DragAndSort";
-// import { sortArray } from "../../components/DragAndSort/helperFunctions";
+import DragDropEntry, { sortArray } from "@markmccoid/react-native-drag-and-order";
 
 const ITEM_HEIGHT = 40;
 // const VIEW_HEIGHT = 4 * ITEM_HEIGHT + 2;
@@ -21,6 +20,14 @@ const SectionSavedFilters = () => {
   const { savedFilters } = state.oSaved;
   const { updateSavedFilterOrder } = actions.oSaved;
 
+  const [scrollFuncs, setScrollFuncs] = React.useState();
+
+  React.useEffect(() => {
+    if (!scrollFuncs) return;
+    if (savedFilters.length <= 4) {
+      scrollFuncs.scrollToEnd();
+    }
+  }, [savedFilters.length]);
   const reSort = (positions, baseArray) => {
     // If there is only one item in our list, no need to resort, just noop
     if (Object.keys(positions).length <= 1) {
@@ -63,6 +70,7 @@ const SectionSavedFilters = () => {
           }
           itemHeight={ITEM_HEIGHT}
           enableDragIndicator
+          getScrollFunctions={setScrollFuncs}
         >
           {savedFilters.map((item) => {
             return (
