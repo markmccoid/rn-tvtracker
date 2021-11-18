@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { LogBox, useColorScheme, StatusBar } from "react-native";
+import React from "react";
+import { LogBox, StatusBar } from "react-native";
 
-import { NavigationContainer, DefaultTheme, DarkTheme } from "@react-navigation/native";
+import { NavigationContainer } from "@react-navigation/native";
 import { Provider } from "overmind-react";
 import { HoldMenuProvider } from "@markmccoid/react-native-hold-menu";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -10,12 +10,10 @@ import FeatherIcon from "react-native-vector-icons/Feather";
 
 import * as Linking from "expo-linking";
 
-import { askNotificationPermissions } from "./src/utils/getPermissions";
+// import { askNotificationPermissions } from "./src/utils/getPermissions";
 import { overmind } from "./src/store/overmind";
-import { initTMDB } from "@markmccoid/tmdb_api";
 
 import RootNav from "./src/navigation/RootNav";
-import { colors } from "./src/globalStyles";
 
 // export const AuthContext = React.createContext();
 const prefix = Linking.createURL("/");
