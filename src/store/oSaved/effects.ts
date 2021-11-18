@@ -31,7 +31,7 @@ import {
 import { SavedTVShowsDoc } from "./state";
 
 /**
- * initializeStore - determines whether to load from firebase or the local store
+ * initializeStore -
  *  returns a dataObj that actions.oState.hydrateStore can use to initialize the store
  *
  * @param {string} uid - uid of user who is logged in

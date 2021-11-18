@@ -26,7 +26,7 @@ export const toggleFavSavedFilter = ({ state, actions, effects }, { id, isShown 
   });
 };
 /**
- * addSavedFilter - Adds a new saved filter to the store and then stores it in Firebase.
+ * addSavedFilter - Adds a new saved filter to the store and then store.
  * @param {*} param0
  * @param {object} savedFilterObj
  */
@@ -53,12 +53,10 @@ export const addSavedFilter = ({ state, actions, effects }, savedFilterObj) => {
 
   // Save data to local
   effects.oSaved.localSaveSavedFilters(state.oAdmin.uid, state.oSaved.savedFilters);
-  // Save to Firebase
-  // effects.oSaved.saveSavedFilters(state.oSaved.savedFilters);
 };
 
 /**
- * deleteSavedFilter - deletes the filter associated with the passed ID and then udpates Firebase
+ * deleteSavedFilter - deletes the filter associated with the passed ID
  * @param {*} param0
  * @param {string} filterIdToDelete
  */

@@ -141,7 +141,7 @@ const CreateSavedFilterScreen = ({ navigation, route }) => {
   }, []);
 
   const onSaveFilter = () => {
-    //Take "tagsState" and create a "selectedTags" and "excludedTags" var to store in firebase
+    //Take "tagsState" and create a "selectedTags" and "excludedTags" var to store
     const includeTags = tagsState.reduce((selectedTags, tagObj) => {
       if (tagObj.tagState === "include") {
         selectedTags.push(tagObj.tagId);

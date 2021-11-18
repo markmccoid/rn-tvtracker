@@ -4,7 +4,6 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { useFocusEffect, useRoute } from "@react-navigation/native";
 
-import Firebase from "../storage/firebase";
 import ViewStack from "../screens/view/ViewStack";
 import SearchStack from "../screens/search/SearchStack";
 import TagStack from "../screens/tags/TagStack";
@@ -52,29 +51,6 @@ const tabsScreenOptions = ({ route }) => ({
 //--Drawer Creation
 const Drawer = createDrawerNavigator();
 
-//-- SignOut component for drawer.
-//- Calls Firebase signout method, then shows activity indicator.
-//- when onAuthStateChanged(store/oSaved/onInitialize.js) "reacts" user will be logged out
-//- this will cause rerender and auth nav path to be displayed.
-// const SignOut = ({ navigation }) => {
-//   Firebase.auth().signOut();
-//   return <ActivityIndicator />;
-// };
-
-//-- Redirect to View Movies screen --
-// const RedirectToMain = ({ navigation }) => {
-//   // Using the useFocusEffect, the navigation is run
-//   // whenever this component gets focus.
-//   // Currently this is from the Drawer link "Home"
-//   useFocusEffect(() => {
-//     navigation.navigate("ViewTVShowsTab", {
-//       screen: "ViewTVShows",
-//       params: { screen: "Filter" },
-//     });
-//   });
-
-//   return null;
-// };
 //-- Main application Bottom Tabs ----------
 const AppTabs = createBottomTabNavigator();
 

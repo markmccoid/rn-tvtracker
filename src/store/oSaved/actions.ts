@@ -238,7 +238,6 @@ export const refreshTVShow = async (
 export const saveTVShow = async ({ state, effects, actions }: Context, tvShowId: number) => {
   //! We are tagging the result set so that the search screen will know that the movie
   //! is part of our saved movies.
-  //! BUT we do NOT need to save this field in firebase.  We can add it during hydration.
 
   const { tagResults } = actions.oSearch.internal;
   const searchData = state.oSearch.resultData;
@@ -288,9 +287,6 @@ export const saveTVShow = async ({ state, effects, actions }: Context, tvShowId:
 
   // Store all TV Shows to Async Storage
   await effects.oSaved.localSaveTVShows(state.oAdmin.uid, state.oSaved.savedTVShows);
-
-  // Add TV show to firebase
-  // await effects.oSaved.addTVShow(tvShowRecordToWrite);
 };
 
 export const apiGetTVShowDetails = async (
@@ -515,10 +511,6 @@ export const deleteTag = async ({ state, effects, actions }: Context, tagId: str
   });
   // Save data to local
   effects.oSaved.localSaveSavedFilters(state.oAdmin.uid, state.oSaved.savedFilters);
-  // -- COMMENT OUT FIRESTORE
-  // Save to Firebase
-  // effects.oSaved.saveSavedFilters(state.oSaved.savedFilters);
-  //----------------------------
 
   // Check currently applied filter and remove deleted tag
   state.oSaved.filterData.excludeTags = state.oSaved.filterData.excludeTags.filter(

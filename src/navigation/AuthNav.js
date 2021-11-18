@@ -2,7 +2,6 @@ import React from "react";
 import { createStackNavigator, TransitionSpecs } from "@react-navigation/stack";
 
 import SignIn from "../screens/auth/SignIn";
-import ForgotPasswordScreen from "../screens/auth/ForgotPasswordScreen";
 
 const AuthStack = createStackNavigator();
 
