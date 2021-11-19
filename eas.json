@@ -5,16 +5,15 @@
   "build": {
     "development": {
       "developmentClient": true,
-      "distribution": "internal"
+      "distribution": "internal",
+      "ios": {
+        "simulator": true
+      }
     },
     "preview": {
       "distribution": "internal"
     },
-    "production": {
-      "env": {
-        "TMDB_ID": "0e4935aa81b04539beb687d04ff414e3"
-      }
-    }
+    "production": {}
   },
   "submit": {
     "production": {}
