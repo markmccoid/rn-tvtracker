@@ -15,6 +15,9 @@ const DropboxListFiles = ({ token, selectedFile, setSelectedFile }: Props) => {
   const [refresh, setRefresh] = React.useState(false);
   const fileList = useDropboxFiles(token, refresh);
   // const [selected, setSelected] = React.useState(undefined);
+  const FILEITEM_HEIGHT = 35;
+  const scrollHeight =
+    fileList.length <= 4 ? fileList.length * FILEITEM_HEIGHT : FILEITEM_HEIGHT * 4.2;
 
   if (!fileList) {
     return (
@@ -64,8 +67,9 @@ const DropboxListFiles = ({ token, selectedFile, setSelectedFile }: Props) => {
         </View>
       )}
 
-      <ScrollView>
+      <ScrollView style={{ height: scrollHeight, borderWidth: 0.5 }}>
         {/* This is the list of files found in Apps/TV_Tracker */}
+
         {fileList.length > 0 &&
           fileList.map((file) => {
             return (
@@ -73,9 +77,10 @@ const DropboxListFiles = ({ token, selectedFile, setSelectedFile }: Props) => {
                 <Text
                   style={{
                     fontSize: 18,
+                    height: 35,
                     color: selectedFile === file.fileName ? "white" : colors.darkText,
                     padding: 5,
-                    borderWidth: 1,
+                    borderWidth: 0.5,
                     backgroundColor: selectedFile === file.fileName ? "#555" : "white",
                   }}
                 >
