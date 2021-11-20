@@ -5,6 +5,7 @@ import { useOState, useOActions } from "../../store/overmind";
 import DebugItem from "../../components/debug/DebugItem";
 import { colors } from "../../globalStyles";
 import PressableButton from "../../components/common/PressableButton";
+import Constants from "expo-constants";
 
 import * as FileSystem from "expo-file-system";
 import * as Sharing from "expo-sharing";
@@ -80,7 +81,7 @@ const AppDebugScreen: React.FC = (props) => {
       >
         <Text>Debug</Text>
       </PressableButton>
-      <PressableButton
+      {/* <PressableButton
         onPress={() => setScreen("dropbox")}
         style={{ backgroundColor: colors.splashGreenDark }}
       >
@@ -91,12 +92,13 @@ const AppDebugScreen: React.FC = (props) => {
         style={{ backgroundColor: colors.mutedRed }}
       >
         <Text>Test Write Data</Text>
-      </PressableButton>
+      </PressableButton> */}
     </View>
   );
   if (screen === "debug") {
     return (
       <View>
+        {/* <Text style={{ fontSize: 24 }}>TMDBID - {Constants.manifest.extra.tmdbAPI}</Text> */}
         <ButtonBar />
         <ScrollView>
           {sortedTVShows.map((show) => (
