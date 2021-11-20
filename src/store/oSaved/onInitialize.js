@@ -7,12 +7,9 @@ import * as Notifications from "expo-notifications";
 import { askNotificationPermissions } from "../../utils/getPermissions";
 import { loadCurrentUserFromStorage } from "../../storage/localData";
 
-let tmdbId = Constants.manifest.extra.tmdbAPI;
-// if (process.env.NODE_ENV === "development") {
-//   const envData = require("../../../env.json");
-//   tmdbId = envData?.tmdbId;
-// }
 import { initTMDB } from "@markmccoid/tmdb_api";
+
+let tmdbId = Constants.manifest.extra.tmdbAPI;
 // initialize currently only loads data that was stored in
 // phones local storage.
 let unsubscribe = () => {};

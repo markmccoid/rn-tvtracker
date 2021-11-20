@@ -13,7 +13,11 @@
     "preview": {
       "distribution": "internal"
     },
-    "production": {}
+    "production": {
+      "env": {
+        "TMDB_ID": "0e4935aa81b04539beb687d04ff414e3"
+      }
+    }
   },
   "submit": {
     "production": {}
