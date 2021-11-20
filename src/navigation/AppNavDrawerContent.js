@@ -14,7 +14,7 @@ import {
 import { useOState, useOActions } from "../store/overmind";
 
 import { TouchableOpacity } from "react-native-gesture-handler";
-
+import Constants from "expo-constants";
 import { colors } from "../globalStyles";
 // The DrawerContentScrollView takes care of housekeeping for scroll view (notches, etc)
 // The DrawerItemList displays the screens that you pass as children to your drawer
@@ -22,6 +22,7 @@ import { colors } from "../globalStyles";
 // props sent to custom drawer include navigation
 
 function AppNavDrawerContent(props) {
+  let appVersion = Constants.manifest.version;
   const state = useOState();
   const actions = useOActions();
   const { applySavedFilter, clearFilterTags, hydrateStore } = actions.oSaved;
@@ -43,7 +44,7 @@ function AppNavDrawerContent(props) {
           />
           <View style={{ flexDirection: "column", justifyContent: "center", paddingTop: 10 }}>
             <Text style={styles.userText}>{username}</Text>
-            {/* <Text style={styles.userText}>Loaded From {appState.dataSource}</Text> */}
+            <Text style={styles.userText}>App Version {appVersion}</Text>
           </View>
         </View>
         <View style={styles.menuItemStyle}>
