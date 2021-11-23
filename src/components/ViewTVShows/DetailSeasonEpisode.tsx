@@ -64,7 +64,16 @@ const DetailSeasonEpisode = ({ tvShowId, episode, episodeState, isShowSaved }: P
           padding: 10,
         }}
       >
-        <View style={{ justifyContent: "center", paddingRight: 15 }}>
+        <View
+          style={{
+            justifyContent: "center",
+            marginRight: 6,
+            paddingHorizontal: 4,
+            // backgroundColor: "red",
+            // borderRadius: 4,
+            // borderWidth: StyleSheet.hairlineWidth,
+          }}
+        >
           <Text style={styles.epNumber}>{`${episode.episodeNumber}`}</Text>
         </View>
         <TouchableOpacity

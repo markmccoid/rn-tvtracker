@@ -60,7 +60,7 @@ type SectionDataProps = {
 export const sectionData = ({ item, index, section, separators }: SectionDataProps) => {
   const itemData: SectionListDataItem = item;
   const isShowSaved = section.title.isShowSaved;
-  // console.log("item episode", itemData.episode.seasonNumber, itemData.episode.episodeNumber);
+  // const isDownloadStateEnabled = section.title.isDownloadStateEnabled;
 
   return (
     <>
@@ -87,7 +87,9 @@ const EpisodeRow = React.memo(({ tvShowId, episode, isShowSaved }: EpisodeRowPro
     episode.seasonNumber,
     episode.episodeNumber
   );
-  const { toggleTVShowEpisodeState } = actions.oSaved;
+
+  // Read episodeDownloadState from oSaved
+
   return (
     <>
       {/* <MotiView
