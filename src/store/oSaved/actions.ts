@@ -826,18 +826,40 @@ export const getTVShowSeasonData = async (
  */
 export const toggleTVShowEpisodeState = async (
   { state, actions, effects }: Context,
-  payload: { tvShowId: number; seasonNumber: number; episodeNumber: number }
+  payload: {
+    tvShowId: number;
+    seasonNumber: number;
+    episodeNumber: number;
+    modifyDownloadState?: boolean;
+  }
 ): Promise<boolean> => {
   const { tvShowId, seasonNumber, episodeNumber } = payload;
+
+  // This will allow this function to modify either the episodeState
+  // or the downloadState.  Default will be episodeState
+  const workingTempStateObject = payload?.modifyDownloadState
+    ? "tempDownloadState"
+    : "tempEpisodeState";
+  const workingTVShowStateObject = payload?.modifyDownloadState
+    ? "downloadState"
+    : "episodeState";
   // Since we are assigning true/false directly to tempEpisodeState[tvShowId] we need
   // to make sure it exists first!
-  if (!state.oSaved.tempEpisodeState[tvShowId]) {
-    state.oSaved.tempEpisodeState = { ...state.oSaved.tempEpisodeState, [tvShowId]: {} };
+
+  if (!state.oSaved[workingTempStateObject][tvShowId]) {
+    state.oSaved[workingTempStateObject] = {
+      ...state.oSaved[workingTempStateObject],
+      [tvShowId]: {},
+    };
   }
-  const tvShowWatchData = state.oSaved.tempEpisodeState[tvShowId];
+  const tvShowWatchData = state.oSaved[workingTempStateObject][tvShowId];
 
   // Needed to know if we are toggling episode to "watched"(true) or "not watched"(false)
   // So that we know if we should ask them to mark all previous episodes as watched.
+  // Toggle and actual check of "next" state after prevKeyState definition.
+  //! NOTE: nextState is referring to the current episode number and its state AFTER
+  //! the toggle.  A bit incongruous with the prevKeyState, which is looking at the previous
+  //! episodes state.
   let isNextStateWatched = true;
 
   // Determine if the previous episode is marked as watched.
@@ -851,7 +873,7 @@ export const toggleTVShowEpisodeState = async (
 
   let prevKeyState = true;
   if (previousKey) {
-    prevKeyState = !!state.oSaved.tempEpisodeState?.[tvShowId]?.[previousKey];
+    prevKeyState = !!state.oSaved[workingTempStateObject]?.[tvShowId]?.[previousKey];
   }
 
   // If this exists, then we are removing the "watch flag"
@@ -865,13 +887,19 @@ export const toggleTVShowEpisodeState = async (
   }
 
   // Update savedTVShows state array
-  actions.oSaved.internal.updateEpisodeStateOnTVShow(tvShowId);
+  actions.oSaved.internal.updateEpisodeStateOnTVShow({
+    tvShowId,
+    workingTVShowStateObject,
+    workingTempStateObject,
+  });
 
   // --OPTION 3 ---- Store on disk ONLY in savedTVShows (like taggedWith)
   // -- call it episodeState: { [key: string]: boolean }
   // -- still most likely will need to save with false states
   const mergeObj = {
-    [tvShowId]: { episodeState: { ...state.oSaved.tempEpisodeState?.[tvShowId] } },
+    [tvShowId]: {
+      [workingTVShowStateObject]: { ...state.oSaved[workingTempStateObject]?.[tvShowId] },
+    },
   };
   await effects.oSaved.localMergeTVShows(state.oAdmin.uid, mergeObj);
 
@@ -885,9 +913,23 @@ export const toggleTVShowEpisodeState = async (
  */
 export const markAllSeasonsEpisodes = async (
   { state, actions, effects }: Context,
-  payload: { tvShowId: number; seasonNumber: number; watchedState: boolean }
+  payload: {
+    tvShowId: number;
+    seasonNumber: number;
+    watchedState: boolean;
+    modifyDownloadState?: boolean;
+  }
 ): Promise<void> => {
   const { tvShowId, seasonNumber, watchedState } = payload;
+
+  // This will allow this function to modify either the episodeState
+  // or the downloadState.  Default will be episodeState
+  const workingTempStateObject = payload?.modifyDownloadState
+    ? "tempDownloadState"
+    : "tempEpisodeState";
+  const workingTVShowStateObject = payload?.modifyDownloadState
+    ? "downloadState"
+    : "episodeState";
 
   const seasonData = state.oSaved.tempSeasonsData[tvShowId].find(
     (season) => season.seasonNumber === seasonNumber
@@ -898,15 +940,21 @@ export const markAllSeasonsEpisodes = async (
     return (final = { ...final, [`${ep.seasonNumber}-${ep.episodeNumber}`]: watchedState });
   }, {});
 
-  // Merge with tempEpisodeState data
-  mergeEpisodeStateData(episodesToMarkObj, tvShowId, state.oSaved.tempEpisodeState);
+  // Merge with tempEpisodeState or tempDownloadState data
+  mergeEpisodeStateData(episodesToMarkObj, tvShowId, state.oSaved[workingTempStateObject]);
 
   // update the savedTVShow array with any episode state that has changed for this tvShow
-  actions.oSaved.internal.updateEpisodeStateOnTVShow(tvShowId);
+  actions.oSaved.internal.updateEpisodeStateOnTVShow({
+    tvShowId,
+    workingTVShowStateObject,
+    workingTempStateObject,
+  });
 
   // save to async storage
   const mergeObj = {
-    [tvShowId]: { episodeState: { ...state.oSaved.tempEpisodeState?.[tvShowId] } },
+    [tvShowId]: {
+      [workingTVShowStateObject]: { ...state.oSaved[workingTempStateObject]?.[tvShowId] },
+    },
   };
   await effects.oSaved.localMergeTVShows(state.oAdmin.uid, mergeObj);
 };
@@ -916,9 +964,24 @@ export const markAllSeasonsEpisodes = async (
  */
 export const markAllPreviousEpisodes = async (
   { state, actions, effects }: Context,
-  payload: { tvShowId: number; seasonNumber: number; episodeNumber: number }
+  payload: {
+    tvShowId: number;
+    seasonNumber: number;
+    episodeNumber: number;
+    modifyDownloadState?: boolean;
+  }
 ): Promise<void> => {
   const { tvShowId, seasonNumber, episodeNumber } = payload;
+
+  // This will allow this function to modify either the episodeState
+  // or the downloadState.  Default will be episodeState
+  const workingTempStateObject = payload?.modifyDownloadState
+    ? "tempDownloadState"
+    : "tempEpisodeState";
+  const workingTVShowStateObject = payload?.modifyDownloadState
+    ? "downloadState"
+    : "episodeState";
+
   // Based on season and episode, get an object with the episode to mark as watched
   const mergeEpisodeStateData = buildEpisodesToMarkObj(
     seasonNumber,
@@ -929,18 +992,24 @@ export const markAllPreviousEpisodes = async (
   // Merge with tempEpisodeState data
   Object.entries(mergeEpisodeStateData).forEach(
     ([key, value]: [key: string, value: boolean]) => {
-      if (!state.oSaved.tempEpisodeState[tvShowId]?.[key]) {
-        state.oSaved.tempEpisodeState[tvShowId][key] = value;
+      if (!state.oSaved[workingTempStateObject][tvShowId]?.[key]) {
+        state.oSaved[workingTempStateObject][tvShowId][key] = value;
       }
     }
   );
 
   // update the savedTVShow array with any episode state that has changed for this tvShow
-  actions.oSaved.internal.updateEpisodeStateOnTVShow(tvShowId);
+  actions.oSaved.internal.updateEpisodeStateOnTVShow({
+    tvShowId,
+    workingTVShowStateObject,
+    workingTempStateObject,
+  });
 
   // save to async storage
   const mergeObj = {
-    [tvShowId]: { episodeState: { ...state.oSaved.tempEpisodeState?.[tvShowId] } },
+    [tvShowId]: {
+      [workingTVShowStateObject]: { ...state.oSaved[workingTempStateObject]?.[tvShowId] },
+    },
   };
   await effects.oSaved.localMergeTVShows(state.oAdmin.uid, mergeObj);
 };

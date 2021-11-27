@@ -29,9 +29,17 @@ export const createTaggedTVShowsObj = ({ state }: Context, savedTVShows) => {
  * @param {array} savedTVShows
  */
 export const hydrateEpisodeState = ({ state }: Context, savedTVShows) => {
+  // Hydrate the tempEpisodeState
   state.oSaved.tempEpisodeState = savedTVShows.reduce((acc, tvShow) => {
     if (tvShow?.episodeState) {
       return { ...acc, [tvShow.id]: tvShow.episodeState };
+    }
+    return acc;
+  }, {});
+  // Hydrate the tempDownloadState
+  state.oSaved.tempDownloadState = savedTVShows.reduce((acc, tvShow) => {
+    if (tvShow?.downloadState) {
+      return { ...acc, [tvShow.id]: tvShow.downloadState };
     }
     return acc;
   }, {});
@@ -51,10 +59,19 @@ export const updateTaggedWithOnTVShow = ({ state }: Context, tvShowId: number) =
 /**updateEpisodeStateOnTVShow
  *
  */
-export const updateEpisodeStateOnTVShow = ({ state }: Context, tvShowId: number) => {
+export const updateEpisodeStateOnTVShow = (
+  { state }: Context,
+  payload: {
+    tvShowId: number;
+    workingTempStateObject: string;
+    workingTVShowStateObject: string;
+  }
+) => {
+  const { tvShowId, workingTVShowStateObject, workingTempStateObject } = payload;
+
   state.oSaved.savedTVShows.forEach((tvShow) => {
     if (tvShow.id === tvShowId) {
-      tvShow.episodeState = { ...state.oSaved.tempEpisodeState[tvShowId] };
+      tvShow[workingTVShowStateObject] = { ...state.oSaved[workingTempStateObject][tvShowId] };
     }
   });
 };

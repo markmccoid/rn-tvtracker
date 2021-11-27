@@ -87,6 +87,11 @@ const EpisodeRow = React.memo(({ tvShowId, episode, isShowSaved }: EpisodeRowPro
     episode.seasonNumber,
     episode.episodeNumber
   );
+  const episodeDownloadState = state.oSaved.getTVShowDownloadState(
+    tvShowId,
+    episode.seasonNumber,
+    episode.episodeNumber
+  );
 
   // Read episodeDownloadState from oSaved
 
@@ -102,6 +107,7 @@ const EpisodeRow = React.memo(({ tvShowId, episode, isShowSaved }: EpisodeRowPro
         tvShowId={tvShowId}
         episode={episode}
         episodeState={episodeState}
+        episodeDownloadState={episodeDownloadState}
         isShowSaved={isShowSaved}
       />
       {/* </MotiView> */}

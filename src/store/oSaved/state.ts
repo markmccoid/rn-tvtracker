@@ -25,6 +25,7 @@ export type SavedTVShowsDoc = {
   // TV Tracker created items
   taggedWith?: string[];
   episodeState?: WatchedSeasonEpisodes;
+  downloadState?: WatchedSeasonEpisodes;
   userRating: number;
   dateSaved: number; //Unix epoch time
   dateLastUpdated?: number; //Unix epoch time
@@ -45,11 +46,11 @@ export type SavedEpisodeState = Record<number, WatchedSeasonEpisodes>;
 //   episodes: TempSeasonDataEpisode[];
 // }
 export type TempSeasonsData = Record<number, TVShowSeasonDetails[]>;
-export type TempSeasonsState = Record<number, { [seasonNumber: number]: boolean }>;
 
 export type Settings = {
   defaultFilter: string;
   defaultSort: defaultConstants.SortObjectItem[];
+  isDownloadStateEnabled: boolean;
 };
 
 export type SavedFilters = {
@@ -87,6 +88,7 @@ export type TagDataExtended = TagData & {
 export type State = {
   savedTVShows: SavedTVShowsDoc[];
   tempEpisodeState: SavedEpisodeState;
+  tempDownloadState: SavedEpisodeState;
   tagData: TagData[]; // Array of Objects containing tag info { tagId, tagName, members[]??}
   // This will hold an object (with key of MovieId) for each movie that has
   // been "tagged".
@@ -116,7 +118,6 @@ export type State = {
     watchProviders: string[];
   };
   tempSeasonsData: TempSeasonsData;
-  tempSeasonsState: TempSeasonsState;
   // --- GETTERS ---
   getFilteredTVShowIds: number[];
   getFilteredTVShows: SavedTVShowsDoc[];
@@ -125,10 +126,10 @@ export type State = {
   getTVShowDetails: (tvShowId: number) => SavedTVShowsDoc;
   getTVShowSeasonDetails: (tvShowId: number) => TVShowSeasonDetails[];
   getTVShowSeasons: (tvShowId: number) => Omit<TVShowSeasonDetails, "episodes">[];
-  getTVShowSeasonState: (tvShowId: number, seasonNumber: number) => boolean;
   getTVShowEpisodes: (tvShowId: number, seasonNumber: number) => Episode[];
   getTVShowEpisode: (tvShowId: number, seasonNumber: number, episodeNumber) => Episode;
   getTVShowEpisodeState: (tvShowId: number, seasonNumber: number, episodeNumber) => boolean;
+  getTVShowDownloadState: (tvShowId: number, seasonNumber: number, episodeNumber) => boolean;
   getWatchedEpisodes: (tvShowId: number, seasonNumber: number) => number;
   getNotWatchedEpisodeCount: (tvShowId: number) => number;
   isTVShowSaved: (tvShowId: number) => boolean;
@@ -152,9 +153,11 @@ export type State = {
   getSavedFilter: (filterId: string) => SavedFilters;
 };
 export const state: State = {
-  savedTVShows: [], // Movie data pulled from @markmccoid/tmdb_api
+  savedTVShows: [],
   tempEpisodeState: {},
-  tagData: [], // Array of Objects containing tag info { tagId, tagName, members[]??}
+  tempDownloadState: {},
+  tagData: [],
+
   // This will hold an object (with key of MovieId) for each movie that has
   // been "tagged".
   taggedTVShows: {},
@@ -162,6 +165,7 @@ export const state: State = {
   settings: {
     defaultFilter: undefined,
     defaultSort: defaultConstants.defaultSort,
+    isDownloadStateEnabled: false,
   },
   // Object containing any filter data
   filterData: {
@@ -280,10 +284,7 @@ export const state: State = {
       return newSeason;
     });
   }),
-  //* ------
-  getTVShowSeasonState: derived((state: State) => (tvShowId: number, seasonNumber: number) => {
-    return state.tempSeasonsState[tvShowId][seasonNumber];
-  }),
+
   //* ------
   getTVShowEpisodes: derived((state: State) => (tvShowId: number, seasonNumber: number) => {
     return state.tempSeasonsData[tvShowId].find(
@@ -302,12 +303,16 @@ export const state: State = {
       return holdEpisode;
     }
   ),
+  //* ------
   getTVShowEpisodeState: derived(
     (state: State) => (tvShowId: number, seasonNumber: number, episodeNumber: number) => {
-      // if (!state.tempEpisodeState?.[tvShowId]?.[`${seasonNumber}-${episodeNumber}`]) {
-      //   return false;
-      // }
       return !!state.tempEpisodeState?.[tvShowId]?.[`${seasonNumber}-${episodeNumber}`];
+    }
+  ),
+  //* ------
+  getTVShowDownloadState: derived(
+    (state: State) => (tvShowId: number, seasonNumber: number, episodeNumber: number) => {
+      return !!state.tempDownloadState?.[tvShowId]?.[`${seasonNumber}-${episodeNumber}`];
     }
   ),
   //- Simply returns the number of episodes marked as watched for the passed tvShowId and seasonNumber
@@ -422,7 +427,6 @@ export const state: State = {
     // Since we are only storing the tagId, we need to
     // extract the tagName for the stored tagIds.
     // This helper function will do that
-
     const tagDataExtended = helpers.buildTagObjFromIds(state, tvShowTags, {
       isSelected: true,
     });

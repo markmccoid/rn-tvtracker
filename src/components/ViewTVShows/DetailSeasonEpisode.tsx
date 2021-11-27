@@ -13,16 +13,24 @@ import { fonts, colors } from "../../globalStyles";
 
 //@types
 import { SectionListDataItem } from "../../screens/view/ViewDetails/SeasonScreen";
+// import { reduceRight } from "lodash";
 
 type Props = {
   tvShowId: number;
   episode: SectionListDataItem;
   episodeState: boolean;
+  episodeDownloadState: boolean;
   isShowSaved: boolean;
 };
 const { width, height } = Dimensions.get("window");
 
-const DetailSeasonEpisode = ({ tvShowId, episode, episodeState, isShowSaved }: Props) => {
+const DetailSeasonEpisode = ({
+  tvShowId,
+  episode,
+  episodeState,
+  episodeDownloadState,
+  isShowSaved,
+}: Props) => {
   const state = useOState();
   const actions = useOActions();
   const { toggleTVShowEpisodeState, getEpisodeExternalIds } = actions.oSaved;
@@ -30,8 +38,39 @@ const DetailSeasonEpisode = ({ tvShowId, episode, episodeState, isShowSaved }: P
   // const [episodeState, setEpisodeState] = React.useState(false);
   const [askToMark, setAskToMark] = React.useState(false);
 
+  // this ref is set whenever episode or download state change is made
+  // it is then checked in the useEffect
+  const isDownloadStateUpdate = React.useRef(false);
+
   const navigation = useNavigation();
   const route = useRoute();
+
+  const episodeNumberText = (
+    <Text
+      style={[styles.epNumberText, , episodeDownloadState && styles.epNumberTextActive]}
+    >{`${episode.episodeNumber}`}</Text>
+  );
+  const episodeNumberView = isShowSaved ? (
+    <TouchableOpacity
+      style={[styles.epNumberView, episodeDownloadState && styles.epNumberTouch]}
+      onPress={async () => {
+        isDownloadStateUpdate.current = true;
+        const toggleResult = await toggleTVShowEpisodeState({
+          tvShowId,
+          seasonNumber: episode.seasonNumber,
+          episodeNumber: episode.episodeNumber,
+          modifyDownloadState: true,
+        });
+        // Update useEffect to work for both downloads and watched
+        // console.log("use setAskToMark(result)", toggleResult);
+        setAskToMark(toggleResult);
+      }}
+    >
+      {episodeNumberText}
+    </TouchableOpacity>
+  ) : (
+    <View style={styles.epNumberView}>{episodeNumberText}</View>
+  );
   // Was trying to use the episodeState to control the UI changes, but then when I added
   // the functionality to update episode state (mark all previous as watched) the UI
   // wouldn't be updated until coming back in.  THUS, this use effect was born.
@@ -46,6 +85,7 @@ const DetailSeasonEpisode = ({ tvShowId, episode, episodeState, isShowSaved }: P
               tvShowId,
               seasonNumber: episode.seasonNumber,
               episodeNumber: episode.episodeNumber,
+              modifyDownloadState: isDownloadStateUpdate.current,
             }),
         },
         { text: "Cancel" },
@@ -61,22 +101,16 @@ const DetailSeasonEpisode = ({ tvShowId, episode, episodeState, isShowSaved }: P
       <View
         style={{
           flexDirection: "row",
-          padding: 10,
+          justifyContent: "flex-start",
+          alignItems: "center",
+          // padding: 10,
+          flex: 1,
         }}
       >
-        <View
-          style={{
-            justifyContent: "center",
-            marginRight: 6,
-            paddingHorizontal: 4,
-            // backgroundColor: "red",
-            // borderRadius: 4,
-            // borderWidth: StyleSheet.hairlineWidth,
-          }}
-        >
-          <Text style={styles.epNumber}>{`${episode.episodeNumber}`}</Text>
-        </View>
+        {episodeNumberView}
+        {/* Episode Name and Airdate info  */}
         <TouchableOpacity
+          style={{ flex: 1 }}
           onPress={() =>
             navigation.navigate(`${route.name}Episode`, {
               tvShowId: tvShowId,
@@ -90,7 +124,8 @@ const DetailSeasonEpisode = ({ tvShowId, episode, episodeState, isShowSaved }: P
               flexDirection: "column",
               overflow: "hidden",
               marginRight: 4,
-              width: width / 1.5,
+
+              // width: width / 1.5,
             }}
           >
             <Text style={styles.epName}>{episode.name}</Text>
@@ -146,6 +181,7 @@ const DetailSeasonEpisode = ({ tvShowId, episode, episodeState, isShowSaved }: P
             style={{ justifyContent: "center", padding: 10 }}
             activeOpacity={0.75}
             onPress={async () => {
+              isDownloadStateUpdate.current = false;
               const toggleResult = await toggleTVShowEpisodeState({
                 tvShowId,
                 seasonNumber: episode.seasonNumber,
@@ -185,14 +221,32 @@ const styles = StyleSheet.create({
     backgroundColor: "#E0E7EB",
     // marginBottom: 5,
     marginLeft: 10,
-    width: width - 11,
+    paddingRight: 5,
+    width: width - 10,
     justifyContent: "space-around",
     height: 60,
   },
-  epNumber: {
+  epNumberText: {
     fontSize: 18,
     fontWeight: "600",
     fontFamily: fonts.family.episodes,
+  },
+  epNumberTextActive: {
+    color: "#D7EBDB",
+  },
+  epNumberView: {
+    justifyContent: "center",
+    marginRight: 6,
+    paddingHorizontal: 10,
+    alignItems: "center",
+  },
+  epNumberTouch: {
+    backgroundColor: "#274315",
+    borderRadius: 15,
+    borderBottomLeftRadius: 0,
+    borderTopLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    height: "50%",
   },
   epName: {
     fontSize: 16,
