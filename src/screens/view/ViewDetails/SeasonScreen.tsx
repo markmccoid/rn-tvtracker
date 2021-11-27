@@ -111,13 +111,13 @@ const formatForSectionList = (
 // const prepareSeasonPicker = (
 //   tvShowId: number,
 //   seasons: number[],
-//   getWatchedEpisodes
+//   getSeasonEpisodeStateCount
 // ): SeasonPicker[] => {
 //   return seasons.map((season) => {
 //     return {
 //       seasonNumber: season,
 //       seasonText: `Season ${season}`,
-//       episodesWatched: getWatchedEpisodes(tvShowId, season),
+//       episodesWatched: getSeasonEpisodeStateCount(tvShowId, season),
 //     };
 //   });
 // };
@@ -141,7 +141,7 @@ const SeasonsScreen = ({ navigation, route }: SeasonsScreenProps) => {
   const [seasonState, setSeasonState] = React.useState<SeasonState>(undefined);
   const { getTVShowSeasonData, apiGetTVShowDetails, getLastestEpisodeWatched } =
     actions.oSaved;
-  const { getTVShowSeasonDetails, getWatchedEpisodes, getNotWatchedEpisodeCount } =
+  const { getTVShowSeasonDetails, getSeasonEpisodeStateCount, getNotWatchedEpisodeCount } =
     state.oSaved;
 
   const getSeasonData = async () => {
@@ -157,7 +157,7 @@ const SeasonsScreen = ({ navigation, route }: SeasonsScreenProps) => {
     await getTVShowSeasonData({ tvShowId, seasonNumbers });
     const seasonDets = getTVShowSeasonDetails(tvShowId);
 
-    //prepareSeasonPicker(tvShowId, seasonNumbers, state.oSaved.getWatchedEpisodes)
+    //prepareSeasonPicker(tvShowId, seasonNumbers, state.oSaved.getSeasonEpisodeStateCount)
     setSeasonPicker(seasonNumbers);
     setSeasonData(formatForSectionList(tvShowId, seasonDets, isShowSaved));
 
@@ -264,7 +264,7 @@ const SeasonsScreen = ({ navigation, route }: SeasonsScreenProps) => {
             if (season === 0) return;
             //Get episode watched info to style horizontal season menu
             //all episodes watch gets special styling for season button
-            const episodesWatched = state.oSaved.getWatchedEpisodes(tvShowId, season);
+            const episodesWatched = state.oSaved.getSeasonEpisodeStateCount(tvShowId, season);
             const numberOfEpisodes = seasonData.find((el) => el.title.seasonNumber === season)
               .title.numberOfEpisodes;
             const allEpisodesWatched = !!!(numberOfEpisodes - episodesWatched);

@@ -28,34 +28,30 @@ const HiddenContainer = ({ children, style, title, startOpen = false }) => {
       <Pressable
         style={({ pressed }) => [
           {
+            flex: 1,
             flexDirection: "row",
+            justifyContent: "space-between",
             paddingVertical: 10,
             borderBottomColor: "#777",
             borderBottomWidth: 1,
             backgroundColor: "#ffffff77",
             opacity: pressed ? 0.6 : 1,
+            paddingHorizontal: 25,
           },
         ]}
         onPress={() => setViewContents((prev) => !prev)}
       >
         <View
           style={{
-            flex: 2,
-            flexDirection: "row",
-            justifyContent: "flex-start",
-            marginLeft: 25,
-          }}
-        >
-          <Text style={{ fontSize: 20, fontWeight: "bold", marginRight: 15 }}>{title}</Text>
-        </View>
-        <View
-          style={{
             flex: 1,
-            flexDirection: "row",
-            justifyContent: "flex-end",
-            marginRight: 25,
+            paddingRight: 5,
           }}
         >
+          <Text style={{ fontSize: 20, fontWeight: "bold" }} numberOfLines={1}>
+            {title}
+          </Text>
+        </View>
+        <View>
           {!viewContents ? (
             <ExpandDownIcon style={{ marginTop: 5 }} size={20} />
           ) : (

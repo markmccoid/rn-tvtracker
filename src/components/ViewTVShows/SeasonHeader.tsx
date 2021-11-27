@@ -133,7 +133,12 @@ const SeasonHeader = ({
   const state = useOState();
   const actions = useOActions();
 
-  const episodesWatched = state.oSaved.getWatchedEpisodes(tvShowId, seasonNumber);
+  const episodesWatched = state.oSaved.getSeasonEpisodeStateCount(tvShowId, seasonNumber);
+  // const episodesDownloaded = state.oSaved.getSeasonEpisodeStateCount(
+  //   tvShowId,
+  //   seasonNumber,
+  //   true
+  // );
   const { markAllSeasonsEpisodes } = actions.oSaved;
 
   const allEpisodesWatched = !!(episodesWatched === numberOfEpisodes);

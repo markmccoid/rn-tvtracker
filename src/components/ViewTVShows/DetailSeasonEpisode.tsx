@@ -110,7 +110,7 @@ const DetailSeasonEpisode = ({
         {episodeNumberView}
         {/* Episode Name and Airdate info  */}
         <TouchableOpacity
-          style={{ flex: 1 }}
+          style={{ flex: 1, marginVertical: 3, paddingRight: 4 }}
           onPress={() =>
             navigation.navigate(`${route.name}Episode`, {
               tvShowId: tvShowId,
@@ -122,13 +122,13 @@ const DetailSeasonEpisode = ({
           <View
             style={{
               flexDirection: "column",
-              overflow: "hidden",
               marginRight: 4,
-
               // width: width / 1.5,
             }}
           >
-            <Text style={styles.epName}>{episode.name}</Text>
+            <Text style={styles.epName} numberOfLines={1}>
+              {episode.name}
+            </Text>
             <Text allowFontScaling={false}>{`${episode.airDate || "Unknown"}`}</Text>
           </View>
         </TouchableOpacity>
@@ -249,6 +249,7 @@ const styles = StyleSheet.create({
     height: "50%",
   },
   epName: {
+    paddingVertical: 5,
     fontSize: 16,
     fontWeight: "600",
     fontFamily: fonts.family.episodes,
