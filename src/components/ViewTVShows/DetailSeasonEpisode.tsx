@@ -33,6 +33,7 @@ const DetailSeasonEpisode = ({
 }: Props) => {
   const state = useOState();
   const actions = useOActions();
+  const { isDownloadStateEnabled } = state.oSaved.settings;
   const { toggleTVShowEpisodeState, getEpisodeExternalIds } = actions.oSaved;
   // const episode = state.oSaved.getTVShowEpisode(tvShowId, seasonNumber, episodeNumber);
   // const [episodeState, setEpisodeState] = React.useState(false);
@@ -41,36 +42,39 @@ const DetailSeasonEpisode = ({
   // this ref is set whenever episode or download state change is made
   // it is then checked in the useEffect
   const isDownloadStateUpdate = React.useRef(false);
+  // only consider download state usable if the "isDownloadStateEnable" setting is true
+  const downloadStateActive = isDownloadStateEnabled && episodeDownloadState;
 
   const navigation = useNavigation();
   const route = useRoute();
 
   const episodeNumberText = (
     <Text
-      style={[styles.epNumberText, , episodeDownloadState && styles.epNumberTextActive]}
+      style={[styles.epNumberText, , downloadStateActive && styles.epNumberTextActive]}
     >{`${episode.episodeNumber}`}</Text>
   );
-  const episodeNumberView = isShowSaved ? (
-    <TouchableOpacity
-      style={[styles.epNumberView, episodeDownloadState && styles.epNumberTouch]}
-      onPress={async () => {
-        isDownloadStateUpdate.current = true;
-        const toggleResult = await toggleTVShowEpisodeState({
-          tvShowId,
-          seasonNumber: episode.seasonNumber,
-          episodeNumber: episode.episodeNumber,
-          modifyDownloadState: true,
-        });
-        // Update useEffect to work for both downloads and watched
-        // console.log("use setAskToMark(result)", toggleResult);
-        setAskToMark(toggleResult);
-      }}
-    >
-      {episodeNumberText}
-    </TouchableOpacity>
-  ) : (
-    <View style={styles.epNumberView}>{episodeNumberText}</View>
-  );
+  const episodeNumberView =
+    isShowSaved && isDownloadStateEnabled ? (
+      <TouchableOpacity
+        style={[styles.epNumberView, downloadStateActive && styles.epNumberTouch]}
+        onPress={async () => {
+          isDownloadStateUpdate.current = true;
+          const toggleResult = await toggleTVShowEpisodeState({
+            tvShowId,
+            seasonNumber: episode.seasonNumber,
+            episodeNumber: episode.episodeNumber,
+            modifyDownloadState: true,
+          });
+          // Update useEffect to work for both downloads and watched
+          // console.log("use setAskToMark(result)", toggleResult);
+          setAskToMark(toggleResult);
+        }}
+      >
+        {episodeNumberText}
+      </TouchableOpacity>
+    ) : (
+      <View style={styles.epNumberView}>{episodeNumberText}</View>
+    );
   // Was trying to use the episodeState to control the UI changes, but then when I added
   // the functionality to update episode state (mark all previous as watched) the UI
   // wouldn't be updated until coming back in.  THUS, this use effect was born.

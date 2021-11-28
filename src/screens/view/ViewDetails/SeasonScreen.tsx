@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import _ from "lodash";
 
-import { CheckIcon, CloseIcon } from "../../../components/common/Icons";
+import { CheckIcon, CloseIcon, HardDriveIcon } from "../../../components/common/Icons";
 
 import sectionListGetItemLayout from "react-native-section-list-get-item-layout";
 
@@ -143,6 +143,7 @@ const SeasonsScreen = ({ navigation, route }: SeasonsScreenProps) => {
     actions.oSaved;
   const { getTVShowSeasonDetails, getSeasonEpisodeStateCount, getNotWatchedEpisodeCount } =
     state.oSaved;
+  const { isDownloadStateEnabled } = state.oSaved.settings;
 
   const getSeasonData = async () => {
     setLoading(true);
@@ -268,6 +269,15 @@ const SeasonsScreen = ({ navigation, route }: SeasonsScreenProps) => {
             const numberOfEpisodes = seasonData.find((el) => el.title.seasonNumber === season)
               .title.numberOfEpisodes;
             const allEpisodesWatched = !!!(numberOfEpisodes - episodesWatched);
+            //Downloaded episodes
+            const episodesDownloaded = state.oSaved.getSeasonEpisodeStateCount(
+              tvShowId,
+              season,
+              true
+            );
+            // will always be false if isDownloadStateEnabled == false
+            const allEpisodesDownloaded =
+              !!!(numberOfEpisodes - episodesDownloaded) && isDownloadStateEnabled;
 
             return (
               <PressableButton
@@ -293,18 +303,10 @@ const SeasonsScreen = ({ navigation, route }: SeasonsScreenProps) => {
                 style={[
                   styleHelpers.buttonShadow,
                   {
-                    borderRadius: 14,
-                    // borderWidth: 2,
-                    // borderColor: "#84EE4A",
-                    // borderColor: allEpisodesWatched ? colors.excludeRed : "#ffffff00",
-                    // width: width / 2.5,
                     margin: 5,
                     paddingVertical: 5,
-                    paddingHorizontal: 15,
+                    paddingHorizontal: 10,
                     backgroundColor: allEpisodesWatched ? colors.darkbg : colors.buttonPrimary,
-
-                    alignItems: "center",
-                    justifyContent: "center",
                   },
                 ]}
               >
@@ -313,6 +315,8 @@ const SeasonsScreen = ({ navigation, route }: SeasonsScreenProps) => {
                     flexDirection: "row",
                     alignItems: "center",
                     justifyContent: "center",
+                    paddingRight: allEpisodesWatched ? 0 : 10,
+                    paddingLeft: allEpisodesDownloaded ? 0 : 10,
                   }}
                   onLayout={(e) => {
                     seasonButtonWidth.current = e.nativeEvent.layout.width;
@@ -324,13 +328,19 @@ const SeasonsScreen = ({ navigation, route }: SeasonsScreenProps) => {
                     // );
                   }}
                 >
+                  {allEpisodesDownloaded && (
+                    <HardDriveIcon
+                      size={15}
+                      color={allEpisodesDownloaded ? colors.excludeRed : colors.buttonPrimary}
+                    />
+                  )}
                   <Text
                     style={{
                       fontWeight: "600",
                       color: allEpisodesWatched ? "white" : colors.buttonTextDark,
-                      fontSize: 12,
+                      fontSize: 14,
                       paddingRight: allEpisodesWatched ? 5 : 10,
-                      paddingLeft: allEpisodesWatched ? 0 : 10,
+                      paddingLeft: allEpisodesDownloaded ? 5 : 10,
                     }}
                   >
                     {`Season ${season}`}

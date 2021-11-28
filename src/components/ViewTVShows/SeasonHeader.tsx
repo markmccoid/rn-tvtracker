@@ -139,10 +139,12 @@ const SeasonHeader = ({
   //   seasonNumber,
   //   true
   // );
+
   const { markAllSeasonsEpisodes } = actions.oSaved;
 
   const allEpisodesWatched = !!(episodesWatched === numberOfEpisodes);
   const noEpisodesWatched = !!(episodesWatched === 0);
+  // const allEpisodesDownloaded = !!(episodesDownloaded === numberOfEpisodes);
 
   const seasonTitle =
     seasonName === `Season ${seasonNumber}` || seasonNumber === 0

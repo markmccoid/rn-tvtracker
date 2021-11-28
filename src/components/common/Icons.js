@@ -84,6 +84,9 @@ export const EraserIcon = ({ size = 25, color, style }) => {
 export const RefreshIcon = ({ size = 25, color, style }) => {
   return <FontAwesome name="refresh" size={size} color={color} style={style} />;
 };
+export const HardDriveIcon = ({ size = 25, color, style = {} }) => {
+  return <Feather name="hard-drive" size={size} color={color} style={style} />;
+};
 
 //OLD Check icon has circle around it
 // export const CheckIcon = ({ size, color, style }) => {
