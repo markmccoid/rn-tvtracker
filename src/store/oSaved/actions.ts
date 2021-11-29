@@ -87,7 +87,8 @@ export const hydrateStore = async (
     // Save data to local
     await effects.oSaved.localSaveSettings(uid, state.oSaved.settings);
   }
-
+  state.oSaved.settings.isDownloadStateEnabled =
+    userDocData?.settings?.isDownloadStateEnabled || false;
   // Get movie genres from savedTVShows objects
   state.oSaved.generated.genres = getGenresFromTVShows(state.oSaved.savedTVShows);
 
@@ -753,7 +754,7 @@ export const setIgnoreFilterOnSearch = ({ state }: Context, ignoreFilterFlag) =>
   state.oSaved.filterData.ignoreFilterOnSearch = ignoreFilterFlag;
 };
 //*==============================================
-//*- SORT Actions
+//* Settings - SORT Actions
 //*==============================================
 export const updateDefaultSortItem = ({ state, effects }: Context, payload) => {
   const { id, active, direction } = payload;
@@ -787,9 +788,15 @@ export const updateDefaultSortOrder = ({ state, effects }: Context, newlyIndexed
 
   // Save data to local
   effects.oSaved.localSaveSettings(state.oAdmin.uid, state.oSaved.settings);
-  // -- COMMENT OUT FIRESTORE
-  // Save to firestore
-  // effects.oSaved.saveSettings(state.oSaved.settings);
+};
+//*==============================================
+//* Settings - OTHER
+//*==============================================
+export const toggleIsDownloadStateEnabled = ({ state, effects }: Context) => {
+  state.oSaved.settings.isDownloadStateEnabled = !state.oSaved.settings.isDownloadStateEnabled;
+
+  // Save data to local
+  effects.oSaved.localSaveSettings(state.oAdmin.uid, state.oSaved.settings);
 };
 
 //*==============================================

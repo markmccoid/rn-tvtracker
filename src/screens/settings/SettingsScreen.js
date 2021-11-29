@@ -1,7 +1,7 @@
 import React from "react";
-import { View, ScrollView, StyleSheet, Text, Dimensions } from "react-native";
+import { View, ScrollView, StyleSheet, Switch, Text, Dimensions } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useOState } from "../../store/overmind";
+import { useOState, useOActions } from "../../store/overmind";
 
 import SectionSavedFilters from "./SectionSavedFilters";
 import SectionDefaultFilter from "./SectionDefaultFilter";
@@ -15,6 +15,9 @@ const { width, height } = Dimensions.get("window");
 
 const Settings = ({ navigation }) => {
   const state = useOState();
+  const actions = useOActions();
+  const { isDownloadStateEnabled } = state.oSaved.settings;
+  const { toggleIsDownloadStateEnabled } = actions.oSaved;
   //# When savedFilters gets updated in the drag component, it isn't updated here
   //# TEST - maybe use this as the driver and send the data down OR figure out why not updating
   // React.useEffect(() => {
@@ -32,6 +35,30 @@ const Settings = ({ navigation }) => {
       <View style={styles.settingsContainer}>
         <SectionSort />
       </View>
+      <View style={styles.line} />
+      <View
+        style={
+          ([styles.settingsMenuItem],
+          {
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+            paddingVertical: 5,
+          })
+        }
+      >
+        <Text style={{ fontSize: 16, fontWeight: "600" }}>
+          Enable Secondary Watched Option
+        </Text>
+        <Switch
+          //trackColor={{ false: "#767577", true: "#81b0ff" }}
+          //thumbColor={isDownloadStateEnabled ? "#f5dd4b" : "#f4f3f4"}
+          ios_backgroundColor="#3e3e3e"
+          onValueChange={toggleIsDownloadStateEnabled}
+          value={isDownloadStateEnabled}
+        />
+      </View>
+
       <View style={styles.line} />
       <View style={styles.settingsMenuItem}>
         <View style={{ justifyContent: "center", alignItems: "flex-start" }}>
