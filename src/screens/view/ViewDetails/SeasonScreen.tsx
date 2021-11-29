@@ -307,6 +307,8 @@ const SeasonsScreen = ({ navigation, route }: SeasonsScreenProps) => {
                     paddingVertical: 5,
                     paddingHorizontal: 10,
                     backgroundColor: allEpisodesWatched ? colors.darkbg : colors.buttonPrimary,
+                    borderWidth: StyleSheet.hairlineWidth,
+                    borderColor: allEpisodesDownloaded ? colors.excludeRed : colors.darkbg,
                   },
                 ]}
               >
