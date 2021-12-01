@@ -43,8 +43,8 @@ function AppNavDrawerContent(props) {
             style={{ marginLeft: 20, paddingRight: 20, paddingTop: 10 }}
           />
           <View style={{ flexDirection: "column", justifyContent: "center", paddingTop: 10 }}>
-            <Text style={styles.userText}>{username}</Text>
-            <Text style={styles.userText}>App Version {appVersion}</Text>
+            <Text style={styles.userText}>User: {username}</Text>
+            <Text style={styles.userText}>{`App : v${appVersion}`}</Text>
           </View>
         </View>
         <View style={styles.menuItemStyle}>

@@ -13,7 +13,7 @@ type Props = {
 };
 const DropboxListFiles = ({ token, selectedFile, setSelectedFile }: Props) => {
   const [refresh, setRefresh] = React.useState(false);
-  const fileList = useDropboxFiles(token, refresh);
+  const fileList = useDropboxFiles(token, refresh) || "";
   // const [selected, setSelected] = React.useState(undefined);
   const FILEITEM_HEIGHT = 35;
   const scrollHeight =

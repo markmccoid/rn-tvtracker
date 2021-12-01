@@ -85,18 +85,6 @@ const AppBackupScreen: React.FC = ({ navigation }) => {
   const { setDropboxToken } = actions.oAdmin;
   const { dropboxToken } = state.oAdmin;
 
-  React.useEffect(() => {
-    navigation.setOptions({
-      title: "App Backup",
-      headerTintColor: colors.darkText,
-      headerStyle: {
-        backgroundColor: colors.buttonPrimary,
-        height: 40,
-        borderWidth: 1,
-        borderColor: colors.commonBorder,
-      },
-    });
-  }, []);
   // Make sure Token we have for Dropbox is still valid
   React.useEffect(() => {
     const checkToken = async (token: string) => {

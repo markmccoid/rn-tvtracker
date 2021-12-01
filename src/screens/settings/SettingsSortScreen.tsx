@@ -13,7 +13,7 @@ import { SyncIcon } from "../../components/common/Icons";
 
 const { width, height } = Dimensions.get("window");
 
-const Settings = ({ navigation }) => {
+const SettingsSortScreen = ({ navigation }) => {
   const state = useOState();
   const actions = useOActions();
   const { isDownloadStateEnabled } = state.oSaved.settings;
@@ -24,10 +24,8 @@ const Settings = ({ navigation }) => {
   //   console.log("saved filters updated", savedFilters.length);
   // }, [savedFilters.length]);
   return (
-    <ScrollView style={styles.scrollContainer} showsVerticalScrollIndicator={false}>
-      <View style={styles.settingsContainer}>
-        <SectionSavedFilters />
-      </View>
+    <View style={styles.container}>
+      <View style={styles.line} />
       <View style={[styles.settingsContainer, { zIndex: 100 }]}>
         <SectionDefaultFilter />
       </View>
@@ -35,54 +33,7 @@ const Settings = ({ navigation }) => {
       <View style={styles.settingsContainer}>
         <SectionSort />
       </View>
-      <View style={styles.line} />
-      <View
-        style={
-          ([styles.settingsMenuItem],
-          {
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
-            paddingVertical: 5,
-          })
-        }
-      >
-        <Text style={{ fontSize: 16, fontWeight: "600" }}>
-          Enable Secondary Watched Option
-        </Text>
-        <Switch
-          //trackColor={{ false: "#767577", true: "#81b0ff" }}
-          //thumbColor={isDownloadStateEnabled ? "#f5dd4b" : "#f4f3f4"}
-          ios_backgroundColor="#3e3e3e"
-          onValueChange={toggleIsDownloadStateEnabled}
-          value={isDownloadStateEnabled}
-        />
-      </View>
-
-      <View style={styles.line} />
-      <View style={styles.settingsMenuItem}>
-        <View style={{ justifyContent: "center", alignItems: "flex-start" }}>
-          <PressableButton
-            style={styles.settingsButton}
-            onPress={() => navigation.navigate("SettingsAppBackup")}
-          >
-            <Text style={{ marginRight: 8 }}>Backup Data</Text>
-            <SyncIcon size={20} />
-          </PressableButton>
-        </View>
-      </View>
-      <View style={styles.line} />
-      <View style={[styles.settingsMenuItem, { paddingBottom: 50 }]}>
-        {/* <View style={{ justifyContent: "center", alignItems: "flex-start" }}>
-          <PressableButton
-            style={styles.settingsButton}
-            onPress={() => navigation.navigate("SettingsAppDebug")}
-          >
-            <Text>DEBUG</Text>
-          </PressableButton>
-        </View> */}
-      </View>
-    </ScrollView>
+    </View>
   );
 };
 
@@ -118,9 +69,9 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
   line: {
-    height: 2,
+    height: 1,
     backgroundColor: colors.commonBorder,
   },
 });
 
-export default Settings;
+export default SettingsSortScreen;
