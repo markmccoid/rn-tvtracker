@@ -24,33 +24,33 @@ export const EyeFilledIcon = ({ size, color, style = {} }) => {
   return <AntDesign name="eye" size={size} color={color} style={style} />;
 };
 
-export const SearchIcon = ({ size, color, style }) => {
+export const SearchIcon = ({ size, color = undefined, style = undefined }) => {
   return <MaterialIcons name="search" size={size} color={color} style={style} />;
 };
 
-export const DragHandleIcon = ({ size, color, style }) => {
+export const DragHandleIcon = ({ size, color = undefined, style = undefined }) => {
   return <MaterialIcons name="drag-handle" size={size} color={color} style={style} />;
 };
 
-export const TagIcon = ({ size, color, style }) => {
+export const TagIcon = ({ size, color = undefined, style = undefined }) => {
   return <FontAwesome name="tags" color={color} size={size} style={style} />;
 };
-export const GenreIcon = ({ size, color, style }) => {
+export const GenreIcon = ({ size, color = undefined, style = undefined }) => {
   return <MaterialCommunityIcons name="tag-faces" color={color} size={size} style={style} />;
 };
 
-export const UnTagIcon = ({ size, color, style }) => {
+export const UnTagIcon = ({ size, color = undefined, style = undefined }) => {
   return <Entypo name="untag" color={color} size={size} style={style} />;
 };
 
-export const ShareIcon = ({ size, color, style }) => {
+export const ShareIcon = ({ size, color = undefined, style = undefined }) => {
   return <Entypo name="share-alternative" size={size} color={color} style={style} />;
 };
 
-export const IMDBIcon = ({ size, color, style }) => {
+export const IMDBIcon = ({ size, color = undefined, style = undefined }) => {
   return <Fontisto name="imdb" size={size} color={color} style={style} />;
 };
-export const FilterIcon = ({ size, color, style }) => {
+export const FilterIcon = ({ size, color = undefined, style = undefined }) => {
   return (
     <Feather
       name="filter"
@@ -69,7 +69,7 @@ export const FilterIcon = ({ size, color, style }) => {
   );
 };
 
-export const CloseIcon = ({ size, color, style }) => {
+export const CloseIcon = ({ size, color = undefined, style = undefined }) => {
   return <AntDesign name="close" size={size} color={color} style={style} />;
 };
 
@@ -77,11 +77,11 @@ export const DeleteIcon = ({ size = 25, color = "#b20a2c", style }) => {
   return <AntDesign name="delete" size={size} color={color} style={style} />;
 };
 
-export const EraserIcon = ({ size = 25, color, style }) => {
+export const EraserIcon = ({ size = 25, color = undefined, style = undefined }) => {
   return <MaterialCommunityIcons name="eraser" size={size} color={color} style={style} />;
 };
 
-export const RefreshIcon = ({ size = 25, color, style }) => {
+export const RefreshIcon = ({ size = 25, color = undefined, style = undefined }) => {
   return <FontAwesome name="refresh" size={size} color={color} style={style} />;
 };
 export const HardDriveIcon = ({ size = 25, color, style = {} }) => {
@@ -89,151 +89,154 @@ export const HardDriveIcon = ({ size = 25, color, style = {} }) => {
 };
 
 //OLD Check icon has circle around it
-// export const CheckIcon = ({ size, color, style }) => {
+// export const CheckIcon = ({ size, color = undefined, style = undefined }) => {
 //   return (
 //     <AntDesign name="checkcircleo" size={size} color={color} style={style} />
 //   );
 // };
 // New Check icon has no circle around it
-export const CheckIcon = ({ size, color, style }) => {
+export const CheckIcon = ({ size, color = undefined, style = undefined }) => {
   return <Ionicons name="ios-checkmark" color={color} size={size} style={style} />;
 };
 
-export const MenuIcon = ({ size, color, style }) => {
+export const MenuIcon = ({ size, color = undefined, style = undefined }) => {
   return <Ionicons name="ios-menu" size={size} color={color} style={style} />;
 };
 
-export const EditIcon = ({ size, color, style }) => {
+export const EditIcon = ({ size, color = undefined, style = undefined }) => {
   return <Feather name="edit" size={size} color={color} style={style} />;
 };
 
-export const HeartIcon = ({ size, color, style }) => {
+export const HeartIcon = ({ size, color = undefined, style = undefined }) => {
   return <AntDesign name="hearto" size={size} color={color} style={style} />;
 };
 
-export const ImagesIcon = ({ size, color, style }) => {
+export const ImagesIcon = ({ size, color = undefined, style = undefined }) => {
   return <FontAwesome5 name="images" size={size} color={color} style={style} />;
 };
 
-export const CaretRightIcon = ({ size, color, style }) => {
+export const CaretRightIcon = ({ size, color = undefined, style = undefined }) => {
   return <FontAwesome name="caret-right" size={size} color={color} style={style} />;
 };
-export const CaretDownIcon = ({ size, color, style }) => {
+export const CaretDownIcon = ({ size, color = undefined, style = undefined }) => {
   return <FontAwesome name="caret-down" size={size} color={color} style={style} />;
 };
 
 //# More (down) Less (up) icons
-export const MoreIcon = ({ size, color, style }) => {
+export const MoreIcon = ({ size, color = undefined, style = undefined }) => {
   return <AntDesign name="downcircleo" size={size} color={color} style={style} />;
 };
-export const LessIcon = ({ size, color, style }) => {
+export const LessIcon = ({ size, color = undefined, style = undefined }) => {
   return <AntDesign name="upcircleo" size={size} color={color} style={style} />;
 };
 
-export const CheckedBox = ({ size, color, style }) => {
+export const CheckedBox = ({ size, color = undefined, style = undefined }) => {
   // return <FontAwesome5 name="sync-alt" size={size} color={color} style={style} />;
   return <MaterialIcons name="check-box" size={size} color={color} style={style} />;
 };
 
-export const UnCheckedBox = ({ size, color, style }) => {
+export const UnCheckedBox = ({ size, color = undefined, style = undefined }) => {
   // return <FontAwesome5 name="sync-alt" size={size} color={color} style={style} />;
   return (
     <MaterialIcons name="check-box-outline-blank" size={size} color={color} style={style} />
   );
 };
 //# BACK button icon for headers in screens
-export const BackIcon = ({ size, color, style }) => {
+export const BackIcon = ({ size, color = undefined, style = undefined }) => {
   return <AntDesign name="back" size={size} color={color} style={style} />;
 };
 //----------------
 //- Drawer Icons
 //----------------
-export const SignOutIcon = ({ size, color, style }) => {
+export const SignOutIcon = ({ size, color = undefined, style = undefined }) => {
   return <FontAwesome name="sign-out" color={color} size={size} style={style} />;
 };
-export const HomeIcon = ({ size, color, style }) => {
+export const HomeIcon = ({ size, color = undefined, style = undefined }) => {
   return <FontAwesome name="home" color={color} size={size} style={style} />;
 };
-export const SettingsIcon = ({ size, color, style }) => {
+export const SettingsIcon = ({ size, color = undefined, style = undefined }) => {
   return <Ionicons name="ios-settings" color={color} size={size} style={style} />;
 };
-export const UserIcon = ({ size, color, style }) => {
+export const UserIcon = ({ size, color = undefined, style = undefined }) => {
   return <FontAwesome name="user" color={color} size={size} style={style} />;
 };
 //Plus sign icon
-export const AddIcon = ({ size, color, style }) => {
+export const AddIcon = ({ size, color = undefined, style = undefined }) => {
   return <Ionicons name="ios-add" color={color} size={size} style={style} />;
 };
-export const EmptyMDHeartIcon = ({ size, color, style }) => {
+export const EmptyMDHeartIcon = ({ size, color = undefined, style = undefined }) => {
   return (
     <MaterialCommunityIcons name="heart-outline" color={color} size={size} style={style} />
   );
 };
-export const MDHeartIcon = ({ size, color, style }) => {
+export const MDHeartIcon = ({ size, color = undefined, style = undefined }) => {
   return <Ionicons name="ios-heart" color={color} size={size} style={style} />;
 };
 
 // Other Icons
 
-export const ThumbsUpIcon = ({ size, color, style }) => {
+export const ThumbsUpIcon = ({ size, color = undefined, style = undefined }) => {
   return <Ionicons name="ios-thumbs-up" color={color} size={size} style={style} />;
 };
 
-export const YouTubePlayIcon = ({ size, color, style }) => {
+export const YouTubePlayIcon = ({ size, color = undefined, style = undefined }) => {
   return <FontAwesome name="youtube-play" color={color} size={size} style={style} />;
 };
 
-export const SyncIcon = ({ size, color, style }) => {
+export const SyncIcon = ({ size, color = undefined, style = undefined }) => {
   // return <FontAwesome5 name="sync-alt" size={size} color={color} style={style} />;
   return <MaterialCommunityIcons name="cloud-sync" size={size} color={color} style={style} />;
 };
 
-export const CarouselIcon = ({ size, color, style }) => {
+export const CarouselIcon = ({ size, color = undefined, style = undefined }) => {
   // return <FontAwesome5 name="sync-alt" size={size} color={color} style={style} />;
   return <MaterialIcons name="view-carousel" size={size} color={color} style={style} />;
 };
 
-export const ExpandDownIcon = ({ size, color, style }) => {
+export const ExpandDownIcon = ({ size, color = undefined, style = undefined }) => {
   return (
     <MaterialCommunityIcons name="arrow-expand-down" color={color} size={size} style={style} />
   );
 };
 
-export const CollapseUpIcon = ({ size, color, style }) => {
+export const CollapseUpIcon = ({ size, color = undefined, style = undefined }) => {
   return (
     <MaterialCommunityIcons name="arrow-collapse-up" color={color} size={size} style={style} />
   );
 };
 
-export const PowerIcon = ({ size, color, style }) => {
+export const PowerIcon = ({ size, color = undefined, style = undefined }) => {
   return <Feather name="power" color={color} size={size} style={style} />;
 };
 
 //# Other Icons
-export const InfoIcon = ({ size, color, style }) => {
+export const InfoIcon = ({ size, color = undefined, style = undefined }) => {
   return <Feather name="info" color={color} size={size} style={style} />;
+};
+export const FlagIcon = ({ size, color = undefined, style = undefined }) => {
+  return <FontAwesome name="flag-o" color={color} size={size} style={style} />;
 };
 
 //# SORT Icons
-export const AscAlphaIcon = ({ size, color, style }) => {
+export const AscAlphaIcon = ({ size, color = undefined, style = undefined }) => {
   return <FontAwesome name="sort-alpha-asc" color={color} size={size} style={style} />;
 };
-export const DescAlphaIcon = ({ size, color, style }) => {
+export const DescAlphaIcon = ({ size, color = undefined, style = undefined }) => {
   return <FontAwesome name="sort-alpha-desc" color={color} size={size} style={style} />;
 };
-export const AscNumIcon = ({ size, color, style }) => {
+export const AscNumIcon = ({ size, color = undefined, style = undefined }) => {
   return <FontAwesome name="sort-numeric-asc" color={color} size={size} style={style} />;
 };
-export const DescNumIcon = ({ size, color, style }) => {
+export const DescNumIcon = ({ size, color = undefined, style = undefined }) => {
   return <FontAwesome name="sort-numeric-desc" color={color} size={size} style={style} />;
 };
-export const AscOtherIcon = ({ size, color, style }) => {
+export const AscOtherIcon = ({ size, color = undefined, style = undefined }) => {
   return <FontAwesome name="sort-amount-asc" color={color} size={size} style={style} />;
 };
-export const DescOtherIcon = ({ size, color, style }) => {
+export const DescOtherIcon = ({ size, color = undefined, style = undefined }) => {
   return <FontAwesome name="sort-amount-desc" color={color} size={size} style={style} />;
 };
 
-export const InfinityIcon = ({ size, color, style }) => {
+export const InfinityIcon = ({ size, color = undefined, style = undefined }) => {
   return <Ionicons name="ios-infinite" size={size} color={color} style={style} />;
 };
