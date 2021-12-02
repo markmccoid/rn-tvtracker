@@ -7,8 +7,17 @@ export type SortObjectItem = {
   sortDirection: "asc" | "desc";
 };
 
+export type SortDefinitionDetails = {
+  sortField: string;
+  subSortField?: string;
+  title: string;
+  type: SortTypes;
+};
+
+export type FullSortObject = SortObjectItem & SortDefinitionDetails;
+
 export type SortDefinitions = {
-  [key: number]: { sortField: string; subSortField?: string; title: string; type: SortTypes };
+  [key: number]: SortDefinitionDetails;
 };
 
 export const sortDefinitions: SortDefinitions = {

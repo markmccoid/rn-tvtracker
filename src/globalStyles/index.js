@@ -73,6 +73,6 @@ export const styleHelpers = {
 export const commonStyles = {
   headerText: {
     fontSize: 18,
-    fontWeight: "bold",
+    fontWeight: "600",
   },
 };
