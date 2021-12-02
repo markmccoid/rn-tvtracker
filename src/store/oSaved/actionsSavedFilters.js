@@ -24,6 +24,9 @@ export const toggleFavSavedFilter = ({ state, actions, effects }, { id, isShown 
     }
     return filter;
   });
+
+  // Save data to local
+  effects.oSaved.localSaveSavedFilters(state.oAdmin.uid, state.oSaved.savedFilters);
 };
 /**
  * addSavedFilter - Adds a new saved filter to the store and then store.
@@ -50,7 +53,6 @@ export const addSavedFilter = ({ state, actions, effects }, savedFilterObj) => {
       return filter;
     });
   }
-
   // Save data to local
   effects.oSaved.localSaveSavedFilters(state.oAdmin.uid, state.oSaved.savedFilters);
 };
@@ -80,6 +82,8 @@ export const deleteSavedFilter = ({ state, actions, effects }, filterIdToDelete)
 //================================================================
 //-Takes the passed savedFilterId, finds it and applies it
 //-By applying it, I mean that oSaved.filterData is being set.
+//- 12/21 - now if there is a sort key, that will be copied to currentSort
+//-     if no sort key found, then defaultSort will be copied to currentSort
 export const applySavedFilter = ({ state, actions }, savedFilterId) => {
   const {
     addTagToFilter,
@@ -89,10 +93,14 @@ export const applySavedFilter = ({ state, actions }, savedFilterId) => {
     setExcludeTagOperator,
     setGenreOperator,
   } = actions.oSaved;
+
   //reset filter state
   state.oSaved.filterData.genres = [];
   state.oSaved.filterData.tags = [];
   state.oSaved.filterData.excludeTags = [];
+  // reset sort state to default state.  This effectively resets the sort so if the saved filter
+  // doesn't have a sort component, we will use the default sort
+  state.oSaved.currentSort = [...state.oSaved.settings.defaultSort];
   //Filter for the passed id since this returns an array, just grab the first and only one
   const filterToApply = getFilterToApply(state.oSaved.savedFilters, savedFilterId);
   if (filterToApply.wasFound) {
@@ -104,6 +112,9 @@ export const applySavedFilter = ({ state, actions }, savedFilterId) => {
     setTagOperator(filterToApply?.tagOperator || "AND");
     setExcludeTagOperator(filterToApply?.excludeTagOperator || "OR");
     setGenreOperator(filterToApply?.genreOperator || "OR");
+    if (filterToApply?.sort) {
+      state.oSaved.currentSort = [...filterToApply.sort];
+    }
   }
 };
 

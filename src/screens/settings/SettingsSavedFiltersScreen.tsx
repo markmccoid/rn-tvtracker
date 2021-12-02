@@ -13,7 +13,6 @@ import DragDropEntry, { sortArray } from "@markmccoid/react-native-drag-and-orde
 const { width, height } = Dimensions.get("window");
 const ITEM_HEIGHT = 40;
 const FILTERS_SHOWN = Math.floor((height - 44) / 40 / 2);
-console.log("FILTERS HS", FILTERS_SHOWN);
 // const VIEW_HEIGHT = 4 * ITEM_HEIGHT + 2;
 
 const SettingsSavedFiltersScreen = ({ navigation }) => {

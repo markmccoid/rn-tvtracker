@@ -65,6 +65,7 @@ export type SavedFilters = {
   showInDrawer: boolean;
   tagOperator: Operators;
   tags: string[];
+  sort?: defaultConstants.SortObjectItem[];
 };
 
 export type FilterData = {

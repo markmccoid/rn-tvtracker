@@ -18,7 +18,7 @@ const SettingsSavedFiltersStackScreen = () => {
   return (
     <SettingsSavedFiltersStack.Navigator
       screenOptions={{
-        animationEnabled: false,
+        animationEnabled: true,
         presentation: "modal",
         headerShown: true,
       }}
@@ -32,7 +32,12 @@ const SettingsSavedFiltersStackScreen = () => {
             title: "Saved Filters",
             headerRight: () => {
               return (
-                <TouchableOpacity onPress={() => navigation.navigate("ViewTVShows")}>
+                <TouchableOpacity
+                  onPress={() => {
+                    navigation.goBack();
+                    navigation.navigate("ViewTVShows");
+                  }}
+                >
                   <HomeIcon size={30} color={colors.darkText} style={{ marginRight: 10 }} />
                 </TouchableOpacity>
               );
@@ -76,7 +81,13 @@ const SettingsStackScreen = () => {
   // -- if you have some screens you don't want to be model then you will need to embed another Stack within
   // -- i.e. the main "Settings" screen will be a stack.
   return (
-    <SettingsStack.Navigator screenOptions={{ animationEnabled: true, headerShown: true }}>
+    <SettingsStack.Navigator
+      initialRouteName="SettingsScreen"
+      screenOptions={{
+        animationEnabled: true,
+        headerShown: true,
+      }}
+    >
       <SettingsStack.Screen
         name="SettingsScreen"
         component={SettingsScreen}
@@ -120,7 +131,12 @@ const SettingsStackScreen = () => {
             title: "Show Sort Order",
             headerRight: () => {
               return (
-                <TouchableOpacity onPress={() => navigation.navigate("ViewTVShows")}>
+                <TouchableOpacity
+                  onPress={() => {
+                    navigation.goBack();
+                    navigation.navigate("ViewTVShows");
+                  }}
+                >
                   <HomeIcon size={30} color={colors.darkText} style={{ marginRight: 10 }} />
                 </TouchableOpacity>
               );

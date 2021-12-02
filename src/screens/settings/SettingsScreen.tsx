@@ -39,15 +39,15 @@ const Settings = ({ navigation }) => {
       <View style={styles.line} />
 
       <View style={styles.settingsMenuItem}>
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <FilterIcon size={20} />
-          <Text style={styles.settingsText}>Saved Filters</Text>
-          {/* <InfoIcon size={20} /> */}
-        </View>
         <TouchableOpacity
           onPress={() => navigation.navigate("SettingsSavedFiltersStack")}
-          style={styles.rightArrowPressable}
+          style={styles.menuPressable}
         >
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <FilterIcon size={20} />
+            <Text style={styles.settingsText}>Saved Filters</Text>
+            {/* <InfoIcon size={20} /> */}
+          </View>
           <CaretRightIcon size={25} />
         </TouchableOpacity>
       </View>
@@ -55,15 +55,15 @@ const Settings = ({ navigation }) => {
       <View style={styles.line} />
 
       <View style={styles.settingsMenuItem}>
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <AscAlphaIcon size={20} />
-          <Text style={styles.settingsText}>Show Sort Order</Text>
-          {/* <InfoIcon size={20} /> */}
-        </View>
         <TouchableOpacity
           onPress={() => navigation.navigate("SettingsMainSortStack")}
-          style={styles.rightArrowPressable}
+          style={styles.menuPressable}
         >
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <AscAlphaIcon size={20} />
+            <Text style={styles.settingsText}>Show Sort Order</Text>
+            {/* <InfoIcon size={20} /> */}
+          </View>
           <CaretRightIcon size={25} />
         </TouchableOpacity>
       </View>
@@ -71,15 +71,16 @@ const Settings = ({ navigation }) => {
       <View style={styles.line} />
 
       <View style={[styles.settingsMenuItem, { backgroundColor: "white" }]}>
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <SyncIcon size={20} />
-          <Text style={styles.settingsText}>Data Backup/Restore</Text>
-          {/* <InfoIcon size={20} /> */}
-        </View>
         <TouchableOpacity
           onPress={() => navigation.navigate("SettingsAppBackup")}
-          style={styles.rightArrowPressable}
+          activeOpacity={0.7}
+          style={styles.menuPressable}
         >
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <SyncIcon size={20} />
+            <Text style={styles.settingsText}>Data Backup/Restore</Text>
+            {/* <InfoIcon size={20} /> */}
+          </View>
           <CaretRightIcon size={25} />
         </TouchableOpacity>
       </View>
@@ -123,6 +124,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   rightArrowPressable: { flex: 1, alignItems: "flex-end" },
+  menuPressable: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
   settingsText: {
     fontSize: 14,
     paddingLeft: 5,

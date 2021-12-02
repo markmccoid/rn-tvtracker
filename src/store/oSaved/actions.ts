@@ -770,9 +770,6 @@ export const updateDefaultSortItem = ({ state, effects }: Context, payload) => {
 
   // Save data to local
   effects.oSaved.localSaveSettings(state.oAdmin.uid, state.oSaved.settings);
-  // -- COMMENT OUT FIRESTORE
-  // Save to firestore
-  // effects.oSaved.saveSettings(state.oSaved.settings);
 };
 
 //* update when sort item order is changed

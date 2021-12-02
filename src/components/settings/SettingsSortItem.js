@@ -78,14 +78,18 @@ const SettingsSortItem = ({
           {title}
         </Text>
         <View style={styles.buttonDragContainer}>
-          <Switch value={active} onChange={toggleActive} />
+          <Switch
+            style={{ transform: [{ scaleX: 0.9 }, { scaleY: 0.9 }] }}
+            value={active}
+            onChange={toggleActive}
+          />
           <ButtonGroup
             disabled={!active}
             disabledStyle={{ backgroundColor: "#e3e6e8" }}
             onPress={(index) => handleSortItemUpdate(index)}
             buttons={buttons[type]}
             selectedIndex={buttonIndex}
-            containerStyle={{ width: 125, height: 30, borderColor: "gray" }}
+            containerStyle={{ width: 100, height: 30, borderColor: "gray" }}
             buttonStyle={{ backgroundColor: "#e3e6e8" }}
             selectedButtonStyle={{ backgroundColor: "#34c759" }}
           />

@@ -7,6 +7,7 @@ import { useOState, useOActions } from "../../store/overmind";
 
 import FilterByTagsContainer from "../../components/Filter/FilterByTagsContainer";
 import FilterByGenreContainer from "../../components/Filter/FilterByGenreContainer";
+import SavedFilterSort from "./SavedFilterSort";
 import { colors } from "../../globalStyles";
 
 const buildTagObjFromIds = (allTags, tagIdArray, isSelected) => {
@@ -49,6 +50,7 @@ const CreateSavedFilterScreen = ({ navigation, route }) => {
   const actions = useOActions();
   const { getInitialTagsSavedFilter, generated } = state.oSaved;
   const { addSavedFilter } = actions.oSaved;
+  const { defaultSort } = state.oSaved.settings;
 
   //# Tag state objects
   // tagsArray = {[{tagId, tagName, tagState}, ...]}
@@ -70,6 +72,9 @@ const CreateSavedFilterScreen = ({ navigation, route }) => {
   //# Other state
   const [showInDrawer, setShowInDrawer] = React.useState(false);
   const [inEditFilter, setInEditFilter] = React.useState(false);
+
+  const [newSort, setNewSort] = React.useState(defaultSort);
+  const [sortEnabled, setSortEnabled] = React.useState(false);
 
   const tagFilterFunctions = {
     onAddIncludeTag: (tagId) =>
@@ -112,6 +117,7 @@ const CreateSavedFilterScreen = ({ navigation, route }) => {
 
       const filterObj = state.oSaved.getSavedFilter(filterId);
       const filterGenres = filterObj?.genres || [];
+      const filterSort = filterObj?.sort;
 
       setFilterName(filterObj.name);
       setFilterIndex(filterObj.index);
@@ -119,6 +125,11 @@ const CreateSavedFilterScreen = ({ navigation, route }) => {
       setExcludeTagOperator(filterObj?.excludeTagOperator || "OR");
       setGenreOperator(filterObj?.genreOperator || "OR");
       setShowInDrawer(filterObj.showInDrawer);
+      setNewSort(filterSort || defaultSort);
+      // When loading an existing filter, if there is no sort key on the saved filter, make sure to turn off
+      // the sortEnabled flag and if there is something there, turn it on!
+      setSortEnabled(!!filterSort);
+
       filterObj?.tags?.forEach((tagId) =>
         dispatch({ type: "UPDATE_TAGSTATE", payload: { tagId, tagState: "include" } })
       );
@@ -194,64 +205,88 @@ const CreateSavedFilterScreen = ({ navigation, route }) => {
       genreOperator,
       showInDrawer,
       index: filterIndex,
+      sort: sortEnabled ? newSort : undefined,
     };
     addSavedFilter(filterObj);
     navigation.goBack();
   };
   const titleSize = "m";
   return (
-    <ScrollView style={styles.scrollViewContainer}>
-      <View style={styles.container}>
-        <Text style={styles.title}>Filter Name:</Text>
-        <View>
-          <TextInput
-            placeholder="Enter Filter Name"
-            onChangeText={(e) => setFilterName(e)}
-            value={filterName}
-            autoCorrect={true}
-            autoCapitalize="sentences"
-            clearButtonMode="while-editing"
-            style={styles.filterName}
-          />
-        </View>
-
-        <View>
-          <Text style={styles.title}>Show On Menu?</Text>
-          <Switch onValueChange={(val) => setShowInDrawer(val)} value={showInDrawer} />
-        </View>
-
-        <Divider style={{ backgroundColor: "black", marginTop: 10 }} />
-
-        {/* Start of Tag */}
-        <View style={styles.tagContainer}>
-          <FilterByTagsContainer
-            titleSize={titleSize}
-            title="Select Tags"
-            allFilterTags={tagsState}
-            operatorValues={{ tagOperator, excludeTagOperator }}
-            filterFunctions={tagFilterFunctions}
-          />
-        </View>
-        <Divider style={{ backgroundColor: "black" }} />
-        <View style={{ flex: 1, flexDirection: "column", marginVertical: 10 }}>
-          <FilterByGenreContainer
-            titleSize={titleSize}
-            title="Select Genres"
-            allGenreFilters={genresObj}
-            genreOperator={genreOperator}
-            filterFunctions={genreFilterFunctions}
-          />
-        </View>
-        <View style={styles.saveButton}>
-          <Button
-            title={inEditFilter ? "Update Filter" : "Save Filter"}
-            onPress={() => onSaveFilter()}
-            bgColor={colors.primary}
-            color="white"
-          />
-        </View>
+    <View style={{ flex: 1, backgroundColor: colors.background }}>
+      <View style={styles.saveButton}>
+        <Button
+          title={inEditFilter ? "Update Filter" : "Save Filter"}
+          onPress={() => onSaveFilter()}
+          bgColor={colors.primary}
+          color="white"
+        />
       </View>
-    </ScrollView>
+      <ScrollView style={styles.scrollViewContainer}>
+        <View style={styles.container}>
+          <Text style={styles.title}>Filter Name:</Text>
+          <View>
+            <TextInput
+              placeholder="Enter Filter Name"
+              onChangeText={(e) => setFilterName(e)}
+              value={filterName}
+              autoCorrect={true}
+              autoCapitalize="sentences"
+              clearButtonMode="while-editing"
+              style={styles.filterName}
+            />
+          </View>
+          <View>
+            <Text style={styles.title}>Show On Menu?</Text>
+            <Switch onValueChange={(val) => setShowInDrawer(val)} value={showInDrawer} />
+          </View>
+          <Divider style={{ backgroundColor: "black", marginTop: 10 }} />
+          {/* Start of Tag */}
+          <View style={styles.tagContainer}>
+            <FilterByTagsContainer
+              titleSize={titleSize}
+              title="Select Tags"
+              allFilterTags={tagsState}
+              operatorValues={{ tagOperator, excludeTagOperator }}
+              filterFunctions={tagFilterFunctions}
+            />
+          </View>
+          <Divider style={{ backgroundColor: "black" }} />
+          <View style={{ flex: 1, flexDirection: "column", marginVertical: 10 }}>
+            <FilterByGenreContainer
+              titleSize={titleSize}
+              title="Select Genres"
+              allGenreFilters={genresObj}
+              genreOperator={genreOperator}
+              filterFunctions={genreFilterFunctions}
+            />
+          </View>
+        </View>
+
+        <View style={styles.line} />
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-around",
+            alignItems: "center",
+            backgroundColor: "white",
+            paddingVertical: 5,
+          }}
+        >
+          <Text>Store Custom Sort with Filter</Text>
+          <Switch
+            style={{ transform: [{ scaleX: 0.9 }, { scaleY: 0.9 }] }}
+            ios_backgroundColor="#3e3e3e"
+            onValueChange={setSortEnabled}
+            value={sortEnabled}
+          />
+        </View>
+        <View style={styles.line} />
+        <View style={styles.container}>
+          {sortEnabled && <SavedFilterSort newSort={newSort} setNewSort={setNewSort} />}
+        </View>
+        <View style={{ marginTop: 5, marginBottom: 40 }} />
+      </ScrollView>
+    </View>
   );
 };
 
@@ -262,6 +297,10 @@ const styles = StyleSheet.create({
   container: {
     marginVertical: 10,
     marginHorizontal: 15,
+  },
+  line: {
+    height: 1,
+    backgroundColor: colors.commonBorder,
   },
   title: {
     marginVertical: 10,
@@ -279,7 +318,11 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   saveButton: {
-    marginBottom: 50,
+    marginBottom: 0,
+    alignItems: "center",
+    backgroundColor: colors.background,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    paddingVertical: 5,
   },
 });
 

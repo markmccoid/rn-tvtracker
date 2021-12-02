@@ -19,7 +19,7 @@ const SectionSort = () => {
     <View style={styles.container}>
       <View style={{ marginBottom: 5 }}>
         <Text style={commonStyles.headerText}>Set Default Sort</Text>
-        <Text>Choose a default sort order for viewing movies.</Text>
+        <Text>Choose a default sort order for viewing TV Shows.</Text>
       </View>
       <DragDropEntry
         scrollStyles={{ borderWidth: 1, borderColor: colors.listBorder }}
