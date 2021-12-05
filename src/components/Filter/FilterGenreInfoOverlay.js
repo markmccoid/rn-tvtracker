@@ -74,11 +74,12 @@ const FilterGenreInfoOverlay = ({
               </View>
               <View>
                 <Text style={styles.describeText}>
-                  Green (selected) genres will search for movies that INCLUDE those genres. The
-                  green switch, when on, allows you to choose if the movies returned should
-                  have
+                  Green (selected) genres will search for TV Shows that INCLUDE those genres.
+                  The green switch, when on, allows you to choose if the TV Shows returned
+                  should have
                   <Text style={[styles.describeText, { fontWeight: "600" }]}>{` ALL `}</Text>
-                  of the selected genres. When the switch is off, the movies returned will have
+                  of the selected genres. When the switch is off, the TV Shows returned will
+                  have
                   <Text style={[styles.describeText, { fontWeight: "600" }]}>
                     {` ONE OR MORE `}
                   </Text>

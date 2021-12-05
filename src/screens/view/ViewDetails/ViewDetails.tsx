@@ -75,7 +75,7 @@ const ViewDetails = ({ navigation, route }: DetailsScreenProps) => {
 
   //---- Set navigation options for detail screen -----
   // 1. Set the title to the current movie title
-  // 2. Add a + icon for movies that are have not yet been added to list.
+  // 2. Add a + icon for shows that are have not yet been added to list.
   // 3. If the movie is in the list, show a delete icon INSTEAD of the plus.
   //TODO (could be better looking delete icon)
 

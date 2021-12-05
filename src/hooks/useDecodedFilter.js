@@ -98,7 +98,9 @@ export const useDecodedFilter = ({ filterTags = [], filterData, filterGenres = [
       GenreMessageComponent: () => (
         <View style={{ flexDirection: "column" }}>
           <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-            <Text style={{ fontSize: 18 }}>Find movies with the {formattedGenres} genres</Text>
+            <Text style={{ fontSize: 18 }}>
+              Find TV Shows with the {formattedGenres} genres
+            </Text>
           </View>
         </View>
       ),
@@ -118,9 +120,9 @@ export const useDecodedFilter = ({ filterTags = [], filterData, filterGenres = [
  * @return {object} - { formattedDefault, formattedInclude, formattedJoin, formattedExclude }
  */
 function buildTagMessages(tagCounts, tagOperator, excludeTagOperator) {
-  const includeIntro = `Find movies that have the `;
+  const includeIntro = `Find TV Shows that have the `;
   const joinStatement = "---AND FROM THOSE---";
-  const excludeIntro = "Find movies that DO NOT have the ";
+  const excludeIntro = "Find TV Shows that DO NOT have the ";
   const defaultMessage = "No Tags selected for filtering.";
 
   // Build the Include Tags with TEXT components and proper AND/OR

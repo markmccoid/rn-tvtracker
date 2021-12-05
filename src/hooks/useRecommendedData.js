@@ -27,7 +27,7 @@ export const useRecommendedData = (tvShowId, page = 1) => {
     // Maybe will use later.  Could expose and let get more data
     const nextPage = getNextPage(result.data.page, result.data.totalPages);
     const prevPage = result.data.page - 1 < 1 ? 1 : result.data.page - 1;
-    // the results are not tagged (showing if a movie is already in your saved movies list)
+    // the results are not tagged (showing if a movie is already in your saved TV Shows list)
     // tag first and then send back
     const taggedResults = actions.oSearch.tagOtherTVShowResults(result.data.results);
     setRecommendedData(taggedResults);

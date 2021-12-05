@@ -79,11 +79,12 @@ const FilterTagsInfoOverlay = ({
               </View>
               <View>
                 <Text style={styles.describeText}>
-                  Green tags will search for movies that INCLUDE those tags. The green switch,
-                  when on, allows you to choose if the movies returned should be tagged with
+                  Green tags will search for TV Shows that INCLUDE those tags. The green
+                  switch, when on, allows you to choose if the TV Shows returned should be
+                  tagged with
                   <Text style={[styles.describeText, { fontWeight: "600" }]}>{` ALL `}</Text>
-                  of the green tags selected. When the switch is off, the movies returned will
-                  be tagged with
+                  of the green tags selected. When the switch is off, the TV Shows returned
+                  will be tagged with
                   <Text style={[styles.describeText, { fontWeight: "600" }]}>
                     {` ONE OR MORE `}
                   </Text>
@@ -114,12 +115,12 @@ const FilterTagsInfoOverlay = ({
               </View>
               <View>
                 <Text style={styles.describeText}>
-                  Red tags will search for movies that EXCLUDE (do not have) those tags. The
-                  red switch, when on, will return movies
+                  Red tags will search for TV Shows that EXCLUDE (do not have) those tags. The
+                  red switch, when on, will return TV Shows
                   <Text style={[styles.describeText, { fontWeight: "600" }]}>
                     {` NOT tagged will ALL `}
                   </Text>
-                  of the red tags selected. When the switch is off, the movies returned will
+                  of the red tags selected. When the switch is off, the TV Shows returned will
                   <Text style={[styles.describeText, { fontWeight: "600" }]}>
                     {` NOT be tagged with ONE OR MORE `}
                   </Text>

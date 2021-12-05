@@ -143,11 +143,11 @@ const ViewTVShowsScreen = ({ navigation, route }) => {
         maxToRenderPerBatch={30}
       />
 
-      {/* If there are NO movies after the filters are applied then show a message and Filter button  */}
+      {/* If there are NO TV Shows after the filters are applied then show a message and Filter button  */}
       {getFilteredTVShows.length === 0 && state.oSaved.savedTVShows.length !== 0 && (
         <View style={[styles.noItemsShownPosition, { alignItems: "center" }]}>
           <Text style={{ fontSize: 20, fontWeight: "600", marginBottom: 10 }}>
-            No Movies match current filter.
+            No TV Shows match current filter.
           </Text>
           <Text style={{ fontSize: 20, fontWeight: "600", marginBottom: 10 }}>
             Modify filter.

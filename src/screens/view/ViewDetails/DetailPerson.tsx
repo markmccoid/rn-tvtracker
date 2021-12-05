@@ -40,7 +40,7 @@ const DetailPerson = ({ navigation, route }: DetailPersonScreenProps) => {
   const { saveTVShow, deleteTVShow } = actions.oSaved;
 
   const toggleShowBio = () => setShowBio((prevState) => !prevState);
-  //loads personDetails and movies that person was in(personCredits)
+  //loads personDetails and shows that person was in(personCredits)
   useEffect(() => {
     const getPersonInfo = async (personId) => {
       const personDetails = await getPersonDetails(personId);

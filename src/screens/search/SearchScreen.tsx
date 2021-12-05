@@ -79,12 +79,12 @@ const SearchScreen = ({ navigation, route }) => {
   //   };
   // }, []);
 
-  //NOTE: Each page contains 10 items, but with screen redesign 12 movies
+  //NOTE: Each page contains 10 items, but with screen redesign 12
   // fit on the first screen, this means that two api calls will happen
   // when searching.  Meaning the currentPage state variable will always be 2
   // after the "first" loading of the flatlist (if search by title)
-  // if NO search string then a search by popular movies will start and it defaults
-  // to 20 movies per page
+  // if NO search string then a search by popular will start and it defaults
+  // to 20 per page
   const fetchMoreData = async () => {
     if (isMoreData) {
       setIsNewQuery(false);

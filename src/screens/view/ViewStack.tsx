@@ -159,7 +159,7 @@ const ViewStackScreen = () => {
   const actions = useOActions();
   // Check for deep link
   let numGenreFilters = state.oSaved.filterData.genres.length;
-  let numMovies = state.oSaved.getFilteredTVShows.length;
+  let numTVShows = state.oSaved.getFilteredTVShows.length;
   let numIncludeFilters = state.oSaved.filterData.tags.length;
   let numExcludeFilters = state.oSaved.filterData.excludeTags.length;
   const isGenreFiltered = numGenreFilters > 0;
@@ -193,7 +193,7 @@ const ViewStackScreen = () => {
           // if (movieIndex >= 0) {
           //   movieKey = route?.state?.routes[movieIndex]?.key;
           // }
-          // let title = currentScreenName === "TVShowsScreen" ? `${numMovies} Movies` : "Set Filter";
+          // let title = currentScreenName === "TVShowsScreen" ? `${numTVShows} TV Shows` : "Set Filter";
           return {
             // Found that the "title" property was not updated often enough, not sure when it was updated
             // headerCenter seems to be more reliable
@@ -203,7 +203,7 @@ const ViewStackScreen = () => {
             headerCenter: () => (
               <Text
                 style={{ color: colors.darkText, fontSize: 16, fontWeight: "600" }}
-              >{`${numMovies} TV Shows`}</Text>
+              >{`${numTVShows} TV Shows`}</Text>
             ),
             headerLeft: () => {
               if (currentScreenName === "TVShowsScreen") {
