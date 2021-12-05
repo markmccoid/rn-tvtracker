@@ -179,7 +179,7 @@ const SeasonsScreen = ({ navigation, route }: SeasonsScreenProps) => {
   //* at zero watched when seasonScreen is opened.
   React.useEffect(() => {
     if (!firstOpenRef.current) {
-      if (getNotWatchedEpisodeCount(tvShowId) === 0) {
+      if (getNotWatchedEpisodeCount(tvShowId).countEpisodesNotWatched === 0) {
         Alert.alert(
           "All Watched",
           "You've watched all episodes that are available!  Update your tags!"
@@ -188,7 +188,7 @@ const SeasonsScreen = ({ navigation, route }: SeasonsScreenProps) => {
     } else {
       firstOpenRef.current = false;
     }
-  }, [getNotWatchedEpisodeCount(tvShowId)]);
+  }, [getNotWatchedEpisodeCount(tvShowId).countEpisodesNotWatched]);
 
   // React.useEffect(() => {
   //   if (!sectionRef.current) return;

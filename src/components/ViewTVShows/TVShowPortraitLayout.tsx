@@ -13,6 +13,7 @@ import { MotiView } from "moti";
 import PressableButton from "../common/PressableButton";
 import { sendNotificationImmediately } from "../../utils/notificationHelpers";
 import { getEpisodeRunTimeGroup } from "../../utils/helperFunctions";
+import { color } from "react-native-reanimated";
 
 type Props = {
   tvShow: SavedTVShowsDoc;
@@ -56,6 +57,8 @@ const TVShowPortraitLayout = ({ tvShow, setTVShowEditingId, navigateToDetails }:
   const { width, height } = useDimensions().window;
   const state = useOState();
   const { getNotWatchedEpisodeCount } = state.oSaved;
+  const { isDownloadStateEnabled, showNextAirDateEnabled } = state.oSaved.settings;
+
   const navigation = useNavigation();
   //! Should be first air date
   //const movieReleaseDate = tvShow.releaseDate?.formatted || " - ";
@@ -67,12 +70,29 @@ const TVShowPortraitLayout = ({ tvShow, setTVShowEditingId, navigateToDetails }:
   let posterHeight = posterWidth * 1.5;
   const MARGIN = 5;
   const BORDER_RADIUS = 10;
-  const countEpisodesNotWatched = getNotWatchedEpisodeCount(tvShow.id);
+  const { countEpisodesNotWatched, countEpisodesNotDownloaded, downloadedEpisodes } =
+    getNotWatchedEpisodeCount(tvShow.id);
+
   const [episodeGroupStyles, groupWidthOffset] = setEpisodeGroupStyles(
     getEpisodeRunTimeGroup(tvShow.avgEpisodeRunTime),
     posterWidth
   );
 
+  //--------------------------------
+  //-- create an object for the colors used for status/next air date box
+  const statusColors = {
+    Ended: colors.ended,
+    ["Returning Series"]: colors.returning,
+    Canceled: colors.canceled,
+    nextAirDate: colors.nextAirDate,
+  };
+  const tvShowStatus =
+    tvShow?.status === "Returning Series" && tvShow?.nextAirDate
+      ? "nextAirDate"
+      : tvShow?.status;
+  const statusColor = statusColors[tvShowStatus];
+
+  //--------------------------------
   const styles = StyleSheet.create({
     movieCard: {
       // backgroundColor: colors.background,
@@ -95,7 +115,12 @@ const TVShowPortraitLayout = ({ tvShow, setTVShowEditingId, navigateToDetails }:
       fontWeight: "bold",
       textAlign: "center",
     },
-    episodesLeftPosition: { position: "absolute", bottom: -5, zIndex: 10 },
+    episodesLeftPosition: {
+      position: "absolute",
+      bottom: -5,
+      zIndex: 10,
+      // flexDirection: "row",
+    },
     episodesLeftContainer: {
       backgroundColor:
         countEpisodesNotWatched === 0 ? colors.excludeRed : colors.buttonPrimary,
@@ -137,6 +162,73 @@ const TVShowPortraitLayout = ({ tvShow, setTVShowEditingId, navigateToDetails }:
         }}
       >
         <View style={{ alignItems: "center" }}>
+          <React.Fragment>
+            {showNextAirDateEnabled && (
+              <View style={{ position: "absolute", zIndex: 10, top: -5, left: 5 }}>
+                <View
+                  style={{
+                    backgroundColor: `${statusColor}cc`, //"#ffffffaa",
+                    borderWidth: StyleSheet.hairlineWidth,
+                    padding: 4,
+                    borderTopRightRadius: 4,
+                    borderTopLeftRadius: 4,
+                    borderBottomRightRadius: 8,
+                    borderBottomLeftRadius: 8,
+                    shadowColor: "#000",
+                    shadowOffset: {
+                      width: 3,
+                      height: 3,
+                    },
+                    shadowOpacity: 0.85,
+                    shadowRadius: 3,
+                    elevation: 5,
+                    //       ...styleHelpers.buttonShadow,
+                    // display: tvShow?.nextAirDate?.formatted ? undefined : "none",
+                  }}
+                >
+                  <Text style={{ color: "white" }}>
+                    {tvShow?.nextAirDate?.formatted || tvShow?.status}
+                  </Text>
+                </View>
+              </View>
+            )}
+            {/* Downloadable Episodes Left display */}
+            {isDownloadStateEnabled && downloadedEpisodes > 0 && (
+              <View style={{ position: "absolute", zIndex: 10, top: -5, right: 5 }}>
+                <PressableButton
+                  style={[
+                    styles.episodesLeftContainer,
+                    {
+                      backgroundColor: colors.darkText,
+                      borderRadius: 50,
+                      borderWidth: StyleSheet.hairlineWidth,
+                      shadowColor: "#000",
+                      shadowOffset: {
+                        width: 2,
+                        height: 2,
+                      },
+                      shadowOpacity: 0.85,
+                      shadowRadius: 3.75,
+                      elevation: 5,
+                    },
+                  ]}
+                  onPress={() => {
+                    // console.log("sending notification", tvShow.id);
+                    // sendNotificationImmediately(tvShow.id);
+                    navigation.navigate("ViewStackSeasons", {
+                      tvShowId: tvShow.id,
+                      logo: { showName: tvShow.name },
+                    });
+                  }}
+                >
+                  <Text style={[styles.episodesLeftText, { color: "white" }]}>
+                    {countEpisodesNotDownloaded}
+                  </Text>
+                </PressableButton>
+              </View>
+            )}
+          </React.Fragment>
+
           <View style={styles.episodesLeftPosition}>
             <PressableButton
               style={styles.episodesLeftContainer}

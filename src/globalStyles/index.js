@@ -28,6 +28,10 @@ export const colors = {
   episodeLengthGroup1: "green",
   episodeLengthGroup2: "blue",
   episodeLengthGroup3: "red",
+  canceled: "#CB4C4E",
+  returning: "#59922D",
+  ended: "#CB4C4E",
+  nextAirDate: "#5657D6",
 };
 
 export const fonts = {

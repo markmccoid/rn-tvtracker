@@ -51,6 +51,7 @@ export type Settings = {
   defaultFilter: string;
   defaultSort: defaultConstants.SortObjectItem[];
   isDownloadStateEnabled: boolean;
+  showNextAirDateEnabled: boolean;
 };
 
 export type SavedFilters = {
@@ -136,7 +137,13 @@ export type State = {
     seasonNumber: number,
     useDownloadState?: boolean
   ) => number;
-  getNotWatchedEpisodeCount: (tvShowId: number) => number;
+  getNotWatchedEpisodeCount: (tvShowId: number) => {
+    countEpisodesNotWatched: number;
+    countEpisodesNotDownloaded: number;
+    totalEpisodes: number;
+    watchedEpisodes: number;
+    downloadedEpisodes: number;
+  };
   isTVShowSaved: (tvShowId: number) => boolean;
   getCurrentImageUrls: (tvShowId: number) => {
     currentPosterURL: string;
@@ -171,6 +178,7 @@ export const state: State = {
     defaultFilter: undefined,
     defaultSort: defaultConstants.defaultSort,
     isDownloadStateEnabled: false,
+    showNextAirDateEnabled: false,
   },
   // Object containing any filter data
   filterData: {
@@ -383,14 +391,26 @@ export const state: State = {
     const tvShowDetails = state.getTVShowDetails(tvShowId);
     const totalEpisodes = tvShowDetails?.totalEpisodes ?? 0;
     const watchedEpisodeState = tvShowDetails?.episodeState ?? {};
+    const downloadEpisodeState = tvShowDetails?.downloadState ?? {};
 
     //Calculate how many episodes marked as watched. i.e. return only true
     const watchedEpisodes = Object.entries(watchedEpisodeState)
       .filter(([key, value]) => value)
       .filter(([key, value]) => key.slice(0, 1) !== "0").length;
+    //Calculate how many episodes marked as downloaded. i.e. return only true
+    const downloadedEpisodes = Object.entries(downloadEpisodeState)
+      .filter(([key, value]) => value)
+      .filter(([key, value]) => key.slice(0, 1) !== "0").length;
 
-    return totalEpisodes - watchedEpisodes;
+    return {
+      countEpisodesNotWatched: totalEpisodes - watchedEpisodes,
+      countEpisodesNotDownloaded: totalEpisodes - downloadedEpisodes,
+      totalEpisodes,
+      watchedEpisodes,
+      downloadedEpisodes,
+    };
   }),
+
   //--------------
   // Get the current posterURL and backgroundURL for the passed movieId
   getCurrentImageUrls: derived((state: State) => (tvShowId: number) => {

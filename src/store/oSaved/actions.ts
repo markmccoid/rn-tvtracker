@@ -150,7 +150,9 @@ export const refreshTVShow = async (
   // get more movie details from tmdbapi
   const { data: latesTVShowDetails } = await effects.oSaved.getTVShowDetails(tvShowId);
 
-  state.oSaved.getNotWatchedEpisodeCount(tvShowId);
+  //! Not sure what this was for, so commented out.  IT doesn't do anything??
+  // state.oSaved.getNotWatchedEpisodeCount(tvShowId);
+
   //! IMPLEMENTATION
   //! Do not update the posterURL as user could have changed
   //! Create Object with only items that will be updated as to leave
@@ -791,6 +793,12 @@ export const updateDefaultSortOrder = ({ state, effects }: Context, newlyIndexed
 //*==============================================
 export const toggleIsDownloadStateEnabled = ({ state, effects }: Context) => {
   state.oSaved.settings.isDownloadStateEnabled = !state.oSaved.settings.isDownloadStateEnabled;
+
+  // Save data to local
+  effects.oSaved.localSaveSettings(state.oAdmin.uid, state.oSaved.settings);
+};
+export const toggleShowNextAirDateEnabled = ({ state, effects }: Context) => {
+  state.oSaved.settings.showNextAirDateEnabled = !state.oSaved.settings.showNextAirDateEnabled;
 
   // Save data to local
   effects.oSaved.localSaveSettings(state.oAdmin.uid, state.oSaved.settings);

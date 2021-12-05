@@ -23,8 +23,8 @@ const { width, height } = Dimensions.get("window");
 const Settings = ({ navigation }) => {
   const state = useOState();
   const actions = useOActions();
-  const { isDownloadStateEnabled } = state.oSaved.settings;
-  const { toggleIsDownloadStateEnabled } = actions.oSaved;
+  const { isDownloadStateEnabled, showNextAirDateEnabled } = state.oSaved.settings;
+  const { toggleIsDownloadStateEnabled, toggleShowNextAirDateEnabled } = actions.oSaved;
   //# When savedFilters gets updated in the drag component, it isn't updated here
   //# TEST - maybe use this as the driver and send the data down OR figure out why not updating
   // React.useEffect(() => {
@@ -99,6 +99,23 @@ const Settings = ({ navigation }) => {
           ios_backgroundColor="#3e3e3e"
           onValueChange={toggleIsDownloadStateEnabled}
           value={isDownloadStateEnabled}
+        />
+      </View>
+
+      <View style={styles.line} />
+
+      <View style={[styles.settingsMenuItem]}>
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <FlagIcon size={20} />
+          <Text style={styles.settingsText}>Show Status/Next Air on Main Screen</Text>
+
+          {/* <InfoIcon size={20} /> */}
+        </View>
+        <Switch
+          style={{ transform: [{ scaleX: 0.9 }, { scaleY: 0.9 }] }}
+          ios_backgroundColor="#3e3e3e"
+          onValueChange={toggleShowNextAirDateEnabled}
+          value={showNextAirDateEnabled}
         />
       </View>
 
