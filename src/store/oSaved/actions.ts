@@ -87,8 +87,11 @@ export const hydrateStore = async (
     // Save data to local
     await effects.oSaved.localSaveSettings(uid, state.oSaved.settings);
   }
+  // hydrate flags from settings
   state.oSaved.settings.isDownloadStateEnabled =
     userDocData?.settings?.isDownloadStateEnabled || false;
+  state.oSaved.settings.showNextAirDateEnabled =
+    userDocData?.settings?.showNextAirDateEnabled || false;
   // Get movie genres from savedTVShows objects
   state.oSaved.generated.genres = getGenresFromTVShows(state.oSaved.savedTVShows);
 

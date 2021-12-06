@@ -21,6 +21,8 @@ const EpisodesWatched = ({
   markAllSeasonsEpisodes,
   tvShowId,
   seasonNumber,
+  isDownloadStateEnabled,
+  episodesDownloaded,
 }) => {
   const yVal = useSharedValue(0);
 
@@ -81,13 +83,20 @@ const EpisodesWatched = ({
     },
   });
   return (
-    <View style={{ flexDirection: "row", marginLeft: 10, paddingBottom: 5 }}>
+    <View
+      style={{
+        flexDirection: "row",
+        marginLeft: 10,
+        paddingBottom: 5,
+      }}
+    >
       {/* <Animated.View style={[animatedStyle]} /> */}
       <Text style={styles.textStyle}>Watched: </Text>
       {/* <Text>{`${episodesWatched} of ${numberOfEpisodes}`}</Text> */}
       <Animated.Text style={[yStyle, styles.textStyle]}>{episodesWatched}</Animated.Text>
       <Text style={styles.textStyle}>{` of ${numberOfEpisodes}`}</Text>
       <View style={{ width: 10 }} />
+
       <PressableButton
         disabled={episodesWatched === numberOfEpisodes}
         style={[styles.markButtons, styles.watchAll, { marginBottom: 3 }]}
@@ -106,6 +115,34 @@ const EpisodesWatched = ({
           Unwatch All
         </Text>
       </PressableButton>
+      {isDownloadStateEnabled && episodesDownloaded > 0 && (
+        <View
+          style={{
+            flexGrow: 1,
+            justifyContent: "center",
+            alignItems: "flex-end",
+            marginBottom: 3,
+            marginRight: 3,
+          }}
+        >
+          <PressableButton
+            style={[
+              styles.markButtons,
+              { backgroundColor: colors.darkText, marginBottom: 3, marginLeft: 3 },
+            ]}
+            onPress={() =>
+              markAllSeasonsEpisodes({
+                tvShowId,
+                seasonNumber,
+                watchedState: false,
+                modifyDownloadState: true,
+              })
+            }
+          >
+            <Text style={[styles.markButtonsText, { color: "white" }]}>Clear Secondary</Text>
+          </PressableButton>
+        </View>
+      )}
     </View>
   );
 };
@@ -134,6 +171,12 @@ const SeasonHeader = ({
   const actions = useOActions();
 
   const episodesWatched = state.oSaved.getSeasonEpisodeStateCount(tvShowId, seasonNumber);
+  const episodesDownloaded = state.oSaved.getSeasonEpisodeStateCount(
+    tvShowId,
+    seasonNumber,
+    true
+  );
+  const { isDownloadStateEnabled } = state.oSaved.settings;
   // const episodesDownloaded = state.oSaved.getSeasonEpisodeStateCount(
   //   tvShowId,
   //   seasonNumber,
@@ -161,7 +204,7 @@ const SeasonHeader = ({
           },
         ]}
       >
-        <View style={{ flexDirection: "column" }}>
+        <View style={{ flexDirection: "column", flex: 1 }}>
           <Text
             style={[
               styles.seasonText,
@@ -179,6 +222,8 @@ const SeasonHeader = ({
               markAllSeasonsEpisodes={markAllSeasonsEpisodes}
               tvShowId={tvShowId}
               seasonNumber={seasonNumber}
+              isDownloadStateEnabled={isDownloadStateEnabled}
+              episodesDownloaded={episodesDownloaded}
             />
           )}
         </View>
