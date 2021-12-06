@@ -14,10 +14,13 @@ import { UserBackupObject } from "../../types";
 import DropboxListFiles from "./DropboxListFiles";
 import { colors } from "../../globalStyles";
 import { RefreshIcon } from "../common/Icons";
+import { MotiView } from "moti";
 
 const RestoreFromDropbox = ({ token }) => {
   // const [selectedRestoreImage, setSelectedRestoreImage] = React.useState(undefined);
   const [selectedFile, setSelectedFile] = React.useState(undefined);
+  const [isRestoring, setIsRestoring] = React.useState(false);
+  const [buttonWidth, setButtonWidth] = React.useState(0);
 
   const state = useOState();
   const actions = useOActions();
@@ -41,28 +44,61 @@ const RestoreFromDropbox = ({ token }) => {
           selectedFile={selectedFile}
         />
         <View style={{ alignItems: "center" }}>
-          <PressableButton
-            style={{
-              backgroundColor: `${colors.dropboxBlue}${!!!selectedFile ? "aa" : ""}`,
-              marginVertical: 10,
+          <View
+            onLayout={(e) => {
+              // containerHeight.current = e.nativeEvent.layout.height;
+              setButtonWidth(e.nativeEvent.layout.width);
+              console.log("containerWidth", e.nativeEvent.layout.width);
             }}
-            onPress={async () => {
-              const backupData = await downloadDropboxFile<UserBackupObject>(
-                token,
-                "/",
-                selectedFile
-              );
-              const result = await restoreBackupObject(backupData);
-              if (result.success) {
-                Alert.alert("Restore Complete", `${selectedFile} has been restored.`);
-              } else {
-                Alert.alert("Restore Error", `${selectedFile} not a valid restore file.`);
-              }
-            }}
-            disabled={!!!selectedFile}
           >
-            <Text style={{ color: "white" }}>Restore Image</Text>
-          </PressableButton>
+            <PressableButton
+              style={{
+                backgroundColor: `${colors.dropboxBlue}${!!!selectedFile ? "aa" : ""}`,
+                marginVertical: 10,
+              }}
+              onPress={async () => {
+                setIsRestoring(true);
+                const backupData = await downloadDropboxFile<UserBackupObject>(
+                  token,
+                  "/",
+                  selectedFile
+                );
+                const result = await restoreBackupObject(backupData);
+                setIsRestoring(false);
+                if (result.success) {
+                  Alert.alert("Restore Complete", `${selectedFile} has been restored.`);
+                } else {
+                  Alert.alert("Restore Error", `${selectedFile} not a valid restore file.`);
+                }
+              }}
+              disabled={!!!selectedFile}
+            >
+              <Text style={{ color: "white" }}>Restore Image</Text>
+            </PressableButton>
+            {isRestoring && (
+              <MotiView
+                from={{
+                  width: 5,
+                }}
+                animate={{
+                  width: buttonWidth - 20,
+                }}
+                transition={{
+                  type: "timing",
+                  duration: 3000,
+                  loop: true,
+                }}
+                style={{
+                  position: "absolute",
+                  bottom: 10,
+                  left: 10,
+                  height: 5,
+                  borderRadius: 10,
+                  backgroundColor: "#000000",
+                }}
+              />
+            )}
+          </View>
         </View>
       </View>
     </View>
