@@ -25,7 +25,7 @@ import {
 import { SeasonsScreenProps } from "../viewTypes";
 
 import { useOActions, useOState } from "../../../store/overmind";
-import { colors, styleHelpers } from "../../../globalStyles";
+import { colors, styleHelpers, seasonConstants } from "../../../globalStyles";
 import { TVShowSeasonDetails } from "@markmccoid/tmdb_api";
 import PressableButton from "../../../components/common/PressableButton";
 
@@ -204,7 +204,14 @@ const SeasonsScreen = ({ navigation, route }: SeasonsScreenProps) => {
   //----------------------
   const sectionGetItemLayout = sectionListGetItemLayout({
     // The height of the row with rowData at the given sectionIndex and rowIndex
-    getItemHeight: (rowData, sectionIndex, rowIndex) => (sectionIndex === 0 ? 62 : 62),
+    getItemHeight: (rowData, sectionIndex, rowIndex) => {
+      // https://medium.com/@jsoendermann/sectionlist-and-getitemlayout-2293b0b916fb
+      // Unless you have dynamic heights, then this should just be the episode item height
+      // If you have dynamic heights, you can use the sectionIndex(Season) and rowIndex(Episode) **Zero based**
+      // and rowData to determine the correc theight.
+      return seasonConstants.episodeHeight;
+    },
+    getSectionHeaderHeight: () => seasonConstants.seasonHeaderHeight,
   });
 
   if (loading || !seasonData) {
@@ -289,16 +296,6 @@ const SeasonsScreen = ({ navigation, route }: SeasonsScreenProps) => {
                     viewPosition: 0,
                     animated: true,
                   });
-                  setTimeout(
-                    () =>
-                      sectionRef.current?.scrollToLocation({
-                        sectionIndex: season - 1,
-                        itemIndex: 0,
-                        viewPosition: 0,
-                        animated: true,
-                      }),
-                    500
-                  );
                 }}
                 style={[
                   styleHelpers.buttonShadow,
@@ -367,20 +364,10 @@ const SeasonsScreen = ({ navigation, route }: SeasonsScreenProps) => {
           const [latestSeason, latestEpisode] = getLastestEpisodeWatched(tvShowId);
           sectionRef.current?.scrollToLocation({
             sectionIndex: latestSeason - 1,
-            itemIndex: 0,
+            itemIndex: latestEpisode,
             viewPosition: 0,
             animated: false,
           });
-          setTimeout(
-            () =>
-              sectionRef.current?.scrollToLocation({
-                sectionIndex: latestSeason - 1,
-                itemIndex: latestEpisode,
-                viewPosition: 0,
-                animated: true,
-              }),
-            500
-          );
         }}
         style={{ width: "100%" }}
         contentContainerStyle={{ paddingBottom: 55 }}
