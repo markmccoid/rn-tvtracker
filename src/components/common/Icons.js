@@ -18,10 +18,21 @@ export const ViewTVShowIcon = ({ size, color, style = {} }) => {
   return <Feather name="tv" size={size} color={color} style={style} />;
 };
 export const EyeEmptyIcon = ({ size, color, style = {} }) => {
-  return <AntDesign name="eyeo" size={size} color={color} style={style} />;
+  return <AntDesign name="eye" size={size} color={color} style={style} />;
 };
 export const EyeFilledIcon = ({ size, color, style = {} }) => {
   return <AntDesign name="eye" size={size} color={color} style={style} />;
+};
+export const EyeWatchedIcon = ({ size, color, style = {} }) => {
+  return <MaterialCommunityIcons name="eye-check" size={size} color={color} style={style} />;
+};
+export const EyeNotWatchedIcon = ({ size, color, style = {} }) => {
+  return <MaterialCommunityIcons name="eye-off" size={size} color={color} style={style} />;
+};
+export const TelevisionOffIcon = ({ size, color, style = {} }) => {
+  return (
+    <MaterialCommunityIcons name="television-off" size={size} color={color} style={style} />
+  );
 };
 
 export const SearchIcon = ({ size, color = undefined, style = undefined }) => {

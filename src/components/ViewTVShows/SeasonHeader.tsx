@@ -9,21 +9,13 @@ import Animated, {
   withSequence,
 } from "react-native-reanimated";
 import { useOState, useOActions } from "../../store/overmind";
-import { colors, fonts } from "../../globalStyles";
+import { colors, fonts, seasonConstants } from "../../globalStyles";
 import PressableButton from "../common/PressableButton";
-import { UnCheckedBox, CheckedBox } from "../common/Icons";
+import SeasonHeaderButtonRow from "./SeasonHeaderButtonRow";
 
 const { width, height } = Dimensions.get("window");
 
-const EpisodesWatched = ({
-  episodesWatched,
-  numberOfEpisodes,
-  markAllSeasonsEpisodes,
-  tvShowId,
-  seasonNumber,
-  isDownloadStateEnabled,
-  episodesDownloaded,
-}) => {
+const EpisodesWatched = ({ episodesWatched, numberOfEpisodes }) => {
   const yVal = useSharedValue(0);
 
   React.useEffect(() => {
@@ -60,26 +52,7 @@ const EpisodesWatched = ({
   const styles = StyleSheet.create({
     textStyle: {
       fontFamily: fonts.family.seasons,
-    },
-    watchAll: {
-      backgroundColor: allWatched ? "#E7E7E7" : colors.includeGreen,
-    },
-    unwatchAll: {
-      backgroundColor: allUnwatched ? "#E7E7E7" : colors.excludeRed,
-    },
-    markButtons: {
-      paddingVertical: 1,
-      paddingHorizontal: 3,
-
-      alignItems: "center",
-      borderRadius: 6,
-      borderWidth: 1,
-      borderColor: colors.buttonPrimaryBorder,
-    },
-    markButtonsText: {
-      fontSize: 12,
-      fontFamily: fonts.family.seasons,
-      color: colors.darkText,
+      fontSize: fonts.sizes.m,
     },
   });
   return (
@@ -87,62 +60,13 @@ const EpisodesWatched = ({
       style={{
         flexDirection: "row",
         marginLeft: 10,
-        paddingBottom: 5,
+        alignItems: "center",
       }}
     >
-      {/* <Animated.View style={[animatedStyle]} /> */}
       <Text style={styles.textStyle}>Watched: </Text>
-      {/* <Text>{`${episodesWatched} of ${numberOfEpisodes}`}</Text> */}
       <Animated.Text style={[yStyle, styles.textStyle]}>{episodesWatched}</Animated.Text>
       <Text style={styles.textStyle}>{` of ${numberOfEpisodes}`}</Text>
       <View style={{ width: 10 }} />
-
-      <PressableButton
-        disabled={episodesWatched === numberOfEpisodes}
-        style={[styles.markButtons, styles.watchAll, { marginBottom: 3 }]}
-        onPress={() => markAllSeasonsEpisodes({ tvShowId, seasonNumber, watchedState: true })}
-      >
-        <Text style={[styles.markButtonsText, { color: colors.darkText }]}>Watch All</Text>
-      </PressableButton>
-      <PressableButton
-        disabled={episodesWatched === 0}
-        style={[styles.markButtons, styles.unwatchAll, { marginBottom: 3, marginLeft: 3 }]}
-        onPress={() => markAllSeasonsEpisodes({ tvShowId, seasonNumber, watchedState: false })}
-      >
-        <Text
-          style={[styles.markButtonsText, { color: allUnwatched ? colors.darkText : "white" }]}
-        >
-          Unwatch All
-        </Text>
-      </PressableButton>
-      {isDownloadStateEnabled && episodesDownloaded > 0 && (
-        <View
-          style={{
-            flexGrow: 1,
-            justifyContent: "center",
-            alignItems: "flex-end",
-            marginBottom: 3,
-            marginRight: 3,
-          }}
-        >
-          <PressableButton
-            style={[
-              styles.markButtons,
-              { backgroundColor: colors.darkText, marginBottom: 3, marginLeft: 3 },
-            ]}
-            onPress={() =>
-              markAllSeasonsEpisodes({
-                tvShowId,
-                seasonNumber,
-                watchedState: false,
-                modifyDownloadState: true,
-              })
-            }
-          >
-            <Text style={[styles.markButtonsText, { color: "white" }]}>Clear Secondary</Text>
-          </PressableButton>
-        </View>
-      )}
     </View>
   );
 };
@@ -165,8 +89,6 @@ const SeasonHeader = ({
   numberOfEpisodes,
   isShowSaved,
 }) => {
-  //const { seasonState, toggleSeasonState } = headerDetail;
-  // const toggleSeasonState = () => {};
   const state = useOState();
   const actions = useOActions();
 
@@ -176,96 +98,78 @@ const SeasonHeader = ({
     seasonNumber,
     true
   );
-  const { isDownloadStateEnabled } = state.oSaved.settings;
-  // const episodesDownloaded = state.oSaved.getSeasonEpisodeStateCount(
-  //   tvShowId,
-  //   seasonNumber,
-  //   true
-  // );
-
-  const { markAllSeasonsEpisodes } = actions.oSaved;
 
   const allEpisodesWatched = !!(episodesWatched === numberOfEpisodes);
   const noEpisodesWatched = !!(episodesWatched === 0);
-  // const allEpisodesDownloaded = !!(episodesDownloaded === numberOfEpisodes);
 
+  // Get styles
+  const styles = stylesFunc({ allEpisodesWatched });
   const seasonTitle =
     seasonName === `Season ${seasonNumber}` || seasonNumber === 0
       ? seasonName
       : `Season ${seasonNumber} - ${seasonName}`;
 
   return (
-    <View key={seasonNumber}>
-      <View
-        style={[
-          styles.seasonName,
-          {
-            backgroundColor: allEpisodesWatched ? colors.darkbg : colors.listBackground,
-          },
-        ]}
-      >
-        <View style={{ flexDirection: "column", flex: 1 }}>
-          <Text
-            style={[
-              styles.seasonText,
-              {
-                color: allEpisodesWatched ? colors.darkfg : colors.darkText,
-              },
-            ]}
-          >
-            {seasonTitle}
-          </Text>
-          {isShowSaved && (
-            <EpisodesWatched
-              episodesWatched={episodesWatched}
-              numberOfEpisodes={numberOfEpisodes}
-              markAllSeasonsEpisodes={markAllSeasonsEpisodes}
-              tvShowId={tvShowId}
-              seasonNumber={seasonNumber}
-              isDownloadStateEnabled={isDownloadStateEnabled}
-              episodesDownloaded={episodesDownloaded}
-            />
-          )}
-        </View>
+    <View key={seasonNumber} style={styles.container}>
+      <View style={styles.seasonName}>
+        <Text style={styles.seasonText} numberOfLines={1}>
+          {seasonTitle}
+        </Text>
+
+        {isShowSaved && (
+          <EpisodesWatched
+            episodesWatched={episodesWatched}
+            numberOfEpisodes={numberOfEpisodes}
+          />
+        )}
       </View>
+      <SeasonHeaderButtonRow
+        episodesWatched={episodesWatched}
+        numberOfEpisodes={numberOfEpisodes}
+        tvShowId={tvShowId}
+        seasonNumber={seasonNumber}
+        episodesDownloaded={episodesDownloaded}
+      />
     </View>
   );
 };
 
-const styles = StyleSheet.create({
-  seasonName: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    borderWidth: 1,
-    height: 60,
-    // borderColor: "#aaa123",
-    // padding: 5,
-    // marginBottom: 5,
-    // backgroundColor: "#ddd",
-    backgroundColor: colors.listBackground,
-  },
-  seasonText: {
-    // fontSize: 18,
-    fontSize: fonts.sizes.l,
-    fontWeight: "600",
-    padding: 5,
-    color: colors.darkText,
-    fontFamily: fonts.family.seasons,
-  },
-  markButtons: {
-    backgroundColor: "#E7E7E7",
-    paddingVertical: 3,
-    paddingHorizontal: 1,
-
-    alignItems: "center",
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: colors.buttonPrimaryBorder,
-  },
-  markButtonsText: {
-    fontSize: 12,
-  },
-});
+const stylesFunc = (props) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      flexDirection: "column",
+      alignItems: "flex-start",
+      justifyContent: "flex-start",
+      height: seasonConstants.seasonHeaderHeight,
+      backgroundColor: props.allEpisodesWatched ? colors.darkbg : "#d5e3ca", //colors.listBackground,
+      borderWidth: 1,
+    },
+    seasonName: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      width: "100%",
+      padding: 5,
+    },
+    seasonText: {
+      fontSize: fonts.sizes.l,
+      fontWeight: "600",
+      color: props.allEpisodesWatched ? colors.darkfg : colors.darkText,
+      fontFamily: fonts.family.seasons,
+    },
+    markButtons: {
+      backgroundColor: "#E7E7E7",
+      paddingVertical: 3,
+      paddingHorizontal: 1,
+      alignItems: "center",
+      borderRadius: 8,
+      borderWidth: 1,
+      borderColor: colors.buttonPrimaryBorder,
+    },
+    markButtonsText: {
+      fontSize: 12,
+    },
+  });
 
 export default React.memo(SeasonHeader);

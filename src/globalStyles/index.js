@@ -80,3 +80,8 @@ export const commonStyles = {
     fontWeight: "600",
   },
 };
+
+export const seasonConstants = {
+  seasonHeaderHeight: 75,
+  episodeHeight: 70,
+};

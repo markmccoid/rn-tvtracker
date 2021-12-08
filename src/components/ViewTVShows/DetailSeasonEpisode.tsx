@@ -9,7 +9,7 @@ import * as Linking from "expo-linking";
 import { useOActions, useOState } from "../../store/overmind";
 
 import { IMDBIcon, EyeFilledIcon, ViewTVShowIcon } from "../common/Icons";
-import { fonts, colors } from "../../globalStyles";
+import { fonts, colors, seasonConstants } from "../../globalStyles";
 
 //@types
 import { SectionListDataItem } from "../../screens/view/ViewDetails/SeasonScreen";
@@ -228,7 +228,7 @@ const styles = StyleSheet.create({
     paddingRight: 5,
     width: width - 10,
     justifyContent: "space-around",
-    height: 60,
+    height: seasonConstants.episodeHeight,
   },
   epNumberText: {
     fontSize: 18,
