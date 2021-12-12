@@ -48,7 +48,6 @@ const RestoreFromDropbox = ({ token }) => {
             onLayout={(e) => {
               // containerHeight.current = e.nativeEvent.layout.height;
               setButtonWidth(e.nativeEvent.layout.width);
-              console.log("containerWidth", e.nativeEvent.layout.width);
             }}
           >
             <PressableButton
