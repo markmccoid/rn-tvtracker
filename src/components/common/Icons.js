@@ -11,28 +11,31 @@ import {
   Entypo,
 } from "@expo/vector-icons";
 
-export const ViewMovieIcon = ({ size, color, style = {} }) => {
+export const ViewMovieIcon = ({ size, color = undefined, style = {} }) => {
   return <MaterialIcons name="movie" size={size} color={color} style={style} />;
 };
-export const ViewTVShowIcon = ({ size, color, style = {} }) => {
+export const ViewTVShowIcon = ({ size, color = undefined, style = {} }) => {
   return <Feather name="tv" size={size} color={color} style={style} />;
 };
-export const EyeEmptyIcon = ({ size, color, style = {} }) => {
+export const EyeEmptyIcon = ({ size, color = undefined, style = {} }) => {
   return <AntDesign name="eye" size={size} color={color} style={style} />;
 };
-export const EyeFilledIcon = ({ size, color, style = {} }) => {
+export const EyeFilledIcon = ({ size, color = undefined, style = {} }) => {
   return <AntDesign name="eye" size={size} color={color} style={style} />;
 };
-export const EyeWatchedIcon = ({ size, color, style = {} }) => {
+export const EyeWatchedIcon = ({ size, color = undefined, style = {} }) => {
   return <MaterialCommunityIcons name="eye-check" size={size} color={color} style={style} />;
 };
-export const EyeNotWatchedIcon = ({ size, color, style = {} }) => {
+export const EyeNotWatchedIcon = ({ size, color = undefined, style = {} }) => {
   return <MaterialCommunityIcons name="eye-off" size={size} color={color} style={style} />;
 };
-export const TelevisionOffIcon = ({ size, color, style = {} }) => {
+export const TelevisionOffIcon = ({ size, color = undefined, style = {} }) => {
   return (
     <MaterialCommunityIcons name="television-off" size={size} color={color} style={style} />
   );
+};
+export const TelevisionIcon = ({ size, color = undefined, style = {} }) => {
+  return <MaterialCommunityIcons name="television" size={size} color={color} style={style} />;
 };
 
 export const SearchIcon = ({ size, color = undefined, style = undefined }) => {

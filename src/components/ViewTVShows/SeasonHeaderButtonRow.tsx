@@ -5,6 +5,7 @@ import {
   EyeWatchedIcon,
   EyeNotWatchedIcon,
   TelevisionOffIcon,
+  TelevisionIcon,
 } from "../../components/common/Icons";
 import PressableButton from "../common/PressableButton";
 import { useOState, useOActions } from "../../store/overmind";
@@ -15,6 +16,7 @@ type Props = {
   numberOfEpisodes: number;
   tvShowId: number;
   seasonNumber: number;
+  EpisodesWatched: React.ReactNode;
 };
 const SeasonHeaderButtonRow = ({
   episodesWatched,
@@ -22,6 +24,7 @@ const SeasonHeaderButtonRow = ({
   numberOfEpisodes,
   tvShowId,
   seasonNumber,
+  EpisodesWatchedComponent,
 }: Props) => {
   const state = useOState();
   const actions = useOActions();
@@ -29,6 +32,8 @@ const SeasonHeaderButtonRow = ({
   const { markAllSeasonsEpisodes } = actions.oSaved;
   const allWatched = !!(episodesWatched === numberOfEpisodes);
   const allUnwatched = !!(episodesWatched === 0);
+  const allDownloaded = !!(episodesDownloaded === numberOfEpisodes);
+  const allNotDownloaded = !!(episodesDownloaded === 0);
   const inlineStyles = StyleSheet.create({
     watchAll: {
       backgroundColor: allWatched ? "#cac9c9" : "white", //colors.includeGreen,
@@ -36,56 +41,73 @@ const SeasonHeaderButtonRow = ({
     unwatchAll: {
       backgroundColor: allUnwatched ? "#cac9c9" : "white", // colors.includeGreen,
     },
+    downloadedAll: {
+      backgroundColor: allDownloaded ? "#cac9c9" : "white", //colors.includeGreen,
+    },
+    notDownloadedAll: {
+      backgroundColor: allNotDownloaded ? "#cac9c9" : "white", // colors.includeGreen,
+    },
   });
+
+  const downloadButtons = isDownloadStateEnabled && (
+    <>
+      <PressableButton
+        style={[styles.markButtons, inlineStyles.downloadedAll, { marginRight: 3 }]}
+        disabled={allDownloaded}
+        onPress={() =>
+          markAllSeasonsEpisodes({
+            tvShowId,
+            seasonNumber,
+            watchedState: true,
+            modifyDownloadState: true,
+          })
+        }
+      >
+        {/* <Text style={[styles.markButtonsText, { color: "white" }]}>Clear Secondary</Text> */}
+        <TelevisionIcon size={25} />
+      </PressableButton>
+      <PressableButton
+        style={[styles.markButtons, inlineStyles.notDownloadedAll]}
+        disabled={allNotDownloaded}
+        onPress={() =>
+          markAllSeasonsEpisodes({
+            tvShowId,
+            seasonNumber,
+            watchedState: false,
+            modifyDownloadState: true,
+          })
+        }
+      >
+        {/* <Text style={[styles.markButtonsText, { color: "white" }]}>Clear Secondary</Text> */}
+        <TelevisionOffIcon size={25} />
+      </PressableButton>
+    </>
+  );
+  const watchedButtons = (
+    <>
+      <PressableButton
+        disabled={episodesWatched === numberOfEpisodes}
+        style={[styles.markButtons, inlineStyles.watchAll]}
+        onPress={() => markAllSeasonsEpisodes({ tvShowId, seasonNumber, watchedState: true })}
+      >
+        {/* <Text style={[styles.markButtonsText, { color: colors.darkText }]}>Watch All</Text> */}
+        <EyeWatchedIcon size={25} />
+      </PressableButton>
+      <PressableButton
+        disabled={episodesWatched === 0}
+        style={[styles.markButtons, inlineStyles.unwatchAll, { marginLeft: 3 }]}
+        onPress={() => markAllSeasonsEpisodes({ tvShowId, seasonNumber, watchedState: false })}
+      >
+        {/* <Text style={styles.markButtonsText}>Unwatch All</Text> */}
+        <EyeNotWatchedIcon size={25} />
+      </PressableButton>
+    </>
+  );
   return (
     <View style={styles.buttonRow}>
-      <View style={{ flexDirection: "row" }}>
-        <PressableButton
-          disabled={episodesWatched === numberOfEpisodes}
-          style={[styles.markButtons, inlineStyles.watchAll]}
-          onPress={() =>
-            markAllSeasonsEpisodes({ tvShowId, seasonNumber, watchedState: true })
-          }
-        >
-          {/* <Text style={[styles.markButtonsText, { color: colors.darkText }]}>Watch All</Text> */}
-          <EyeWatchedIcon size={25} />
-        </PressableButton>
-        <PressableButton
-          disabled={episodesWatched === 0}
-          style={[styles.markButtons, inlineStyles.unwatchAll, { marginLeft: 3 }]}
-          onPress={() =>
-            markAllSeasonsEpisodes({ tvShowId, seasonNumber, watchedState: false })
-          }
-        >
-          {/* <Text style={styles.markButtonsText}>Unwatch All</Text> */}
-          <EyeNotWatchedIcon size={25} />
-        </PressableButton>
-      </View>
-      {isDownloadStateEnabled && episodesDownloaded > 0 && (
-        <View
-          style={{
-            flexGrow: 1,
-            justifyContent: "center",
-            alignItems: "flex-end",
-            marginRight: 3,
-          }}
-        >
-          <PressableButton
-            style={[styles.markButtons]}
-            onPress={() =>
-              markAllSeasonsEpisodes({
-                tvShowId,
-                seasonNumber,
-                watchedState: false,
-                modifyDownloadState: true,
-              })
-            }
-          >
-            {/* <Text style={[styles.markButtonsText, { color: "white" }]}>Clear Secondary</Text> */}
-            <TelevisionOffIcon size={25} />
-          </PressableButton>
-        </View>
-      )}
+      <View style={{ flexDirection: "row" }}>{downloadButtons}</View>
+      {EpisodesWatchedComponent}
+      <View style={{ flexDirection: "row" }}>{watchedButtons}</View>
     </View>
   );
 };

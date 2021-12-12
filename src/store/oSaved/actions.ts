@@ -951,12 +951,24 @@ export const markAllSeasonsEpisodes = async (
   );
   let watchedObj: { [x: string]: boolean } = {};
 
-  const episodesToMarkObj = seasonData.episodes.reduce((final, ep) => {
+  const episodesToMarkObj: WatchedSeasonEpisodes = seasonData.episodes.reduce((final, ep) => {
     return (final = { ...final, [`${ep.seasonNumber}-${ep.episodeNumber}`]: watchedState });
   }, {});
 
+  // Need to check if we have any data for this TV Show in our temp(Download|Episode)State object
+  // Initialize if not
+  if (!state.oSaved[workingTempStateObject][tvShowId]) {
+    state.oSaved[workingTempStateObject] = {
+      ...state.oSaved[workingTempStateObject],
+      [tvShowId]: {},
+    };
+  }
   // Merge with tempEpisodeState or tempDownloadState data
-  mergeEpisodeStateData(episodesToMarkObj, tvShowId, state.oSaved[workingTempStateObject]);
+  // THe episodesToMarkObj is key = "1-1", etc -- value: boolean
+  Object.entries(episodesToMarkObj).forEach(([key, value]: [key: string, value: boolean]) => {
+    // Set the value (true/false)
+    state.oSaved[workingTempStateObject][tvShowId][key] = value;
+  });
 
   // update the savedTVShow array with any episode state that has changed for this tvShow
   actions.oSaved.internal.updateEpisodeStateOnTVShow({
@@ -1097,23 +1109,6 @@ const calcTotalEpisodes = (seasonsList: TVDetail_Seasons[]): number => {
     }, 0);
 };
 
-/**
- * Function accepts the episodeStateData (new watched data) and merges it with
- * the tempEpisodeState object.
- *
- */
-function mergeEpisodeStateData(
-  episodeStateData: { [x: string]: boolean },
-  tvShowId: number,
-  tempEpisodeState: SavedEpisodeState
-): void {
-  // Merge with tempEpisodeState data
-  Object.entries(episodeStateData).forEach(([key, value]: [key: string, value: boolean]) => {
-    // if (!tempEpisodeState[tvShowId]?.[key]) {
-    tempEpisodeState[tvShowId][key] = value;
-    // }
-  });
-}
 /**
  * Function accepts the Episode State from saved Movies { '1-1': true, ... }
  * I will iterate through and return a [season, episode] that

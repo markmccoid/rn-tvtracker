@@ -53,6 +53,8 @@ const EpisodesWatched = ({ episodesWatched, numberOfEpisodes }) => {
     textStyle: {
       fontFamily: fonts.family.seasons,
       fontSize: fonts.sizes.m,
+      fontWeight: "500",
+      color: "#1F380B",
     },
   });
   return (
@@ -116,12 +118,12 @@ const SeasonHeader = ({
           {seasonTitle}
         </Text>
 
-        {isShowSaved && (
+        {/* {isShowSaved && (
           <EpisodesWatched
             episodesWatched={episodesWatched}
             numberOfEpisodes={numberOfEpisodes}
           />
-        )}
+        )} */}
       </View>
       <SeasonHeaderButtonRow
         episodesWatched={episodesWatched}
@@ -129,6 +131,14 @@ const SeasonHeader = ({
         tvShowId={tvShowId}
         seasonNumber={seasonNumber}
         episodesDownloaded={episodesDownloaded}
+        EpisodesWatchedComponent={
+          isShowSaved && (
+            <EpisodesWatched
+              episodesWatched={episodesWatched}
+              numberOfEpisodes={numberOfEpisodes}
+            />
+          )
+        }
       />
     </View>
   );
