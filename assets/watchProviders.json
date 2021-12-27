@@ -3,120 +3,147 @@
     "providerId": 8,
     "providerLogo": "https://www.themoviedb.org/t/p/original/9A1JSVmSxsyaBK4SUFsYVqbAYfW.jpg",
     "providerName": "Netflix",
-    "providerPriority": 1
+    "providerPriority": 1,
+    "providerOrder": 1
   },
   {
     "providerId": 9,
     "providerLogo": "https://image.tmdb.org/t/p/original/68MNrwlkpF7WnmNPXLah69CR5cb.jpg",
     "providerName": "Amazon Prime Video",
-    "providerPriority": 1
-  },
-  {
-    "providerId": 2,
-    "providerLogo": "https://image.tmdb.org/t/p/original/q6tl6Ib6X5FT80RMlcDbexIo4St.jpg",
-    "providerName": "Apple iTunes",
-    "providerPriority": 1
-  },
-  {
-    "providerId": 3,
-    "providerLogo": "https://image.tmdb.org/t/p/original/p3Z12gKq2qvJaUOMeKNU2mzKVI9.jpg",
-    "providerName": "Google Play Movies",
-    "providerPriority": 5
+    "providerPriority": 1,
+    "providerOrder": 2
   },
   {
     "providerId": 15,
     "providerLogo": "https://image.tmdb.org/t/p/original/giwM8XX4V2AQb9vsoN7yti82tKK.jpg",
     "providerName": "Hulu",
-    "providerPriority": 1
+    "providerPriority": 1,
+    "providerOrder": 3
+  },
+  {
+    "providerId": 531,
+    "providerLogo": "https://image.tmdb.org/t/p/original/pkAHkRhIq3Iu0Z1EhDzbguSlyZF.jpg",
+    "providerName": "Paramount Plus",
+    "providerPriority": 1,
+    "providerOrder": 6
   },
   {
     "providerId": 337,
     "providerLogo": "https://image.tmdb.org/t/p/original/dgPueyEdOwpQ10fjuhL2WYFQwQs.jpg",
     "providerName": "Disney Plus",
-    "providerPriority": 1
+    "providerPriority": 1,
+    "providerOrder": 5
   },
   {
     "providerId": 384,
     "providerLogo": "https://image.tmdb.org/t/p/original/aS2zvJWn9mwiCOeaaCkIh4wleZS.jpg",
     "providerName": "HBO Max",
-    "providerPriority": 1
+    "providerPriority": 1,
+    "providerOrder": 4
   },
   {
     "providerId": 175,
     "providerLogo": "https://image.tmdb.org/t/p/original/7IF7BHgNB20PKk37EExLQcWTYaB.jpg",
     "providerName": "Netflix Kids",
-    "providerPriority": 5
+    "providerPriority": 5,
+    "providerOrder": 17
   },
   {
     "providerId": 386,
     "providerLogo": "https://image.tmdb.org/t/p/original/d9cPwjnMYUEdjsfPuX96akc807z.jpg",
     "providerName": "Peacock",
-    "providerPriority": 1
+    "providerPriority": 1,
+    "providerOrder": 6
   },
   {
     "providerId": 283,
     "providerLogo": "https://image.tmdb.org/t/p/original/oswPTkUarKavsbi4Ec3b3SgqZ29.jpg",
     "providerName": "Crunchyroll",
-    "providerPriority": 1
+    "providerPriority": 1,
+    "providerOrder": 16
   },
   {
     "providerId": 387,
     "providerLogo": "https://image.tmdb.org/t/p/original/7cOEzL1ogV1hQV9a65qAeG7dK6c.jpg",
     "providerName": "Peacock Premium",
-    "providerPriority": 1
+    "providerPriority": 1,
+    "providerOrder": 6
   },
   {
     "providerId": 350,
     "providerLogo": "https://image.tmdb.org/t/p/original/A3WLxoSkmuxwaQkpfwL6H8WwWwM.jpg",
     "providerName": "Apple TV Plus",
-    "providerPriority": 1
+    "providerPriority": 1,
+    "providerOrder": 6
   },
   {
     "providerId": 192,
     "providerLogo": "https://image.tmdb.org/t/p/original/vDCcryHD32b0yMeSCgBhuYavsmx.jpg",
     "providerName": "YouTube",
-    "providerPriority": 1
+    "providerPriority": 1,
+    "providerOrder": 11
   },
   {
     "providerId": 188,
     "providerLogo": "https://image.tmdb.org/t/p/original/hvVCDCBcmj8ouq5T18P5g2qfaNc.jpg",
     "providerName": "YouTube Premium",
-    "providerPriority": 1
+    "providerPriority": 1,
+    "providerOrder": 12
   },
   {
     "providerId": 190,
     "providerLogo": "https://image.tmdb.org/t/p/original/aWGqR6ERNT6cAlgmtQUMfGFeaFv.jpg",
     "providerName": "Curiosity Stream",
-    "providerPriority": 5
+    "providerPriority": 5,
+    "providerOrder": 13
   },
   {
     "providerId": 235,
     "providerLogo": "https://image.tmdb.org/t/p/original/zqPiJW4AeaR7UQV1jupvCyv4RJy.jpg",
     "providerName": "YouTube Free",
-    "providerPriority": 1
+    "providerPriority": 1,
+    "providerOrder": 14
   },
   {
     "providerId": 27,
     "providerLogo": "https://image.tmdb.org/t/p/original/pCmBqVbaYTpTactRXXDw5O8N1VZ.jpg",
     "providerName": "HBO Now",
-    "providerPriority": 1
+    "providerPriority": 1,
+    "providerOrder": 15
   },
   {
     "providerId": 238,
     "providerLogo": "https://image.tmdb.org/t/p/original/2irzpx5DK6PhmTOz4qiskLmVnT3.jpg",
     "providerName": "IMDb TV",
-    "providerPriority": 1
+    "providerPriority": 1,
+    "providerOrder": 9
   },
   {
     "providerId": 37,
     "providerLogo": "https://image.tmdb.org/t/p/original/bo7FM7ha4iEnOEAvhhwg0RuVGid.jpg",
     "providerName": "Showtime",
-    "providerPriority": 1
+    "providerPriority": 1,
+    "providerOrder": 8
   },
   {
     "providerId": 12,
     "providerLogo": "https://image.tmdb.org/t/p/original/eg9ljJBQjpNdurHcAfiFVx5kSBc.jpg",
     "providerName": "Crackle",
-    "providerPriority": 1
+    "providerPriority": 1,
+    "providerOrder": 10
+  },
+  {
+    "providerId": 2,
+    "providerLogo": "https://image.tmdb.org/t/p/original/q6tl6Ib6X5FT80RMlcDbexIo4St.jpg",
+    "providerName": "Apple iTunes",
+    "providerPriority": 1,
+    "providerOrder": 18
+  },
+  {
+    "providerId": 3,
+    "providerLogo": "https://image.tmdb.org/t/p/original/p3Z12gKq2qvJaUOMeKNU2mzKVI9.jpg",
+    "providerName": "Google Play Movies",
+    "providerPriority": 5,
+    "providerOrder": 19
   }
 ]
