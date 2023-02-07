@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { View, Alert, TouchableOpacity, ActivityIndicator, StyleSheet } from "react-native";
-import { HoldItem } from "@markmccoid/react-native-hold-menu";
+import { HoldItem } from "react-native-hold-menu";
+// import { HoldItem } from "@markmccoid/react-native-hold-menu";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Linking from "expo-linking";
 import { useNavigation } from "@react-navigation/native";
@@ -10,6 +11,7 @@ import {
   scheduleLocalNotification,
   sendNotificationImmediately,
 } from "../../../utils/notificationHelpers";
+import { useOActions } from "../../../store/overmind";
 
 const showRefreshAlert = (msg) => {
   Alert.alert("TV Show Refresh", msg);
@@ -46,6 +48,8 @@ const DetailMainInfoHoldMenu = ({
   refreshTVShow,
   children,
 }) => {
+  const actions = useOActions();
+  const { deleteTVShow } = actions.oSaved;
   const [isRefreshing, setisRefreshing] = useState(false);
   const navigation = useNavigation();
   const onPressShare = () => {
@@ -82,6 +86,16 @@ const DetailMainInfoHoldMenu = ({
     },
   };
 
+  const menuItemDeleteShow = {
+    text: "Delete Show",
+    withSeperator: true,
+    icon: "trash-2",
+    onPress: async () => {
+      console.log("delete", tvShow.id);
+      await deleteTVShow(tvShow.id);
+    },
+  };
+
   const sendNotification = {
     text: "Send test Notification",
     withSeperator: false,
@@ -94,6 +108,7 @@ const DetailMainInfoHoldMenu = ({
         isInSavedTVShows ? menuItemUpdateMovie : undefined,
         isInSavedTVShows ? menuItemPickImage : undefined,
         menuItemShareMovie,
+        menuItemDeleteShow,
       ].filter((el) => el)}
     >
       {children}

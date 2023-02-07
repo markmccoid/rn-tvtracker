@@ -139,7 +139,7 @@ const ViewDetails = ({ navigation, route }: DetailsScreenProps) => {
         } else {
           return (
             <TouchableOpacity
-              style={{ marginRight: 0 }}
+              style={{ marginRight: 2 }}
               onPress={async () => {
                 setIsLoading(true);
                 navigation.goBack();

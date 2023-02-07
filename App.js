@@ -3,7 +3,8 @@ import { LogBox, StatusBar } from "react-native";
 
 import { NavigationContainer } from "@react-navigation/native";
 import { Provider } from "overmind-react";
-import { HoldMenuProvider } from "@markmccoid/react-native-hold-menu";
+import { HoldMenuProvider } from "react-native-hold-menu";
+// import { HoldMenuProvider } from "@markmccoid/react-native-hold-menu";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import * as Notifications from "expo-notifications";
 import FeatherIcon from "react-native-vector-icons/Feather";

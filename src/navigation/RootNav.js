@@ -2,7 +2,8 @@ import React from "react";
 import { View, Text, Button } from "react-native";
 // import { createStackNavigator } from "@react-navigation/stack";
 import { enableScreens } from "react-native-screens";
-import { createNativeStackNavigator } from "react-native-screens/native-stack";
+// import { createNativeStackNavigator } from "react-native-screens/native-stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import { useOState } from "../store/overmind";
 

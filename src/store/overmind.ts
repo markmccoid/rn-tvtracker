@@ -44,6 +44,6 @@ export const useOEffects = createEffectsHook<Config>();
 export const useOReaction = createReactionHook<Config>();
 // When in dev config overmind for devtools
 const devToolsConfig =
-  process.env.NODE_ENV === "development" ? { devtools: "192.168.1.18:3031" } : {};
+  process.env.NODE_ENV === "development" ? { devtools: "192.168.1.89:3031" } : {};
 export const overmind = createOvermind(config, devToolsConfig);
 // export const overmind = createOvermind(config, { devtools: "192.168.1.25:3031" });

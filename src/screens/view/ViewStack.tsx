@@ -1,7 +1,8 @@
 import React from "react";
 import { View, TouchableOpacity, Text } from "react-native";
 
-import { createNativeStackNavigator } from "react-native-screens/native-stack";
+// import { createNativeStackNavigator } from "react-native-screens/native-stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
 import * as Linking from "expo-linking";
 
@@ -31,8 +32,8 @@ const ViewSeasonDetailsStack = () => {
     <ViewSeasonDetailsStackNav.Navigator
       initialRouteName="DetailsSeasons"
       screenOptions={{
-        stackAnimation: "default",
-        stackPresentation: "modal",
+        animation: "default",
+        presentation: "modal",
       }}
     >
       <ViewSeasonDetailsStackNav.Screen
@@ -65,8 +66,8 @@ const ViewTVShowsModalStack = () => {
     <ViewTVShowsStackNav.Navigator
       initialRouteName="TVShowsScreen"
       screenOptions={{
-        stackAnimation: "default",
-        stackPresentation: "modal",
+        animation: "default",
+        presentation: "modal",
       }}
       // mode="modal"
       // headerMode="none"
@@ -116,8 +117,8 @@ const ViewTVDetailsStack = () => {
     <ViewTVDetailsStackNav.Navigator
       initialRouteName="Details"
       screenOptions={{
-        stackAnimation: "default",
-        stackPresentation: "modal",
+        animation: "default",
+        presentation: "modal",
       }}
       // mode="modal"
       // headerMode="none"

@@ -9,7 +9,8 @@ import DetailPerson from "../view/ViewDetails/DetailPerson";
 import SeasonsScreen from "../view/ViewDetails/SeasonScreen";
 import AnimatedPickImage from "../view/ViewDetails/AnimatedPickImage";
 
-import { createNativeStackNavigator } from "react-native-screens/native-stack";
+// import { createNativeStackNavigator } from "react-native-screens/native-stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { colors } from "../../globalStyles";
 import EpisodeScreen from "../view/ViewDetails/EpisodeScreen";
 

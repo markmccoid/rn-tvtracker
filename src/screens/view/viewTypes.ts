@@ -1,8 +1,12 @@
 import { RouteProp } from "@react-navigation/native";
+// import {
+//   NativeStackScreenProps,
+//   NativeStackNavigationProp,
+// } from "react-native-screens/native-stack";
 import {
   NativeStackScreenProps,
   NativeStackNavigationProp,
-} from "react-native-screens/native-stack";
+} from "@react-navigation/native-stack";
 
 //* Screens in the Main stacks
 //- Main View stack

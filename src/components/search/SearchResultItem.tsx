@@ -18,7 +18,8 @@ import {
   DetailsScreenNavigation,
   DetailsSearchScreenNavigation,
 } from "../../screens/view/viewTypes";
-import { NativeStackNavigationProp } from "react-native-screens/lib/typescript/native-stack";
+// import { NativeStackNavigationProp } from "react-native-screens/lib/typescript/native-stack";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { rawTVGetExternalIds } from "@markmccoid/tmdb_api";
 
 const { width, height } = Dimensions.get("window");
