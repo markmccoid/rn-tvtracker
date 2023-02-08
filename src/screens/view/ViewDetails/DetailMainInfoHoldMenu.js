@@ -66,8 +66,8 @@ const DetailMainInfoHoldMenu = ({
   const menuItemTitle = { text: "Actions", icon: "home", isTitle: true, onPress: () => {} };
   const menuItemUpdateMovie = {
     text: `Update TV Show`,
-    onPress: async () => {
-      let msg = await refreshTVShow({ tvShowId: tvShow.id });
+    onPress: async (tvShowId) => {
+      let msg = await refreshTVShow({ tvShowId });
       showRefreshAlert(msg);
       navigateToRoute();
     },
@@ -81,8 +81,9 @@ const DetailMainInfoHoldMenu = ({
   const menuItemPickImage = {
     text: "Change Image",
     withSeperator: true,
-    onPress: async () => {
-      navigation.navigate(`${routeName}PickImage`, { tvShowId: tvShow.id });
+    onPress: async (tvShowId) => {
+      alert(`${routeName}PickImage -${tvShowId}`);
+      navigation.navigate(`${routeName}PickImage`, { tvShowId });
     },
   };
 
@@ -90,9 +91,8 @@ const DetailMainInfoHoldMenu = ({
     text: "Delete Show",
     withSeperator: true,
     icon: "trash-2",
-    onPress: async () => {
-      console.log("delete", tvShow.id);
-      await deleteTVShow(tvShow.id);
+    onPress: async (tvShowId) => {
+      await deleteTVShow(tvShowId);
     },
   };
 
@@ -108,8 +108,13 @@ const DetailMainInfoHoldMenu = ({
         isInSavedTVShows ? menuItemUpdateMovie : undefined,
         isInSavedTVShows ? menuItemPickImage : undefined,
         menuItemShareMovie,
-        menuItemDeleteShow,
+        isInSavedTVShows ? menuItemDeleteShow : undefined,
       ].filter((el) => el)}
+      actionParams={{
+        ["Delete Show"]: [tvShow.id],
+        ["Change Image"]: [tvShow.id],
+        ["Update TV Show"]: [tvShow.id],
+      }}
     >
       {children}
     </HoldItem>
