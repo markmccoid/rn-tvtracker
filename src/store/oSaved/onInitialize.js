@@ -9,7 +9,9 @@ import { loadCurrentUserFromStorage } from "../../storage/localData";
 
 import { initTMDB } from "@markmccoid/tmdb_api";
 
-let tmdbId = Constants.manifest.extra.tmdbAPI;
+// let tmdbId = Constants.manifest.extra.tmdbAPI;
+// let tmdbId = Constants.expoConfig.extra.TMDB_API;
+let tmdbId = Constants.expoConfig.extra.tmdbAPI;
 // initialize currently only loads data that was stored in
 // phones local storage.
 let unsubscribe = () => {};

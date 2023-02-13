@@ -31,5 +31,8 @@ export default {
   },
   extra: {
     tmdbAPI: tmdbId,
+    eas: {
+      projectId: "05a9634d-07d7-4103-8fa1-fe02c39fff61",
+    },
   },
 };
