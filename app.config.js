@@ -4,6 +4,7 @@ import "dotenv/config";
 // console.log("APP CONFIG CONTANTS", process.env.TMDB_ID);
 const tmdbId = process.env.TMDB_ID;
 export default {
+  jsEngine: "hermes",
   name: "TV Tracker",
   slug: "tv-tracker",
   scheme: "tvtracker",

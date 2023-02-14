@@ -19,7 +19,8 @@ const getImages = async (tvShowId) => {
   return posterImages.data;
 };
 
-const AnimatedPickImage = ({ tvShowId, setPosterHeight }) => {
+const AnimatedPickImage = ({ tvShowId }) => {
+  console.log("in Animated Pick list", tvShowId);
   const [posterData, setPosterData] = React.useState([]);
   const [largeImage, setLargeImage] = React.useState(undefined);
   const [posterWidth, posterHeight] = useImageDims("m");

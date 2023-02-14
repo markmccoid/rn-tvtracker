@@ -1,5 +1,11 @@
 import React, { useState } from "react";
-import { View, Alert, TouchableOpacity, ActivityIndicator, StyleSheet } from "react-native";
+import {
+  View,
+  Alert,
+  TouchableOpacity,
+  ActivityIndicator,
+  StyleSheet,
+} from "react-native";
 import { HoldItem } from "react-native-hold-menu";
 // import { HoldItem } from "@markmccoid/react-native-hold-menu";
 import { LinearGradient } from "expo-linear-gradient";
@@ -63,7 +69,12 @@ const DetailMainInfoHoldMenu = ({
   //-----------------------------------
   //-- COMMENTED OUT UNTIL HOLD MENU BUG IS FIXED
   // Setup hold-menu items for use in the hold menu
-  const menuItemTitle = { text: "Actions", icon: "home", isTitle: true, onPress: () => {} };
+  const menuItemTitle = {
+    text: "Actions",
+    icon: "home",
+    isTitle: true,
+    onPress: () => {},
+  };
   const menuItemUpdateMovie = {
     text: `Update TV Show`,
     onPress: async (tvShowId) => {
@@ -78,11 +89,13 @@ const DetailMainInfoHoldMenu = ({
     icon: "share",
     onPress: onPressShare,
   };
+
+  // NOTE: you have to pass in the navigation function since this is a closure
+  //  if you don't, only the first navigation works
   const menuItemPickImage = {
     text: "Change Image",
     withSeperator: true,
-    onPress: async (tvShowId) => {
-      alert(`${routeName}PickImage -${tvShowId}`);
+    onPress: (tvShowId, navigation) => {
       navigation.navigate(`${routeName}PickImage`, { tvShowId });
     },
   };
@@ -112,7 +125,7 @@ const DetailMainInfoHoldMenu = ({
       ].filter((el) => el)}
       actionParams={{
         ["Delete Show"]: [tvShow.id],
-        ["Change Image"]: [tvShow.id],
+        ["Change Image"]: [tvShow.id, navigation],
         ["Update TV Show"]: [tvShow.id],
       }}
     >
