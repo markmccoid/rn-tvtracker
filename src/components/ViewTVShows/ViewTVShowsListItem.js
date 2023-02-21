@@ -1,5 +1,4 @@
 import React from "react";
-import { useDimensions } from "@react-native-community/hooks";
 import { useNavigation } from "@react-navigation/native";
 
 import MovieColumnLayout from "./MovieColumnLayout";

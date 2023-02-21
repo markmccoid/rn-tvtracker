@@ -1,9 +1,14 @@
 import React from "react";
-import { View, StyleSheet, TouchableOpacity, Dimensions } from "react-native";
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Dimensions,
+  useWindowDimensions,
+} from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 
 import { useOState, useOActions } from "../../../store/overmind";
-import { useDimensions } from "@react-native-community/hooks";
 import { useCastData } from "../../../hooks/useCastData";
 
 import { colors } from "../../../globalStyles";
@@ -36,7 +41,7 @@ const ViewTVShowDetails = ({ tvShow, isInSavedTVShows }: Props) => {
 
   const castData = useCastData(tvShowId);
 
-  const { width } = useDimensions().window;
+  const { width } = useWindowDimensions();
 
   const navigation = useNavigation<
     DetailSeasonsScreenNavigation | DetailPersonScreenNavigation
@@ -90,7 +95,11 @@ const ViewTVShowDetails = ({ tvShow, isInSavedTVShows }: Props) => {
                   });
                 }}
               >
-                <DetailCastInfo person={person} screenWidth={width} key={person.personId} />
+                <DetailCastInfo
+                  person={person}
+                  screenWidth={width}
+                  key={person.personId}
+                />
               </TouchableOpacity>
             ))}
           </View>

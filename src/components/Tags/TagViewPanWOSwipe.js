@@ -8,7 +8,6 @@ import {
   PanResponder,
   Animated,
 } from "react-native";
-import { useDimensions } from "@react-native-community/hooks";
 import { useOState, useOActions } from "../../store/overmind";
 import { DragHandleIcon } from "../common/Icons";
 

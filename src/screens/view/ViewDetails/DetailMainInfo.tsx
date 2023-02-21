@@ -7,11 +7,11 @@ import {
   Alert,
   TouchableOpacity,
   ImageStyle,
+  useWindowDimensions,
 } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import DetailMainInfoHoldMenu from "./DetailMainInfoHoldMenu";
 
-import { useDimensions } from "@react-native-community/hooks";
 import { LessIcon, MoreIcon } from "../../../components/common/Icons";
 import { useOActions, useOState } from "../../../store/overmind";
 import LongTouchUserRating from "./LongTouchUserRating";
@@ -21,7 +21,11 @@ import { colors, styleHelpers } from "../../../globalStyles";
 import { TVShowDetails } from "@markmccoid/tmdb_api";
 
 import DatesScroller from "./DatesScroller";
-import { AverageEpisodeTimeBlock, ShowStatusBlock, GenresBlock } from "./DetailBlocks";
+import {
+  AverageEpisodeTimeBlock,
+  ShowStatusBlock,
+  GenresBlock,
+} from "./DetailBlocks";
 
 type Props = {
   tvShow: TVShowDetails;
@@ -47,7 +51,7 @@ const DetailMainInfo: React.FC<Props> = ({
   // maybe needs to be in useEffect??? or memoized
   const tvShowUserRating = getTVShowUserRating(tvShow.id);
 
-  const { width } = useDimensions().window;
+  const { width } = useWindowDimensions();
 
   const posterWidth = width * 0.35;
   const posterHeight = posterWidth * 1.5;
@@ -62,7 +66,8 @@ const DetailMainInfo: React.FC<Props> = ({
   } = tvShow;
   const nextAirDate = tvShow.nextEpisodeToAir?.airDate;
 
-  const toggleOverview = () => setOverviewHeight((curr) => (curr ? undefined : 205));
+  const toggleOverview = () =>
+    setOverviewHeight((curr) => (curr ? undefined : 205));
   const navigateToRoute = () =>
     navigation.navigate(route.name, {
       tvShowId: tvShow.id,

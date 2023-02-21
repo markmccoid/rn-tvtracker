@@ -8,10 +8,10 @@ import {
   Dimensions,
   PanResponder,
   Animated,
+  useWindowDimensions,
 } from "react-native";
 import { SwipeListView } from "react-native-swipe-list-view";
 import { Feather } from "@expo/vector-icons";
-import { useDimensions } from "@react-native-community/hooks";
 import { Badge } from "react-native-elements";
 import { useOState, useOActions } from "../../store/overmind";
 import { DragHandleIcon } from "../common/Icons";
@@ -57,7 +57,7 @@ const TagViewPan = ({ taggedCount }) => {
   const flatListHeight = React.useRef(0);
   let flatListRef = React.useRef();
   const viewRef = React.useRef();
-  const { width, height } = useDimensions().window;
+  const { width, height } = useWindowDimensions();
   //Get tag data from Overmind
   const state = useOState();
   const actions = useOActions();
@@ -94,7 +94,9 @@ const TagViewPan = ({ taggedCount }) => {
       startingIdx.current = currentIdx.current;
       active.current = true;
 
-      pointY.setValue(gestureState.y0 - flatListTopOffset.current - rowHeight.current / 2);
+      pointY.setValue(
+        gestureState.y0 - flatListTopOffset.current - rowHeight.current / 2
+      );
       // console.log("START============================================");
       // console.log("GS-moveY, y0", gestureState.moveY, gestureState.y0);
       // console.log(
@@ -113,7 +115,9 @@ const TagViewPan = ({ taggedCount }) => {
       // console.log("GS-moveY, vy", gestureState.moveY, gestureState.vy);
       // console.log("CurrentIndex", currentIdx.current);
       currentY.current = gestureState.moveY - rowHeight.current / 2;
-      pointY.setValue(gestureState.moveY - flatListTopOffset.current - rowHeight.current / 2);
+      pointY.setValue(
+        gestureState.moveY - flatListTopOffset.current - rowHeight.current / 2
+      );
       animateList();
     },
     onPanResponderTerminationRequest: (evt, gestureState) => false,
@@ -150,7 +154,10 @@ const TagViewPan = ({ taggedCount }) => {
     requestAnimationFrame(() => {
       //Check if we are near bottom
 
-      if (currentY.current + 60 > flatListTopOffset.current + flatListHeight.current) {
+      if (
+        currentY.current + 60 >
+        flatListTopOffset.current + flatListHeight.current
+      ) {
         flatListRef.current.scrollToOffset({
           offset: scrollOffset.current + 10,
           animated: false,
@@ -237,7 +244,11 @@ const TagViewPan = ({ taggedCount }) => {
             <Badge
               status="success"
               value={taggedCount[item.tagId] || 0}
-              badgeStyle={{ padding: 5, height: rowHeight.current * 0.7, width: 40 }}
+              badgeStyle={{
+                padding: 5,
+                height: rowHeight.current * 0.7,
+                width: 40,
+              }}
               textStyle={{ fontSize: 15 }}
               containerStyle={{ justifyContent: "center", marginRight: 25 }}
             />
@@ -317,7 +328,9 @@ const TagViewPan = ({ taggedCount }) => {
           style={{ backgroundColor: colors.background }}
           data={data}
           scrollEnabled={!dragging}
-          onScroll={(e) => (scrollOffset.current = e.nativeEvent.contentOffset.y)}
+          onScroll={(e) =>
+            (scrollOffset.current = e.nativeEvent.contentOffset.y)
+          }
           onLayout={(e) => {
             // flatListTopOffset.current = e.nativeEvent.layout.y;
             flatListHeight.current = e.nativeEvent.layout.height;

@@ -1,14 +1,25 @@
 import React from "react";
-import { View, Text, Image, StyleSheet, LayoutAnimation } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  LayoutAnimation,
+  useWindowDimensions,
+} from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import { useDimensions } from "@react-native-community/hooks";
 
 import { useOState, useOActions } from "../../store/overmind";
 import { DeleteIcon, CheckIcon } from "../common/Icons";
 import TagCloud, { TagItem } from "../TagCloud/TagCloud";
 
-const MovieColumnLayout = ({ movie, setMovieEditingId, navigateToDetails, inEditState }) => {
-  const { width, height } = useDimensions().window;
+const MovieColumnLayout = ({
+  movie,
+  setMovieEditingId,
+  navigateToDetails,
+  inEditState,
+}) => {
+  const { width, height } = useWindowDimensions();
   // Import Overmind state and actions
   const state = useOState();
   const actions = useOActions();
@@ -83,7 +94,9 @@ const MovieColumnLayout = ({ movie, setMovieEditingId, navigateToDetails, inEdit
       </View>
       <TouchableOpacity
         onPress={navigateToDetails}
-        onLongPress={() => (inEditState ? setMovieEditingId() : setMovieEditingId(movie.id))}
+        onLongPress={() =>
+          inEditState ? setMovieEditingId() : setMovieEditingId(movie.id)
+        }
       >
         <View
           style={{
@@ -184,7 +197,9 @@ const MovieColumnLayout = ({ movie, setMovieEditingId, navigateToDetails, inEdit
                 tagId={tagObj.tagId}
                 tagName={tagObj.tagName}
                 isSelected={tagObj.isSelected}
-                onSelectTag={() => addTagToMovie({ movieId: movie.id, tagId: tagObj.tagId })}
+                onSelectTag={() =>
+                  addTagToMovie({ movieId: movie.id, tagId: tagObj.tagId })
+                }
                 onDeSelectTag={() =>
                   removeTagFromMovie({
                     movieId: movie.id,

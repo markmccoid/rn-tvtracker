@@ -1,6 +1,5 @@
 import React from "react";
-import { View, Pressable, StyleSheet } from "react-native";
-import { useDimensions } from "@react-native-community/hooks";
+import { View, Pressable, StyleSheet, useWindowDimensions } from "react-native";
 import { watchProviders } from "../../storage/externalData";
 import DropDownPicker from "react-native-dropdown-picker";
 import { useAdvancedSearchState } from "../../context/AdvancedSearchContext";
@@ -9,16 +8,23 @@ import { EraserIcon } from "../../components/common/Icons";
 
 const createProvidersArray = () => [
   { label: "All Providers", value: "all" },
-  ...watchProviders.map((wp) => ({ label: wp.providerName, value: wp.providerId.toString() })),
+  ...watchProviders.map((wp) => ({
+    label: wp.providerName,
+    value: wp.providerId.toString(),
+  })),
 ];
 
 const clearItem = (items) => {
-  return items.map((el) => ({ label: el.label, value: el.value, selected: false }));
+  return items.map((el) => ({
+    label: el.label,
+    value: el.value,
+    selected: false,
+  }));
 };
 const DiscoverAdvProviders = ({ pickerStateInfo }) => {
   const providersArray = React.useMemo(createProvidersArray, []);
   const [selectedItem, setSelectedItem] = React.useState([]);
-  const { width } = useDimensions().window;
+  const { width } = useWindowDimensions();
   // Pull out picker states info
   const { pickerStates, updatePickerStates, pickerKey } = pickerStateInfo;
 
@@ -88,7 +94,10 @@ const DiscoverAdvProviders = ({ pickerStateInfo }) => {
             padding: 5,
             borderRadius: 10,
             marginLeft: 10,
-            transform: [{ translateY: pressed ? 2 : 0 }, { translateX: pressed ? 2 : 0 }],
+            transform: [
+              { translateY: pressed ? 2 : 0 },
+              { translateX: pressed ? 2 : 0 },
+            ],
           },
         ]}
       >

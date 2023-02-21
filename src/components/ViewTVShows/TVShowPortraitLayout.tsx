@@ -1,10 +1,9 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, useWindowDimensions } from "react-native";
 import * as Haptics from "expo-haptics";
 import { useNavigation } from "@react-navigation/native";
 
 import { TouchableOpacity } from "react-native-gesture-handler";
-import { useDimensions } from "@react-native-community/hooks";
 import PosterImage from "../common/PosterImage";
 import { colors, styleHelpers } from "../../globalStyles";
 import { SavedTVShowsDoc } from "../../store/oSaved/state";
@@ -21,7 +20,10 @@ type Props = {
   navigateToDetails: () => void;
 };
 
-const setEpisodeGroupStyles = (group: number, maxWidth: number): [Object, number] => {
+const setEpisodeGroupStyles = (
+  group: number,
+  maxWidth: number
+): [Object, number] => {
   //0 < 15, 1 < 30, 2 < 60, 3/undefined everything else
   switch (group) {
     case 0:
@@ -53,11 +55,16 @@ const setEpisodeGroupStyles = (group: number, maxWidth: number): [Object, number
       ];
   }
 };
-const TVShowPortraitLayout = ({ tvShow, setTVShowEditingId, navigateToDetails }: Props) => {
-  const { width, height } = useDimensions().window;
+const TVShowPortraitLayout = ({
+  tvShow,
+  setTVShowEditingId,
+  navigateToDetails,
+}: Props) => {
+  const { width, height } = useWindowDimensions();
   const state = useOState();
   const { getNotWatchedEpisodeCount } = state.oSaved;
-  const { isDownloadStateEnabled, showNextAirDateEnabled } = state.oSaved.settings;
+  const { isDownloadStateEnabled, showNextAirDateEnabled } =
+    state.oSaved.settings;
 
   const navigation = useNavigation();
   //! Should be first air date
@@ -70,8 +77,11 @@ const TVShowPortraitLayout = ({ tvShow, setTVShowEditingId, navigateToDetails }:
   let posterHeight = posterWidth * 1.5;
   const MARGIN = 5;
   const BORDER_RADIUS = 10;
-  const { countEpisodesNotWatched, countEpisodesNotDownloaded, downloadedEpisodes } =
-    getNotWatchedEpisodeCount(tvShow.id);
+  const {
+    countEpisodesNotWatched,
+    countEpisodesNotDownloaded,
+    downloadedEpisodes,
+  } = getNotWatchedEpisodeCount(tvShow.id);
 
   const [episodeGroupStyles, groupWidthOffset] = setEpisodeGroupStyles(
     getEpisodeRunTimeGroup(tvShow.avgEpisodeRunTime),
@@ -123,7 +133,9 @@ const TVShowPortraitLayout = ({ tvShow, setTVShowEditingId, navigateToDetails }:
     },
     episodesLeftContainer: {
       backgroundColor:
-        countEpisodesNotWatched === 0 ? colors.excludeRed : colors.buttonPrimary,
+        countEpisodesNotWatched === 0
+          ? colors.excludeRed
+          : colors.buttonPrimary,
       paddingVertical: 4,
       paddingHorizontal: 6,
       borderTopLeftRadius: 8,
@@ -164,7 +176,9 @@ const TVShowPortraitLayout = ({ tvShow, setTVShowEditingId, navigateToDetails }:
         <View style={{ alignItems: "center" }}>
           <React.Fragment>
             {showNextAirDateEnabled && (
-              <View style={{ position: "absolute", zIndex: 10, top: -5, left: 5 }}>
+              <View
+                style={{ position: "absolute", zIndex: 10, top: -5, left: 5 }}
+              >
                 <View
                   style={{
                     backgroundColor: `${statusColor}cc`, //"#ffffffaa",
@@ -194,7 +208,9 @@ const TVShowPortraitLayout = ({ tvShow, setTVShowEditingId, navigateToDetails }:
             )}
             {/* Downloadable Episodes Left display */}
             {isDownloadStateEnabled && downloadedEpisodes > 0 && (
-              <View style={{ position: "absolute", zIndex: 10, top: -5, right: 5 }}>
+              <View
+                style={{ position: "absolute", zIndex: 10, top: -5, right: 5 }}
+              >
                 <PressableButton
                   style={[
                     styles.episodesLeftContainer,
@@ -241,7 +257,9 @@ const TVShowPortraitLayout = ({ tvShow, setTVShowEditingId, navigateToDetails }:
                 });
               }}
             >
-              <Text style={styles.episodesLeftText}>{countEpisodesNotWatched}</Text>
+              <Text style={styles.episodesLeftText}>
+                {countEpisodesNotWatched}
+              </Text>
             </PressableButton>
           </View>
           <PosterImage

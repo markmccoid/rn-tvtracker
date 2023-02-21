@@ -1,8 +1,16 @@
 import React from "react";
-import { View, Text, TextInput, Pressable, StyleSheet, Picker } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  Pressable,
+  StyleSheet,
+  Picker,
+  useWindowDimensions,
+} from "react-native";
 import { View as MotiView, AnimatePresence } from "moti";
 import DropDownPicker from "react-native-dropdown-picker";
-import { useDimensions } from "@react-native-community/hooks";
+
 import { useAdvancedSearchState } from "../../context/AdvancedSearchContext";
 import { colors } from "../../globalStyles";
 
@@ -36,7 +44,7 @@ const DiscoverAdvYears = ({ pickerStateInfo }) => {
     advancedSearchHandlers: { handleAdvReleaseYear },
   } = useAdvancedSearchState();
 
-  const { width } = useDimensions().window;
+  const { width } = useWindowDimensions();
   // Pull out picker states info
   const { pickerStates, updatePickerStates, pickerKey } = pickerStateInfo;
 

@@ -1,12 +1,16 @@
 import React from "react";
-import { Pressable, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  Pressable,
+  StyleSheet,
+  TouchableOpacity,
+  useWindowDimensions,
+} from "react-native";
 import { View, Text, ScrollView } from "@motify/components";
 import { MotiView, AnimatePresence, motify } from "moti";
 
 import { colors } from "../../../globalStyles";
 import DetailSelectTags from "../ViewDetails/DetailSelectTags";
 import { useOState, useOActions } from "../../../store/overmind";
-import { useDimensions } from "@react-native-community/hooks";
 import { EditIcon, CloseIcon, AddIcon } from "../../../components/common/Icons";
 
 //-- Animation props ------------
@@ -119,7 +123,7 @@ const DetailToggleTags = ({ tvShowId }) => {
   let tags = state.oSaved.getAllTVShowTags(tvShowId);
   let assignedTags = state.oSaved.getTVShowTags(tvShowId);
   let { removeTagFromTVShow, addTagToTVShow } = actions.oSaved;
-  const { width, height } = useDimensions().window;
+  const { width, height } = useWindowDimensions();
 
   return (
     <View style={styles.wrapper}>

@@ -1,7 +1,14 @@
 import React from "react";
-import { View, Text, StyleSheet, Pressable, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Pressable,
+  ScrollView,
+  useWindowDimensions,
+} from "react-native";
 import { Overlay } from "react-native-elements";
-import { useDimensions } from "@react-native-community/hooks";
+
 import { useOState, useOActions } from "../../../store/overmind";
 import { Button } from "../../../components/common/Buttons";
 import { MoreIcon } from "../../../components/common/Icons";
@@ -10,8 +17,13 @@ import TagCloud, { TagItem } from "../../../components/TagCloud/TagCloud";
 import PosterImage from "../../../components/common/PosterImage";
 import { colors, styleHelpers } from "../../../globalStyles";
 
-const ViewTVShowOverlay = ({ tvShowId, isVisible, tvShowDetails, setTVShowEditingId }) => {
-  const { width } = useDimensions().window;
+const ViewTVShowOverlay = ({
+  tvShowId,
+  isVisible,
+  tvShowDetails,
+  setTVShowEditingId,
+}) => {
+  const { width } = useWindowDimensions();
   const state = useOState();
   const actions = useOActions();
   const { getAllTVShowTags } = state.oSaved;

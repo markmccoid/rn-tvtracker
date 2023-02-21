@@ -3,18 +3,19 @@ import { StyleSheet, Text, View, Pressable } from "react-native";
 import { colors } from "../../globalStyles";
 import { EraserIcon } from "../../components/common/Icons";
 import DropDownPicker from "react-native-dropdown-picker";
-import { useDimensions } from "@react-native-community/hooks";
 import { useAdvancedSearchState } from "../../context/AdvancedSearchContext";
 
 const DiscoverByGenre = ({ allGenreFilters, pickerStateInfo }) => {
   const [selectedItem, setSelectedItem] = React.useState([]);
   const genres = [
     { label: "Any Genre", value: "any" },
-    ...allGenreFilters.map((genreObj) => ({ label: genreObj.name, value: genreObj.id })),
+    ...allGenreFilters.map((genreObj) => ({
+      label: genreObj.name,
+      value: genreObj.id,
+    })),
   ];
   // Pull out picker states info
   const { pickerStates, updatePickerStates, pickerKey } = pickerStateInfo;
-  // const { height } = useDimensions().window;
   const {
     currentSnapPointInfo: { currSnapIndex },
     advancedSearchHandlers: { handleAdvGenres },
@@ -86,7 +87,10 @@ const DiscoverByGenre = ({ allGenreFilters, pickerStateInfo }) => {
             padding: 5,
             borderRadius: 10,
             marginLeft: 10,
-            transform: [{ translateY: pressed ? 2 : 0 }, { translateX: pressed ? 2 : 0 }],
+            transform: [
+              { translateY: pressed ? 2 : 0 },
+              { translateX: pressed ? 2 : 0 },
+            ],
           },
         ]}
       >
