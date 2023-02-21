@@ -10,7 +10,7 @@ export default {
   scheme: "tvtracker",
   privacy: "unlisted",
   platforms: ["ios"],
-  version: "0.2.01",
+  version: "0.2.03",
   orientation: "portrait",
   icon: "./assets/TVTrackerIcon.png",
   splash: {
@@ -25,7 +25,7 @@ export default {
   ios: {
     supportsTablet: false,
     bundleIdentifier: "com.mccoidco.tvtracker",
-    buildNumber: "0.2.01",
+    buildNumber: "0.2.03",
     infoPlist: {
       RCTAsyncStorageExcludeFromBackup: false,
     },
